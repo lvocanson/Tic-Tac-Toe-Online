@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Client.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\Server.vcxproj", "{F22B1B44-5603-4925-AA51-9DB281A6EDA0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TicTacToe", "TicTacToe\TicTacToe.vcxproj", "{11C755AE-E4E1-44C4-B129-205F96AD3271}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,10 @@ Global
 		{F22B1B44-5603-4925-AA51-9DB281A6EDA0}.Debug|x64.Build.0 = Debug|x64
 		{F22B1B44-5603-4925-AA51-9DB281A6EDA0}.Release|x64.ActiveCfg = Release|x64
 		{F22B1B44-5603-4925-AA51-9DB281A6EDA0}.Release|x64.Build.0 = Release|x64
+		{11C755AE-E4E1-44C4-B129-205F96AD3271}.Debug|x64.ActiveCfg = Debug|x64
+		{11C755AE-E4E1-44C4-B129-205F96AD3271}.Debug|x64.Build.0 = Debug|x64
+		{11C755AE-E4E1-44C4-B129-205F96AD3271}.Release|x64.ActiveCfg = Release|x64
+		{11C755AE-E4E1-44C4-B129-205F96AD3271}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
