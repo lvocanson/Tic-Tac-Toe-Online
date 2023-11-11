@@ -15,8 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ClientMain.cpp">
+    <ClCompile Include="src\ClientMain.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\pch.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pch.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
