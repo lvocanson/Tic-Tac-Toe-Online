@@ -19,3 +19,9 @@
 #define RELEASE(ptr) if(ptr) { delete ptr; ptr = nullptr; }
 
 #pragma endregion
+
+#pragma region SFML
+
+#include <SFML/Graphics.hpp>
+
+#pragma endregion
