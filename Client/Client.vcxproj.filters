@@ -21,9 +21,21 @@
     <ClCompile Include="src\pch.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\ClientApp.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Window.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\ClientApp.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Window.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
