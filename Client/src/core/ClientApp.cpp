@@ -6,6 +6,11 @@ void ClientApp::Init()
     m_IsRunning = true;
     m_Window = new Window();
     m_Window->Create("Tic Tac Toe Online!", 800, 600);
+
+
+    tempShape = new sf::RectangleShape(sf::Vector2f(100, 100));
+    tempShape->setFillColor(sf::Color::Red);
+    m_Window->RegisterDrawable(tempShape);
 }
 
 void ClientApp::Run()
@@ -26,10 +31,14 @@ void ClientApp::Run()
 
 void ClientApp::Update()
 {
-    // TODO: game logic
+    tempShape->setPosition((sf::Vector2f)m_Window->GetMousePosition());
 }
 
 void ClientApp::Cleanup()
 {
+    for (auto& drawable : m_Window->GetDrawables())
+    {
+        RELEASE(drawable);
+    }
     RELEASE(m_Window);
 }

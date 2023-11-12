@@ -47,17 +47,11 @@ bool Window::IsOpen() const
 void Window::Render()
 {
     m_Window->clear(m_ClearColor);
+    for (auto drawable : m_Drawables)
+    {
+        m_Window->draw(*drawable);
+    }
     m_Window->display();
-}
-
-void Window::RegisterDrawable(sf::Drawable* drawable)
-{
-    m_Drawables.push_back(drawable);
-}
-
-void Window::UnregisterDrawable(sf::Drawable* drawable)
-{
-    m_Drawables.erase(std::remove(m_Drawables.begin(), m_Drawables.end(), drawable), m_Drawables.end());
 }
 
 #pragma endregion

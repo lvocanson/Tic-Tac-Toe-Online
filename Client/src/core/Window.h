@@ -42,11 +42,15 @@ public:
     /// <summary>
     /// Registers a drawable object to be rendered.
     /// </summary>
-    void RegisterDrawable(sf::Drawable* drawable);
+    void RegisterDrawable(sf::Drawable* drawable) { m_Drawables.push_back(drawable); }
     /// <summary>
     /// Unregisters a drawable object.
     /// </summary>
-    void UnregisterDrawable(sf::Drawable* drawable);
+    void UnregisterDrawable(sf::Drawable* drawable) { m_Drawables.erase(std::remove(m_Drawables.begin(), m_Drawables.end(), drawable), m_Drawables.end()); }
+    /// <summary>
+    /// Returns all the registered drawable objects.
+    /// </summary>
+    std::vector<sf::Drawable*>& GetDrawables() { return m_Drawables; }
 
 #pragma endregion
 
