@@ -36,11 +36,12 @@ void ClientApp::DrawBoard()
         square->setFillColor(sf::Color::Color(51, 56, 63));
         square->setOutlineColor(sf::Color::Color(0, 189, 156));
         square->setOutlineThickness(OUTLINE_THICKNESS);
-        square->setPosition(center.x - (width * pieceSize * 0.5f) + (i % width) * pieceSize, center.y - (height * pieceSize * 0.5f) + (i / height) * pieceSize);
-        m_Window->RegisterDrawable(square);
+        square->setPosition(center.x - (width * pieceSize * 0.5f) + (i % width) * pieceSize + OUTLINE_THICKNESS * (i % width),
+                            center.y - (height * pieceSize * 0.5f) + (i / height) * pieceSize + OUTLINE_THICKNESS * (i / height));
 
-        GraphicPiece piece = (GraphicPiece)m_Board[i];
-        piece.SetPosition(square->getPosition());
+        m_Window->RegisterDrawable(square);
+        m_Board.GetGraphicPiece(i).SetShape(square);
+        m_Board.GetGraphicPiece(i).SetPosition(square->getPosition());
     }
 }
 
