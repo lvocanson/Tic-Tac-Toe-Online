@@ -2,6 +2,7 @@
 #include "TicTacToe.h"
 
 class Window;
+class sf::Shape;
 
 class ClientApp
 {
