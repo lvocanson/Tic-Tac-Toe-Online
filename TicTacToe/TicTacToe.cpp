@@ -11,7 +11,7 @@
 
 namespace TicTacToe
 {
-	Board::Board(size_t width, size_t height, int pieceSize) : width(width), height(height), size(width * height), pieceSize(pieceSize)
+	Board::Board(size_t width, size_t height, int pieceSize, int winnablePieces) : width(width), height(height), size(width * height), pieceSize(pieceSize), winnablePieces(winnablePieces)
 	{
 		for (size_t i = 0; i < size; ++i)
 		{
@@ -47,8 +47,11 @@ namespace TicTacToe
 	    }
 	}
 
-	bool Board::IsThereAWinner() const
+	int Board::IsThereAWinner() const
 	{
+		int winner = EMPTY_PIECE;
+		int continuousPiecesCount = 0;
+
 		for (int i = 0; i < size; i++)
 		{
 			if (m_board[i]->GetPlayerID() == EMPTY_PIECE)
@@ -59,17 +62,20 @@ namespace TicTacToe
 			// Check for horizontal win
 			if (i % width == 0)
 			{
+				continuousPiecesCount = 0;
 				for (int j = 0; j < width; j++)
 				{
 					if (m_board[i + j]->GetPlayerID() != m_board[i]->GetPlayerID())
 					{
 						break;
 					}
-					if (j == width - 1)
+					else 
 					{
-						// We have a winner!
-						std::cout << "Player " << m_board[i]->GetPlayerID() << " has won!\n";
-						return true;
+						continuousPiecesCount++;
+						if (continuousPiecesCount >= winnablePieces)
+						{
+						    return m_board[i]->GetPlayerID();
+                        }
 					}
 				}
 			}
@@ -77,17 +83,21 @@ namespace TicTacToe
 			// Check for vertical win
 			if (i < width)
 			{
+				continuousPiecesCount = 0;
+
 				for (int j = 0; j < size; j += width)
 				{
 					if (m_board[i + j]->GetPlayerID() != m_board[i]->GetPlayerID())
 					{
 						break;
 					}
-					if (j == size - width)
+					else
 					{
-												// We have a winner!
-						std::cout << "Player " << m_board[i]->GetPlayerID() << " has won!\n";
-						return true;
+						continuousPiecesCount++;
+						if (continuousPiecesCount == winnablePieces)
+						{
+							return m_board[i]->GetPlayerID();
+						}
 					}
 				}
 			}
@@ -95,17 +105,21 @@ namespace TicTacToe
 			// Check for top-left diagonal win
 			if (i == 0)
 			{
+				continuousPiecesCount = 0;
+
 				for (int j = 0; j < size; j += width + 1)
 				{
 					if (m_board[i + j]->GetPlayerID() != m_board[i]->GetPlayerID())
 					{
 						break;
 					}
-					if (j == size - 1)
+					else
 					{
-												// We have a winner!
-						std::cout << "Player " << m_board[i]->GetPlayerID() << " has won!\n";
-						return true;
+						continuousPiecesCount++;
+						if (continuousPiecesCount == winnablePieces)
+						{
+							return m_board[i]->GetPlayerID();
+						}
 					}
 				}
 			}
@@ -113,23 +127,27 @@ namespace TicTacToe
 			// Check  for top-right diagonal win
 			if (i == width - 1)
 			{
+				continuousPiecesCount = 0;
+
 				for (int j = 0; j < size - 1; j += width - 1)
 				{
 					if (m_board[i + j]->GetPlayerID() != m_board[i]->GetPlayerID())
 					{
 						break;
 					}
-					if (i + j == size - width)
+					else
 					{
-						// We have a winner!
-						std::cout << "Player " << m_board[i]->GetPlayerID() << " has won!\n";
-						return true;
+						continuousPiecesCount++;
+						if (continuousPiecesCount == winnablePieces)
+						{
+							return m_board[i]->GetPlayerID();
+						}
 					}
 				}
 			}
 		}
 
-		return false;
+		return EMPTY_PIECE;
 	}
 
 	Piece::Piece() : m_PlayerID(EMPTY_PIECE)

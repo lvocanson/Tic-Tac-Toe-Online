@@ -47,11 +47,11 @@ namespace TicTacToe
 	    /// <summary>
 	    /// Creates a 3x3 board and sets the size of each piece to 100.
 	    /// </summary>
-	    Board() : Board(3, 3, PIECE_SIZE) {}
+	    Board() : Board(3, 3, PIECE_SIZE, DEFAULT_WINNABLE_PIECES) {}
 	    /// <summary>
 	    /// Creates a board with the specified width and height.
 	    /// </summary>
-	    Board(size_t width, size_t height, int pieceSize);
+	    Board(size_t width, size_t height, int pieceSize, int winnablePieces);
 	    ~Board();
 
 	    size_t GetWidth() const { return width; }
@@ -90,13 +90,16 @@ namespace TicTacToe
 	    void Clear();
 
 		/// <summary>
-		/// Checks if there is a winner on the board.
+		/// Checks if there is a winner on the board and return his id
 		/// </summary>
-	    bool IsThereAWinner() const;
+	    int IsThereAWinner() const;
 
     protected:
+
 	    size_t width = 3, height = 3, size = 9;
 		int pieceSize = PIECE_SIZE;
+		int winnablePieces = 3;
 	    std::vector<Piece*> m_board;
+
 	};
 }
