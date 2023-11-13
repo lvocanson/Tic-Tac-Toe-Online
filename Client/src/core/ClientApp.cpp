@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "TicTacToe.h"
 #include "Window.h"
+#include "src/PlayerPiece.h"
 
 using namespace TicTacToe;
 
@@ -15,11 +16,8 @@ void ClientApp::Init()
 
     m_Board = new Board();
 
-    //temp
-    playerOneShape = new sf::CircleShape(30);
-    playerOneShape->setFillColor(sf::Color::Transparent);
-    playerOneShape->setOutlineThickness(10);
-    playerOneShape->setOutlineColor(sf::Color::Red);
+    m_PlayerOne = new Player("Player One");
+    m_PlayerTwo = new Player("Player Two");
 
     //temp
     playerTwoShape = new sf::CircleShape(30);
@@ -75,7 +73,7 @@ void ClientApp::Run()
     Cleanup();
 }
 
-void ClientApp::Update()
+void ClientApp::Update(sf::Time delta)
 {
     if (m_PlayerTurnDelay > sf::Time::Zero)
     {
@@ -91,29 +89,62 @@ void ClientApp::CheckIfMouseHoverBoard()
 {
     for (size_t i = 0; i < m_Board->GetTotalSize(); i++)
     {
+        if (m_Board->GetPieceAt(i)->GetPlayerID() != EMPTY_PIECE) continue;
+
         if (IsMouseHoverPiece(i))
         {
             if (m_Window->IsMouseButtonPressed(sf::Mouse::Left))
             {
-                m_Window->UnregisterDrawable(m_Board->GetPieceAt(i).GetShape());
-                m_Board->GetPieceAt(i).SetPlayerPiece(m_IsPlayerOneTurn ? m_PlayerOne : m_PlayerTwo);
-                m_Window->RegisterDrawable(m_Board->GetPieceAt(i).GetShape());
+                PlacePlayerPieceOnBoard(i);
 
                 m_IsGameFinished = m_Board->IsThereAWinner();
+
+                SwitchPlayerTurn();
             }
         }
     }
 }
 
+void ClientApp::PlacePlayerPieceOnBoard(size_t i)
+{
+    m_Board->GetPieceAt(i)->SetPlayerPiece(m_IsPlayerOneTurn ? m_PlayerOne : m_PlayerTwo);
+
+    sf::Vector2f pos = sf::Vector2f( m_Board->GetPieceAt(i)->GetPositionX(), m_Board->GetPieceAt(i)->GetPositionY());
+
+    // Center the piece
+    pos.x += m_Board->GetPieceSize() * 0.5f;
+    pos.y += m_Board->GetPieceSize() * 0.5f;
+
+    if (m_IsPlayerOneTurn)
+    {
+        auto* piece = new PlayerCircleShape(m_PlayerOne);
+        piece->setPosition(pos);
+        m_Window->RegisterDrawable(piece);
+            }
+    else
+    {
+        auto* piece = new PlayerCrossShape(m_PlayerTwo);
+        piece->setPosition(pos);
+        m_Window->RegisterDrawable(piece);
+        }
+    }
+
+void ClientApp::SwitchPlayerTurn()
+{
+    m_IsPlayerOneTurn = !m_IsPlayerOneTurn;
+    m_PlayerTurnDelay = sf::seconds(PLAYER_TURN_DELAY);
+}
+
+
 bool ClientApp::IsMouseHoverPiece(size_t i) const
 {
-    sf::Vector2f mousePos = static_cast<sf::Vector2f>(m_Window->GetMousePosition());
-    size_t size = m_Board->GetPieceSize();
+	const sf::Vector2f mousePos = static_cast<sf::Vector2f>(m_Window->GetMousePosition());
+    const size_t size = m_Board->GetPieceSize();
 
-    return  mousePos.x > m_Board->GetPieceAt(i).GetPosition().x &&
-			mousePos.x < m_Board->GetPieceAt(i).GetPosition().x + size &&
-			mousePos.y > m_Board->GetPieceAt(i).GetPosition().y &&
-			mousePos.y < m_Board->GetPieceAt(i).GetPosition().y + size;
+    return  mousePos.x > m_Board->GetPieceAt(i)->GetPositionX() &&
+			mousePos.x < m_Board->GetPieceAt(i)->GetPositionX() + size &&
+			mousePos.y > m_Board->GetPieceAt(i)->GetPositionY() &&
+			mousePos.y < m_Board->GetPieceAt(i)->GetPositionY() + size;
 }
 
 void ClientApp::Cleanup()

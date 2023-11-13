@@ -32,6 +32,8 @@ public:
 private: // Methods
     /// Update the ClientApp. Called once per frame.
     void Update(sf::Time delta);
+    void SwitchPlayerTurn();
+    void PlacePlayerPieceOnBoard(size_t i);
 
     void CheckIfMouseHoverBoard();
     bool IsMouseHoverPiece(size_t i) const;
@@ -48,10 +50,8 @@ private: // Fields
     TicTacToe::Player* m_PlayerOne = nullptr;
     TicTacToe::Player* m_PlayerTwo = nullptr;
 
-    sf::Shape* playerOneShape = nullptr;
-    sf::Shape* playerTwoShape = nullptr;
+    sf::Time m_PlayerTurnDelay = sf::seconds(0);
 
     bool m_IsPlayerOneTurn = true;
-    
 
 };
