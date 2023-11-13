@@ -6,7 +6,13 @@
 
 namespace TicTacToe
 {
-	
+	struct PlayerData
+	{
+	    int PlayerID;
+        std::string Name;
+    };
+
+
 	class Player
 	{
 	public:
@@ -16,18 +22,17 @@ namespace TicTacToe
 		/// <summary>
 		/// Init a player with a name
 		/// </summary>
-		Player(std::string name);
+		Player(const std::string& name);
 		~Player();
 
-		void SetName(const std::string& name) { m_Name = name; }
+		void SetName(const std::string& name) { m_PlayerData.Name = name; }
 
-		int GetPlayerID() const { return m_PlayerID; }
-		std::string GetName() const { return m_Name; }
+		int GetPlayerID() const { return m_PlayerData.PlayerID; }
+		std::string GetName() const { return m_PlayerData.Name; }
 
 	private:
 
-		std::string m_Name;
-		int m_PlayerID;
+        PlayerData m_PlayerData;
 
 	};
 

@@ -3,17 +3,23 @@
 
 namespace TicTacToe
 {
-	Player::Player() : m_Name("DefaultName")
+	Player::Player()
 	{
-		m_PlayerID = IDGenerator::GenerateID();
+        const int id = IDGenerator::GenerateID();
+		m_PlayerData = {
+			.PlayerID = id,
+			.Name = "Player " + std::to_string(id)
+		};
 	}
 
-	Player::Player(std::string name) : m_Name(std::move(name))
+	Player::Player(const std::string& name)
 	{
-		m_PlayerID = IDGenerator::GenerateID();
+		m_PlayerData = {
+			.PlayerID = IDGenerator::GenerateID(),
+			.Name = name
+		};
 	}
 
 	Player::~Player()
-	{
-	}
+    = default;
 }
