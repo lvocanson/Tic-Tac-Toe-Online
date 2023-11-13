@@ -1,4 +1,5 @@
 #pragma once
+#include <map>
 #include <vector>
 
 #include "Player.h"
@@ -37,8 +38,11 @@ namespace TicTacToe
         ScoreManager();
         ~ScoreManager();
 
+        void RegisterPlayer(PlayerData* player);
+
         void AddMove(int playerID, int lastCellPlayed);
-        
+        void AddScoreToPlayer(int playerID);
+        int GetPlayerScore(int playerID);
         void NewGame(PlayerData* winner);
 
     private:
@@ -47,6 +51,7 @@ namespace TicTacToe
 
     private:
 
+        std::map<int, int> m_PlayerScores;
         std::vector<GameData*> m_GameHistory;
         std::vector<PlayerMove*> m_CurrentGame;
     };

@@ -1,7 +1,5 @@
 #include "ScoreManager.h"
 
-
-
 TicTacToe::PlayerMove::PlayerMove(int playerID, int boardCell)
 {
     PlayerID = playerID;
@@ -45,13 +43,29 @@ TicTacToe::ScoreManager::~ScoreManager()
         move = nullptr;
     }
 
+    m_PlayerScores.clear();
     m_CurrentGame.clear();
     m_GameHistory.clear();
+}
+
+void TicTacToe::ScoreManager::RegisterPlayer(PlayerData* player)
+{
+    m_PlayerScores.insert(std::pair<int, int>(player->PlayerID, 0));
 }
 
 void TicTacToe::ScoreManager::AddMove(int playerID, int lastCellPlayed)
 {
     m_CurrentGame.push_back(new PlayerMove(playerID, lastCellPlayed));
+}
+
+void TicTacToe::ScoreManager::AddScoreToPlayer(int playerID)
+{
+    m_PlayerScores[playerID]++;
+}
+
+int TicTacToe::ScoreManager::GetPlayerScore(int playerID)
+{
+    return m_PlayerScores[playerID];
 }
 
 void TicTacToe::ScoreManager::NewGame(PlayerData* winner)
