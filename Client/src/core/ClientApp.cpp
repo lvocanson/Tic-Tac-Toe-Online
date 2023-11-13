@@ -108,11 +108,11 @@ void ClientApp::PlacePlayerPieceOnBoard(size_t i)
 {
     m_Board[i].SetPlayerPiece(m_IsPlayerOneTurn ? &m_PlayerOne : &m_PlayerTwo);
 
-    sf::Vector2f pos = sf::Vector2f( m_Board[i].GetPosition());
+    auto pos = sf::Vector2f( m_Board.GetGraphicPiece(i).GetPosition());
 
     // Center the piece
-    pos.x += m_Board.GetPieceSize() * 0.5f;
-    pos.y += m_Board.GetPieceSize() * 0.5f ;
+    pos.x += static_cast<float>(m_Board.GetPieceSize()) * 0.5f;
+    pos.y += static_cast<float>(m_Board.GetPieceSize()) * 0.5f;
 
     if (m_IsPlayerOneTurn)
     {
@@ -153,7 +153,7 @@ bool ClientApp::IsMouseHoverPiece(size_t i)
 {
 	const sf::Vector2f mousePos = static_cast<sf::Vector2f>(m_Window->GetMousePosition());
     int size = m_Board.GetPieceSize();
-    const sf::Vector2f piecePosition = m_Board[i].GetPosition();
+    const sf::Vector2f piecePosition = m_Board.GetGraphicPiece(i).GetPosition();
 
     return  mousePos.x > piecePosition.x &&
 			mousePos.x < piecePosition.x + size &&
@@ -163,10 +163,6 @@ bool ClientApp::IsMouseHoverPiece(size_t i)
 
 void ClientApp::Cleanup()
 {
-    RELEASE(m_PlayerOne);
-    RELEASE(m_PlayerTwo);
-    RELEASE(m_Board);
-
     for (auto& drawable : m_Window->GetDrawables())
     {
         RELEASE(drawable);

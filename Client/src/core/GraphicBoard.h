@@ -9,12 +9,13 @@ public:
     ~GraphicPiece() override;
 
     void Clear() override;
-    
-    void SetPosition(sf::Vector2f position) { m_Position = position; };
+
+    void SetShape(sf::Shape* shape) { m_Shape = shape; };
+    void SetPosition(sf::Vector2f position) const { m_Shape->setPosition(position); };
+    sf::Vector2f GetPosition() const { return m_Shape->getPosition(); };
 
 private:
 
-    sf::Vector2f m_Position;
     sf::Shape* m_Shape;
 
 };
@@ -23,15 +24,17 @@ class GraphicBoard : public TicTacToe::Board
 {
 public:
 
-    GraphicBoard() : Board(3, 3, DEFAULT_WINNABLE_PIECES) {};
+    GraphicBoard() : Board(3, 3, DEFAULT_WINNABLE_PIECES) {}
     GraphicBoard(size_t width, size_t height, int winnablePieces, int piecePixelSize);
     ~GraphicBoard() override;
 
     void Init() override;
-    void AddPlayerPieceInBoard(int cell, GraphicPiece* shape);
+
+    void AddPlayerPieceInBoard(int cell, const TicTacToe::Player* player, GraphicPiece* piece);
     void RemovePlayerPieceInBoard(int cell);
 
-    int GetPieceSize() { return m_PiecePixelSize; };
+    GraphicPiece& GetGraphicPiece(int cell) { return *m_AllPiecesOnBoard[cell]; }
+    int GetPieceSize() const { return m_PiecePixelSize; }
 
 private:
 

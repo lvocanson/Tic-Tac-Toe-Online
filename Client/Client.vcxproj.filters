@@ -30,7 +30,7 @@
     <ClCompile Include="src\core\PlayerPiece.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicBoard.cpp">
+    <ClCompile Include="src\core\GraphicBoard.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,7 +50,7 @@
     <ClInclude Include="src\core\PlayerPiece.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicBoard.h">
+    <ClInclude Include="src\core\GraphicBoard.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
