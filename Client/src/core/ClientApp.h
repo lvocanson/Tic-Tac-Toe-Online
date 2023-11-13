@@ -31,7 +31,7 @@ public:
 
 private: // Methods
     /// Update the ClientApp. Called once per frame.
-    void Update();
+    void Update(sf::Time delta);
 
     void CheckIfMouseHoverBoard();
     bool IsMouseHoverPiece(size_t i) const;

@@ -60,10 +60,14 @@ void ClientApp::Run()
     if (!m_IsRunning)
         throw std::runtime_error("ClientApp is not initialized!");
 
-    while (m_IsRunning || !m_IsGameFinished)
+    sf::Clock clock;
+
+    while (m_IsRunning && !m_IsGameFinished)
     {
+        const sf::Time elapsed = clock.restart();
+
         m_Window->PollEvents();
-        Update();
+        Update(elapsed);
         m_Window->Render();
         m_IsRunning = m_Window->IsOpen();
     }
@@ -73,10 +77,15 @@ void ClientApp::Run()
 
 void ClientApp::Update()
 {
-    //playerOneShape->setPosition(static_cast<sf::Vector2f>(m_Window->GetMousePosition()));
+    if (m_PlayerTurnDelay > sf::Time::Zero)
+    {
+        m_PlayerTurnDelay -= delta;
+        return;
+    }
 
     CheckIfMouseHoverBoard();
 }
+
 
 void ClientApp::CheckIfMouseHoverBoard()
 {

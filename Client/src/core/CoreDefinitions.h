@@ -13,3 +13,5 @@
 #define NULLPTR(ptr) if(ptr) { ptr = nullptr; }
 
 #define EMPTY_PIECE (-1)
+
+#define PLAYER_TURN_DELAY (0.5f)
