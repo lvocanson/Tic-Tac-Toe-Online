@@ -16,8 +16,8 @@ void ClientApp::Init()
 
     m_Board = new Board();
 
-    m_PlayerOne = new Player("Player One");
-    m_PlayerTwo = new Player("Player Two");
+    m_PlayerOne.SetName("Player One");
+    m_PlayerTwo.SetName("Player Two");
 
     DrawBoard();
 }
@@ -168,5 +168,6 @@ void ClientApp::Cleanup()
         RELEASE(drawable);
     }
 
+    RELEASE(m_Font);
     RELEASE(m_Window);
 }
