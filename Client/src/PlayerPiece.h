@@ -1,6 +1,8 @@
 #pragma once
 #include "Player.h"
 
+class TicTacToe::Player;
+
 class PlayerPiece
 {
 public:
