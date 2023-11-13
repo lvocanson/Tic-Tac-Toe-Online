@@ -18,9 +18,15 @@
     <ClInclude Include="TicTacToe.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TicTacToe.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -107,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\ClientApp.h" />
+    <ClInclude Include="src\core\CoreDefinitions.h" />
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>

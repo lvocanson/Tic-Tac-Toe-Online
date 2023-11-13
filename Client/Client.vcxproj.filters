@@ -38,5 +38,8 @@
     <ClInclude Include="src\core\Window.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\core\CoreDefinitions.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
