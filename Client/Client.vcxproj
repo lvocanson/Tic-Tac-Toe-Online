@@ -115,6 +115,9 @@
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\fonts\bold-font.ttf" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

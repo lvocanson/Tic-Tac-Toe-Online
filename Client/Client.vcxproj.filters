@@ -54,4 +54,7 @@
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\fonts\bold-font.ttf" />
+  </ItemGroup>
 </Project>

@@ -58,6 +58,8 @@ private: // Fields
     sf::Time m_PlayerTurnTimer = sf::seconds(0);
 
     std::vector<sf::Drawable*> m_GamePieces;
+    sf::Text m_PlayerTurnText;
+    sf::Font* m_Font;
 
     bool m_IsPlayerOneTurn = true;
 

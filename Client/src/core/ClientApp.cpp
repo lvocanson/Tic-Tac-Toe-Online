@@ -14,7 +14,24 @@ void ClientApp::Init()
     
     std::cout << "Hello World! I'm a client!\n";
 
-    m_Board = new Board();
+    m_Font = new sf::Font;
+    if (!m_Font->loadFromFile("../resources/fonts/bold-font.ttf"))
+    {
+        // error...
+    }
+
+    m_Board.Init();
+
+    sf::Vector2f center = m_Window->GetCenter();
+
+    const auto text = new sf::Text();
+    text->setFont(*m_Font);
+    text->setString("Tic Tac Toe Online!");
+    text->setCharacterSize(24);
+    text->setFillColor(sf::Color::White);
+    text->setPosition(center.x - text->getGlobalBounds().width * 0.5f, 0.0f);
+
+    m_Window->RegisterDrawable(text);
 
     m_PlayerOne = new Player("Player One");
     m_PlayerTwo = new Player("Player Two");
