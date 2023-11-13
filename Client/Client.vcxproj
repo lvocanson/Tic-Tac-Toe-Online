@@ -98,12 +98,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ClientMain.cpp" />
+    <ClCompile Include="src\core\ClientApp.cpp" />
+    <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\ClientApp.h" />
+    <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

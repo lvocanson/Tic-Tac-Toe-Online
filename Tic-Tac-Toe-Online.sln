@@ -4,8 +4,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Client.vcxproj", "{8E2B2C8F-8D71-4895-9404-306097EE056E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{11C755AE-E4E1-44C4-B129-205F96AD3271} = {11C755AE-E4E1-44C4-B129-205F96AD3271}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\Server.vcxproj", "{F22B1B44-5603-4925-AA51-9DB281A6EDA0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{11C755AE-E4E1-44C4-B129-205F96AD3271} = {11C755AE-E4E1-44C4-B129-205F96AD3271}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TicTacToe", "TicTacToe\TicTacToe.vcxproj", "{11C755AE-E4E1-44C4-B129-205F96AD3271}"
 EndProject
