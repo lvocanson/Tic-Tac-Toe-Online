@@ -1,7 +1,5 @@
 #include "Player.h"
-
 #include "IDGenerator.h"
-#include "../Client/src/core/CoreDefinitions.h"
 
 namespace TicTacToe
 {

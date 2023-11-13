@@ -2,7 +2,7 @@
 #include "Player.h"
 #include "TicTacToe.h"
 #include "Window.h"
-#include "src/PlayerPiece.h"
+#include "src/core/PlayerPiece.h"
 
 using namespace TicTacToe;
 
@@ -51,7 +51,7 @@ void ClientApp::Run()
 
     sf::Clock clock;
 
-    while (m_IsRunning && !m_IsGameFinished)
+    while (m_IsRunning)
     {
         const sf::Time elapsed = clock.restart();
 

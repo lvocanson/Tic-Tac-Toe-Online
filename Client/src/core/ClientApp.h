@@ -46,7 +46,6 @@ private: // Methods
 
 private: // Fields
     bool m_IsRunning = false;
-    bool m_IsGameFinished = false;
 
     Window* m_Window = nullptr;
 

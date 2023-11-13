@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
 
+#define EMPTY_PIECE (-1)
+#define DEFAULT_PIECE_SIZE (150)
+
 namespace TicTacToe
 {
 	

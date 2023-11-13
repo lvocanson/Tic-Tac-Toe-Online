@@ -3,7 +3,7 @@
 
 #include "Player.h"
 
-#include "../Client/src/core/CoreDefinitions.h"
+#define DEFAULT_WINNABLE_PIECES (3)
 
 
 namespace TicTacToe
@@ -15,7 +15,6 @@ namespace TicTacToe
 	{
 	public:
 		Piece();
-		Piece(sf::Vector2f position);
 		~Piece();
 
 		int GetPlayerID() const { return m_PlayerID; }
@@ -47,37 +46,37 @@ namespace TicTacToe
 	    /// <summary>
 	    /// Creates a 3x3 board and sets the size of each piece to 100.
 	    /// </summary>
-	    Board() : Board(3, 3, PIECE_SIZE, DEFAULT_WINNABLE_PIECES) {}
+	    Board() : Board(3, 3, DEFAULT_PIECE_SIZE, DEFAULT_WINNABLE_PIECES) {}
 	    /// <summary>
 	    /// Creates a board with the specified width and height.
 	    /// </summary>
 	    Board(size_t width, size_t height, int pieceSize, int winnablePieces);
 	    ~Board();
 
-	    size_t GetWidth() const { return width; }
-	    size_t GetHeight() const { return height; }
-	    size_t GetTotalSize() const { return size; }
-		size_t GetPieceSize() const { return pieceSize; }
-		Piece* GetPieceAt(size_t index) const { return m_board[index]; }
-		Piece* GetPieceAt(size_t row, size_t col) const { return m_board[row * width + col]; }
+	    size_t GetWidth() const { return m_Width; }
+	    size_t GetHeight() const { return m_Height; }
+	    size_t GetTotalSize() const { return m_Size; }
+		size_t GetPieceSize() const { return m_PieceSize; }
+		Piece* GetPieceAt(size_t index) const { return m_Board[index]; }
+		Piece* GetPieceAt(size_t row, size_t col) const { return m_Board[row * m_Width + col]; }
 
 
 	    /// <summary>
 	    /// Returns a reference to the piece at the specified row and column.
 	    /// </summary>
-	    Piece& operator()(size_t row, size_t col) { return *m_board[row * width + col]; }
+	    Piece& operator()(size_t row, size_t col) { return *m_Board[row * m_Width + col]; }
 	    /// <summary>
 	    /// Returns a const reference to the piece at the specified row and column.
 	    /// </summary>
-	    const Piece& operator()(size_t row, size_t col) const { return *m_board[row * width + col]; }
+	    const Piece& operator()(size_t row, size_t col) const { return *m_Board[row * m_Width + col]; }
 	    /// <summary>
 	    /// Returns a reference to the piece at the specified index.
 	    /// </summary>
-	    Piece& operator[](size_t index) { return *m_board[index]; }
+	    Piece& operator[](size_t index) { return *m_Board[index]; }
 	    /// <summary>
 	    /// Returns a const reference to the piece at the specified index.
 	    /// </summary>
-	    const Piece& operator[](size_t index) const { return *m_board[index]; }
+	    const Piece& operator[](size_t index) const { return *m_Board[index]; }
 
 	    /// <summary>
 	    /// Returns true if the board does not contain a piece with EMPTY_PIECE id
@@ -96,10 +95,10 @@ namespace TicTacToe
 
     protected:
 
-	    size_t width = 3, height = 3, size = 9;
-		int pieceSize = PIECE_SIZE;
-		int winnablePieces = 3;
-	    std::vector<Piece*> m_board;
+	    size_t m_Width = 3, m_Height = 3, m_Size = 9;
+		int m_PieceSize = DEFAULT_PIECE_SIZE;
+		int m_WinnablePieces = 3;
+	    std::vector<Piece*> m_Board;
 
 	};
 }

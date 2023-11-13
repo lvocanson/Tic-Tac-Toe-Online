@@ -11,27 +11,31 @@
 
 namespace TicTacToe
 {
-	Board::Board(size_t width, size_t height, int pieceSize, int winnablePieces) : width(width), height(height), size(width * height), pieceSize(pieceSize), winnablePieces(winnablePieces)
+	Board::Board(size_t width, size_t height, int pieceSize, int winnablePieces) : m_Width(width), m_Height(height), m_Size(width * height), m_PieceSize(pieceSize), m_WinnablePieces(winnablePieces)
 	{
-		for (size_t i = 0; i < size; ++i)
+		for (size_t i = 0; i < m_Size; ++i)
 		{
-			m_board.push_back(new Piece());
+			m_Board.push_back(new Piece());
 		}
 	}
 
 	Board::~Board()
 	{
-	    for (auto& piece : m_board)
+	    for (auto& piece : m_Board)
 	    {
-		    RELEASE(piece);
+			if (piece)
+			{
+				delete piece;
+				piece = nullptr;
+			}
 	    }
 	}
 
 	bool Board::IsFull() const
 	{
-	    for (int i = 0; i < size; i++)
+	    for (int i = 0; i < m_Size; i++)
 	    {
-	        if (m_board[i]->GetPlayerID() == EMPTY_PIECE)
+	        if (m_Board[i]->GetPlayerID() == EMPTY_PIECE)
 	        {
 	            return false;
 	        }
@@ -41,9 +45,9 @@ namespace TicTacToe
 
 	void Board::Clear()
 	{
-	    for (int i = 0; i < size; i++)
+	    for (int i = 0; i < m_Size; i++)
 	    {
-			m_board[i]->Clear();
+			m_Board[i]->Clear();
 	    }
 	}
 
@@ -52,51 +56,51 @@ namespace TicTacToe
 		int winner = EMPTY_PIECE;
 		int continuousPiecesCount = 0;
 
-		for (int i = 0; i < size; i++)
+		for (int i = 0; i < m_Size; i++)
 		{
-			if (m_board[i]->GetPlayerID() == EMPTY_PIECE)
+			if (m_Board[i]->GetPlayerID() == EMPTY_PIECE)
 			{
 				continue;
 			}
 
 			// Check for horizontal win
-			if (i % width == 0)
+			if (i % m_Width == 0)
 			{
 				continuousPiecesCount = 0;
-				for (int j = 0; j < width; j++)
+				for (int j = 0; j < m_Width; j++)
 				{
-					if (m_board[i + j]->GetPlayerID() != m_board[i]->GetPlayerID())
+					if (m_Board[i + j]->GetPlayerID() != m_Board[i]->GetPlayerID())
 					{
 						break;
 					}
 					else 
 					{
 						continuousPiecesCount++;
-						if (continuousPiecesCount >= winnablePieces)
+						if (continuousPiecesCount >= m_WinnablePieces)
 						{
-						    return m_board[i]->GetPlayerID();
+						    return m_Board[i]->GetPlayerID();
                         }
 					}
 				}
 			}
 
 			// Check for vertical win
-			if (i < width)
+			if (i < m_Width)
 			{
 				continuousPiecesCount = 0;
 
-				for (int j = 0; j < size; j += width)
+				for (int j = 0; j < m_Size; j += m_Width)
 				{
-					if (m_board[i + j]->GetPlayerID() != m_board[i]->GetPlayerID())
+					if (m_Board[i + j]->GetPlayerID() != m_Board[i]->GetPlayerID())
 					{
 						break;
 					}
 					else
 					{
 						continuousPiecesCount++;
-						if (continuousPiecesCount == winnablePieces)
+						if (continuousPiecesCount == m_WinnablePieces)
 						{
-							return m_board[i]->GetPlayerID();
+							return m_Board[i]->GetPlayerID();
 						}
 					}
 				}
@@ -107,40 +111,40 @@ namespace TicTacToe
 			{
 				continuousPiecesCount = 0;
 
-				for (int j = 0; j < size; j += width + 1)
+				for (int j = 0; j < m_Size; j += m_Width + 1)
 				{
-					if (m_board[i + j]->GetPlayerID() != m_board[i]->GetPlayerID())
+					if (m_Board[i + j]->GetPlayerID() != m_Board[i]->GetPlayerID())
 					{
 						break;
 					}
 					else
 					{
 						continuousPiecesCount++;
-						if (continuousPiecesCount == winnablePieces)
+						if (continuousPiecesCount == m_WinnablePieces)
 						{
-							return m_board[i]->GetPlayerID();
+							return m_Board[i]->GetPlayerID();
 						}
 					}
 				}
 			}
 
 			// Check  for top-right diagonal win
-			if (i == width - 1)
+			if (i == m_Width - 1)
 			{
 				continuousPiecesCount = 0;
 
-				for (int j = 0; j < size - 1; j += width - 1)
+				for (int j = 0; j < m_Size - 1; j += m_Width - 1)
 				{
-					if (m_board[i + j]->GetPlayerID() != m_board[i]->GetPlayerID())
+					if (m_Board[i + j]->GetPlayerID() != m_Board[i]->GetPlayerID())
 					{
 						break;
 					}
 					else
 					{
 						continuousPiecesCount++;
-						if (continuousPiecesCount == winnablePieces)
+						if (continuousPiecesCount == m_WinnablePieces)
 						{
-							return m_board[i]->GetPlayerID();
+							return m_Board[i]->GetPlayerID();
 						}
 					}
 				}
@@ -154,11 +158,6 @@ namespace TicTacToe
 	{
 
 	}
-
-	Piece::Piece(sf::Vector2f position) : m_PlayerID(EMPTY_PIECE)
-	{
-
-    }
 
 	Piece::~Piece()
 	{
