@@ -22,8 +22,11 @@ namespace TicTacToe
 		int GetPlayerID() const { return m_PlayerID; }
 		sf::Vector2f GetPosition() const { return m_Shape->getPosition(); }
 
+		/// <summary>
+		/// Sets the id of the player that owns this piece and changes the shape of the piece to match the player's shape.
+		/// </summary>
 		void SetPlayerPiece(const Player* player);
-		void SetPosition(sf::Vector2f position) { m_Shape->setPosition(position); }
+		void SetPosition(sf::Vector2f position) const { m_Shape->setPosition(position); }
 
 		void Clear();
 
@@ -41,7 +44,7 @@ namespace TicTacToe
 	{
 	public:
 	    /// <summary>
-	    /// Creates a 3x3 board.
+	    /// Creates a 3x3 board and sets the size of each piece to 100.
 	    /// </summary>
 	    Board() : Board(3, 3, 100) {}
 	    /// <summary>
@@ -76,14 +79,19 @@ namespace TicTacToe
 	    const Piece& operator[](size_t index) const { return *m_board[index]; }
 
 	    /// <summary>
-	    /// Returns true if the board does not contain any Piece::None.
+	    /// Returns true if the board does not contain a piece with EMPTY_PIECE id
 	    /// </summary>
 	    bool IsFull() const;
+
 	    /// <summary>
-	    /// Sets all the pieces on the board to Piece::None.
+	    /// Sets all the pieces on the board to EMPTY_PIECE id and reset their shape
 	    /// </summary>
 	    void Clear();
-	    bool CheckForWin();
+
+		/// <summary>
+		/// Checks if there is a winner on the board.
+		/// </summary>
+	    bool IsThereAWinner();
 
     protected:
 	    size_t width = 3, height = 3, size = 9;

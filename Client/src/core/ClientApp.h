@@ -1,4 +1,5 @@
 #pragma once
+#include "TicTacToe.h"
 
 class Window;
 
@@ -14,6 +15,7 @@ public:
     /// Get the singleton instance of the ClientApp. The instance is created on the first call to this method.
     /// </summary>
     static ClientApp& GetInstance() { static ClientApp instance; return instance; }
+
     /// <summary>
     /// Initialize the ClientApp. This method must be called before calling Run().
     /// </summary>
@@ -30,12 +32,26 @@ public:
 private: // Methods
     /// Update the ClientApp. Called once per frame.
     void Update();
+
+    void CheckIfMouseHoverBoard();
+    bool IsMouseHoverPiece(size_t i) const;
+
     /// Perform any cleanup tasks (e.g. delete pointers). Called before Run() returns.
     void Cleanup();
 
 private: // Fields
     bool m_IsRunning = false;
+    bool m_IsGameFinished = false;
     Window* m_Window = nullptr;
 
-    sf::Shape* tempShape = nullptr;
+    TicTacToe::Board* m_Board = nullptr;
+    TicTacToe::Player* m_PlayerOne = nullptr;
+    TicTacToe::Player* m_PlayerTwo = nullptr;
+
+    sf::Shape* playerOneShape = nullptr;
+    sf::Shape* playerTwoShape = nullptr;
+
+    bool m_IsPlayerOneTurn = true;
+    
+
 };
