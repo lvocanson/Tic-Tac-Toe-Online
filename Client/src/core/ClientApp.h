@@ -1,5 +1,7 @@
 #pragma once
 #include "TicTacToe.h"
+#include "GraphicBoard.h"
+#include <SFML/System/Time.hpp>
 
 class Window;
 class sf::Shape;
@@ -39,7 +41,7 @@ private: // Methods
 
     void ClearBoard();
     void CheckIfMouseHoverBoard();
-    bool IsMouseHoverPiece(size_t i) const;
+    bool IsMouseHoverPiece(size_t i);
 
     /// Perform any cleanup tasks (e.g. delete pointers). Called before Run() returns.
     void Cleanup();
@@ -49,9 +51,9 @@ private: // Fields
 
     Window* m_Window = nullptr;
 
-    TicTacToe::Board* m_Board = nullptr;
-    TicTacToe::Player* m_PlayerOne = nullptr;
-    TicTacToe::Player* m_PlayerTwo = nullptr;
+    GraphicBoard m_Board;
+    TicTacToe::Player m_PlayerOne;
+    TicTacToe::Player m_PlayerTwo;
 
     sf::Time m_PlayerTurnTimer = sf::seconds(0);
 

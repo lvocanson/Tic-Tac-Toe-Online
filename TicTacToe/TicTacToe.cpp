@@ -11,12 +11,9 @@
 
 namespace TicTacToe
 {
-	Board::Board(size_t width, size_t height, int pieceSize, int winnablePieces) : m_Width(width), m_Height(height), m_Size(width * height), m_PieceSize(pieceSize), m_WinnablePieces(winnablePieces)
+	Board::Board(size_t width, size_t height, int winnablePieces) : m_Width(width), m_Height(height), m_Size(width* height), m_WinnablePieces(winnablePieces)
 	{
-		for (size_t i = 0; i < m_Size; ++i)
-		{
-			m_Board.push_back(new Piece());
-		}
+		Init();
 	}
 
 	Board::~Board()
@@ -29,6 +26,14 @@ namespace TicTacToe
 				piece = nullptr;
 			}
 	    }
+	}
+
+	void Board::Init() 
+	{
+		for (int i = 0; i < m_Size; i++)
+		{
+			m_Board.push_back(new Piece());
+		}
 	}
 
 	bool Board::IsFull() const

@@ -24,13 +24,13 @@ void ClientApp::Init()
 
 void ClientApp::DrawBoard()
 {
-    const int pieceSize = m_Board->GetPieceSize();
-    const int width = m_Board->GetWidth();
-    const int height = m_Board->GetHeight();
+    const int pieceSize = m_Board.GetPieceSize();
+    const int width = m_Board.GetWidth();
+    const int height = m_Board.GetHeight();
     const sf::Vector2f center = m_Window->GetCenter();
 
     // Draw the board - temp
-    for (size_t i = 0; i < m_Board->GetTotalSize(); ++i)
+    for (size_t i = 0; i < m_Board.GetTotalSize(); ++i)
     {
         auto* square = new sf::RectangleShape(sf::Vector2f(pieceSize, pieceSize));
         square->setFillColor(sf::Color::Color(51, 56, 63));
@@ -39,8 +39,8 @@ void ClientApp::DrawBoard()
         square->setPosition(center.x - (width * pieceSize * 0.5f) + (i % width) * pieceSize, center.y - (height * pieceSize * 0.5f) + (i / height) * pieceSize);
         m_Window->RegisterDrawable(square);
 
-        auto piece = m_Board->GetPieceAt(i);
-        piece->SetPosition(square->getPosition().x, square->getPosition().y);
+        GraphicPiece piece = (GraphicPiece)m_Board[i];
+        piece.SetPosition(square->getPosition());
     }
 }
 
@@ -78,9 +78,9 @@ void ClientApp::Update(sf::Time delta)
 
 void ClientApp::CheckIfMouseHoverBoard()
 {
-    for (size_t i = 0; i < m_Board->GetTotalSize(); i++)
+    for (size_t i = 0; i < m_Board.GetTotalSize(); i++)
     {
-        if (m_Board->GetPieceAt(i)->GetPlayerID() != EMPTY_PIECE) continue;
+        if (m_Board[i].GetPlayerID() != EMPTY_PIECE) continue;
 
         if (IsMouseHoverPiece(i))
         {
@@ -88,13 +88,13 @@ void ClientApp::CheckIfMouseHoverBoard()
             {
                 PlacePlayerPieceOnBoard(i);
 
-                const int winnerID = m_Board->IsThereAWinner();
+                const int winnerID = m_Board.IsThereAWinner();
                 if (winnerID != EMPTY_PIECE)
                 {
                     std::cout << "Player " << winnerID << " won!\n";
                 }
 
-                if (m_Board->IsFull() || winnerID != EMPTY_PIECE)
+                if (m_Board.IsFull() || winnerID != EMPTY_PIECE)
                     ClearBoard();
 
                 SwitchPlayerTurn();
@@ -105,24 +105,24 @@ void ClientApp::CheckIfMouseHoverBoard()
 
 void ClientApp::PlacePlayerPieceOnBoard(size_t i)
 {
-    m_Board->GetPieceAt(i)->SetPlayerPiece(m_IsPlayerOneTurn ? m_PlayerOne : m_PlayerTwo);
+    m_Board[i].SetPlayerPiece(m_IsPlayerOneTurn ? &m_PlayerOne : &m_PlayerTwo);
 
-    sf::Vector2f pos = sf::Vector2f( m_Board->GetPieceAt(i)->GetPositionX(), m_Board->GetPieceAt(i)->GetPositionY());
+    sf::Vector2f pos = sf::Vector2f( m_Board[i].GetPosition());
 
     // Center the piece
-    pos.x += m_Board->GetPieceSize() * 0.5f;
-    pos.y += m_Board->GetPieceSize() * 0.5f ;
+    pos.x += m_Board.GetPieceSize() * 0.5f;
+    pos.y += m_Board.GetPieceSize() * 0.5f ;
 
     if (m_IsPlayerOneTurn)
     {
-        auto* piece = new PlayerCircleShape(m_PlayerOne);
+        auto* piece = new PlayerCircleShape(&m_PlayerOne);
         piece->setPosition(pos);
         m_Window->RegisterDrawable(piece);
         m_GamePieces.push_back(piece);
     }
     else
     {
-        auto* piece = new PlayerCrossShape(m_PlayerTwo);
+        auto* piece = new PlayerCrossShape(&m_PlayerTwo);
         piece->setPosition(pos);
         m_Window->RegisterDrawable(piece);
         m_GamePieces.push_back(piece);
@@ -138,7 +138,7 @@ void ClientApp::ClearBoard()
     }
 
     m_GamePieces.clear();
-    m_Board->Clear();
+    m_Board.Clear();
 }
 
 void ClientApp::SwitchPlayerTurn()
@@ -148,15 +148,16 @@ void ClientApp::SwitchPlayerTurn()
 }
 
 
-bool ClientApp::IsMouseHoverPiece(size_t i) const
+bool ClientApp::IsMouseHoverPiece(size_t i)
 {
 	const sf::Vector2f mousePos = static_cast<sf::Vector2f>(m_Window->GetMousePosition());
-    const size_t size = m_Board->GetPieceSize();
+    int size = m_Board.GetPieceSize();
+    const sf::Vector2f piecePosition = m_Board[i].GetPosition();
 
-    return  mousePos.x > m_Board->GetPieceAt(i)->GetPositionX() &&
-			mousePos.x < m_Board->GetPieceAt(i)->GetPositionX() + size &&
-			mousePos.y > m_Board->GetPieceAt(i)->GetPositionY() &&
-			mousePos.y < m_Board->GetPieceAt(i)->GetPositionY() + size;
+    return  mousePos.x > piecePosition.x &&
+			mousePos.x < piecePosition.x + size &&
+			mousePos.y > piecePosition.y &&
+			mousePos.y < piecePosition.y + size;
 }
 
 void ClientApp::Cleanup()

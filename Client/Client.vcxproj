@@ -97,6 +97,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GraphicBoard.cpp" />
     <ClCompile Include="src\core\PlayerPiece.cpp" />
     <ClCompile Include="src\ClientMain.cpp" />
     <ClCompile Include="src\core\ClientApp.cpp" />
@@ -107,6 +108,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GraphicBoard.h" />
     <ClInclude Include="src\core\PlayerPiece.h" />
     <ClInclude Include="src\core\ClientApp.h" />
     <ClInclude Include="src\core\CoreDefinitions.h" />

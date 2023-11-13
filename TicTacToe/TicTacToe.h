@@ -15,24 +15,19 @@ namespace TicTacToe
 	{
 	public:
 		Piece();
-		~Piece();
+		virtual ~Piece();
 
 		int GetPlayerID() const { return m_PlayerID; }
-		int GetPositionX() const { return m_PosX; }
-		int GetPositionY() const { return m_PosY; }
-
 
 		/// <summary>
 		/// Sets the id of the player that owns this piece
 		/// </summary>
 		void SetPlayerPiece(const Player* player);
-		void SetPosition(int x, int y) { m_PosX = x; m_PosY = y; }
 
-		void Clear();
+		virtual void Clear();
 
 	private:
 
-		int m_PosX = 0, m_PosY = 0;
 		int m_PlayerID = EMPTY_PIECE;
 
 	};
@@ -46,19 +41,18 @@ namespace TicTacToe
 	    /// <summary>
 	    /// Creates a 3x3 board and sets the size of each piece to 100.
 	    /// </summary>
-	    Board() : Board(3, 3, DEFAULT_PIECE_SIZE, DEFAULT_WINNABLE_PIECES) {}
+	    Board() : Board(3, 3, DEFAULT_WINNABLE_PIECES) {}
 	    /// <summary>
 	    /// Creates a board with the specified width and height.
 	    /// </summary>
-	    Board(size_t width, size_t height, int pieceSize, int winnablePieces);
-	    ~Board();
+	    Board(size_t width, size_t height, int winnablePieces);
+	    virtual ~Board();
 
 	    size_t GetWidth() const { return m_Width; }
 	    size_t GetHeight() const { return m_Height; }
 	    size_t GetTotalSize() const { return m_Size; }
-		size_t GetPieceSize() const { return m_PieceSize; }
-		Piece* GetPieceAt(size_t index) const { return m_Board[index]; }
-		Piece* GetPieceAt(size_t row, size_t col) const { return m_Board[row * m_Width + col]; }
+
+
 
 
 	    /// <summary>
@@ -95,8 +89,9 @@ namespace TicTacToe
 
     protected:
 
+		virtual void Init();
+
 	    size_t m_Width = 3, m_Height = 3, m_Size = 9;
-		int m_PieceSize = DEFAULT_PIECE_SIZE;
 		int m_WinnablePieces = 3;
 	    std::vector<Piece*> m_Board;
 
