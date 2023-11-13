@@ -1,6 +1,7 @@
 #pragma once
 
 class Window;
+class sf::Shape;
 
 class ClientApp
 {
