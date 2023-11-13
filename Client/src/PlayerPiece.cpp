@@ -10,7 +10,7 @@ PlayerCrossShape::PlayerCrossShape(TicTacToe::Player* player) : PlayerPiece(play
 {
     setFillColor(sf::Color::Transparent);
     setOutlineThickness(OUTLINE_THICKNESS);
-    setOutlineColor(sf::Color::Blue);
+    setOutlineColor(sf::Color::Color(255, 194, 0));
     setOrigin(getSize().x * 0.5f, getSize().y * 0.5f);
 }
 
@@ -18,6 +18,6 @@ PlayerCircleShape::PlayerCircleShape(TicTacToe::Player* player) : sf::CircleShap
 {
     setFillColor(sf::Color::Transparent);
     setOutlineThickness(OUTLINE_THICKNESS);
-    setOutlineColor(sf::Color::Red);
+    setOutlineColor(sf::Color::Color(250, 92, 12));
     setOrigin(getRadius(), getRadius());
 }
