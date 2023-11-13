@@ -1,5 +1,5 @@
-#include "src/pch.h"
 #include "PlayerPiece.h"
+#include "Player.h"
 
 PlayerPiece::PlayerPiece(TicTacToe::Player* player)
 {
