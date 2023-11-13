@@ -41,7 +41,6 @@ void ClientApp::DrawBoard()
 
         auto piece = m_Board->GetPieceAt(i);
         piece->SetPosition(square->getPosition().x, square->getPosition().y);
-        //m_Window->RegisterDrawable(piece.GetShape());
     }
 }
 
