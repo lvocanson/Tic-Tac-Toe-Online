@@ -36,7 +36,7 @@ void ClientApp::DrawBoard()
         square->setFillColor(sf::Color::Color(51, 56, 63));
         square->setOutlineColor(sf::Color::Color(0, 189, 156));
         square->setOutlineThickness(OUTLINE_THICKNESS);
-        square->setPosition(center.x - (width * pieceSize * 0.5f) + (i % width) * pieceSize, center.y - (height * pieceSize * 0.5f) + (i / width) * pieceSize);
+        square->setPosition(center.x - (width * pieceSize * 0.5f) + (i % width) * pieceSize, center.y - (height * pieceSize * 0.5f) + (i / height) * pieceSize);
         m_Window->RegisterDrawable(square);
 
         auto piece = m_Board->GetPieceAt(i);
@@ -89,7 +89,12 @@ void ClientApp::CheckIfMouseHoverBoard()
             {
                 PlacePlayerPieceOnBoard(i);
 
-                m_IsGameFinished = m_Board->IsThereAWinner();
+                const int winnerID = m_Board->IsThereAWinner();
+                if (winnerID != EMPTY_PIECE)
+                {
+                    std::cout << "Player " << winnerID << " won!\n";
+                    m_IsGameFinished = true;
+                }
 
                 if (m_Board->IsFull())
                     ClearBoard();
@@ -108,7 +113,7 @@ void ClientApp::PlacePlayerPieceOnBoard(size_t i)
 
     // Center the piece
     pos.x += m_Board->GetPieceSize() * 0.5f;
-    pos.y += m_Board->GetPieceSize() * 0.5f;
+    pos.y += m_Board->GetPieceSize() * 0.5f ;
 
     if (m_IsPlayerOneTurn)
     {

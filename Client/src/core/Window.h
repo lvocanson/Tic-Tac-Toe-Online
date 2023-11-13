@@ -73,7 +73,7 @@ public:
 
 #pragma region Other
 
-    sf::Vector2f GetCenter() const { return sf::Vector2f(m_Window->getSize().x / 2, m_Window->getSize().y / 2); }
+    sf::Vector2f GetCenter() const { return sf::Vector2f(m_Window->getSize().x * 0.5f, m_Window->getSize().y *0.5f); }
 
 #pragma endregion
 
