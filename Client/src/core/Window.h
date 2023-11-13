@@ -1,10 +1,5 @@
 #pragma once
-
-// Forward declarations
-namespace sf
-{
-class RenderWindow;
-}
+#include <SFML/Graphics.hpp>
 
 class Window
 {
@@ -25,7 +20,7 @@ public:
     /// <summary>
     /// Returns whether the window is open.
     /// </summary>
-    bool IsOpen() const;
+    bool IsOpen() const { return m_Window->isOpen(); }
 
 #pragma endregion
 
@@ -59,15 +54,15 @@ public:
     /// <summary>
     /// Returns whether the given key is pressed.
     /// </summary>
-    bool IsKeyPressed(sf::Keyboard::Key key) const;
+    bool IsKeyPressed(sf::Keyboard::Key key) const { return sf::Keyboard::isKeyPressed(key); }
     /// <summary>
     /// Returns whether the given mouse button is pressed.
     /// </summary>
-    bool IsMouseButtonPressed(sf::Mouse::Button button) const;
+    bool IsMouseButtonPressed(sf::Mouse::Button button) const { return sf::Mouse::isButtonPressed(button); }
     /// <summary>
     /// Returns the mouse position relative to the window.
     /// </summary>
-    sf::Vector2i GetMousePosition() const;
+    sf::Vector2i GetMousePosition() const { return sf::Mouse::getPosition(*m_Window); }
 
 #pragma endregion
 
