@@ -93,10 +93,10 @@ void ClientApp::CheckIfMouseHoverBoard()
                 if (winnerID != EMPTY_PIECE)
                 {
                     std::cout << "Player " << winnerID << " won!\n";
-                    m_IsGameFinished = true;
+                    //m_IsGameFinished = true;
                 }
 
-                if (m_Board->IsFull())
+                if (m_Board->IsFull() || winnerID != EMPTY_PIECE)
                     ClearBoard();
 
                 SwitchPlayerTurn();
