@@ -17,6 +17,5 @@ namespace TicTacToe
 
 	Player::~Player()
 	{
-		//NULLPTR(m_PieceShape);
 	}
 }
