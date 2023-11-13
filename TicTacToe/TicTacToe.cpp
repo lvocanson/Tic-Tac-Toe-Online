@@ -1,10 +1,6 @@
 #include "TicTacToe.h"
 
 #include <iostream>
-#include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-
-#include "../Client/src/core/ClientApp.h"
 
 
 #if defined(DEBUG) | defined(_DEBUG)
@@ -51,7 +47,7 @@ namespace TicTacToe
 	    }
 	}
 
-	bool Board::IsThereAWinner()
+	bool Board::IsThereAWinner() const
 	{
 		for (int i = 0; i < size; i++)
 		{
@@ -132,16 +128,19 @@ namespace TicTacToe
 				}
 			}
 		}
+
+		return false;
 	}
 
-	Piece::Piece()
+	Piece::Piece() : m_PlayerID(EMPTY_PIECE)
 	{
-		m_Shape = new sf::RectangleShape(sf::Vector2f(100, 100));
-		m_Shape->setFillColor(sf::Color::Color(51, 56, 63));
-		m_Shape->setOutlineThickness(10);
-		m_Shape->setOutlineColor(sf::Color::Red);
-		m_PlayerID = EMPTY_PIECE;
+
 	}
+
+	Piece::Piece(sf::Vector2f position) : m_PlayerID(EMPTY_PIECE)
+	{
+
+    }
 
 	Piece::~Piece()
 	{
@@ -150,16 +149,11 @@ namespace TicTacToe
 
 	void Piece::SetPlayerPiece(const Player* player)
 	{
-		const sf::Vector2f currentPosition = GetPosition();
-
-		m_Shape = player->GetShape();
-		m_Shape->setPosition(currentPosition);
 		m_PlayerID = player->GetPlayerID();
 	}
 
 	void Piece::Clear()
 	{
-		NULLPTR(m_Shape)
 		m_PlayerID = EMPTY_PIECE;
 	}
 

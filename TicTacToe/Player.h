@@ -14,22 +14,19 @@ namespace TicTacToe
 		Player();
 
 		/// <summary>
-		/// Init a player with a name and a piece shape
+		/// Init a player with a name
 		/// </summary>
-		Player(std::string name, sf::Shape* pieceShape);
+		Player(std::string name);
 		~Player();
 
 		void SetName(const std::string& name) { m_Name = name; }
-		void SetShape(sf::Shape* shape) { m_PieceShape = shape; }
 
 		int GetPlayerID() const { return m_PlayerID; }
 		std::string GetName() const { return m_Name; }
-		sf::Shape* GetShape() const { return m_PieceShape; }
 
 	private:
 
 		std::string m_Name;
-		sf::Shape* m_PieceShape;
 		int m_PlayerID;
 
 	};

@@ -1,5 +1,5 @@
 #pragma once
-#include <string>
+#include <vector>
 
 #include "Player.h"
 
@@ -18,21 +18,22 @@ namespace TicTacToe
 		Piece(sf::Vector2f position);
 		~Piece();
 
-		sf::Shape* GetShape() const { return m_Shape; }
 		int GetPlayerID() const { return m_PlayerID; }
-		sf::Vector2f GetPosition() const { return m_Shape->getPosition(); }
+		int GetPositionX() const { return m_PosX; }
+		int GetPositionY() const { return m_PosY; }
+
 
 		/// <summary>
-		/// Sets the id of the player that owns this piece and changes the shape of the piece to match the player's shape.
+		/// Sets the id of the player that owns this piece
 		/// </summary>
 		void SetPlayerPiece(const Player* player);
-		void SetPosition(sf::Vector2f position) const { m_Shape->setPosition(position); }
+		void SetPosition(int x, int y) { m_PosX = x; m_PosY = y; }
 
 		void Clear();
 
 	private:
 
-		sf::Shape* m_Shape = nullptr;
+		int m_PosX = 0, m_PosY = 0;
 		int m_PlayerID = EMPTY_PIECE;
 
 	};
@@ -57,8 +58,8 @@ namespace TicTacToe
 	    size_t GetHeight() const { return height; }
 	    size_t GetTotalSize() const { return size; }
 		size_t GetPieceSize() const { return pieceSize; }
-		Piece& GetPieceAt(size_t index) const { return *m_board[index]; }
-		Piece& GetPieceAt(size_t row, size_t col) const { return *m_board[row * width + col]; }
+		Piece* GetPieceAt(size_t index) const { return m_board[index]; }
+		Piece* GetPieceAt(size_t row, size_t col) const { return m_board[row * width + col]; }
 
 
 	    /// <summary>
@@ -91,7 +92,7 @@ namespace TicTacToe
 		/// <summary>
 		/// Checks if there is a winner on the board.
 		/// </summary>
-	    bool IsThereAWinner();
+	    bool IsThereAWinner() const;
 
     protected:
 	    size_t width = 3, height = 3, size = 9;
