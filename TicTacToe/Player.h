@@ -1,9 +1,6 @@
 #pragma once
 #include <string>
 
-#include "../Client/vendor/SFML-2.6.1/include/SFML/Graphics/Shape.hpp"
-
-
 namespace TicTacToe
 {
 	
