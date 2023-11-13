@@ -14,3 +14,5 @@
 
 #define PLAYER_TURN_DELAY (0.2f)
 #define OUTLINE_THICKNESS (15.0f)
+#define DEFAULT_PIECE_SIZE (150)
+

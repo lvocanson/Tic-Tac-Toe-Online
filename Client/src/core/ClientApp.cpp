@@ -1,4 +1,7 @@
 #include "ClientApp.h"
+
+#include <assert.h>
+
 #include "Player.h"
 #include "TicTacToe.h"
 #include "Window.h"
@@ -14,10 +17,9 @@ void ClientApp::Init()
     
     std::cout << "Hello World! I'm a client!\n";
 
-    m_Font = new sf::Font;
-    if (!m_Font->loadFromFile("../resources/fonts/bold-font.ttf"))
+    if (!m_Font.loadFromFile("resources/fonts/bold-font.ttf"))
     {
-        // error...
+        assert(false, "Failed to load font");
     }
 
     m_Board.Init();
@@ -25,16 +27,52 @@ void ClientApp::Init()
     sf::Vector2f center = m_Window->GetCenter();
 
     const auto text = new sf::Text();
-    text->setFont(*m_Font);
-    text->setString("Tic Tac Toe Online!");
-    text->setCharacterSize(24);
+    text->setFont(m_Font);
+    text->setString("Tic Tac Toz");
+    text->setCharacterSize(48);
     text->setFillColor(sf::Color::White);
-    text->setPosition(center.x - text->getGlobalBounds().width * 0.5f, 0.0f);
+    text->setStyle(sf::Text::Bold | sf::Text::Underlined);
+    text->setPosition(center.x - text->getGlobalBounds().width * 0.5f + 20, 0.0f + 20);
 
     m_Window->RegisterDrawable(text);
 
-    m_PlayerOne = new Player("Player One");
-    m_PlayerTwo = new Player("Player Two");
+    m_PlayerOne.SetName("Player One");
+    m_ScoreManager.RegisterPlayer(m_PlayerOne.GetPlayerData());
+
+    m_PlayerTwo.SetName("Player Two");
+    m_ScoreManager.RegisterPlayer(m_PlayerTwo.GetPlayerData());
+
+    m_PlayerOneScoreText = new sf::Text();
+    m_PlayerOneScoreText->setFont(m_Font);
+    m_PlayerOneScoreText->setString(m_PlayerOne.GetName() + " : 0");
+    m_PlayerOneScoreText->setCharacterSize(24);
+    m_PlayerOneScoreText->setFillColor(sf::Color::White);
+    m_PlayerOneScoreText->setStyle(sf::Text::Bold);
+    m_PlayerOneScoreText->setPosition(75, m_Window->GetHeight() * 0.5f - m_PlayerOneScoreText->getGlobalBounds().height);
+
+    m_PlayerTwoScoreText = new sf::Text();
+    m_PlayerTwoScoreText->setFont(m_Font);
+    m_PlayerTwoScoreText->setString(m_PlayerTwo.GetName() + " : 0");
+    m_PlayerTwoScoreText->setCharacterSize(24);
+    m_PlayerTwoScoreText->setFillColor(sf::Color::White);
+    m_PlayerTwoScoreText->setStyle(sf::Text::Bold);
+    m_PlayerTwoScoreText->setPosition(m_PlayerOneScoreText->getPosition().x, m_Window->GetHeight() * 0.5f + m_PlayerTwoScoreText->getGlobalBounds().height);
+
+    m_Window->RegisterDrawable(m_PlayerOneScoreText);
+    m_Window->RegisterDrawable(m_PlayerTwoScoreText);
+
+    m_CurrentPlayer = &m_PlayerOne;
+
+    m_GameStateText = new sf::Text();
+    m_GameStateText->setFont(m_Font);
+    m_GameStateText->setString(m_CurrentPlayer->GetName() + " turn");
+    m_GameStateText->setCharacterSize(24);
+    // TODO : Change color based on player turn
+    m_GameStateText->setFillColor(sf::Color::White);
+    m_GameStateText->setStyle(sf::Text::Bold);
+    m_GameStateText->setPosition(m_Window->GetWidth() - m_GameStateText->getGlobalBounds().width - 75, m_Window->GetHeight() * 0.5f - m_GameStateText->getGlobalBounds().height);
+
+    m_Window->RegisterDrawable(m_GameStateText);
 
     DrawBoard();
 }
@@ -110,10 +148,24 @@ void ClientApp::CheckIfMouseHoverBoard()
                 if (winnerID != EMPTY_PIECE)
                 {
                     std::cout << "Player " << winnerID << " won!\n";
-                }
 
-                if (m_Board.IsFull() || winnerID != EMPTY_PIECE)
+                    m_ScoreManager.NewGame(m_CurrentPlayer->GetPlayerData());
+                    m_ScoreManager.AddScoreToPlayer(m_CurrentPlayer->GetPlayerID());
+
+                    if (m_IsPlayerOneTurn)
+                        m_PlayerOneScoreText->setString(m_CurrentPlayer->GetName() + " : " + std::to_string(m_ScoreManager.GetPlayerScore(m_CurrentPlayer->GetPlayerID())));
+                    else
+                        m_PlayerTwoScoreText->setString(m_CurrentPlayer->GetName() + " : " + std::to_string(m_ScoreManager.GetPlayerScore(m_CurrentPlayer->GetPlayerID())));
+
+                    m_GameStateText->setString(m_CurrentPlayer->GetName() + " won!");
+
                     ClearBoard();
+                }
+                else if (m_Board.IsFull())
+                {
+                    std::cout << "It's a draw!\n";  
+                    ClearBoard();
+                }
 
                 SwitchPlayerTurn();
             }
@@ -123,7 +175,7 @@ void ClientApp::CheckIfMouseHoverBoard()
 
 void ClientApp::PlacePlayerPieceOnBoard(size_t i)
 {
-    m_Board[i].SetPlayerPiece(m_IsPlayerOneTurn ? &m_PlayerOne : &m_PlayerTwo);
+    m_Board[i].SetPlayerPiece(m_CurrentPlayer);
 
     auto pos = sf::Vector2f( m_Board.GetGraphicPiece(i).GetPosition());
 
@@ -145,6 +197,8 @@ void ClientApp::PlacePlayerPieceOnBoard(size_t i)
         m_Window->RegisterDrawable(piece);
         m_GamePieces.push_back(piece);
     }
+
+    m_ScoreManager.AddMove(m_CurrentPlayer->GetPlayerID(), i);
 }
 
 void ClientApp::ClearBoard()
@@ -162,7 +216,10 @@ void ClientApp::ClearBoard()
 void ClientApp::SwitchPlayerTurn()
 {
     m_IsPlayerOneTurn = !m_IsPlayerOneTurn;
+    m_CurrentPlayer = m_IsPlayerOneTurn ? &m_PlayerOne : &m_PlayerTwo;
     m_PlayerTurnTimer = sf::seconds(PLAYER_TURN_DELAY);
+
+    m_GameStateText->setString(m_CurrentPlayer->GetName() + " turn");
 }
 
 
@@ -184,6 +241,10 @@ void ClientApp::Cleanup()
     {
         RELEASE(drawable);
     }
+
+    NULLPTR(m_GameStateText)
+    NULLPTR(m_PlayerOneScoreText)
+    NULLPTR(m_PlayerTwoScoreText)
 
     RELEASE(m_Window);
 }
