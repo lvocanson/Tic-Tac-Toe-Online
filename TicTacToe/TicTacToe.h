@@ -3,7 +3,7 @@
 
 #include "Player.h"
 
-#define DEFAULT_WINNABLE_PIECES (3)
+constexpr int DEFAULT_WINNABLE_PIECES = 3;
 
 
 namespace TicTacToe
@@ -58,19 +58,19 @@ namespace TicTacToe
 	    /// <summary>
 	    /// Returns a reference to the piece at the specified row and column.
 	    /// </summary>
-	    Piece& operator()(size_t row, size_t col) { return *m_Board[row * m_Width + col]; }
+	    Piece& operator()(size_t row, size_t col) { return m_Board[row * m_Width + col]; }
 	    /// <summary>
 	    /// Returns a const reference to the piece at the specified row and column.
 	    /// </summary>
-	    const Piece& operator()(size_t row, size_t col) const { return *m_Board[row * m_Width + col]; }
+	    const Piece& operator()(size_t row, size_t col) const { return m_Board[row * m_Width + col]; }
 	    /// <summary>
 	    /// Returns a reference to the piece at the specified index.
 	    /// </summary>
-	    Piece& operator[](size_t index) { return *m_Board[index]; }
+	    Piece& operator[](size_t index) { return m_Board[index]; }
 	    /// <summary>
 	    /// Returns a const reference to the piece at the specified index.
 	    /// </summary>
-	    const Piece& operator[](size_t index) const { return *m_Board[index]; }
+	    const Piece& operator[](size_t index) const { return m_Board[index]; }
 
 	    /// <summary>
 	    /// Returns true if the board does not contain a piece with EMPTY_PIECE id
@@ -93,7 +93,7 @@ namespace TicTacToe
 
 	    size_t m_Width = 3, m_Height = 3, m_Size = 9;
 		int m_WinnablePieces = 3;
-	    std::vector<Piece*> m_Board;
+	    Piece* m_Board;
 
 	};
 }

@@ -13,34 +13,24 @@ namespace TicTacToe
 {
 	Board::Board(size_t width, size_t height, int winnablePieces) : m_Width(width), m_Height(height), m_Size(width* height), m_WinnablePieces(winnablePieces)
 	{
-		Init();
 	}
 
 	Board::~Board()
 	{
-	    for (auto& piece : m_Board)
-	    {
-			if (piece)
-			{
-				delete piece;
-				piece = nullptr;
-			}
-	    }
+	    delete[] m_Board;
+		m_Board = nullptr;
 	}
 
 	void Board::Init() 
 	{
-		for (int i = 0; i < m_Size; i++)
-		{
-			m_Board.push_back(new Piece());
-		}
+		m_Board = new Piece[m_Size];
 	}
 
 	bool Board::IsFull() const
 	{
 	    for (int i = 0; i < m_Size; i++)
 	    {
-	        if (m_Board[i]->GetPlayerID() == EMPTY_PIECE)
+	        if (m_Board[i].GetPlayerID() == EMPTY_PIECE)
 	        {
 	            return false;
 	        }
@@ -52,10 +42,11 @@ namespace TicTacToe
 	{
 	    for (int i = 0; i < m_Size; i++)
 	    {
-			m_Board[i]->Clear();
+			m_Board[i].Clear();
 	    }
 	}
 
+	// TODO: Needs to be reworked cauz it doesn't work if we change the grid size and the win condition
 	int Board::IsThereAWinner() const
 	{
 		int winner = EMPTY_PIECE;
@@ -63,7 +54,7 @@ namespace TicTacToe
 
 		for (int i = 0; i < m_Size; i++)
 		{
-			if (m_Board[i]->GetPlayerID() == EMPTY_PIECE)
+			if (m_Board[i].GetPlayerID() == EMPTY_PIECE)
 			{
 				continue;
 			}
@@ -74,7 +65,7 @@ namespace TicTacToe
 				continuousPiecesCount = 0;
 				for (int j = 0; j < m_Width; j++)
 				{
-					if (m_Board[i + j]->GetPlayerID() != m_Board[i]->GetPlayerID())
+					if (m_Board[i + j].GetPlayerID() != m_Board[i].GetPlayerID())
 					{
 						break;
 					}
@@ -83,7 +74,7 @@ namespace TicTacToe
 						continuousPiecesCount++;
 						if (continuousPiecesCount >= m_WinnablePieces)
 						{
-						    return m_Board[i]->GetPlayerID();
+						    return m_Board[i].GetPlayerID();
                         }
 					}
 				}
@@ -96,7 +87,7 @@ namespace TicTacToe
 
 				for (int j = 0; j < m_Size; j += m_Width)
 				{
-					if (m_Board[i + j]->GetPlayerID() != m_Board[i]->GetPlayerID())
+					if (m_Board[i + j].GetPlayerID() != m_Board[i].GetPlayerID())
 					{
 						break;
 					}
@@ -105,7 +96,7 @@ namespace TicTacToe
 						continuousPiecesCount++;
 						if (continuousPiecesCount == m_WinnablePieces)
 						{
-							return m_Board[i]->GetPlayerID();
+							return m_Board[i].GetPlayerID();
 						}
 					}
 				}
@@ -118,7 +109,7 @@ namespace TicTacToe
 
 				for (int j = 0; j < m_Size; j += m_Width + 1)
 				{
-					if (m_Board[i + j]->GetPlayerID() != m_Board[i]->GetPlayerID())
+					if (m_Board[i + j].GetPlayerID() != m_Board[i].GetPlayerID())
 					{
 						break;
 					}
@@ -127,7 +118,7 @@ namespace TicTacToe
 						continuousPiecesCount++;
 						if (continuousPiecesCount == m_WinnablePieces)
 						{
-							return m_Board[i]->GetPlayerID();
+							return m_Board[i].GetPlayerID();
 						}
 					}
 				}
@@ -140,7 +131,7 @@ namespace TicTacToe
 
 				for (int j = 0; j < m_Size - 1; j += m_Width - 1)
 				{
-					if (m_Board[i + j]->GetPlayerID() != m_Board[i]->GetPlayerID())
+					if (m_Board[i + j].GetPlayerID() != m_Board[i].GetPlayerID())
 					{
 						break;
 					}
@@ -149,7 +140,7 @@ namespace TicTacToe
 						continuousPiecesCount++;
 						if (continuousPiecesCount == m_WinnablePieces)
 						{
-							return m_Board[i]->GetPlayerID();
+							return m_Board[i].GetPlayerID();
 						}
 					}
 				}
@@ -166,7 +157,7 @@ namespace TicTacToe
 
 	Piece::~Piece()
 	{
-		Clear();
+		Piece::Clear();
 	}
 
 	void Piece::SetPlayerPiece(const Player* player)
