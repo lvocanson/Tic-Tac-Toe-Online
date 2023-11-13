@@ -14,4 +14,7 @@
 
 #define EMPTY_PIECE (-1)
 
-#define PLAYER_TURN_DELAY (0.5f)
+#define PIECE_SIZE (150)
+#define PLAYER_TURN_DELAY (0.2f)
+
+#define OUTLINE_THICKNESS (10.0f)

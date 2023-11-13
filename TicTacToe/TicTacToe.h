@@ -47,7 +47,7 @@ namespace TicTacToe
 	    /// <summary>
 	    /// Creates a 3x3 board and sets the size of each piece to 100.
 	    /// </summary>
-	    Board() : Board(3, 3, 100) {}
+	    Board() : Board(3, 3, PIECE_SIZE) {}
 	    /// <summary>
 	    /// Creates a board with the specified width and height.
 	    /// </summary>
@@ -96,7 +96,7 @@ namespace TicTacToe
 
     protected:
 	    size_t width = 3, height = 3, size = 9;
-		int pieceSize = 100;
+		int pieceSize = PIECE_SIZE;
 	    std::vector<Piece*> m_board;
 	};
 }

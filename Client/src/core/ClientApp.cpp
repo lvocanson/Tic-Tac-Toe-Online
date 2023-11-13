@@ -10,7 +10,7 @@ void ClientApp::Init()
 {
     m_IsRunning = true;
     m_Window = new Window();
-    m_Window->Create("Tic Tac Toe Online!", 800, 600);
+    m_Window->Create("Tic Tac Toe Online!", 1280, 720);
     
     std::cout << "Hello World! I'm a client!\n";
 
@@ -19,7 +19,11 @@ void ClientApp::Init()
     m_PlayerOne = new Player("Player One");
     m_PlayerTwo = new Player("Player Two");
 
+    DrawBoard();
+}
 
+void ClientApp::DrawBoard()
+{
     const int pieceSize = m_Board->GetPieceSize();
     const int width = m_Board->GetWidth();
     const int height = m_Board->GetHeight();
@@ -28,17 +32,17 @@ void ClientApp::Init()
     // Draw the board - temp
     for (size_t i = 0; i < m_Board->GetTotalSize(); ++i)
     {
-	    auto* square = new sf::RectangleShape(sf::Vector2f(pieceSize, pieceSize));
-		square->setFillColor(sf::Color::Color(51, 56, 63));
-		square->setOutlineColor(sf::Color::Color(0, 189, 156));
-		square->setOutlineThickness(5);
+        auto* square = new sf::RectangleShape(sf::Vector2f(pieceSize, pieceSize));
+        square->setFillColor(sf::Color::Color(51, 56, 63));
+        square->setOutlineColor(sf::Color::Color(0, 189, 156));
+        square->setOutlineThickness(OUTLINE_THICKNESS);
         square->setPosition(center.x - (width * pieceSize * 0.5f) + (i % width) * pieceSize, center.y - (height * pieceSize * 0.5f) + (i / width) * pieceSize);
-		m_Window->RegisterDrawable(square);
+        m_Window->RegisterDrawable(square);
 
         auto piece = m_Board->GetPieceAt(i);
         piece->SetPosition(square->getPosition().x, square->getPosition().y);
         //m_Window->RegisterDrawable(piece.GetShape());
-	}
+    }
 }
 
 void ClientApp::Run()
@@ -63,9 +67,9 @@ void ClientApp::Run()
 
 void ClientApp::Update(sf::Time delta)
 {
-    if (m_PlayerTurnDelay > sf::Time::Zero)
+    if (m_PlayerTurnTimer > sf::Time::Zero)
     {
-        m_PlayerTurnDelay -= delta;
+        m_PlayerTurnTimer -= delta;
         return;
     }
 
@@ -86,6 +90,9 @@ void ClientApp::CheckIfMouseHoverBoard()
                 PlacePlayerPieceOnBoard(i);
 
                 m_IsGameFinished = m_Board->IsThereAWinner();
+
+                if (m_Board->IsFull())
+                    ClearBoard();
 
                 SwitchPlayerTurn();
             }
@@ -108,19 +115,33 @@ void ClientApp::PlacePlayerPieceOnBoard(size_t i)
         auto* piece = new PlayerCircleShape(m_PlayerOne);
         piece->setPosition(pos);
         m_Window->RegisterDrawable(piece);
+        m_GamePieces.push_back(piece);
     }
     else
     {
         auto* piece = new PlayerCrossShape(m_PlayerTwo);
         piece->setPosition(pos);
         m_Window->RegisterDrawable(piece);
+        m_GamePieces.push_back(piece);
     }
+}
+
+void ClientApp::ClearBoard()
+{
+    for (auto& piece : m_GamePieces)
+    {
+        m_Window->UnregisterDrawable(piece);
+        RELEASE(piece);
+    }
+
+    m_GamePieces.clear();
+    m_Board->Clear();
 }
 
 void ClientApp::SwitchPlayerTurn()
 {
     m_IsPlayerOneTurn = !m_IsPlayerOneTurn;
-    m_PlayerTurnDelay = sf::seconds(PLAYER_TURN_DELAY);
+    m_PlayerTurnTimer = sf::seconds(PLAYER_TURN_DELAY);
 }
 
 

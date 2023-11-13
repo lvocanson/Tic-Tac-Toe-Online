@@ -16,6 +16,7 @@ public:
     /// </summary>
     static ClientApp& GetInstance() { static ClientApp instance; return instance; }
 
+    void DrawBoard();
     /// <summary>
     /// Initialize the ClientApp. This method must be called before calling Run().
     /// </summary>
@@ -35,6 +36,7 @@ private: // Methods
     void SwitchPlayerTurn();
     void PlacePlayerPieceOnBoard(size_t i);
 
+    void ClearBoard();
     void CheckIfMouseHoverBoard();
     bool IsMouseHoverPiece(size_t i) const;
 
@@ -44,13 +46,16 @@ private: // Methods
 private: // Fields
     bool m_IsRunning = false;
     bool m_IsGameFinished = false;
+
     Window* m_Window = nullptr;
 
     TicTacToe::Board* m_Board = nullptr;
     TicTacToe::Player* m_PlayerOne = nullptr;
     TicTacToe::Player* m_PlayerTwo = nullptr;
 
-    sf::Time m_PlayerTurnDelay = sf::seconds(0);
+    sf::Time m_PlayerTurnTimer = sf::seconds(0);
+
+    std::vector<sf::Drawable*> m_GamePieces;
 
     bool m_IsPlayerOneTurn = true;
 

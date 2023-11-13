@@ -19,25 +19,14 @@ class PlayerCrossShape final : public PlayerPiece, public sf::RectangleShape
 {
 public:
 
-    PlayerCrossShape(TicTacToe::Player* player) : PlayerPiece(player), sf::RectangleShape(sf::Vector2f(50, 50))
-    {
-        setFillColor(sf::Color::Transparent);
-        setOutlineThickness(10);
-        setOutlineColor(sf::Color::Blue);
-        setOrigin(getSize().x * 0.5f, getSize().y * 0.5f);
-    }
+    PlayerCrossShape(TicTacToe::Player* player);
+
 };
 
 class PlayerCircleShape final : public sf::CircleShape, public PlayerPiece
 {
 public:
 
-    PlayerCircleShape(TicTacToe::Player* player) : sf::CircleShape(30), PlayerPiece(player)
-    {
-        setFillColor(sf::Color::Transparent);
-        setOutlineThickness(10);
-        setOutlineColor(sf::Color::Red);
-        setOrigin(getRadius(), getRadius());
-    }
+    PlayerCircleShape(TicTacToe::Player* player);
 };
 
