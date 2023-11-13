@@ -11,7 +11,7 @@ void ClientApp::Init()
     m_IsRunning = true;
     m_Window = new Window();
     m_Window->Create("Tic Tac Toe Online!", 800, 600);
-
+    
     std::cout << "Hello World! I'm a client!\n";
 
     m_Board = new Board();
@@ -19,38 +19,26 @@ void ClientApp::Init()
     m_PlayerOne = new Player("Player One");
     m_PlayerTwo = new Player("Player Two");
 
-    //temp
-    playerTwoShape = new sf::CircleShape(30);
-    playerTwoShape->setFillColor(sf::Color::Transparent);
-    playerTwoShape->setOutlineThickness(10);
-    playerTwoShape->setOutlineColor(sf::Color::Yellow);
 
-    m_Window->RegisterDrawable(playerOneShape);
-    //m_Window->RegisterDrawable(playerTwoShape);
-
-    m_PlayerOne = new Player("Player One", playerOneShape);
-    m_PlayerTwo = new Player("Player Two", playerTwoShape);
-
-
-    int pieceSize = m_Board->GetPieceSize();
-    int width = m_Board->GetWidth();
-    int height = m_Board->GetHeight();
+    const int pieceSize = m_Board->GetPieceSize();
+    const int width = m_Board->GetWidth();
+    const int height = m_Board->GetHeight();
+    const sf::Vector2f center = m_Window->GetCenter();
 
     // Draw the board - temp
     for (size_t i = 0; i < m_Board->GetTotalSize(); ++i)
     {
 	    auto* square = new sf::RectangleShape(sf::Vector2f(pieceSize, pieceSize));
-		square->setFillColor(sf::Color::Transparent);
+		square->setFillColor(sf::Color::Color(51, 56, 63));
 		square->setOutlineColor(sf::Color::Color(0, 189, 156));
 		square->setOutlineThickness(5);
-        square->setPosition(i % width * pieceSize, (i) / height * pieceSize);
+        square->setPosition(center.x - (width * pieceSize * 0.5f) + (i % width) * pieceSize, center.y - (height * pieceSize * 0.5f) + (i / width) * pieceSize);
 		m_Window->RegisterDrawable(square);
 
         auto piece = m_Board->GetPieceAt(i);
-        piece.SetPosition(square->getPosition());
-        m_Window->RegisterDrawable(piece.GetShape());
+        piece->SetPosition(square->getPosition().x, square->getPosition().y);
+        //m_Window->RegisterDrawable(piece.GetShape());
 	}
-
 }
 
 void ClientApp::Run()
@@ -120,14 +108,14 @@ void ClientApp::PlacePlayerPieceOnBoard(size_t i)
         auto* piece = new PlayerCircleShape(m_PlayerOne);
         piece->setPosition(pos);
         m_Window->RegisterDrawable(piece);
-            }
+    }
     else
     {
         auto* piece = new PlayerCrossShape(m_PlayerTwo);
         piece->setPosition(pos);
         m_Window->RegisterDrawable(piece);
-        }
     }
+}
 
 void ClientApp::SwitchPlayerTurn()
 {
