@@ -38,12 +38,15 @@ namespace TicTacToe
         ScoreManager();
         ~ScoreManager();
 
-        void RegisterPlayer(PlayerData* player);
+        void Init();
 
-        void AddMove(int playerID, int lastCellPlayed);
+        void CreateScoreForPlayer(PlayerData* player);
+
+        void AddPlayerMove(int playerID, int lastCellPlayed);
         void AddScoreToPlayer(int playerID);
+        void InitNewGame(PlayerData* winner);
+
         int GetPlayerScore(int playerID);
-        void NewGame(PlayerData* winner);
 
     private:
 
@@ -51,8 +54,13 @@ namespace TicTacToe
 
     private:
 
+        // Player id -> score
         std::map<int, int> m_PlayerScores;
+
+        // List of all the local game history
         std::vector<GameData*> m_GameHistory;
+
+        // List of all the moves of the current game
         std::vector<PlayerMove*> m_CurrentGame;
     };
 }

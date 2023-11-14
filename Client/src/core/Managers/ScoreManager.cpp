@@ -16,31 +16,22 @@ TicTacToe::GameData::~GameData()
 {
     for (auto move : AllMoves)
     {
-        delete move;
-        move = nullptr;
+        RELEASE(move)
     }
 
     AllMoves.clear();
-}
-
-TicTacToe::ScoreManager::ScoreManager()
-{
-    m_GameHistory = std::vector<GameData*>();
-    m_CurrentGame = std::vector<PlayerMove*>();
 }
 
 TicTacToe::ScoreManager::~ScoreManager()
 {
     for (auto game : m_GameHistory)
     {
-        delete game;
-        game = nullptr;
+        RELEASE(game)
     }
 
     for (auto move : m_CurrentGame)
     {
-        delete move;
-        move = nullptr;
+        RELEASE(move)
     }
 
     m_PlayerScores.clear();
@@ -48,12 +39,19 @@ TicTacToe::ScoreManager::~ScoreManager()
     m_GameHistory.clear();
 }
 
-void TicTacToe::ScoreManager::RegisterPlayer(PlayerData* player)
+void TicTacToe::ScoreManager::Init()
+{
+    m_PlayerScores = std::map<int, int>();
+    m_GameHistory = std::vector<GameData*>();
+    m_CurrentGame = std::vector<PlayerMove*>();
+}
+
+void TicTacToe::ScoreManager::CreateScoreForPlayer(PlayerData* player)
 {
     m_PlayerScores.insert(std::pair<int, int>(player->PlayerID, 0));
 }
 
-void TicTacToe::ScoreManager::AddMove(int playerID, int lastCellPlayed)
+void TicTacToe::ScoreManager::AddPlayerMove(int playerID, int lastCellPlayed)
 {
     m_CurrentGame.push_back(new PlayerMove(playerID, lastCellPlayed));
 }
@@ -68,7 +66,7 @@ int TicTacToe::ScoreManager::GetPlayerScore(int playerID)
     return m_PlayerScores[playerID];
 }
 
-void TicTacToe::ScoreManager::NewGame(PlayerData* winner)
+void TicTacToe::ScoreManager::InitNewGame(PlayerData* winner)
 {
     m_GameHistory.push_back(new GameData(winner, m_CurrentGame));
     ClearMoves();
