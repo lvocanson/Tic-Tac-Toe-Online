@@ -24,9 +24,6 @@
     <ClInclude Include="IDGenerator.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="ScoreManager.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TicTacToe.cpp">
@@ -36,9 +33,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="IDGenerator.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="ScoreManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

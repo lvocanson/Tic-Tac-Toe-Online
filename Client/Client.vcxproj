@@ -98,9 +98,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\core\GraphicBoard.cpp" />
+    <ClCompile Include="src\core\Managers\PlayerManager.cpp" />
     <ClCompile Include="src\core\PlayerPiece.cpp" />
     <ClCompile Include="src\ClientMain.cpp" />
     <ClCompile Include="src\core\ClientApp.cpp" />
+    <ClCompile Include="src\core\Managers\ScoreManager.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -109,9 +111,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\GraphicBoard.h" />
+    <ClInclude Include="src\core\Managers\IManager.h" />
+    <ClInclude Include="src\core\Managers\PlayerManager.h" />
     <ClInclude Include="src\core\PlayerPiece.h" />
     <ClInclude Include="src\core\ClientApp.h" />
     <ClInclude Include="src\core\CoreDefinitions.h" />
+    <ClInclude Include="src\core\Managers\ScoreManager.h" />
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>

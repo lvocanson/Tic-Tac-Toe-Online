@@ -13,13 +13,11 @@
   <ItemGroup>
     <ClInclude Include="IDGenerator.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="ScoreManager.h" />
     <ClInclude Include="TicTacToe.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IDGenerator.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="ScoreManager.cpp" />
     <ClCompile Include="TicTacToe.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
