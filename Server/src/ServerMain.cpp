@@ -1,3 +1,5 @@
+#include "tcp-ip/TcpIpServer.h"
+
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) && !defined(__CYGWIN__)
 
 // Entry point for a Windows program (Unicode)
@@ -10,6 +12,8 @@ int wmain()
 #endif
 
     std::cout << "Hello World! I'm a server!\n";
+
+    TcpIpServer& server = TcpIpServer::GetInstance();
 
     return 0;
 }

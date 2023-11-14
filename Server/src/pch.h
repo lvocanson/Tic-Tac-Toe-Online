@@ -6,6 +6,7 @@
 */
 
 #include <iostream>
+#include <TcpIp.h>
 
 #pragma region Our defines
 
