@@ -11,9 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="TcpIp.h" />
     <ClInclude Include="TicTacToe.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="TcpIp.cpp" />
     <ClCompile Include="TicTacToe.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
