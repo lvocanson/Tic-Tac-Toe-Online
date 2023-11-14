@@ -101,6 +101,11 @@
     <ClCompile Include="src\core\PlayerPiece.cpp" />
     <ClCompile Include="src\ClientMain.cpp" />
     <ClCompile Include="src\core\ClientApp.cpp" />
+    <ClCompile Include="src\core\StateMachine\EndState.cpp" />
+    <ClCompile Include="src\core\StateMachine\GameState.cpp" />
+    <ClCompile Include="src\core\StateMachine\HistoryState.cpp" />
+    <ClCompile Include="src\core\StateMachine\MenuState.cpp" />
+    <ClCompile Include="src\core\StateMachine\StateMachine.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -112,6 +117,12 @@
     <ClInclude Include="src\core\PlayerPiece.h" />
     <ClInclude Include="src\core\ClientApp.h" />
     <ClInclude Include="src\core\CoreDefinitions.h" />
+    <ClInclude Include="src\core\StateMachine\EndState.h" />
+    <ClInclude Include="src\core\StateMachine\GameState.h" />
+    <ClInclude Include="src\core\StateMachine\HistoryState.h" />
+    <ClInclude Include="src\core\StateMachine\MenuState.h" />
+    <ClInclude Include="src\core\StateMachine\State.h" />
+    <ClInclude Include="src\core\StateMachine\StateMachine.h" />
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>

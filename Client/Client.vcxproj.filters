@@ -33,6 +33,21 @@
     <ClCompile Include="src\core\GraphicBoard.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\StateMachine\StateMachine.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\StateMachine\EndState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\StateMachine\GameState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\StateMachine\HistoryState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\StateMachine\MenuState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h">
@@ -51,6 +66,24 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\GraphicBoard.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\StateMachine\StateMachine.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\StateMachine\State.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\StateMachine\EndState.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\StateMachine\GameState.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\StateMachine\HistoryState.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\StateMachine\MenuState.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
