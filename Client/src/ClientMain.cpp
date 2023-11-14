@@ -1,5 +1,4 @@
 #include "core/ClientApp.h"
-#include "tcp-ip/TcpIpClient.h"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) && !defined(__CYGWIN__)
 

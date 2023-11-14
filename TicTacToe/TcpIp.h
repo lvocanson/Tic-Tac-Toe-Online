@@ -5,6 +5,9 @@
 #include <ws2tcpip.h>
 #include <sstream>
 
+constexpr const unsigned int DEFAULT_PORT = 63064;
+constexpr const size_t DEFAULT_BUFFER_SIZE = 1024;
+
 /// <summary>
 /// Helper functions for TCP/IP.
 /// </summary>
