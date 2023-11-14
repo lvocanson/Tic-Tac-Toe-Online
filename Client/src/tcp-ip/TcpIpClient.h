@@ -23,20 +23,28 @@ public:
     /// </summary>
     void Connect(const char* ip, int port);
     /// <summary>
+    /// Disconnects from the server.
+    /// </summary>
+    void Disconnect();
+    /// <summary>
+    /// Checks if the client is connected to a server.
+    /// </summary>
+    bool IsConnected() const;
+
+    /// <summary>
     /// Sends data to the connected server.
     /// </summary>
     void Send(const std::string& data);
     /// <summary>
-    /// Receives data from the connected server. (Blocking, until server closes connection)
+    /// Fetches pending data from the server.
     /// </summary>
-    void Receive(std::stringstream& ss, const unsigned int bufferSize = 512);
-    /// <summary>
-    /// Disconnects from the server.
-    /// </summary>
-    void Disconnect();
+    /// <param name="ss">The stringstream to write the data to.</param>
+    /// <returns>True if data was fetched, false otherwise.</returns>
+    bool FetchPendingData(std::stringstream& ss);
 
 private:
 
     WSADATA m_WsaData;
     SOCKET m_ConnectSocket;
+    WSAEVENT m_ReadEvent;
 };

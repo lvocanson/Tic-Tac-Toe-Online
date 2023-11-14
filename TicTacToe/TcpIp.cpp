@@ -1,5 +1,11 @@
 #include "TcpIp.h"
 
+#if defined(DEBUG) | defined(_DEBUG)
+#include <crtdbg.h>
+// Dynamically allocate memory with memory leak detection. (debug only)
+#define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#endif
+
 namespace TcpIp
 {
     WSADATA InitializeWinsock()
@@ -7,7 +13,7 @@ namespace TcpIp
         WSADATA wsaData;
         int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
         if (iResult != 0)
-            ThrowWithResultCode("WSAStartup", iResult);
+            throw TcpIpException("WSAStartup", iResult);
         return wsaData;
     }
 
@@ -15,21 +21,31 @@ namespace TcpIp
     {
         int iResult = WSACleanup();
         if (iResult != 0)
-            ThrowWithResultCode("WSACleanup", iResult);
+            throw TcpIpException("WSACleanup", iResult);
     }
 
-    void ThrowWithLastError(const char* operation)
+    std::string GetErrMsg(const char* operation)
     {
         std::stringstream ss;
         ss << operation << " failed with error: " << WSAGetLastError();
-        throw std::runtime_error(ss.str());
+        return ss.str();
     }
 
-    void ThrowWithResultCode(const char* operation, int resultCode)
+    std::string GetErrMsg(const char* operation, int resultCode)
     {
         std::stringstream ss;
         ss << operation << " failed with error: " << resultCode;
-        throw std::runtime_error(ss.str());
+        return ss.str();
+    }
+
+    TcpIpException::TcpIpException(const char* operation)
+        : std::runtime_error(GetErrMsg(operation))
+    {
+    }
+
+    TcpIpException::TcpIpException(const char* operation, int resultCode)
+        : std::runtime_error(GetErrMsg(operation, resultCode))
+    {
     }
 
     constexpr const char* const HEADER_SIGNATURE = "T1cT4cT0z";
@@ -66,12 +82,12 @@ namespace TcpIp
         int iResult = send(socket, header, HEADER_SIZE, 0);
         delete[] header;
         if (iResult == SOCKET_ERROR)
-            ThrowWithLastError("send");
+            throw TcpIpException("send");
 
         // Send data
         iResult = send(socket, data.c_str(), static_cast<int>(data.size()), 0);
         if (iResult == SOCKET_ERROR)
-            ThrowWithLastError("send");
+            throw TcpIpException("send");
     }
 
     void Receive(const SOCKET& socket, std::stringstream& ss, const unsigned int bufferSize)
@@ -80,7 +96,7 @@ namespace TcpIp
         char* header = new char[HEADER_SIZE];
         int iResult = recv(socket, header, HEADER_SIZE, 0);
         if (iResult == SOCKET_ERROR)
-            ThrowWithLastError("recv");
+            throw TcpIpException("recv");
 
         // Check header
         if (!IsHeaderValid(header))
@@ -95,7 +111,7 @@ namespace TcpIp
         {
             iResult = recv(socket, buffer, bufferSize, 0);
             if (iResult == SOCKET_ERROR)
-                ThrowWithLastError("recv");
+                throw TcpIpException("recv");
 
             ss.write(buffer, iResult);
             size -= iResult;
@@ -106,7 +122,27 @@ namespace TcpIp
     void CloseSocket(SOCKET& socket)
     {
         if (closesocket(socket) == SOCKET_ERROR)
-            ThrowWithLastError("closesocket");
+            throw TcpIpException("closesocket");
         socket = INVALID_SOCKET;
+    }
+
+    WSAEVENT CreateEventObject(const SOCKET& socket, const long networkEvents)
+    {
+        WSAEVENT event = WSACreateEvent();
+        if (event == WSA_INVALID_EVENT)
+            throw TcpIpException("WSACreateEvent");
+
+        int iResult = WSAEventSelect(socket, event, networkEvents);
+        if (iResult == SOCKET_ERROR)
+            throw TcpIpException("WSAEventSelect", iResult);
+
+        return event;
+    }
+
+    void CloseEventObject(WSAEVENT& event)
+    {
+        if (WSACloseEvent(event) == FALSE)
+            throw TcpIpException("WSACloseEvent");
+        event = WSA_INVALID_EVENT;
     }
 }

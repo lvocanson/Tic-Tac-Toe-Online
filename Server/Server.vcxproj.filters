@@ -24,12 +24,18 @@
     <ClCompile Include="src\tcp-ip\TcpIpServer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\ServerApp.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\tcp-ip\TcpIpServer.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\ServerApp.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

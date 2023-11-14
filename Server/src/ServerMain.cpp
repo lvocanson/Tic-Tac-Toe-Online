@@ -1,4 +1,4 @@
-#include "tcp-ip/TcpIpServer.h"
+#include "core/ServerApp.h"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) && !defined(__CYGWIN__)
 
@@ -11,9 +11,8 @@ int wmain()
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-    std::cout << "Hello World! I'm a server!\n";
-
-    TcpIpServer& server = TcpIpServer::GetInstance();
+    ServerApp app;
+    app.Run();
 
     return 0;
 }

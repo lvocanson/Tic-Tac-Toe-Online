@@ -1,7 +1,8 @@
 #pragma once
 #include <WinSock2.h>
+#include <vector>
 
-typedef SOCKET Client;
+using Client = SOCKET;
 
 /// <summary>
 /// TCP/IP server.
@@ -21,37 +22,49 @@ public:
     }
 
     /// <summary>
-    /// Open server socket.
+    /// Open server and start listening.
     /// </summary>
     /// <param name="port">Port number to listen.</param>
-    void Open(int port);
+    void Open(unsigned int port);
     /// <summary>
-    /// Start listening.
-    /// </summary>
-    void StartListening();
-    /// <summary>
-    /// Accept the next connection request and return client socket. (Blocking)
-    /// </summary>
-    Client WaitForClient();
-    /// <summary>
-    /// Receive data from client. (Blocking, until client close connection)
-    /// </summary>
-    void Receive(const Client& client, std::stringstream& ss, const unsigned int bufferSize = 512);
-    /// <summary>
-    /// Send data to client.
-    /// </summary>
-    void Send(const Client& client, const std::string& data);
-    /// <summary>
-    /// Disconnect a client.
-    /// </summary>
-    void Disconnect(Client& client);
-    /// <summary>
-    /// Close server socket.
+    /// Stop listening and close all connections.
     /// </summary>
     void Close();
 
+    /// <summary>
+    /// Accepts pending connections.
+    /// </summary>
+    /// <returns>True if a connection was accepted, false otherwise.</returns>
+    bool AcceptPendingConnections();
+    /// <summary>
+    /// Fetches pending data from the first client that has data to read.
+    /// </summary>
+    /// <param name="ss">The stringstream to write the data to.</param>
+    /// <param name="client">The client to respond to.</param>
+    /// <returns>True if data was fetched, false otherwise.</returns>
+    bool FetchPendingData(std::stringstream& ss, Client& client);
+    /// <summary>
+    /// Sends data to a client.
+    /// </summary>
+    void Send(const Client& Client, const std::string& data);
+    /// <summary>
+    /// Kills all closed connections. Call this function after FetchPendingData.
+    /// </summary>
+    /// <returns>The number of connections killed.</returns>
+    unsigned int KillClosedConnections();
+
 private:
+    struct Connection
+    {
+        // Creates the event object and associate it with the socket.
+        Connection(SOCKET socket);
+        SOCKET Socket;
+        WSAEVENT Event;
+    };
 
     WSADATA m_WsaData;
     SOCKET m_ListenSocket;
+    WSAEVENT m_AcceptEvent;
+
+    std::vector<Connection> m_Connections;
 };

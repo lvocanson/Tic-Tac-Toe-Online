@@ -7,6 +7,8 @@
 
 #include <iostream>
 #include <TcpIp.h>
+#include <vector>
+#include <algorithm>
 
 #pragma region Our defines
 
