@@ -63,15 +63,26 @@ void ClientApp::Init()
 
     m_CurrentPlayer = &m_PlayerOne;
 
+    m_PlayerTurnText = new sf::Text();
+    m_PlayerTurnText->setFont(m_Font);
+    m_PlayerTurnText->setString(m_CurrentPlayer->GetName() + " turn");
+    m_PlayerTurnText->setCharacterSize(24);
+    // TODO : Change color based on player turn
+    m_PlayerTurnText->setFillColor(sf::Color::White);
+    m_PlayerTurnText->setStyle(sf::Text::Bold);
+    m_PlayerTurnText->setPosition(m_Window->GetWidth() - m_PlayerTurnText->getGlobalBounds().width - 75, m_Window->GetHeight() * 0.5f - m_PlayerTurnText->getGlobalBounds().height);
+
+    m_Window->RegisterDrawable(m_PlayerTurnText);
+
     m_GameStateText = new sf::Text();
     m_GameStateText->setFont(m_Font);
-    m_GameStateText->setString(m_CurrentPlayer->GetName() + " turn");
+    m_GameStateText->setString("");
     m_GameStateText->setCharacterSize(24);
     // TODO : Change color based on player turn
     m_GameStateText->setFillColor(sf::Color::White);
     m_GameStateText->setStyle(sf::Text::Bold);
-    m_GameStateText->setPosition(m_Window->GetWidth() - m_GameStateText->getGlobalBounds().width - 75, m_Window->GetHeight() * 0.5f - m_GameStateText->getGlobalBounds().height);
-
+    m_GameStateText->setPosition(m_PlayerTurnText->getPosition().x, m_PlayerTwoScoreText->getPosition().y);
+   
     m_Window->RegisterDrawable(m_GameStateText);
 
     DrawBoard();
@@ -142,6 +153,8 @@ void ClientApp::CheckIfMouseHoverBoard()
         {
             if (m_Window->IsMouseButtonPressed(sf::Mouse::Left))
             {
+                m_GameStateText->setString("");
+
                 PlacePlayerPieceOnBoard(i);
 
                 const int winnerID = m_Board.IsThereAWinner();
@@ -163,7 +176,7 @@ void ClientApp::CheckIfMouseHoverBoard()
                 }
                 else if (m_Board.IsFull())
                 {
-                    std::cout << "It's a draw!\n";  
+                    m_GameStateText->setString("It's a draw!");
                     ClearBoard();
                 }
 
@@ -219,7 +232,12 @@ void ClientApp::SwitchPlayerTurn()
     m_CurrentPlayer = m_IsPlayerOneTurn ? &m_PlayerOne : &m_PlayerTwo;
     m_PlayerTurnTimer = sf::seconds(PLAYER_TURN_DELAY);
 
-    m_GameStateText->setString(m_CurrentPlayer->GetName() + " turn");
+    m_PlayerTurnText->setString(m_CurrentPlayer->GetName() + " turn");
+
+    if (m_IsPlayerOneTurn)
+        m_PlayerTurnText->setFillColor(sf::Color::Color(250, 92, 12));
+    else 
+        m_PlayerTurnText->setFillColor(sf::Color::Color(255, 194, 0));
 }
 
 
@@ -242,7 +260,7 @@ void ClientApp::Cleanup()
         RELEASE(drawable);
     }
 
-    NULLPTR(m_GameStateText)
+    NULLPTR(m_PlayerTurnText)
     NULLPTR(m_PlayerOneScoreText)
     NULLPTR(m_PlayerTwoScoreText)
 

@@ -65,7 +65,9 @@ private: // Fields
 
     sf::Text* m_PlayerOneScoreText;
     sf::Text* m_PlayerTwoScoreText;
+    sf::Text* m_PlayerTurnText;
     sf::Text* m_GameStateText;
+
     sf::Font m_Font;
 
     bool m_IsPlayerOneTurn = true;
