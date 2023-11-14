@@ -37,11 +37,11 @@ private: // Methods
     /// Update the ClientApp. Called once per frame.
     void Update(sf::Time delta);
     void SwitchPlayerTurn();
-    void PlacePlayerPieceOnBoard(size_t i);
+    void PlacePlayerPieceOnBoard(unsigned int i);
 
     void ClearBoard();
     void CheckIfMouseHoverBoard();
-    bool IsMouseHoverPiece(size_t i);
+    bool IsMouseHoverPiece(unsigned int i);
 
     /// Perform any cleanup tasks (e.g. delete pointers). Called before Run() returns.
     void Cleanup();

@@ -25,21 +25,21 @@ class GraphicBoard : public TicTacToe::Board
 public:
 
     GraphicBoard() : Board(3, 3, DEFAULT_WINNABLE_PIECES) {}
-    GraphicBoard(size_t width, size_t height, int winnablePieces, int piecePixelSize);
+    GraphicBoard(size_t width, size_t height, unsigned int winnablePieces, unsigned int piecePixelSize);
     ~GraphicBoard() override;
 
     void Init() override;
 
-    void AddPlayerPieceInBoard(int cell, const TicTacToe::Player* player, GraphicPiece* piece);
-    void RemovePlayerPieceInBoard(int cell);
+    void AddPlayerPieceInBoard(unsigned int cell, const TicTacToe::Player* player, GraphicPiece* piece);
+    void RemovePlayerPieceInBoard(unsigned int cell);
 
-    GraphicPiece& GetGraphicPiece(int cell) { return *m_AllPiecesOnBoard[cell]; }
-    int GetPieceSize() const { return m_PiecePixelSize; }
+    GraphicPiece& GetGraphicPiece(unsigned int cell) { return *m_AllPiecesOnBoard[cell]; }
+    unsigned int GetPieceSize() const { return m_PiecePixelSize; }
 
 private:
 
-    int m_PiecePixelSize = DEFAULT_PIECE_SIZE;
-    std::map<int, GraphicPiece*> m_AllPiecesOnBoard;
+    unsigned int m_PiecePixelSize = DEFAULT_PIECE_SIZE;
+    std::map<unsigned int, GraphicPiece*> m_AllPiecesOnBoard;
 
 };
 

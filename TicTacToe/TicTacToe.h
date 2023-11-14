@@ -52,9 +52,6 @@ namespace TicTacToe
 	    size_t GetHeight() const { return m_Height; }
 	    size_t GetTotalSize() const { return m_Size; }
 
-
-
-
 	    /// <summary>
 	    /// Returns a reference to the piece at the specified row and column.
 	    /// </summary>

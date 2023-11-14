@@ -14,7 +14,7 @@ void ClientApp::Init()
     
     std::cout << "Hello World! I'm a client!\n";
 
-    m_Board = new Board();
+    m_Board.Init();
 
     m_PlayerOne.SetName("Player One");
     m_PlayerTwo.SetName("Player Two");
@@ -30,7 +30,7 @@ void ClientApp::DrawBoard()
     const sf::Vector2f center = m_Window->GetCenter();
 
     // Draw the board - temp
-    for (size_t i = 0; i < m_Board.GetTotalSize(); ++i)
+    for (unsigned int i = 0; i < m_Board.GetTotalSize(); ++i)
     {
         auto* square = new sf::RectangleShape(sf::Vector2f(pieceSize, pieceSize));
         square->setFillColor(sf::Color::Color(51, 56, 63));
@@ -104,7 +104,7 @@ void ClientApp::CheckIfMouseHoverBoard()
     }
 }
 
-void ClientApp::PlacePlayerPieceOnBoard(size_t i)
+void ClientApp::PlacePlayerPieceOnBoard(unsigned int i)
 {
     m_Board[i].SetPlayerPiece(m_IsPlayerOneTurn ? &m_PlayerOne : &m_PlayerTwo);
 
@@ -149,7 +149,7 @@ void ClientApp::SwitchPlayerTurn()
 }
 
 
-bool ClientApp::IsMouseHoverPiece(size_t i)
+bool ClientApp::IsMouseHoverPiece(unsigned int i)
 {
 	const sf::Vector2f mousePos = static_cast<sf::Vector2f>(m_Window->GetMousePosition());
     int size = m_Board.GetPieceSize();
@@ -168,6 +168,5 @@ void ClientApp::Cleanup()
         RELEASE(drawable);
     }
 
-    RELEASE(m_Font);
     RELEASE(m_Window);
 }

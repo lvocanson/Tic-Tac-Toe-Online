@@ -2,7 +2,7 @@
 #include "GraphicBoard.h"
 
 
-GraphicBoard::GraphicBoard(size_t width, size_t height, int winnablePieces, int piecePixelSize) : Board(width, height, winnablePieces), m_PiecePixelSize(piecePixelSize)
+GraphicBoard::GraphicBoard(size_t width, size_t height, unsigned int winnablePieces, unsigned int piecePixelSize) : Board(width, height, winnablePieces), m_PiecePixelSize(piecePixelSize)
 {
 }
 
@@ -27,13 +27,13 @@ void GraphicBoard::Init()
     }
 }
 
-void GraphicBoard::AddPlayerPieceInBoard(int cell, const TicTacToe::Player* player, GraphicPiece* piece)
+void GraphicBoard::AddPlayerPieceInBoard(unsigned int cell, const TicTacToe::Player* player, GraphicPiece* piece)
 {
     m_AllPiecesOnBoard[cell] = piece;
     m_Board[cell].SetPlayerPiece(player);
 }
 
-void GraphicBoard::RemovePlayerPieceInBoard(int cell)
+void GraphicBoard::RemovePlayerPieceInBoard(unsigned int cell)
 {
     m_AllPiecesOnBoard[cell] = nullptr;
     m_Board[cell].Clear();

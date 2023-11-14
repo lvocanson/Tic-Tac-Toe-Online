@@ -85,7 +85,7 @@ namespace TicTacToe
 			{
 				continuousPiecesCount = 0;
 
-				for (int j = 0; j < m_Size; j += m_Width)
+				for (size_t j = 0; j < m_Size; j += m_Width)
 				{
 					if (m_Board[i + j].GetPlayerID() != m_Board[i].GetPlayerID())
 					{
@@ -107,7 +107,7 @@ namespace TicTacToe
 			{
 				continuousPiecesCount = 0;
 
-				for (int j = 0; j < m_Size; j += m_Width + 1)
+				for (size_t j = 0; j < m_Size; j += m_Width + 1)
 				{
 					if (m_Board[i + j].GetPlayerID() != m_Board[i].GetPlayerID())
 					{
