@@ -5,9 +5,9 @@ StateMachine::StateMachine()
 	m_CurrentState = nullptr;
 }
 
-void StateMachine::InitState(State* initState)
+void StateMachine::InitState(std::string initState)
 {
-	m_CurrentState = initState;
+	m_CurrentState = m_States[initState];
 }
 
 void StateMachine::Start()

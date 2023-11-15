@@ -2,6 +2,7 @@
 #include "TicTacToe.h"
 #include "GraphicBoard.h"
 #include <SFML/System/Time.hpp>
+#include "src/core/StateMachine/StateMachine.h"
 
 class Window;
 class sf::Shape;
@@ -60,5 +61,7 @@ private: // Fields
     std::vector<sf::Drawable*> m_GamePieces;
 
     bool m_IsPlayerOneTurn = true;
+
+    StateMachine* m_StateMachine;
 
 };

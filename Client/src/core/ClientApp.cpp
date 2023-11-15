@@ -3,6 +3,10 @@
 #include "TicTacToe.h"
 #include "Window.h"
 #include "src/core/PlayerPiece.h"
+#include "src/core/StateMachine/EndState.h"
+#include "src/core/StateMachine/GameState.h"
+#include "src/core/StateMachine/HistoryState.h"
+#include "src/core/StateMachine/MenuState.h"
 
 using namespace TicTacToe;
 
@@ -18,6 +22,14 @@ void ClientApp::Init()
 
     m_PlayerOne.SetName("Player One");
     m_PlayerTwo.SetName("Player Two");
+
+    m_StateMachine->AddState("MenuState", new MenuState());
+    m_StateMachine->AddState("GameState", new GameState());
+    m_StateMachine->AddState("HistoryState", new HistoryState());
+    m_StateMachine->AddState("EndState", new EndState());
+
+    m_StateMachine->InitState("MenuState");
+    m_StateMachine->Start();
 
     DrawBoard();
 }

@@ -12,7 +12,7 @@ public:
 	/// </summary>
 	void AddState(std::string stateName, State* newState);
 
-	void InitState(State* initState);
+	void InitState(std::string initState);
 	void Start();
 
 	/// <summary>

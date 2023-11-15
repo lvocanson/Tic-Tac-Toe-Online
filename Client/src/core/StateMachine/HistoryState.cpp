@@ -2,7 +2,6 @@
 
 void HistoryState::OnEnter()
 {
-
 }
 
 void HistoryState::OnUpdate(float dt)
@@ -12,5 +11,4 @@ void HistoryState::OnUpdate(float dt)
 
 void HistoryState::OnExit()
 {
-
 }
