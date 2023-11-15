@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "../Client/src/core/GraphicBoard.h"
 
 #define EMPTY_PIECE (-1)
 
@@ -21,10 +22,12 @@ namespace TicTacToe
 		/// <summary>
 		/// Init a player with a name
 		/// </summary>
-		Player(const std::string& name);
+		Player(const std::string& name, GraphicPiece piece);
 		~Player();
 
 		void SetName(const std::string& name) { m_PlayerData.Name = name; }
+
+		GraphicPiece& GetGraphicPiece() { return m_GraphicPiece; }
 		int GetPlayerID() const { return m_PlayerData.PlayerID; }
 		std::string GetName() const { return m_PlayerData.Name; }
 		PlayerData* GetPlayerData() { return &m_PlayerData; }
@@ -32,7 +35,7 @@ namespace TicTacToe
 	private:
 
         PlayerData m_PlayerData;
-
+		GraphicPiece m_GraphicPiece;
 	};
 
 }

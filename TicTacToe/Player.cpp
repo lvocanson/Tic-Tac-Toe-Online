@@ -12,12 +12,14 @@ namespace TicTacToe
 		};
 	}
 
-	Player::Player(const std::string& name)
+	Player::Player(const std::string& name, GraphicPiece piece)
 	{
 		m_PlayerData = {
 			.PlayerID = IDGenerator::GenerateID(),
 			.Name = name
 		};
+
+		m_GraphicPiece = piece;
 	}
 
 	Player::~Player()
