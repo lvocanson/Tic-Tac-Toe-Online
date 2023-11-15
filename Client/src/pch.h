@@ -10,6 +10,7 @@
 #include <TcpIp.h>
 #include <json.hpp>
 
+#include "TicTacToe.h"
 #include "core/CoreDefinitions.h"
 #include <cassert>
 
