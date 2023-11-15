@@ -10,6 +10,7 @@ TicTacToe::PlayerManager::PlayerManager()
 
 TicTacToe::PlayerManager::~PlayerManager()
 {
+   Clear();
 }
 
 void TicTacToe::PlayerManager::Init()

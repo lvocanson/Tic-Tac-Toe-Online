@@ -68,7 +68,6 @@ namespace TicTacToe
         std::vector<PlayerMove*> m_CurrentGame;
 
 
-        sf::Font m_Font;
     };
 }
 

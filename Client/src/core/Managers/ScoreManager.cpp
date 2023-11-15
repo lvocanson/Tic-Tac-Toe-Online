@@ -37,10 +37,7 @@ TicTacToe::ScoreManager::~ScoreManager()
 
 void TicTacToe::ScoreManager::Init()
 {
-    if (!m_Font.loadFromFile("resources/fonts/bold-font.ttf"))
-    {
-        assert(false, "Failed to load font");
-    }
+    
 }
 
 void TicTacToe::ScoreManager::Clear()
