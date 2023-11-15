@@ -38,6 +38,11 @@ namespace TcpIp
         return ss.str();
     }
 
+    TcpIpException::TcpIpException(const char* message, bool)
+        : std::runtime_error(message)
+    {
+    }
+
     TcpIpException::TcpIpException(const char* operation)
         : std::runtime_error(GetErrMsg(operation))
     {
@@ -98,7 +103,7 @@ namespace TcpIp
 
         // Check header
         if (!IsHeaderValid(header))
-            throw std::runtime_error("Received invalid header.");
+            throw TcpIpException("Received invalid header.", true);
 
         // Receive data
         size_t size = GetSizeFromHeader(header);
@@ -107,9 +112,12 @@ namespace TcpIp
 
         while (size > 0)
         {
-            iResult = recv(socket, buffer, bufferSize, 0);
+            int recvSize = size > bufferSize ? bufferSize : size;
+            iResult = recv(socket, buffer, recvSize, 0);
             if (iResult == SOCKET_ERROR)
                 throw TcpIpException("recv");
+            if (iResult != recvSize)
+                throw TcpIpException("Received data of unexpected size.", true);
 
             ss.write(buffer, iResult);
             size -= iResult;

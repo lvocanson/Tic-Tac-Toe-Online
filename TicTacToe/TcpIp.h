@@ -28,6 +28,7 @@ namespace TcpIp
     class TcpIpException : public std::runtime_error
     {
     public:
+        TcpIpException(const char* message, bool);
         /// <summary>
         /// Creates a TcpIpException with the last Winsock error.
         /// </summary>

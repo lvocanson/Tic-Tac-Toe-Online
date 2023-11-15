@@ -126,15 +126,20 @@ void ClientApp::CheckIfMouseHoverBoard()
             if (m_Window->IsMouseButtonPressed(sf::Mouse::Left))
             {
                 PlacePlayerPieceOnBoard(i);
+                TcpIpClient::GetInstance().Send("A piece has been placed at " + i);
 
                 const int winnerID = m_Board.IsThereAWinner();
                 if (winnerID != EMPTY_PIECE)
                 {
                     std::cout << "Player " << winnerID << " won!\n";
+                    TcpIpClient::GetInstance().Send("A player won ! " + winnerID);
                 }
 
                 if (m_Board.IsFull() || winnerID != EMPTY_PIECE)
+                {
                     ClearBoard();
+                    TcpIpClient::GetInstance().Send("It's a draw !");
+                }
 
                 SwitchPlayerTurn();
             }
