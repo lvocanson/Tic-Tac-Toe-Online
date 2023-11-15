@@ -53,7 +53,13 @@ public:
     /// <returns>True if a connection was accepted, false otherwise.</returns>
     bool AcceptPendingConnection();
     /// <summary>
+    /// Accept all pending connections.
+    /// </summary>
+    /// <returns>The number of connections accepted.</returns>
+    int AcceptAllPendingConnections();
+    /// <summary>
     /// Fetches pending data from the first client that has data to read.
+    /// If a client has closed the connection, the connection will be closed.
     /// </summary>
     /// <param name="ss">The stringstream to write the data to.</param>
     /// <param name="client">The client to respond to.</param>

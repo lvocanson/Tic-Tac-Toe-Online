@@ -115,6 +115,14 @@ bool TcpIpServer::AcceptPendingConnection()
     return false;
 }
 
+int TcpIpServer::AcceptAllPendingConnections()
+{
+    int count = 0;
+    while (AcceptPendingConnection())
+        count++;
+    return count;
+}
+
 bool TcpIpServer::FetchPendingData(std::stringstream& ss, Client& client)
 {
     WSANETWORKEVENTS networkEvents;
