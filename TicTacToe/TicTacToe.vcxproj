@@ -11,10 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="TcpIp.h" />
     <ClInclude Include="IDGenerator.h" />
     <ClInclude Include="TicTacToe.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="TcpIp.cpp" />
     <ClCompile Include="IDGenerator.cpp" />
     <ClCompile Include="TicTacToe.cpp" />
   </ItemGroup>

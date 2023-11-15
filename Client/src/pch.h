@@ -6,6 +6,9 @@
 */
 
 #include <iostream>
+#include <SFML/Graphics.hpp>
+#include <TcpIp.h>
+#include <json.hpp>
 
 #include "core/CoreDefinitions.h"
 
