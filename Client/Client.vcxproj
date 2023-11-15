@@ -98,6 +98,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\core\GraphicBoard.cpp" />
+    <ClCompile Include="src\core\Player.cpp" />
     <ClCompile Include="src\core\PlayerPiece.cpp" />
     <ClCompile Include="src\ClientMain.cpp" />
     <ClCompile Include="src\core\ClientApp.cpp" />
@@ -114,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\GraphicBoard.h" />
+    <ClInclude Include="src\core\Player.h" />
     <ClInclude Include="src\core\PlayerPiece.h" />
     <ClInclude Include="src\core\ClientApp.h" />
     <ClInclude Include="src\core\CoreDefinitions.h" />

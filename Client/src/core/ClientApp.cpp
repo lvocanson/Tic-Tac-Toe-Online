@@ -18,7 +18,7 @@ void ClientApp::Init()
     
     std::cout << "Hello World! I'm a client!\n";
 
-    m_Board = new Board();
+    m_Board.Init();
 
     m_PlayerOne.SetName("Player One");
     m_PlayerTwo.SetName("Player Two");
@@ -36,13 +36,13 @@ void ClientApp::Init()
 
 void ClientApp::DrawBoard()
 {
-    const int pieceSize = m_Board.GetPieceSize();
-    const int width = m_Board.GetWidth();
-    const int height = m_Board.GetHeight();
+    const float pieceSize = m_Board.GetPieceSize();
+    const size_t width = m_Board.GetWidth();
+    const size_t height = m_Board.GetHeight();
     const sf::Vector2f center = m_Window->GetCenter();
 
     // Draw the board - temp
-    for (size_t i = 0; i < m_Board.GetTotalSize(); ++i)
+    for (unsigned int i = 0; i < m_Board.GetTotalSize(); ++i)
     {
         auto* square = new sf::RectangleShape(sf::Vector2f(pieceSize, pieceSize));
         square->setFillColor(sf::Color::Color(51, 56, 63));
@@ -91,9 +91,9 @@ void ClientApp::Update(sf::Time delta)
 
 void ClientApp::CheckIfMouseHoverBoard()
 {
-    for (size_t i = 0; i < m_Board.GetTotalSize(); i++)
+    for (unsigned int i = 0; i < m_Board.GetTotalSize(); i++)
     {
-        if (m_Board[i].GetPlayerID() != EMPTY_PIECE) continue;
+        if (m_Board[i] != EMPTY_PIECE) continue;
 
         if (IsMouseHoverPiece(i))
         {
@@ -116,9 +116,9 @@ void ClientApp::CheckIfMouseHoverBoard()
     }
 }
 
-void ClientApp::PlacePlayerPieceOnBoard(size_t i)
+void ClientApp::PlacePlayerPieceOnBoard(unsigned int i)
 {
-    m_Board[i].SetPlayerPiece(m_IsPlayerOneTurn ? &m_PlayerOne : &m_PlayerTwo);
+    m_Board[i] = (m_IsPlayerOneTurn ? m_PlayerOne.GetPlayerID() : m_PlayerTwo.GetPlayerID());
 
     auto pos = sf::Vector2f( m_Board.GetGraphicPiece(i).GetPosition());
 
@@ -151,7 +151,7 @@ void ClientApp::ClearBoard()
     }
 
     m_GamePieces.clear();
-    m_Board.Clear();
+    m_Board.SetEmpty();
 }
 
 void ClientApp::SwitchPlayerTurn()
@@ -161,10 +161,10 @@ void ClientApp::SwitchPlayerTurn()
 }
 
 
-bool ClientApp::IsMouseHoverPiece(size_t i)
+bool ClientApp::IsMouseHoverPiece(unsigned int i)
 {
 	const sf::Vector2f mousePos = static_cast<sf::Vector2f>(m_Window->GetMousePosition());
-    int size = m_Board.GetPieceSize();
+    const float size = m_Board.GetPieceSize();
     const sf::Vector2f piecePosition = m_Board.GetGraphicPiece(i).GetPosition();
 
     return  mousePos.x > piecePosition.x &&
@@ -180,6 +180,5 @@ void ClientApp::Cleanup()
         RELEASE(drawable);
     }
 
-    RELEASE(m_Font);
     RELEASE(m_Window);
 }

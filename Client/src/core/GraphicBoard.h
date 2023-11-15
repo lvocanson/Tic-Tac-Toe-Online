@@ -1,14 +1,16 @@
 #pragma once
 #include "TicTacToe.h"
+#include "Player.h"
 
-class GraphicPiece : public TicTacToe::Piece
+
+class GraphicPiece
 {
 public:
 
     GraphicPiece();
-    ~GraphicPiece() override;
+    ~GraphicPiece();
 
-    void Clear() override;
+    void SetEmpty();
 
     void SetShape(sf::Shape* shape) { m_Shape = shape; };
     void SetPosition(sf::Vector2f position) const { m_Shape->setPosition(position); };
@@ -23,23 +25,22 @@ private:
 class GraphicBoard : public TicTacToe::Board
 {
 public:
-
-    GraphicBoard() : Board(3, 3, DEFAULT_WINNABLE_PIECES) {}
-    GraphicBoard(size_t width, size_t height, int winnablePieces, int piecePixelSize);
+    GraphicBoard() : GraphicBoard(DEFAULT_BOARD_ARGS, DEFAULT_PIECE_SIZE) {}
+    GraphicBoard(size_t width, size_t height, unsigned int alignementGoal, float piecePixelSize);
     ~GraphicBoard() override;
 
-    void Init() override;
+    void Init();
 
-    void AddPlayerPieceInBoard(int cell, const TicTacToe::Player* player, GraphicPiece* piece);
-    void RemovePlayerPieceInBoard(int cell);
+    void AddPlayerPieceInBoard(unsigned int cell, const Player* player, GraphicPiece* piece);
+    void RemovePlayerPieceInBoard(unsigned int cell);
 
-    GraphicPiece& GetGraphicPiece(int cell) { return *m_AllPiecesOnBoard[cell]; }
-    int GetPieceSize() const { return m_PiecePixelSize; }
+    GraphicPiece& GetGraphicPiece(unsigned int cell) { return *m_AllPiecesOnBoard[cell]; }
+    float GetPieceSize() const { return m_PiecePixelSize; }
 
 private:
 
-    int m_PiecePixelSize = DEFAULT_PIECE_SIZE;
-    std::map<int, GraphicPiece*> m_AllPiecesOnBoard;
+    float m_PiecePixelSize = DEFAULT_PIECE_SIZE;
+    std::map<unsigned int, GraphicPiece*> m_AllPiecesOnBoard;
 
 };
 
