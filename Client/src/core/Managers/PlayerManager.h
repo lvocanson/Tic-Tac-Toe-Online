@@ -17,9 +17,12 @@ namespace TicTacToe {
 
         void SwitchPlayerTurn();
 
-        void RegisterNewPlayer(std::string name);
+        void CreateNewPlayer(std::string name);
         void UnregisterPlayer(Player* player);
 
+        std::vector<Player*> GetAllPlayers() { return m_RegisteredPlayers; }
+        Player* GetPlayer(int index) { return m_RegisteredPlayers[index]; }
+        Player* GetCurrentPlayer() { return m_CurrentPlayer; }
         int GetPlayerCount() { return m_PlayerCount; }
 
     private:

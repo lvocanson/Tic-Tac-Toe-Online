@@ -4,7 +4,7 @@ class IManager
 {
 public:
 
-    virtual ~IManager() = 0;
+    virtual ~IManager() {};
 
     virtual void Init() = 0;
     virtual void Clear() = 0;

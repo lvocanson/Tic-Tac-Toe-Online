@@ -2,6 +2,10 @@
 
 TicTacToe::PlayerManager::PlayerManager()
 {
+    m_PlayerCount = 0;
+    m_RegisteredPlayers = std::vector<Player*>();
+    m_CurrentPlayerIndex = 0;
+    m_CurrentPlayer = nullptr;
 }
 
 TicTacToe::PlayerManager::~PlayerManager()
@@ -10,9 +14,7 @@ TicTacToe::PlayerManager::~PlayerManager()
 
 void TicTacToe::PlayerManager::Init()
 {
-    m_PlayerCount = 0;
-    m_RegisteredPlayers = std::vector<Player*>();
-    m_CurrentPlayerIndex = 0;
+
 }
 
 void TicTacToe::PlayerManager::Clear()
@@ -29,18 +31,17 @@ void TicTacToe::PlayerManager::Clear()
 
 void TicTacToe::PlayerManager::SwitchPlayerTurn()
 {
-    if (m_CurrentPlayerIndex == m_PlayerCount - 1)
+    m_CurrentPlayerIndex++;
+
+    if (m_CurrentPlayerIndex >= m_PlayerCount)
     {
-        m_CurrentPlayer = m_RegisteredPlayers[0];
+        m_CurrentPlayerIndex = 0;
     }
-    else
-    {
-        m_CurrentPlayerIndex++;
-        m_CurrentPlayer = m_RegisteredPlayers[m_CurrentPlayerIndex];
-    }
+
+    m_CurrentPlayer = m_RegisteredPlayers[m_CurrentPlayerIndex];
 }
 
-void TicTacToe::PlayerManager::RegisterNewPlayer(std::string name)
+void TicTacToe::PlayerManager::CreateNewPlayer(std::string name)
 {
     Player* newPlayer = new Player(name);
     m_RegisteredPlayers.push_back(newPlayer);
