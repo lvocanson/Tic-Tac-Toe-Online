@@ -1,13 +1,6 @@
 #include "ScoreManager.h"
-#include <cassert>
 
-TicTacToe::PlayerMove::PlayerMove(int playerID, int boardCell)
-{
-    PlayerID = playerID;
-    BoardCell = boardCell;
-}
-
-TicTacToe::GameData::GameData(PlayerData* winner, const std::vector<PlayerMove*>& allMoves)
+TicTacToe::GameData::GameData(const PlayerData* winner, const std::vector<PlayerMove>& allMoves)
 {
     Winner = winner;
     AllMoves = allMoves;
@@ -15,19 +8,14 @@ TicTacToe::GameData::GameData(PlayerData* winner, const std::vector<PlayerMove*>
 
 TicTacToe::GameData::~GameData()
 {
-    for (auto move : AllMoves)
-    {
-        RELEASE(move)
-    }
-
     AllMoves.clear();
 }
 
 TicTacToe::ScoreManager::ScoreManager()
 {
     m_GameHistory = std::vector<GameData*>();
-    m_CurrentGame = std::vector<PlayerMove*>();
-    m_PlayerScores = std::map<int, int>();
+    m_CurrentGame = std::vector<PlayerMove>();
+    m_PlayerScores = std::map<PieceID, unsigned int>();
 }
 
 TicTacToe::ScoreManager::~ScoreManager()
@@ -42,19 +30,9 @@ void TicTacToe::ScoreManager::Init()
 
 void TicTacToe::ScoreManager::Clear()
 {
-for (auto game : m_GameHistory)
+    for (auto game : m_GameHistory)
     {
         RELEASE(game)
-    }
-
-    for (auto move : m_CurrentGame)
-    {
-        RELEASE(move)
-    }
-
-    for (auto text : m_PlayerScoreTexts)
-    {
-        NULLPTR(text.second);
     }
 
     m_PlayerScores.clear();
@@ -62,42 +40,34 @@ for (auto game : m_GameHistory)
     m_GameHistory.clear();
 }
 
-void TicTacToe::ScoreManager::CreateScoreForPlayer(PlayerData* player, Window* window)
+void TicTacToe::ScoreManager::CreateScoreForPlayer(PlayerData* playerData, Window* window)
 {
-    m_PlayerScores.insert(std::pair<int, int>(player->PlayerID, 0));
-
-    auto* scoreText = new sf::Text();
-    scoreText->setFont(m_Font);
-    scoreText->setString(player->Name + " : ");
-    scoreText->setCharacterSize(24);
-    scoreText->setFillColor(sf::Color::White);
-    scoreText->setStyle(sf::Text::Bold);
-    scoreText->setPosition(75, window->GetHeight() * 0.5f - scoreText->getGlobalBounds().height + 25 * m_PlayerScores.size());
-
-    window->RegisterDrawable(scoreText);
-
-    m_PlayerScoreTexts.insert(std::pair<int, sf::Text*>(player->PlayerID, scoreText));
+    m_PlayerScores.insert(std::pair<int, int>(playerData->Id, 0));
 }
 
-void TicTacToe::ScoreManager::AddPlayerMove(int playerID, int lastCellPlayed)
+void TicTacToe::ScoreManager::AddPlayerMove(PieceID pieceID, unsigned int lastCellPlayed)
 {
-    m_CurrentGame.push_back(new PlayerMove(playerID, lastCellPlayed));
+    const PlayerMove playerMove = {
+        .PieceID = pieceID,
+        .BoardCell = lastCellPlayed
+    };
+
+    m_CurrentGame.push_back(playerMove);
 }
 
-void TicTacToe::ScoreManager::AddScoreToPlayer(PlayerData* player)
+void TicTacToe::ScoreManager::AddScoreToPlayer(const PlayerData* player)
 {
-    unsigned int id = player->PlayerID;
+    const PieceID id = player->Id;
 
     m_PlayerScores[id]++;
-    m_PlayerScoreTexts[id]->setString(player->Name + " : " + std::to_string(m_PlayerScores[id]));
 }
 
-int TicTacToe::ScoreManager::GetPlayerScore(int playerID)
+unsigned int TicTacToe::ScoreManager::GetPlayerScore(PieceID pieceID)
 {
-    return m_PlayerScores[playerID];
+    return m_PlayerScores[pieceID];
 }
 
-void TicTacToe::ScoreManager::SaveGame(PlayerData* winner)
+void TicTacToe::ScoreManager::SaveGame(const PlayerData* winner)
 {
     m_GameHistory.push_back(new GameData(winner, m_CurrentGame));
     ClearMoves();

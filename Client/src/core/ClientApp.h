@@ -1,8 +1,8 @@
 #pragma once
-#include "TicTacToe.h"
 #include "GraphicBoard.h"
 #include <SFML/System/Time.hpp>
 
+#include "Managers/GameStateUI.h"
 #include "Managers/ScoreManager.h"
 #include "Managers/PlayerManager.h"
 
@@ -39,12 +39,15 @@ public:
 private: // Methods
     /// Update the ClientApp. Called once per frame.
     void Update(sf::Time delta);
-    void SwitchPlayerTurn();
-    void PlacePlayerPieceOnBoard(unsigned int i);
 
-    void ClearBoard();
     void CheckIfMouseHoverBoard();
     bool IsMouseHoverPiece(unsigned int i);
+    void PlacePlayerPieceOnBoard(unsigned int cell);
+    void SetGraphicalPiece(unsigned cell, const Player* currentPlayer);
+    void SwitchPlayerTurn();
+
+    void ClearBoard();
+  
 
     /// Perform any cleanup tasks (e.g. delete pointers). Called before Run() returns.
     void Cleanup();
@@ -55,15 +58,13 @@ private: // Fields
     Window* m_Window = nullptr;
     GraphicBoard m_Board;
 
-    TicTacToe::PlayerManager m_PlayerManager;
+    PlayerManager m_PlayerManager;
     TicTacToe::ScoreManager m_ScoreManager;
 
     sf::Time m_PlayerTurnTimer = sf::seconds(0);
 
     std::vector<sf::Drawable*> m_GamePieces;
 
-    sf::Text* m_PlayerTurnText;
-    sf::Text* m_GameStateText;
+    GameStateUI* m_GameStateUI;
 
-    sf::Font m_Font;
 };

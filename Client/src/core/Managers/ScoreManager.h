@@ -2,35 +2,30 @@
 #include <map>
 #include <vector>
 
-#include "Player.h"
+#include "src/core/Window.h"
+#include "src/core/Player.h"
 #include "IManager.h"
-#include <src/core/Window.h>
+
 
 namespace TicTacToe
 {
-    class PlayerMove
+    struct PlayerMove
     {
-    public:
-
-        PlayerMove(int playerID, int boardCell);
-
-    private:
-
-        int PlayerID;
-        int BoardCell;
+        PieceID PieceID;
+        unsigned int BoardCell;
     };
 
     class GameData
     {
     public:
 
-        GameData(PlayerData* winner, const std::vector<PlayerMove*>& allMoves);
+        GameData(const PlayerData* winner, const std::vector<PlayerMove>& allMoves);
         ~GameData();
 
     private:
 
-        PlayerData* Winner;
-        std::vector<PlayerMove*> AllMoves;
+        const PlayerData* Winner;
+        std::vector<PlayerMove> AllMoves;
     };
 
     class ScoreManager : public IManager
@@ -43,13 +38,13 @@ namespace TicTacToe
         void Init() override;
         void Clear() override;
 
-        void CreateScoreForPlayer(PlayerData* player, Window* window);
+        void CreateScoreForPlayer(PlayerData* playerData, Window* window);
 
-        void AddPlayerMove(int playerID, int lastCellPlayed);
-        void AddScoreToPlayer(PlayerData* player);
-        void SaveGame(PlayerData* winner);
+        void AddPlayerMove(PieceID pieceID, unsigned int lastCellPlayed);
+        void AddScoreToPlayer(const PlayerData* player);
+        void SaveGame(const PlayerData* winner);
 
-        int GetPlayerScore(int playerID);
+        unsigned int GetPlayerScore(PieceID pieceID);
 
     private:
 
@@ -58,15 +53,13 @@ namespace TicTacToe
     private:
 
         // Player id -> score
-        std::map<int, int> m_PlayerScores;
-        std::map<int, sf::Text*> m_PlayerScoreTexts;
+        std::map<PieceID, unsigned int> m_PlayerScores;
 
         // List of all the local game history
         std::vector<GameData*> m_GameHistory;
 
         // List of all the moves of the current game
-        std::vector<PlayerMove*> m_CurrentGame;
-
+        std::vector<PlayerMove> m_CurrentGame;
 
     };
 }
