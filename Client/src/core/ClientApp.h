@@ -1,5 +1,8 @@
 #pragma once
 #include "src/core/StateMachine/StateMachine.h"
+#include "Managers/GameStateUI.h"
+#include "Managers/ScoreManager.h"
+#include "Managers/PlayerManager.h"
 
 class Window;
 
@@ -7,15 +10,18 @@ class ClientApp
 {
     // Private constructor for singleton
     ClientApp() = default;
-    ClientApp(const ClientApp&) = delete;
+    ClientApp(const ClientApp &) = delete;
     ~ClientApp() = default;
 
 public:
     /// <summary>
     /// Get the singleton instance of the ClientApp. The instance is created on the first call to this method.
     /// </summary>
-    static ClientApp& GetInstance() { static ClientApp instance; return instance; }
-
+    static ClientApp &GetInstance()
+    {
+        static ClientApp instance;
+        return instance;
+    }
 
     /// <summary>
     /// Initialize the ClientApp. This method must be called before calling Run().
@@ -39,7 +45,6 @@ private: // Methods
 
 private: // Fields
     bool m_IsRunning = false;
-    Window* m_Window = nullptr;
-    StateMachine* m_StateMachine;
-
+    Window *m_Window = nullptr;
+    StateMachine *m_StateMachine;
 };

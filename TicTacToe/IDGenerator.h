@@ -1,10 +1,12 @@
 #pragma once
+#include "TicTacToe.h"
+
 class IDGenerator
 {
 public:
-    static int  GenerateID()
+    static TicTacToe::PieceID  GenerateID()
     {
-        static int id = 1;
+        static TicTacToe::PieceID id = 1;
         return id++;
     }
 };

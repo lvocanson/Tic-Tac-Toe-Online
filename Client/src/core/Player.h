@@ -1,6 +1,11 @@
 #pragma once
 #include <string>
-#include "TicTacToe.h"
+
+struct PlayerData
+{
+    std::string Name;
+    TicTacToe::PieceID Id;
+};
 
 class Player
 {
@@ -11,17 +16,15 @@ public:
 	/// <summary>
 	/// Init a player with a name
 	/// </summary>
-	Player(std::string name);
+	Player(const std::string& name);
 	~Player();
 
-	void SetName(const std::string& name) { m_Name = name; }
-
-	TicTacToe::Piece GetPlayerID() const { return m_ID; }
-	std::string GetName() const { return m_Name; }
+	TicTacToe::PieceID GetPlayerID() const { return m_Data.Id; }
+	std::string GetName() const { return m_Data.Name; }
+	PlayerData* GetData() { return &m_Data; }
 
 private:
 
-	std::string m_Name;
-	TicTacToe::Piece m_ID;
+	PlayerData m_Data;
 
 };

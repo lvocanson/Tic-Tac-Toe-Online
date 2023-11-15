@@ -27,7 +27,10 @@
     <ClCompile Include="src\core\Window.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\PlayerPiece.cpp">
+    <ClCompile Include="src\tcp-ip\TcpIpClient.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\PlayerPieceShape.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\core\GraphicBoard.cpp">
@@ -48,6 +51,21 @@
     <ClCompile Include="src\core\StateMachine\MenuState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\Managers\ScoreManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Managers\PlayerManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Managers\UIStateManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Managers\FontRegistry.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Managers\GameStateUI.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
     <ClCompile Include="src\core\Player.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -65,10 +83,13 @@
     <ClInclude Include="src\core\Window.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\tcp-ip\TcpIpClient.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
     <ClInclude Include="src\core\CoreDefinitions.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\PlayerPiece.h">
+    <ClInclude Include="src\core\PlayerPieceShape.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\GraphicBoard.h">
@@ -92,11 +113,32 @@
     <ClInclude Include="src\core\StateMachine\MenuState.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\core\Managers\ScoreManager.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Managers\PlayerManager.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Managers\IManager.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Managers\UIStateManager.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Managers\FontRegistry.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Managers\GameStateUI.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
     <ClInclude Include="src\core\Player.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Components\ButtonComponent.h">
       <Filter>Headers</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\fonts\bold-font.ttf" />
   </ItemGroup>
 </Project>
