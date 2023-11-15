@@ -12,8 +12,8 @@ void ServerApp::Run()
     Client client;
     char kbhit = 0;
 
-    std::cout << "Press Q to shut down the server." << std::endl;
-    while (!(kbhit == 'q' || kbhit == 'Q'))
+    std::cout << "Press ESC to shut down the server." << std::endl;
+    while (!(kbhit == 27))
     {
         try
         {
