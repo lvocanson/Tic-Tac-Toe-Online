@@ -126,7 +126,6 @@ void ClientApp::CheckIfMouseHoverBoard()
             if (m_Window->IsMouseButtonPressed(sf::Mouse::Left))
             {
                 PlacePlayerPieceOnBoard(i);
-                TcpIpClient::GetInstance().Send("A piece has been placed at " + i);
 
                 const int winnerID = m_Board.IsThereAWinner();
                 if (winnerID != EMPTY_PIECE)
@@ -150,6 +149,11 @@ void ClientApp::CheckIfMouseHoverBoard()
 void ClientApp::PlacePlayerPieceOnBoard(unsigned int i)
 {
     m_Board[i] = (m_IsPlayerOneTurn ? m_PlayerOne.GetPlayerID() : m_PlayerTwo.GetPlayerID());
+
+    int row = i / m_Board.GetWidth();
+    int col = i % m_Board.GetWidth();
+    std::string playerID = std::to_string((m_IsPlayerOneTurn ? m_PlayerOne.GetPlayerID() : m_PlayerTwo.GetPlayerID()));
+    TcpIpClient::GetInstance().Send("A piece has been placed at row: " + std::to_string(row) + "||col: " + std::to_string(col) + " by player " + playerID);
 
     auto pos = sf::Vector2f( m_Board.GetGraphicPiece(i).GetPosition());
 
@@ -189,6 +193,10 @@ void ClientApp::SwitchPlayerTurn()
 {
     m_IsPlayerOneTurn = !m_IsPlayerOneTurn;
     m_PlayerTurnTimer = sf::seconds(PLAYER_TURN_DELAY);
+    if(m_IsPlayerOneTurn)
+        TcpIpClient::GetInstance().Send(m_PlayerOne.GetName() + " Turn");
+    else
+        TcpIpClient::GetInstance().Send(m_PlayerTwo.GetName() + " Turn");
 }
 
 
