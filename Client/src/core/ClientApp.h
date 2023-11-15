@@ -56,15 +56,14 @@ private: // Fields
     bool m_IsRunning = false;
 
     Window* m_Window = nullptr;
-    GraphicBoard m_Board;
+    GameStateUI* m_GameStateUI = nullptr;
 
+    GraphicBoard m_Board;
     PlayerManager m_PlayerManager;
     TicTacToe::ScoreManager m_ScoreManager;
 
     sf::Time m_PlayerTurnTimer = sf::seconds(0);
 
     std::vector<sf::Drawable*> m_GamePieces;
-
-    GameStateUI* m_GameStateUI;
 
 };

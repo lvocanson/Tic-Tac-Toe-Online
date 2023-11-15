@@ -2,13 +2,11 @@
 
 Player* PlayerManager::m_CurrentPlayer = nullptr;
 
-PlayerManager::PlayerManager()
+PlayerManager::PlayerManager() : m_PlayerCount(0), m_CurrentPlayerIndex(0), m_IsPlayerOneTurn(true)
 {
-    m_PlayerCount = 0;
     m_RegisteredPlayers = std::vector<Player*>();
-    m_CurrentPlayerIndex = 0;
-    m_CurrentPlayer = nullptr;
 }
+
 
 PlayerManager::~PlayerManager()
 {
@@ -46,11 +44,11 @@ void PlayerManager::SwitchPlayerTurn()
     m_IsPlayerOneTurn = !m_IsPlayerOneTurn;
 }
 
-void PlayerManager::CreateNewPlayer(std::string name)
+void PlayerManager::CreateNewPlayer(const std::string& name, const sf::Color color)
 {
-    Player* newPlayer = new Player(name);
-    m_RegisteredPlayers.push_back(newPlayer);
+    const auto newPlayer = new Player(name, color);
 
+    m_RegisteredPlayers.push_back(newPlayer);
     m_PlayerCount++;
 
     if (m_CurrentPlayer == nullptr)
