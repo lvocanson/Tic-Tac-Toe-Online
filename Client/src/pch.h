@@ -8,6 +8,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <TcpIp.h>
+#include <json.hpp>
 
 #pragma region Our defines
 
