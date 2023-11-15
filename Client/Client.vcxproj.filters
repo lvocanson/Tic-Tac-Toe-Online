@@ -39,6 +39,15 @@
     <ClCompile Include="src\core\Managers\PlayerManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\Managers\UIStateManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Managers\FontRegistry.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Managers\GameStateUI.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h">
@@ -66,6 +75,15 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Managers\IManager.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Managers\UIStateManager.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Managers\FontRegistry.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Managers\GameStateUI.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
