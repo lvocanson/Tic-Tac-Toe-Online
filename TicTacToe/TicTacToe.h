@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-
 #include "Player.h"
 
 constexpr int DEFAULT_WINNABLE_PIECES = 3;

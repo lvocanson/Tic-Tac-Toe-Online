@@ -5,7 +5,7 @@
 #include "Player.h"
 #include "TicTacToe.h"
 #include "Window.h"
-#include "src/core/PlayerPiece.h"
+#include "src/core/PlayerPieceShape.h"
 
 using namespace TicTacToe;
 
@@ -172,9 +172,8 @@ void ClientApp::PlacePlayerPieceOnBoard(size_t i)
     pos.x += static_cast<float>(m_Board.GetPieceSize()) * 0.5f;
     pos.y += static_cast<float>(m_Board.GetPieceSize()) * 0.5f;
 
-    auto piece = new GraphicPiece(currentPlayer->GetGraphicPiece());
-
-    if (m_IsPlayerOneTurn)
+    // TODO: rework this shit
+    if (m_PlayerManager.IsPlayerOneTurn())
     {
         auto piece = new PlayerCircleShape(currentPlayer);
         piece->setPosition(pos);
@@ -212,7 +211,7 @@ void ClientApp::SwitchPlayerTurn()
     m_PlayerTurnText->setString(m_PlayerManager.GetCurrentPlayer()->GetName() + " turn");
 
     // TODO : Change color based on player turn
-    if (m_IsPlayerOneTurn)
+    if (m_PlayerManager.IsPlayerOneTurn())
         m_PlayerTurnText->setFillColor(sf::Color::Color(250, 92, 12));
     else 
         m_PlayerTurnText->setFillColor(sf::Color::Color(255, 194, 0));

@@ -39,6 +39,8 @@ void TicTacToe::PlayerManager::SwitchPlayerTurn()
     }
 
     m_CurrentPlayer = m_RegisteredPlayers[m_CurrentPlayerIndex];
+
+    m_IsPlayerOneTurn = !m_IsPlayerOneTurn;
 }
 
 void TicTacToe::PlayerManager::CreateNewPlayer(std::string name)

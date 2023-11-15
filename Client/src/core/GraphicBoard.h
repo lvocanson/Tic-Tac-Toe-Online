@@ -1,5 +1,6 @@
 #pragma once
 #include "TicTacToe.h"
+#include <SFML/Graphics.hpp>
 
 class GraphicPiece : public TicTacToe::Piece
 {

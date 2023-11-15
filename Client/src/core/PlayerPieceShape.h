@@ -1,13 +1,12 @@
 #pragma once
 #include "Player.h"
 
-class TicTacToe::Player;
 
-class PlayerPiece
+class PlayerPieceShape
 {
 public:
 
-	PlayerPiece(TicTacToe::Player* player);
+    PlayerPieceShape(TicTacToe::Player* player);
 
     int GetPlayerID() const { return m_PlayerID; }
 
@@ -17,7 +16,7 @@ protected:
 
 };
 
-class PlayerCrossShape final : public PlayerPiece, public sf::RectangleShape
+class PlayerCrossShape final : public PlayerPieceShape, public sf::RectangleShape
 {
 public:
 
@@ -25,10 +24,11 @@ public:
 
 };
 
-class PlayerCircleShape final : public sf::CircleShape, public PlayerPiece
+class PlayerCircleShape final : public sf::CircleShape, public PlayerPieceShape
 {
 public:
 
     PlayerCircleShape(TicTacToe::Player* player);
 };
+
 

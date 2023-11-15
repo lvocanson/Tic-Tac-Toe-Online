@@ -27,7 +27,7 @@
     <ClCompile Include="src\core\Window.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\PlayerPiece.cpp">
+    <ClCompile Include="src\core\PlayerPieceShape.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\core\GraphicBoard.cpp">
@@ -53,7 +53,7 @@
     <ClInclude Include="src\core\CoreDefinitions.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\PlayerPiece.h">
+    <ClInclude Include="src\core\PlayerPieceShape.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\GraphicBoard.h">

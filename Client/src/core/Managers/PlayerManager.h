@@ -20,6 +20,9 @@ namespace TicTacToe {
         void CreateNewPlayer(std::string name);
         void UnregisterPlayer(Player* player);
 
+        // TODO: rework this
+        bool IsPlayerOneTurn() { return m_IsPlayerOneTurn; }
+
         std::vector<Player*> GetAllPlayers() { return m_RegisteredPlayers; }
         Player* GetPlayer(int index) { return m_RegisteredPlayers[index]; }
         Player* GetCurrentPlayer() { return m_CurrentPlayer; }
@@ -33,5 +36,7 @@ namespace TicTacToe {
         int m_PlayerCount;
         int m_CurrentPlayerIndex;
 
+        // TODO: rework this
+        bool m_IsPlayerOneTurn;
     };
 };
