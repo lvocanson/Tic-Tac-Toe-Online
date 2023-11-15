@@ -8,6 +8,7 @@
 #include <iostream>
 
 #include "core/CoreDefinitions.h"
+#include <cassert>
 
 #pragma region SFML
 
