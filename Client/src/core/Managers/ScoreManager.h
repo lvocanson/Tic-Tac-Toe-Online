@@ -7,60 +7,58 @@
 #include "IManager.h"
 
 
-namespace TicTacToe
+
+struct PlayerMove
 {
-    struct PlayerMove
-    {
-        PieceID PieceID;
-        unsigned int BoardCell;
-    };
+    TicTacToe::PieceID PieceID;
+    unsigned int BoardCell;
+};
 
-    class GameData
-    {
-    public:
+class GameData
+{
+public:
 
-        GameData(const PlayerData* winner, const std::vector<PlayerMove>& allMoves);
-        ~GameData();
+    GameData(const PlayerData* winner, const std::vector<PlayerMove>& allMoves);
+    ~GameData();
 
-    private:
+private:
 
-        const PlayerData* Winner;
-        std::vector<PlayerMove> AllMoves;
-    };
+    const PlayerData* Winner;
+    std::vector<PlayerMove> AllMoves;
+};
 
-    class ScoreManager : public IManager
-    {
-    public:
+class ScoreManager : public IManager
+{
+public:
 
-        ScoreManager();
-        ~ScoreManager() override;
+    ScoreManager();
+    ~ScoreManager() override;
 
-        void Init() override;
-        void Clear() override;
+    void Init() override;
+    void Clear() override;
 
-        void CreateScoreForPlayer(PlayerData* playerData, Window* window);
+    void CreateScoreForPlayer(PlayerData* playerData, Window* window);
 
-        void AddPlayerMove(PieceID pieceID, unsigned int lastCellPlayed);
-        void AddScoreToPlayer(const PlayerData* player);
-        void SaveGame(const PlayerData* winner);
+    void AddPlayerMove(TicTacToe::PieceID pieceID, unsigned int lastCellPlayed);
+    void AddScoreToPlayer(const PlayerData& player);
+    void SaveGame(const PlayerData* winner);
 
-        unsigned int GetPlayerScore(PieceID pieceID);
+    unsigned int GetPlayerScore(TicTacToe::PieceID pieceID);
 
-    private:
+private:
 
-        void ClearMoves();
+    void ClearMoves();
 
-    private:
+private:
 
-        // Player id -> score
-        std::map<PieceID, unsigned int> m_PlayerScores;
+    // Player id -> score
+    std::map<TicTacToe::PieceID, unsigned int> m_PlayerScores;
 
-        // List of all the local game history
-        std::vector<GameData*> m_GameHistory;
+    // List of all the local game history
+    std::vector<GameData*> m_GameHistory;
 
-        // List of all the moves of the current game
-        std::vector<PlayerMove> m_CurrentGame;
+    // List of all the moves of the current game
+    std::vector<PlayerMove> m_CurrentGame;
 
-    };
-}
+};
 

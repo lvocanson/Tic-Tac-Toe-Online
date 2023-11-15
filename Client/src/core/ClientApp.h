@@ -60,7 +60,7 @@ private: // Fields
 
     GraphicBoard m_Board;
     PlayerManager m_PlayerManager;
-    TicTacToe::ScoreManager m_ScoreManager;
+    ScoreManager m_ScoreManager;
 
     sf::Time m_PlayerTurnTimer = sf::seconds(0);
 
