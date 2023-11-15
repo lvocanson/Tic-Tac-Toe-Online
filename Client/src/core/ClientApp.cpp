@@ -25,14 +25,14 @@ void ClientApp::Init()
     m_PlayerManager.CreateNewPlayer("Player One");
     m_PlayerManager.CreateNewPlayer("Player Two");
 
-    //m_GameStateUI->Init();
+    m_GameStateUI->Init();
 
     for (const auto& player : m_PlayerManager.GetAllPlayers())
     {
         m_ScoreManager.CreateScoreForPlayer(player->GetData(), m_Window);
     }
 
-    //m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
+    m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
 
     DrawBoard();
 }
@@ -254,4 +254,7 @@ void ClientApp::Cleanup()
     }
 
     RELEASE(m_Window);
+    RELEASE(m_GameStateUI);
+
+    FontRegistry::ClearFonts();
 }

@@ -16,7 +16,7 @@ sf::Font* FontRegistry::GetFont(const std::string& fontName)
 
 void FontRegistry::LoadFont(const std::string& fontName)
 {
-    sf::Font* font = new sf::Font;
+    auto* font = new sf::Font;
 
     if (!font->loadFromFile("resources/fonts/" + fontName + ".ttf"))
     {
@@ -24,4 +24,14 @@ void FontRegistry::LoadFont(const std::string& fontName)
     }
 
     m_Fonts.insert(std::pair(fontName, font));
+}
+
+void FontRegistry::ClearFonts()
+{
+    for (auto& pair : m_Fonts)
+    {
+        RELEASE(pair.second)
+    }
+
+    m_Fonts.clear(); // Efface le contenu du map
 }

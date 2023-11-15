@@ -18,9 +18,9 @@ void UIStateManager::Init()
 
 void UIStateManager::Clear()
 {
-    for (const auto& text : m_Texts)
+    for (auto text : m_Texts)
     {
-        delete text;
+        NULLPTR(text);
     }
 
     m_Texts.clear();
