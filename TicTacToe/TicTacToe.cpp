@@ -1,5 +1,5 @@
 #include "TicTacToe.h"
-
+#include "Player.h"
 #include <iostream>
 
 
@@ -11,7 +11,12 @@
 
 namespace TicTacToe
 {
-	Board::Board(size_t width, size_t height, int winnablePieces) : m_Width(width), m_Height(height), m_Size(width* height), m_WinnablePieces(winnablePieces)
+	Board::Board(size_t width, size_t height, unsigned int alignementGoal)
+		: m_Width(width)
+		, m_Height(height)
+		, m_Size(width* height)
+		, m_AlignementGoal(alignementGoal)
+		, m_Board(new Piece[m_Size])
 	{
 	}
 
@@ -19,11 +24,6 @@ namespace TicTacToe
 	{
 	    delete[] m_Board;
 		m_Board = nullptr;
-	}
-
-	void Board::Init() 
-	{
-		m_Board = new Piece[m_Size];
 	}
 
 	bool Board::IsFull() const
@@ -38,136 +38,27 @@ namespace TicTacToe
 	    return true;
 	}
 
-	void Board::Clear()
+	Piece& Board::GetWinner() const
+	{
+		// TODO: Implement
+		return m_Board[0];
+	}
+
+	void Board::Resize(size_t width, size_t height)
+	{
+		m_Width = width;
+		m_Height = height;
+		m_Size = width * height;
+		delete[] m_Board;
+		m_Board = new Piece[m_Size];
+		SetEmpty();
+	}
+
+	void Board::SetEmpty()
 	{
 	    for (int i = 0; i < m_Size; i++)
 	    {
-			m_Board[i].Clear();
+			m_Board[i].SetEmpty();
 	    }
 	}
-
-	// TODO: Needs to be reworked cauz it doesn't work if we change the grid size and the win condition
-	int Board::IsThereAWinner() const
-	{
-		int winner = EMPTY_PIECE;
-		int continuousPiecesCount = 0;
-
-		for (int i = 0; i < m_Size; i++)
-		{
-			if (m_Board[i].GetPlayerID() == EMPTY_PIECE)
-			{
-				continue;
-			}
-
-			// Check for horizontal win
-			if (i % m_Width == 0)
-			{
-				continuousPiecesCount = 0;
-				for (int j = 0; j < m_Width; j++)
-				{
-					if (m_Board[i + j].GetPlayerID() != m_Board[i].GetPlayerID())
-					{
-						break;
-					}
-					else 
-					{
-						continuousPiecesCount++;
-						if (continuousPiecesCount >= m_WinnablePieces)
-						{
-						    return m_Board[i].GetPlayerID();
-                        }
-					}
-				}
-			}
-
-			// Check for vertical win
-			if (i < m_Width)
-			{
-				continuousPiecesCount = 0;
-
-				for (size_t j = 0; j < m_Size; j += m_Width)
-				{
-					if (m_Board[i + j].GetPlayerID() != m_Board[i].GetPlayerID())
-					{
-						break;
-					}
-					else
-					{
-						continuousPiecesCount++;
-						if (continuousPiecesCount == m_WinnablePieces)
-						{
-							return m_Board[i].GetPlayerID();
-						}
-					}
-				}
-			}
-
-			// Check for top-left diagonal win
-			if (i == 0)
-			{
-				continuousPiecesCount = 0;
-
-				for (size_t j = 0; j < m_Size; j += m_Width + 1)
-				{
-					if (m_Board[i + j].GetPlayerID() != m_Board[i].GetPlayerID())
-					{
-						break;
-					}
-					else
-					{
-						continuousPiecesCount++;
-						if (continuousPiecesCount == m_WinnablePieces)
-						{
-							return m_Board[i].GetPlayerID();
-						}
-					}
-				}
-			}
-
-			// Check  for top-right diagonal win
-			if (i == m_Width - 1)
-			{
-				continuousPiecesCount = 0;
-
-				for (int j = 0; j < m_Size - 1; j += m_Width - 1)
-				{
-					if (m_Board[i + j].GetPlayerID() != m_Board[i].GetPlayerID())
-					{
-						break;
-					}
-					else
-					{
-						continuousPiecesCount++;
-						if (continuousPiecesCount == m_WinnablePieces)
-						{
-							return m_Board[i].GetPlayerID();
-						}
-					}
-				}
-			}
-		}
-
-		return EMPTY_PIECE;
-	}
-
-	Piece::Piece() : m_PlayerID(EMPTY_PIECE)
-	{
-
-	}
-
-	Piece::~Piece()
-	{
-		Piece::Clear();
-	}
-
-	void Piece::SetPlayerPiece(const Player* player)
-	{
-		m_PlayerID = player->GetPlayerID();
-	}
-
-	void Piece::Clear()
-	{
-		m_PlayerID = EMPTY_PIECE;
-	}
-
 }

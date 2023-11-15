@@ -24,9 +24,9 @@ void ClientApp::Init()
 
 void ClientApp::DrawBoard()
 {
-    const int pieceSize = m_Board.GetPieceSize();
-    const int width = m_Board.GetWidth();
-    const int height = m_Board.GetHeight();
+    const float pieceSize = m_Board.GetPieceSize();
+    const size_t width = m_Board.GetWidth();
+    const size_t height = m_Board.GetHeight();
     const sf::Vector2f center = m_Window->GetCenter();
 
     // Draw the board - temp
@@ -139,7 +139,7 @@ void ClientApp::ClearBoard()
     }
 
     m_GamePieces.clear();
-    m_Board.Clear();
+    m_Board.SetEmpty();
 }
 
 void ClientApp::SwitchPlayerTurn()

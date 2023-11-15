@@ -2,13 +2,13 @@
 #include "GraphicBoard.h"
 
 
-GraphicBoard::GraphicBoard(size_t width, size_t height, unsigned int winnablePieces, unsigned int piecePixelSize) : Board(width, height, winnablePieces), m_PiecePixelSize(piecePixelSize)
+GraphicBoard::GraphicBoard(size_t width, size_t height, unsigned int winnablePieces, float piecePixelSize) : Board(width, height, winnablePieces), m_PiecePixelSize(piecePixelSize)
 {
 }
 
 GraphicBoard::~GraphicBoard()
 {
-    Clear();
+    SetEmpty();
 
     for (auto& piece : m_AllPiecesOnBoard)
     {
@@ -19,8 +19,6 @@ GraphicBoard::~GraphicBoard()
 
 void GraphicBoard::Init()
 {
-    Board::Init();
-
     for (int i = 0; i < m_Size; i++)
     {
         m_AllPiecesOnBoard.insert(std::pair(i, new GraphicPiece()));
@@ -36,7 +34,7 @@ void GraphicBoard::AddPlayerPieceInBoard(unsigned int cell, const TicTacToe::Pla
 void GraphicBoard::RemovePlayerPieceInBoard(unsigned int cell)
 {
     m_AllPiecesOnBoard[cell] = nullptr;
-    m_Board[cell].Clear();
+    m_Board[cell].SetEmpty();
 }
 
 GraphicPiece::GraphicPiece() : m_Shape(nullptr)
@@ -49,9 +47,9 @@ GraphicPiece::~GraphicPiece()
 
 }
 
-void GraphicPiece::Clear()
+void GraphicPiece::SetEmpty()
 {
-    Piece::Clear();
+    Piece::SetEmpty();
 
     NULLPTR(m_Shape);
 }

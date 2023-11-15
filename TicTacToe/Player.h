@@ -2,7 +2,7 @@
 #include <string>
 
 #define EMPTY_PIECE (-1)
-#define DEFAULT_PIECE_SIZE (150)
+#define DEFAULT_PIECE_SIZE (150.f)
 
 namespace TicTacToe
 {
@@ -21,13 +21,13 @@ namespace TicTacToe
 
 		void SetName(const std::string& name) { m_Name = name; }
 
-		int GetPlayerID() const { return m_PlayerID; }
+		int GetPlayerID() const { return m_ID; }
 		std::string GetName() const { return m_Name; }
 
 	private:
 
 		std::string m_Name;
-		int m_PlayerID;
+		int m_ID;
 
 	};
 

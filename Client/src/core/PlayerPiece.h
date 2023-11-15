@@ -9,11 +9,11 @@ public:
 
 	PlayerPiece(TicTacToe::Player* player);
 
-    int GetPlayerID() const { return m_PlayerID; }
+    int GetPlayerID() const { return m_ID; }
 
 protected:
 
-    int m_PlayerID;
+    int m_ID;
 
 };
 
