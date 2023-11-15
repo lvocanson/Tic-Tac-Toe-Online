@@ -79,7 +79,7 @@ void ClientApp::Update(sf::Time delta)
 
 void ClientApp::CheckIfMouseHoverBoard()
 {
-    for (size_t i = 0; i < m_Board.GetTotalSize(); i++)
+    for (unsigned int i = 0; i < m_Board.GetTotalSize(); i++)
     {
         if (m_Board[i] != EMPTY_PIECE) continue;
 
@@ -152,7 +152,7 @@ void ClientApp::SwitchPlayerTurn()
 bool ClientApp::IsMouseHoverPiece(unsigned int i)
 {
 	const sf::Vector2f mousePos = static_cast<sf::Vector2f>(m_Window->GetMousePosition());
-    int size = m_Board.GetPieceSize();
+    const float size = m_Board.GetPieceSize();
     const sf::Vector2f piecePosition = m_Board.GetGraphicPiece(i).GetPosition();
 
     return  mousePos.x > piecePosition.x &&

@@ -41,8 +41,8 @@ namespace TicTacToe
 	// TODO: Needs to be reworked cauz it doesn't work if we change the grid size and the win condition
 	Piece Board::IsThereAWinner() const
 	{
-		int winner = EMPTY_PIECE;
-		int continuousPiecesCount = 0;
+		Piece winner = EMPTY_PIECE;
+		unsigned int continuousPiecesCount = 0;
 
 		for (int i = 0; i < m_Size; i++)
 		{
@@ -77,7 +77,7 @@ namespace TicTacToe
 			{
 				continuousPiecesCount = 0;
 
-				for (int j = 0; j < m_Size; j += m_Width)
+				for (size_t j = 0; j < m_Size; j += m_Width)
 				{
 					if (m_Board[i + j] != m_Board[i])
 					{
@@ -99,7 +99,7 @@ namespace TicTacToe
 			{
 				continuousPiecesCount = 0;
 
-				for (int j = 0; j < m_Size; j += m_Width + 1)
+				for (size_t j = 0; j < m_Size; j += m_Width + 1)
 				{
 					if (m_Board[i + j] != m_Board[i])
 					{
@@ -121,7 +121,7 @@ namespace TicTacToe
 			{
 				continuousPiecesCount = 0;
 
-				for (int j = 0; j < m_Size - 1; j += m_Width - 1)
+				for (size_t j = 0; j < m_Size - 1; j += m_Width - 1)
 				{
 					if (m_Board[i + j] != m_Board[i])
 					{

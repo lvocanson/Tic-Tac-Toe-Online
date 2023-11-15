@@ -16,7 +16,7 @@ Window::~Window()
 void Window::Create(const char* title, unsigned int width, unsigned int height)
 {
     sf::ContextSettings settings;
-    settings.antialiasingLevel = 4.0;
+    settings.antialiasingLevel = 4;
 
     m_Window->create(sf::VideoMode(width, height), title, sf::Style::Close, settings);
     m_Window->setVerticalSyncEnabled(true);
