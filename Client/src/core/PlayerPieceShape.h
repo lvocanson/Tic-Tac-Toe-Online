@@ -8,11 +8,11 @@ public:
 
     PlayerPieceShape(TicTacToe::Player* player);
 
-    int GetPlayerID() const { return m_PlayerID; }
+    int GetPlayerID() const { return m_ID; }
 
 protected:
 
-    int m_PlayerID;
+    int m_ID;
 
 };
 
@@ -20,7 +20,7 @@ class PlayerCrossShape final : public PlayerPieceShape, public sf::RectangleShap
 {
 public:
 
-    PlayerCrossShape(TicTacToe::Player* player);
+    PlayerCrossShape(Player* player);
 
 };
 
@@ -28,7 +28,7 @@ class PlayerCircleShape final : public sf::CircleShape, public PlayerPieceShape
 {
 public:
 
-    PlayerCircleShape(TicTacToe::Player* player);
+    PlayerCircleShape(Player* player);
 };
 
 

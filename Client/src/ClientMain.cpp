@@ -3,7 +3,7 @@
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) && !defined(__CYGWIN__)
 
 // Entry point for a Windows application (unicode)
-int wWinMain()
+int wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
 {
 #if defined(DEBUG) | defined(_DEBUG)
     // Enable run-time memory check for debug builds.

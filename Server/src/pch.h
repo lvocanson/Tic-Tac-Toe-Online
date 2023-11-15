@@ -6,6 +6,10 @@
 */
 
 #include <iostream>
+#include <TcpIp.h>
+#include <vector>
+#include <algorithm>
+#include <json.hpp>
 
 #pragma region Our defines
 

@@ -95,14 +95,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\core\ServerApp.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\ServerMain.cpp" />
+    <ClCompile Include="src\tcp-ip\TcpIpServer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\ServerApp.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\tcp-ip\TcpIpServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

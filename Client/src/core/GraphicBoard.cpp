@@ -2,13 +2,13 @@
 #include "GraphicBoard.h"
 
 
-GraphicBoard::GraphicBoard(size_t width, size_t height, int winnablePieces, int piecePixelSize) : Board(width, height, winnablePieces), m_PiecePixelSize(piecePixelSize)
+GraphicBoard::GraphicBoard(size_t width, size_t height, unsigned int winnablePieces, float piecePixelSize) : Board(width, height, winnablePieces), m_PiecePixelSize(piecePixelSize)
 {
 }
 
 GraphicBoard::~GraphicBoard()
 {
-    Clear();
+    SetEmpty();
 
     for (auto& piece : m_AllPiecesOnBoard)
     {
@@ -19,24 +19,22 @@ GraphicBoard::~GraphicBoard()
 
 void GraphicBoard::Init()
 {
-    Board::Init();
-
-    for (int i = 0; i < m_Size; i++)
+    for (unsigned int i = 0; i < m_Size; i++)
     {
         m_AllPiecesOnBoard.insert(std::pair(i, new GraphicPiece()));
     }
 }
 
-void GraphicBoard::AddPlayerPieceInBoard(int cell, const TicTacToe::Player* player, GraphicPiece* piece)
+void GraphicBoard::AddPlayerPieceInBoard(unsigned int cell, const Player* player, GraphicPiece* piece)
 {
     m_AllPiecesOnBoard[cell] = piece;
-    m_Board[cell].SetPlayerPiece(player);
+    m_Board[cell] = player->GetPlayerID();
 }
 
-void GraphicBoard::RemovePlayerPieceInBoard(int cell)
+void GraphicBoard::RemovePlayerPieceInBoard(unsigned int cell)
 {
-    m_AllPiecesOnBoard[cell] = nullptr;
-    m_Board[cell].Clear();
+    m_AllPiecesOnBoard[cell]->SetEmpty();
+    m_Board[cell] = TicTacToe::EMPTY_PIECE;
 }
 
 GraphicPiece::GraphicPiece() : m_Shape(nullptr)
@@ -49,9 +47,7 @@ GraphicPiece::~GraphicPiece()
 
 }
 
-void GraphicPiece::Clear()
+void GraphicPiece::SetEmpty()
 {
-    Piece::Clear();
-
     NULLPTR(m_Shape);
 }

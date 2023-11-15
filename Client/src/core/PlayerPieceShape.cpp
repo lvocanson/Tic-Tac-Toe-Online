@@ -2,7 +2,7 @@
 
 PlayerPieceShape::PlayerPieceShape(TicTacToe::Player* player)
 {
-    m_PlayerID = player->GetPlayerID();
+    m_ID = player->GetPlayerID();
 }
 
 PlayerCrossShape::PlayerCrossShape(TicTacToe::Player* player) : PlayerPieceShape(player), sf::RectangleShape(sf::Vector2f(DEFAULT_PIECE_SIZE * 0.5f, DEFAULT_PIECE_SIZE * 0.5f))

@@ -1,3 +1,5 @@
+#include "core/ServerApp.h"
+
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) && !defined(__CYGWIN__)
 
 // Entry point for a Windows program (Unicode)
@@ -9,7 +11,8 @@ int wmain()
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-    std::cout << "Hello World! I'm a server!\n";
+    ServerApp app;
+    app.Run();
 
     return 0;
 }

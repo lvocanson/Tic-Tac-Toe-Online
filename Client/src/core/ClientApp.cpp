@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "TicTacToe.h"
 #include "Window.h"
+#include "src/tcp-ip/TcpIpClient.h"
 #include "src/core/PlayerPieceShape.h"
 
 using namespace TicTacToe;
@@ -68,13 +69,13 @@ void ClientApp::Init()
 
 void ClientApp::DrawBoard()
 {
-    const int pieceSize = m_Board.GetPieceSize();
-    const int width = m_Board.GetWidth();
-    const int height = m_Board.GetHeight();
+    const float pieceSize = m_Board.GetPieceSize();
+    const size_t width = m_Board.GetWidth();
+    const size_t height = m_Board.GetHeight();
     const sf::Vector2f center = m_Window->GetCenter();
 
     // Draw the board - temp
-    for (size_t i = 0; i < m_Board.GetTotalSize(); ++i)
+    for (unsigned int i = 0; i < m_Board.GetTotalSize(); ++i)
     {
         auto* square = new sf::RectangleShape(sf::Vector2f(pieceSize, pieceSize));
         square->setFillColor(sf::Color::Color(51, 56, 63));
@@ -94,6 +95,20 @@ void ClientApp::Run()
     if (!m_IsRunning)
         throw std::runtime_error("ClientApp is not initialized!");
 
+    auto& client = TcpIpClient::GetInstance();
+    try
+    {
+        client.Connect("localhost", DEFAULT_PORT);
+        DebugLog("Connected to server!\n");
+        client.Send("Hello from client!");
+    }
+    catch (const TcpIp::TcpIpException& e)
+    {
+        DebugLog("Failed to connect to server: " + std::string(e.what()) + "\n");
+        m_IsRunning = false;
+    }
+
+    std::stringstream ss;
     sf::Clock clock;
 
     while (m_IsRunning)
@@ -104,8 +119,31 @@ void ClientApp::Run()
         Update(elapsed);
         m_Window->Render();
         m_IsRunning = m_Window->IsOpen();
+
+        try
+        {
+            if (client.FetchPendingData(ss))
+            {
+                DebugLog("Received data from server: \n");
+                DebugLog(ss.str().c_str());
+                DebugLog("\n");
+                ss.str(std::string());
+            }
+        }
+        catch (const TcpIp::TcpIpException& e)
+        {
+            DebugLog("Failed to fetch data from server: " + std::string(e.what()) + "\n");
+            m_IsRunning = false;
+        }
+
+        if (!client.IsConnected())
+        {
+            DebugLog("Disconnected from server!\n");
+            m_IsRunning = false;
+        }
     }
 
+    client.Disconnect();
     Cleanup();
 }
 
@@ -123,9 +161,9 @@ void ClientApp::Update(sf::Time delta)
 
 void ClientApp::CheckIfMouseHoverBoard()
 {
-    for (size_t i = 0; i < m_Board.GetTotalSize(); i++)
+    for (unsigned int i = 0; i < m_Board.GetTotalSize(); i++)
     {
-        if (m_Board[i].GetPlayerID() != EMPTY_PIECE) continue;
+        if (m_Board[i] != EMPTY_PIECE) continue;
 
         if (IsMouseHoverPiece(i))
         {
@@ -161,7 +199,7 @@ void ClientApp::CheckIfMouseHoverBoard()
     }
 }
 
-void ClientApp::PlacePlayerPieceOnBoard(size_t i)
+void ClientApp::PlacePlayerPieceOnBoard(unsigned int i)
 {
     Player* currentPlayer = m_PlayerManager.GetCurrentPlayer();
     m_Board[i].SetPlayerPiece(currentPlayer);
@@ -200,7 +238,7 @@ void ClientApp::ClearBoard()
     }
 
     m_GamePieces.clear();
-    m_Board.Clear();
+    m_Board.SetEmpty();
 }
 
 void ClientApp::SwitchPlayerTurn()
@@ -218,10 +256,10 @@ void ClientApp::SwitchPlayerTurn()
 }
 
 
-bool ClientApp::IsMouseHoverPiece(size_t i)
+bool ClientApp::IsMouseHoverPiece(unsigned int i)
 {
 	const sf::Vector2f mousePos = static_cast<sf::Vector2f>(m_Window->GetMousePosition());
-    int size = m_Board.GetPieceSize();
+    const float size = m_Board.GetPieceSize();
     const sf::Vector2f piecePosition = m_Board.GetGraphicPiece(i).GetPosition();
 
     return  mousePos.x > piecePosition.x &&
