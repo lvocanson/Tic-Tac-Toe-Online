@@ -67,9 +67,9 @@ bool TcpIpClient::IsConnected() const
     return m_ConnectSocket != INVALID_SOCKET;
 }
 
-void TcpIpClient::Send(const std::string& data)
+void TcpIpClient::Send(const char* data, size_t size)
 {
-    TcpIp::Send(m_ConnectSocket, data);
+    TcpIp::Send(m_ConnectSocket, data, size);
 }
 
 bool TcpIpClient::FetchPendingData(std::stringstream& ss)

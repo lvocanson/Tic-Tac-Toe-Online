@@ -46,7 +46,8 @@ public:
     /// <summary>
     /// Sends data to a client.
     /// </summary>
-    void Send(const Client& Client, const std::string& data);
+    void Send(const Client& Client, const char* data, size_t size);
+    void Send(const Client& Client, const std::string& data) { Send(Client, data.c_str(), data.size()); }
     /// <summary>
     /// Kills all closed connections. Call this function after FetchPendingData.
     /// </summary>

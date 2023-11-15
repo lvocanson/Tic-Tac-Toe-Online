@@ -34,7 +34,8 @@ public:
     /// <summary>
     /// Sends data to the connected server.
     /// </summary>
-    void Send(const std::string& data);
+    void Send(const char* data, size_t size);
+    void Send(const std::string& data) { Send(data.c_str(), data.size()); }
     /// <summary>
     /// Fetches pending data from the server.
     /// </summary>

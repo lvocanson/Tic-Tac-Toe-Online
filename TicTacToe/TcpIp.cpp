@@ -52,18 +52,16 @@ namespace TcpIp
     constexpr const int HEADER_SIGNATURE_SIZE = 9;
     constexpr const int HEADER_SIZE = HEADER_SIGNATURE_SIZE + sizeof(size_t);
 
-    char* CreateHeader(std::string& data)
+    char* CreateHeader(const size_t size)
     {
         char* header = new char[HEADER_SIZE];
         memcpy(header, HEADER_SIGNATURE, HEADER_SIGNATURE_SIZE);
-
-        size_t size = data.size();
         memcpy(header + HEADER_SIGNATURE_SIZE, &size, sizeof(size_t));
 
         return header;
     }
 
-    bool IsHeaderValid(char* header)
+    inline bool IsHeaderValid(char* header)
     {
         return memcmp(header, HEADER_SIGNATURE, HEADER_SIGNATURE_SIZE) == 0;
     }
@@ -75,17 +73,17 @@ namespace TcpIp
         return size;
     }
 
-    void Send(const SOCKET& socket, const std::string& data)
+    void Send(const SOCKET& socket, const char* data, const size_t size)
     {
         // Send header
-        char* header = CreateHeader(const_cast<std::string&>(data));
+        char* header = CreateHeader(size);
         int iResult = send(socket, header, HEADER_SIZE, 0);
         delete[] header;
         if (iResult == SOCKET_ERROR)
             throw TcpIpException("send");
 
         // Send data
-        iResult = send(socket, data.c_str(), static_cast<int>(data.size()), 0);
+        iResult = send(socket, data, static_cast<int>(size), 0);
         if (iResult == SOCKET_ERROR)
             throw TcpIpException("send");
     }

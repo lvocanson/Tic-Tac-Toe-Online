@@ -125,9 +125,9 @@ bool TcpIpServer::FetchPendingData(std::stringstream& ss, Client& client)
     return false;
 }
 
-void TcpIpServer::Send(const Client& client, const std::string& data)
+void TcpIpServer::Send(const Client& client, const char* data, size_t size)
 {
-    TcpIp::Send(client, data);
+    TcpIp::Send(client, data, size);
 }
 
 unsigned int TcpIpServer::KillClosedConnections()
