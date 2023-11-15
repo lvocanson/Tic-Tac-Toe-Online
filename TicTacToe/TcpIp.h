@@ -44,7 +44,7 @@ namespace TcpIp
     /// <summary>
     /// Sends data to a socket.
     /// </summary>
-    void Send(const SOCKET& socket, const char* data, size_t size);
+    void Send(const SOCKET& socket, const char* data, u_long size);
     /// <summary>
     /// Receives data from a socket. (Blocking, until peer shuts down the connection)
     /// </summary>

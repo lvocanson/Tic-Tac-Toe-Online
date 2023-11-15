@@ -70,7 +70,7 @@ bool TcpIpClient::IsConnected() const
     return m_ConnectSocket != INVALID_SOCKET;
 }
 
-void TcpIpClient::Send(const char* data, size_t size)
+void TcpIpClient::Send(const char* data, u_long size)
 {
     TcpIp::Send(m_ConnectSocket, data, size);
 }

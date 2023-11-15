@@ -17,8 +17,10 @@ void ServerApp::Run()
     {
         try
         {
-            if (server.AcceptPendingConnections())
-                std::cout << "A new client has connected." << std::endl;
+            int count = 0;
+            while (server.AcceptPendingConnection()) count++;
+            if (count > 0)
+                std::cout << count << " connections were established." << std::endl << "-> Total number of connections: " << server.ConnectionCount() << std::endl;
 
             // Echo back to the clients
             while (server.FetchPendingData(ss, client))
@@ -31,9 +33,9 @@ void ServerApp::Run()
                 ss.str(std::string());
             }
 
-            auto count = server.KillClosedConnections();
+            count = server.KillClosedConnections();
             if (count > 0)
-                std::cout << count << " connections were closed." << std::endl;
+                std::cout << count << " connections were closed." << std::endl << "-> Total number of connections: " << server.ConnectionCount() << std::endl;
         }
         catch (const TcpIp::TcpIpException& e)
         {

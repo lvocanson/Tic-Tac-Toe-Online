@@ -32,10 +32,10 @@ public:
     void Close();
 
     /// <summary>
-    /// Accepts pending connections.
+    /// Accept the first pending connection.
     /// </summary>
     /// <returns>True if a connection was accepted, false otherwise.</returns>
-    bool AcceptPendingConnections();
+    bool AcceptPendingConnection();
     /// <summary>
     /// Fetches pending data from the first client that has data to read.
     /// </summary>
@@ -46,13 +46,17 @@ public:
     /// <summary>
     /// Sends data to a client.
     /// </summary>
-    void Send(const Client& Client, const char* data, size_t size);
-    void Send(const Client& Client, const std::string& data) { Send(Client, data.c_str(), data.size()); }
+    void Send(const Client& Client, const char* data, u_long size);
+    void Send(const Client& Client, const std::string& data) { Send(Client, data.c_str(), static_cast<u_long>(data.size())); }
     /// <summary>
     /// Kills all closed connections. Call this function after FetchPendingData.
     /// </summary>
     /// <returns>The number of connections killed.</returns>
     unsigned int KillClosedConnections();
+    /// <summary>
+    /// Get the number of connections.
+    /// </summary>
+    size_t ConnectionCount() const { return m_Connections.size(); }
 
 private:
     struct Connection

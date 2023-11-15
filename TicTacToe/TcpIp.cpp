@@ -46,15 +46,17 @@ namespace TcpIp
 
     constexpr const char* const HEADER_SIGNATURE = "T1cT4cT0z";
     constexpr const int HEADER_SIGNATURE_SIZE = 9;
-    constexpr const int HEADER_SIZE = HEADER_SIGNATURE_SIZE + sizeof(size_t);
+    constexpr const int HEADER_SIZE = HEADER_SIGNATURE_SIZE + sizeof(u_long);
 
     // Create a header to describe a data of the given size.
     // /!\ The caller is responsible for the pointer created!
-    char* CreateHeader(const size_t size)
+    char* CreateHeader(const u_long size)
     {
         char* header = new char[HEADER_SIZE];
         memcpy(header, HEADER_SIGNATURE, HEADER_SIGNATURE_SIZE);
-        memcpy(header + HEADER_SIGNATURE_SIZE, &size, sizeof(size_t));
+
+        u_long networkSize = htonl(size); // Convert to network byte order
+        memcpy(header + HEADER_SIGNATURE_SIZE, &networkSize, sizeof(u_long));
         return header;
     }
 
@@ -65,14 +67,16 @@ namespace TcpIp
     }
 
     // Get the size of the next data in the given header.
-    inline void GetSizeFromHeader(char* header, size_t size)
+    inline u_long GetSizeFromHeader(char* header)
     {
-        memcpy(&size, header + HEADER_SIGNATURE_SIZE, sizeof(size_t));
+        u_long networkSize;
+        memcpy(&networkSize, header + HEADER_SIGNATURE_SIZE, sizeof(u_long));
+        return ntohl(networkSize); // Convert to host byte order
     }
 
 #pragma endregion
 
-    void Send(const SOCKET& socket, const char* data, const size_t size)
+    void Send(const SOCKET& socket, const char* data, const u_long size)
     {
         // Send header
         char* header = CreateHeader(size);
@@ -110,15 +114,14 @@ namespace TcpIp
         }
 
         // Get the the data size
-        size_t dataSize = 0;
-        GetSizeFromHeader(header, dataSize);
+        u_long dataSize = GetSizeFromHeader(header);
         delete[] header;
 
         // Get the data
         char* buffer = new char[bufferSize];
         while (dataSize > 0)
         {
-            int recvSize = dataSize > bufferSize ? bufferSize : dataSize;
+            int recvSize = dataSize > bufferSize ? bufferSize : static_cast<int>(dataSize);
             iResult = recv(socket, buffer, recvSize, 0);
 
             // iResult is number of bytes received

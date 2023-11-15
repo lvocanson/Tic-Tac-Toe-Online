@@ -28,7 +28,10 @@ void TcpIpServer::Open(unsigned int port)
     // Resolve the server address and port
     int iResult = getaddrinfo(nullptr, std::to_string(port).c_str(), &hints, &result);
     if (iResult != 0)
+    {
+        freeaddrinfo(result);
         throw TcpIp::TcpIpException("getaddrinfo", iResult);
+    }
 
     // Create listening socket
     m_ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
@@ -62,16 +65,18 @@ void TcpIpServer::Close()
         m_ListenSocket = INVALID_SOCKET;
     }
 
-    KillClosedConnections(); // In case some connections are already closed
     for (Connection& connection : m_Connections)
     {
+        if (connection.Socket == INVALID_SOCKET)
+            continue; // Already closed
+
         TcpIp::CloseEventObject(connection.Event);
         TcpIp::CloseSocket(connection.Socket);
     }
     m_Connections.clear();
 }
 
-bool TcpIpServer::AcceptPendingConnections()
+bool TcpIpServer::AcceptPendingConnection()
 {
     // Check the listening socket for accept events
     WSANETWORKEVENTS networkEvents;
@@ -88,6 +93,7 @@ bool TcpIpServer::AcceptPendingConnections()
         if (connectionSocket == INVALID_SOCKET)
             throw TcpIp::TcpIpException("accept", TCP_IP_WSA_ERROR);
 
+        // Create a new connection, and place it at the end of the vector
         m_Connections.emplace_back(connectionSocket);
         return true;
     }
@@ -99,6 +105,9 @@ bool TcpIpServer::FetchPendingData(std::stringstream& ss, Client& client)
     WSANETWORKEVENTS networkEvents;
     for (Connection& connection : m_Connections)
     {
+        if (connection.Socket == INVALID_SOCKET)
+            continue; // The connection is closed
+
         // Check the connection socket for read and close events
         int iResult = WSAEnumNetworkEvents(connection.Socket, connection.Event, &networkEvents);
         if (iResult == SOCKET_ERROR)
@@ -125,7 +134,7 @@ bool TcpIpServer::FetchPendingData(std::stringstream& ss, Client& client)
     return false;
 }
 
-void TcpIpServer::Send(const Client& client, const char* data, size_t size)
+void TcpIpServer::Send(const Client& client, const char* data, u_long size)
 {
     TcpIp::Send(client, data, size);
 }
