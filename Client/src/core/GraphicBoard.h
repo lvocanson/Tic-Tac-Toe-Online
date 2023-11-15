@@ -1,7 +1,7 @@
 #pragma once
 #include "TicTacToe.h"
-#include <SFML/Graphics.hpp>
 
+class Player;
 
 class GraphicPiece
 {
@@ -25,6 +25,7 @@ private:
 class GraphicBoard : public TicTacToe::Board
 {
 public:
+
     GraphicBoard() : GraphicBoard(DEFAULT_BOARD_ARGS, DEFAULT_PIECE_SIZE) {}
     GraphicBoard(size_t width, size_t height, unsigned int alignementGoal, float piecePixelSize);
     ~GraphicBoard() override;

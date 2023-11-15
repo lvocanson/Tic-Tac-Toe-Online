@@ -2,14 +2,22 @@
 #include "IDGenerator.h"
 
 
-Player::Player() : m_Name("DefaultName")
+Player::Player()
 {
-	m_ID = IDGenerator::GenerateID();
+    const TicTacToe::PieceID id = IDGenerator::GenerateID();
+
+	m_Data = {
+		.Name = "Player " + id,
+		.Id = id,
+	};
 }
 
-Player::Player(std::string name) : m_Name(std::move(name))
+Player::Player(const std::string& name)
 {
-	m_ID = IDGenerator::GenerateID();
+	m_Data = {
+		.Name = name,
+		.Id = IDGenerator::GenerateID(),
+	};
 }
 
 Player::~Player()

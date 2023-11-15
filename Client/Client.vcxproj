@@ -101,6 +101,7 @@
     <ClCompile Include="src\core\Managers\FontRegistry.cpp" />
     <ClCompile Include="src\core\GraphicBoard.cpp" />
     <ClCompile Include="src\core\Managers\PlayerManager.cpp" />
+    <ClCompile Include="src\core\Player.cpp" />
     <ClCompile Include="src\core\PlayerPieceShape.cpp" />
     <ClCompile Include="src\ClientMain.cpp" />
     <ClCompile Include="src\core\ClientApp.cpp" />
@@ -119,6 +120,7 @@
     <ClInclude Include="src\core\GraphicBoard.h" />
     <ClInclude Include="src\core\Managers\IManager.h" />
     <ClInclude Include="src\core\Managers\PlayerManager.h" />
+    <ClInclude Include="src\core\Player.h" />
     <ClInclude Include="src\core\PlayerPieceShape.h" />
     <ClInclude Include="src\core\ClientApp.h" />
     <ClInclude Include="src\core\CoreDefinitions.h" />

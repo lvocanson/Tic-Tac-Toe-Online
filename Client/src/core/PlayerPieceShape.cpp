@@ -1,11 +1,12 @@
 #include "PlayerPieceShape.h"
+#include "Player.h"
 
-PlayerPieceShape::PlayerPieceShape(TicTacToe::Player* player)
+PlayerPieceShape::PlayerPieceShape(const Player* player)
 {
     m_ID = player->GetPlayerID();
 }
 
-PlayerCrossShape::PlayerCrossShape(TicTacToe::Player* player) : PlayerPieceShape(player), sf::RectangleShape(sf::Vector2f(DEFAULT_PIECE_SIZE * 0.5f, DEFAULT_PIECE_SIZE * 0.5f))
+PlayerCrossShape::PlayerCrossShape(const Player* player) : PlayerPieceShape(player), RectangleShape(sf::Vector2f(DEFAULT_PIECE_SIZE * 0.5f, DEFAULT_PIECE_SIZE * 0.5f))
 {
     setFillColor(sf::Color::Transparent);
     setOutlineThickness(OUTLINE_THICKNESS);
@@ -13,7 +14,7 @@ PlayerCrossShape::PlayerCrossShape(TicTacToe::Player* player) : PlayerPieceShape
     setOrigin(getSize().x * 0.5f, getSize().y * 0.5f);
 }
 
-PlayerCircleShape::PlayerCircleShape(TicTacToe::Player* player) : sf::CircleShape(DEFAULT_PIECE_SIZE * 0.25f), PlayerPieceShape(player)
+PlayerCircleShape::PlayerCircleShape(const Player* player) : CircleShape(DEFAULT_PIECE_SIZE * 0.25f), PlayerPieceShape(player)
 {
     setFillColor(sf::Color::Transparent);
     setOutlineThickness(OUTLINE_THICKNESS);
