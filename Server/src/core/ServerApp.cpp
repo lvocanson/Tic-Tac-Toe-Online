@@ -2,6 +2,8 @@
 #include "src/tcp-ip/TcpIpServer.h"
 #include <conio.h>
 
+void AnalyseData(const std::string& data, Client sender);
+
 void ServerApp::Run()
 {
     TcpIpServer& server = TcpIpServer::GetInstance();
@@ -22,16 +24,8 @@ void ServerApp::Run()
             if (count > 0)
                 std::cout << count << " connections were established." << std::endl << "-> Total number of connections: " << server.ConnectionCount() << std::endl;
 
-            // Echo back to the clients
             while (server.FetchPendingData(ss, client))
-            {
-                std::cout << "Received: " << ss.str() << std::endl;
-
-                server.Send(client, ss.str());
-                std::cout << "Sent back." << std::endl;
-
-                ss.str(std::string());
-            }
+                AnalyseData(ss.str(), client);
 
             count = server.KillClosedConnections();
             if (count > 0)
@@ -51,4 +45,16 @@ void ServerApp::Run()
 
     server.Close();
     std::cout << "Server successfully shut down on user request." << std::endl;
+}
+
+void AnalyseData(const std::string& data, Client sender)
+{
+    std::cout << sender->Address << ":" << sender->Port << " sent " << data.size() << " bytes of data." << std::endl;
+    std::ostringstream oss;
+    oss << "Dear " << sender->Address << ":" << sender->Port << ", I received " << data.size() << " bytes of data from you.";
+
+    /* ... */
+
+    TcpIpServer::GetInstance().Send(sender, oss.str());
+    std::cout << "-> Replied with " << oss.str().size() << " bytes of data." << std::endl;
 }

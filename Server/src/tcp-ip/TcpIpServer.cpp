@@ -1,5 +1,20 @@
 #include "TcpIpServer.h"
 
+Connection::Connection(SOCKET socket)
+    : Socket(socket)
+    , Event(TcpIp::CreateEventObject(socket, FD_READ | FD_CLOSE))
+{
+    sockaddr_in clientAddress;
+    int clientAddressLength = sizeof(clientAddress);
+    if (getpeername(socket, (sockaddr*)&clientAddress, &clientAddressLength) == 0)
+    {
+        char clientIP[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(clientAddress.sin_addr), clientIP, INET_ADDRSTRLEN);
+        Address = clientIP;
+        Port = ntohs(clientAddress.sin_port);
+    }
+}
+
 TcpIpServer::TcpIpServer()
     : m_WsaData(TcpIp::InitializeWinsock())
     , m_ListenSocket(INVALID_SOCKET)
@@ -118,7 +133,7 @@ bool TcpIpServer::FetchPendingData(std::stringstream& ss, Client& client)
             if (networkEvents.iErrorCode[FD_READ_BIT] != 0)
                 throw TcpIp::TcpIpException("FD_READ", networkEvents.iErrorCode[FD_READ_BIT]);
 
-            client = connection.Socket;
+            client = &connection;
             TcpIp::Receive(connection.Socket, ss, DEFAULT_BUFFER_SIZE);
             return true;
         }
@@ -136,7 +151,7 @@ bool TcpIpServer::FetchPendingData(std::stringstream& ss, Client& client)
 
 void TcpIpServer::Send(const Client& client, const char* data, u_long size)
 {
-    TcpIp::Send(client, data, size);
+    TcpIp::Send(client->Socket, data, size);
 }
 
 unsigned int TcpIpServer::KillClosedConnections()
@@ -152,10 +167,4 @@ unsigned int TcpIpServer::KillClosedConnections()
     // Erase them from the vector
     m_Connections.erase(it, m_Connections.end());
     return count;
-}
-
-TcpIpServer::Connection::Connection(SOCKET socket)
-    : Socket(socket)
-    , Event(TcpIp::CreateEventObject(socket, FD_READ | FD_CLOSE))
-{
 }

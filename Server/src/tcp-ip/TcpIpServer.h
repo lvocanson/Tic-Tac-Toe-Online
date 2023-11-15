@@ -2,7 +2,23 @@
 #include <WinSock2.h>
 #include <vector>
 
-using Client = SOCKET;
+/// <summary>
+/// A connection to a client.
+/// </summary>
+struct Connection
+{
+    std::string Address;
+    unsigned int Port;
+
+    // Creates the event object and associate it with the socket.
+    Connection(SOCKET socket);
+private:
+    friend class TcpIpServer;
+
+    SOCKET Socket;
+    WSAEVENT Event;
+};
+typedef Connection* Client;
 
 /// <summary>
 /// TCP/IP server.
@@ -59,13 +75,6 @@ public:
     size_t ConnectionCount() const { return m_Connections.size(); }
 
 private:
-    struct Connection
-    {
-        // Creates the event object and associate it with the socket.
-        Connection(SOCKET socket);
-        SOCKET Socket;
-        WSAEVENT Event;
-    };
 
     WSADATA m_WsaData;
     SOCKET m_ListenSocket;

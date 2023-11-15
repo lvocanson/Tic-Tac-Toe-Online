@@ -78,7 +78,7 @@ void ClientApp::Run()
 
         try
         {
-            if (client.FetchPendingData(ss))
+            while (client.FetchPendingData(ss))
             {
                 DebugLog("Received data from server: \n");
                 DebugLog(ss.str().c_str());
