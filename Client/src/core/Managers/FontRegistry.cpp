@@ -1,29 +1,27 @@
 #include "src/pch.h"
 #include "FontRegistry.h"
 
-FontRegistry::FontRegistry()
-{
-    m_Fonts = std::map<std::string, sf::Font>();
-}
+std::map<std::string, sf::Font*> FontRegistry::m_Fonts;
 
-sf::Font FontRegistry::GetFont(std::string fontName)
+
+sf::Font* FontRegistry::GetFont(const std::string& fontName)
 {
-    if (m_Fonts.find(fontName) == m_Fonts.end())
+    if (!m_Fonts.contains(fontName))
     {
-        std::cout << "Font not found: " << fontName << std::endl;
+        DebugLog("Font not registered: " + fontName);
     }
 
-    return m_Fonts[fontName];
+    return m_Fonts.at(fontName);
 }
 
-void FontRegistry::RegisterFont(const std::string& fontName)
+void FontRegistry::LoadFont(const std::string& fontName)
 {
-    sf::Font font;
+    sf::Font* font = new sf::Font;
 
-    if (!font.loadFromFile("resources/fonts/" + fontName + ".ttf"))
+    if (!font->loadFromFile("resources/fonts/" + fontName + ".ttf"))
     {
         assert(false, "Failed to load font");
     }
 
-    m_Fonts[fontName] = font;
+    m_Fonts.insert(std::pair(fontName, font));
 }

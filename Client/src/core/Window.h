@@ -54,11 +54,11 @@ public:
     /// <summary>
     /// Returns whether the given key is pressed.
     /// </summary>
-    bool IsKeyPressed(sf::Keyboard::Key key) const { return sf::Keyboard::isKeyPressed(key); }
+    static bool IsKeyPressed(sf::Keyboard::Key key) { return sf::Keyboard::isKeyPressed(key); }
     /// <summary>
     /// Returns whether the given mouse button is pressed.
     /// </summary>
-    bool IsMouseButtonPressed(sf::Mouse::Button button) const { return sf::Mouse::isButtonPressed(button); }
+    static bool IsMouseButtonPressed(sf::Mouse::Button button) { return sf::Mouse::isButtonPressed(button); }
     /// <summary>
     /// Returns the mouse position relative to the window.
     /// </summary>

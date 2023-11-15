@@ -3,16 +3,16 @@
 class FontRegistry
 {
 public:
-    FontRegistry();
     ~FontRegistry() = default;
 
-    static sf::Font GetFont(std::string fontName);
+    static sf::Font* GetFont(const std::string& fontName);
 
-    static void RegisterFont(const std::string& fontName);
+    static void LoadFont(const std::string& fontName);
 
 private:
+    FontRegistry() = delete;
 
-    static std::map<std::string, sf::Font> m_Fonts;
+    static std::map<std::string, sf::Font*> m_Fonts;
 
 };
 
