@@ -24,6 +24,9 @@
     <ClInclude Include="IDGenerator.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TicTacToe.cpp">
