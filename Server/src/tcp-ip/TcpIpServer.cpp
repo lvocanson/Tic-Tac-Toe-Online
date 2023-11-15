@@ -36,7 +36,7 @@ void TcpIpServer::Open(unsigned int port)
     if (m_ListenSocket == INVALID_SOCKET)
     {
         freeaddrinfo(result);
-        throw TcpIp::TcpIpException("socket");
+        throw TcpIp::TcpIpException("socket", TCP_IP_WSA_ERROR);
     }
 
     // Setup the TCP listening socket
@@ -44,11 +44,11 @@ void TcpIpServer::Open(unsigned int port)
     freeaddrinfo(result);
 
     if (iResult == SOCKET_ERROR)
-        throw TcpIp::TcpIpException("bind");
+        throw TcpIp::TcpIpException("bind", TCP_IP_WSA_ERROR);
 
     // Start listening on the socket
     if (listen(m_ListenSocket, SOMAXCONN) == SOCKET_ERROR)
-        throw TcpIp::TcpIpException("listen");
+        throw TcpIp::TcpIpException("listen", TCP_IP_WSA_ERROR);
 
     m_AcceptEvent = TcpIp::CreateEventObject(m_ListenSocket, FD_ACCEPT);
 }
@@ -58,7 +58,7 @@ void TcpIpServer::Close()
     if (m_ListenSocket != INVALID_SOCKET)
     {
         if (closesocket(m_ListenSocket) == SOCKET_ERROR)
-            throw TcpIp::TcpIpException("closesocket");
+            throw TcpIp::TcpIpException("closesocket", TCP_IP_WSA_ERROR);
         m_ListenSocket = INVALID_SOCKET;
     }
 
@@ -77,7 +77,7 @@ bool TcpIpServer::AcceptPendingConnections()
     WSANETWORKEVENTS networkEvents;
     int iResult = WSAEnumNetworkEvents(m_ListenSocket, m_AcceptEvent, &networkEvents);
     if (iResult == SOCKET_ERROR)
-        throw TcpIp::TcpIpException("WSAEnumNetworkEvents");
+        throw TcpIp::TcpIpException("WSAEnumNetworkEvents", TCP_IP_WSA_ERROR);
 
     if (networkEvents.lNetworkEvents & FD_ACCEPT)
     {
@@ -86,7 +86,7 @@ bool TcpIpServer::AcceptPendingConnections()
 
         SOCKET connectionSocket = accept(m_ListenSocket, nullptr, nullptr);
         if (connectionSocket == INVALID_SOCKET)
-            throw TcpIp::TcpIpException("accept");
+            throw TcpIp::TcpIpException("accept", TCP_IP_WSA_ERROR);
 
         m_Connections.emplace_back(connectionSocket);
         return true;
@@ -102,7 +102,7 @@ bool TcpIpServer::FetchPendingData(std::stringstream& ss, Client& client)
         // Check the connection socket for read and close events
         int iResult = WSAEnumNetworkEvents(connection.Socket, connection.Event, &networkEvents);
         if (iResult == SOCKET_ERROR)
-            throw TcpIp::TcpIpException("WSAEnumNetworkEvents");
+            throw TcpIp::TcpIpException("WSAEnumNetworkEvents", TCP_IP_WSA_ERROR);
 
         if (networkEvents.lNetworkEvents & FD_READ)
         {

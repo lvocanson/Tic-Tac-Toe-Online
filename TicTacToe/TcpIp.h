@@ -5,8 +5,9 @@
 #include <ws2tcpip.h>
 #include <sstream>
 
-constexpr const unsigned int DEFAULT_PORT = 63064;
-constexpr const size_t DEFAULT_BUFFER_SIZE = 1024;
+constexpr unsigned int DEFAULT_PORT = 63064;
+constexpr size_t DEFAULT_BUFFER_SIZE = 1024;
+constexpr auto TCP_IP_WSA_ERROR = 0;
 
 /// <summary>
 /// Helper functions for TCP/IP.
@@ -28,18 +29,16 @@ namespace TcpIp
     class TcpIpException : public std::runtime_error
     {
     public:
-        TcpIpException(const char* message, bool);
         /// <summary>
-        /// Creates a TcpIpException with the last Winsock error.
+        /// Creates a TcpIpException with a custom message.
         /// </summary>
-        /// <param name="operation">The operation that failed.</param>
-        TcpIpException(const char* operation);
+        TcpIpException(const char* message);
         /// <summary>
         /// Creates a TcpIpException with the specified error code.
         /// </summary>
         /// <param name="operation">The operation that failed.</param>
-        /// <param name="resultCode">The error code.</param>
-        TcpIpException(const char* operation, int resultCode);
+        /// <param name="errCode">The error code. TCP_IP_WSA_ERROR will get the last error from WSA.</param>
+        TcpIpException(const char* operation, int errCode);
     };
 
     /// <summary>

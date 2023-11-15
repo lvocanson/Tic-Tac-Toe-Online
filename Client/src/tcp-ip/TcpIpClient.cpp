@@ -27,14 +27,17 @@ void TcpIpClient::Connect(const char* ip, int port)
     // Resolve the server address and port
     int iResult = getaddrinfo(ip, std::to_string(port).c_str(), &hints, &result);
     if (iResult != 0)
+    {
+        freeaddrinfo(result);
         throw TcpIp::TcpIpException("getaddrinfo", iResult);
+    }
 
     // Create a SOCKET for connecting to server 
     m_ConnectSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
     if (m_ConnectSocket == INVALID_SOCKET)
     {
         freeaddrinfo(result);
-        throw TcpIp::TcpIpException("socket");
+        throw TcpIp::TcpIpException("socket", TCP_IP_WSA_ERROR);
     }
 
     // Connect to server.
@@ -44,7 +47,7 @@ void TcpIpClient::Connect(const char* ip, int port)
     if (iResult == SOCKET_ERROR)
         TcpIp::CloseSocket(m_ConnectSocket);
     if (m_ConnectSocket == INVALID_SOCKET)
-        throw TcpIp::TcpIpException("connect");
+        throw TcpIp::TcpIpException("connect", TCP_IP_WSA_ERROR);
 
     m_ReadEvent = TcpIp::CreateEventObject(m_ConnectSocket, FD_READ | FD_CLOSE);
 }
@@ -56,7 +59,7 @@ void TcpIpClient::Disconnect()
 
     int iResult = shutdown(m_ConnectSocket, SD_SEND);
     if (iResult == SOCKET_ERROR)
-        throw TcpIp::TcpIpException("shutdown");
+        throw TcpIp::TcpIpException("shutdown", TCP_IP_WSA_ERROR);
 
     TcpIp::CloseEventObject(m_ReadEvent);
     TcpIp::CloseSocket(m_ConnectSocket);
@@ -77,7 +80,7 @@ bool TcpIpClient::FetchPendingData(std::stringstream& ss)
     WSANETWORKEVENTS networkEvents;
     int iResult = WSAEnumNetworkEvents(m_ConnectSocket, m_ReadEvent, &networkEvents);
     if (iResult == SOCKET_ERROR)
-        throw TcpIp::TcpIpException("WSAEnumNetworkEvents");
+        throw TcpIp::TcpIpException("WSAEnumNetworkEvents", TCP_IP_WSA_ERROR);
 
     if (networkEvents.lNetworkEvents & FD_READ)
     {
