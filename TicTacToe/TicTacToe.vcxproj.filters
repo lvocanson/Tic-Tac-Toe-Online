@@ -21,12 +21,18 @@
     <ClInclude Include="TcpIp.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="IDGenerator.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TicTacToe.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="TcpIp.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="IDGenerator.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

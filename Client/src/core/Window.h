@@ -66,6 +66,12 @@ public:
 
 #pragma endregion
 
+#pragma region Other
+
+    sf::Vector2f GetCenter() const { return sf::Vector2f(m_Window->getSize().x * 0.5f, m_Window->getSize().y *0.5f); }
+
+#pragma endregion
+
 private:
     sf::RenderWindow* m_Window = nullptr;
     sf::Color m_ClearColor;

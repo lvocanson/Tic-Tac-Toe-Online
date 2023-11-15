@@ -30,6 +30,15 @@
     <ClCompile Include="src\tcp-ip\TcpIpClient.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\PlayerPiece.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\GraphicBoard.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Player.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h">
@@ -42,6 +51,18 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\tcp-ip\TcpIpClient.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\CoreDefinitions.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\PlayerPiece.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\GraphicBoard.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Player.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

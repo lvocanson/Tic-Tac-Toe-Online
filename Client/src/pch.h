@@ -10,23 +10,10 @@
 #include <TcpIp.h>
 #include <json.hpp>
 
-#pragma region Our defines
+#include "core/CoreDefinitions.h"
 
-// Prints a message to the Visual Studio output window. (debug only)
-inline void DebugLog(const std::string& msg)
-{
-#if defined(DEBUG) | defined(_DEBUG)
-    OutputDebugStringA(msg.c_str());
-#endif
-}
+#pragma region SFML
 
-#if defined(DEBUG) | defined(_DEBUG)
-#include <crtdbg.h>
-// Dynamically allocate memory with memory leak detection. (debug only)
-#define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
-#endif
-
-// Release a pointer and set it to nullptr
-#define RELEASE(ptr) if(ptr) { delete ptr; ptr = nullptr; }
+#include <SFML/Graphics.hpp>
 
 #pragma endregion

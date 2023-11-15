@@ -1,7 +1,7 @@
 #include "Window.h"
 
 Window::Window()
-    : m_ClearColor(sf::Color::Black), m_Drawables()
+    : m_ClearColor(sf::Color::Color(51, 56, 63)), m_Drawables()
 {
     m_Window = new sf::RenderWindow();
 }
@@ -15,8 +15,13 @@ Window::~Window()
 
 void Window::Create(const char* title, unsigned int width, unsigned int height)
 {
-    m_Window->create(sf::VideoMode(width, height), title);
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 4;
+
+    m_Window->create(sf::VideoMode(width, height), title, sf::Style::Close, settings);
     m_Window->setVerticalSyncEnabled(true);
+    m_Window->setFramerateLimit(60);
+    m_Window->setMouseCursorVisible(true);
 }
 
 void Window::PollEvents()
