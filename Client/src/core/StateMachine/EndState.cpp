@@ -1,5 +1,11 @@
 #include "EndState.h"
 
+EndState::EndState(StateMachine* stateMachine, Window* m_Window) 
+    : State(stateMachine)
+    , m_Window(m_Window)
+{
+}
+
 void EndState::OnEnter()
 {
     //sf::Text* scoreText = new sf::Text("Score : " + std::to_string(m_Score), font, 20);

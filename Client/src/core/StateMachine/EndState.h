@@ -2,6 +2,7 @@
 #include "StateMachine.h"
 #include "State.h"
 #include "src/core/Window.h"
+#include "src/core/Components/ButtonComponent.h"
 
 class EndState : public State
 {
@@ -10,10 +11,12 @@ public:
 	void OnUpdate(float dt) override;
 	void OnExit() override;
 
-	EndState();
+	EndState(StateMachine* stateMachine, Window* m_Window);
 	EndState(const EndState& other) = delete;
 	EndState& operator=(const EndState& other) = delete;
 
 private:
-	Window* m_Window;
+	Window* m_Window;	
+	ButtonComponent* m_ButtonComponent;
+
 };

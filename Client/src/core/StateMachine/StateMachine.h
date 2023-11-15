@@ -13,6 +13,8 @@ public:
 	void AddState(std::string stateName, State* newState);
 
 	void InitState(std::string initState);
+
+	void Update(float dt);
 	void Start();
 
 	/// <summary>

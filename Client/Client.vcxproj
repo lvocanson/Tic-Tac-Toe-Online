@@ -97,6 +97,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\core\Components\ButtonComponent.cpp" />
     <ClCompile Include="src\core\GraphicBoard.cpp" />
     <ClCompile Include="src\core\Player.cpp" />
     <ClCompile Include="src\core\PlayerPiece.cpp" />
@@ -114,6 +115,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\Components\ButtonComponent.h" />
     <ClInclude Include="src\core\GraphicBoard.h" />
     <ClInclude Include="src\core\Player.h" />
     <ClInclude Include="src\core\PlayerPiece.h" />

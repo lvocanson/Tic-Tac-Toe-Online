@@ -10,6 +10,11 @@ void StateMachine::InitState(std::string initState)
 	m_CurrentState = m_States[initState];
 }
 
+void StateMachine::Update(float dt)
+{
+	m_CurrentState->OnUpdate(dt);
+}
+
 void StateMachine::Start()
 {
 	if (!m_CurrentState) 
