@@ -22,8 +22,8 @@ void ClientApp::Init()
     m_ScoreManager.Init();
     m_PlayerManager.Init();
 
-    m_PlayerManager.CreateNewPlayer("Player One");
-    m_PlayerManager.CreateNewPlayer("Player Two");
+    m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12));
+    m_PlayerManager.CreateNewPlayer("Player Two", sf::Color(255, 194, 0));
 
     m_GameStateUI->Init();
 
@@ -226,11 +226,7 @@ void ClientApp::SwitchPlayerTurn()
     m_PlayerTurnTimer = sf::seconds(PLAYER_TURN_DELAY);
     m_GameStateUI->UpdatePlayerTurnText(PlayerManager::GetCurrentPlayer()->GetName());
 
-    // TODO : Change color based on player turn
-    /*if (m_PlayerManager.IsPlayerOneTurn())
-        m_PlayerTurnText->setFillColor(sf::Color::Color(250, 92, 12));
-    else 
-        m_PlayerTurnText->setFillColor(sf::Color::Color(255, 194, 0));*/
+    m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetCurrentPlayer()->GetData());
 }
 
 

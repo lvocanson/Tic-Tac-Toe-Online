@@ -10,7 +10,7 @@ PlayerCrossShape::PlayerCrossShape(const Player* player) : PlayerPieceShape(play
 {
     setFillColor(sf::Color::Transparent);
     setOutlineThickness(OUTLINE_THICKNESS);
-    setOutlineColor(sf::Color::Color(255, 194, 0));
+    setOutlineColor(player->GetColor());
     setOrigin(getSize().x * 0.5f, getSize().y * 0.5f);
 }
 
@@ -18,6 +18,6 @@ PlayerCircleShape::PlayerCircleShape(const Player* player) : CircleShape(DEFAULT
 {
     setFillColor(sf::Color::Transparent);
     setOutlineThickness(OUTLINE_THICKNESS);
-    setOutlineColor(sf::Color::Color(250, 92, 12));
+    setOutlineColor(player->GetColor());
     setOrigin(getRadius(), getRadius());
 }

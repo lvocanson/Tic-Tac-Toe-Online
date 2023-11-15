@@ -8,9 +8,10 @@ public:
 
     PlayerPieceShape(const Player* player);
 
-    int GetPlayerID() const { return m_ID; }
+    TicTacToe::PieceID GetPlayerID() const { return m_ID; }
 
 protected:
+
     TicTacToe::PieceID m_ID;
 
 };
