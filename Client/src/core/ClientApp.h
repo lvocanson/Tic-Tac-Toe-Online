@@ -3,7 +3,8 @@
 #include "GraphicBoard.h"
 #include <SFML/System/Time.hpp>
 
-#include "ScoreManager.h"
+#include "Managers/ScoreManager.h"
+#include "Managers/PlayerManager.h"
 
 class Window;
 class sf::Shape;
@@ -54,22 +55,15 @@ private: // Fields
     Window* m_Window = nullptr;
     GraphicBoard m_Board;
 
+    TicTacToe::PlayerManager m_PlayerManager;
     TicTacToe::ScoreManager m_ScoreManager;
-    TicTacToe::Player m_PlayerOne;
-    TicTacToe::Player m_PlayerTwo;
-    TicTacToe::Player* m_CurrentPlayer;
 
     sf::Time m_PlayerTurnTimer = sf::seconds(0);
 
     std::vector<sf::Drawable*> m_GamePieces;
 
-    sf::Text* m_PlayerOneScoreText;
-    sf::Text* m_PlayerTwoScoreText;
     sf::Text* m_PlayerTurnText;
     sf::Text* m_GameStateText;
 
     sf::Font m_Font;
-
-    bool m_IsPlayerOneTurn = true;
-
 };

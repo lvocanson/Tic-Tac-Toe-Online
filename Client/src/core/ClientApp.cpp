@@ -17,12 +17,9 @@ void ClientApp::Init()
     
     std::cout << "Hello World! I'm a client!\n";
 
-    if (!m_Font.loadFromFile("resources/fonts/bold-font.ttf"))
-    {
-        assert(false, "Failed to load font");
-    }
-
     m_Board.Init();
+    m_ScoreManager.Init();
+    m_PlayerManager.Init();
 
     sf::Vector2f center = m_Window->GetCenter();
 
@@ -36,36 +33,17 @@ void ClientApp::Init()
 
     m_Window->RegisterDrawable(text);
 
-    m_PlayerOne.SetName("Player One");
-    m_ScoreManager.RegisterPlayer(m_PlayerOne.GetPlayerData());
+    m_PlayerManager.CreateNewPlayer("Player One");
+    m_PlayerManager.CreateNewPlayer("Player Two");
 
-    m_PlayerTwo.SetName("Player Two");
-    m_ScoreManager.RegisterPlayer(m_PlayerTwo.GetPlayerData());
-
-    m_PlayerOneScoreText = new sf::Text();
-    m_PlayerOneScoreText->setFont(m_Font);
-    m_PlayerOneScoreText->setString(m_PlayerOne.GetName() + " : 0");
-    m_PlayerOneScoreText->setCharacterSize(24);
-    m_PlayerOneScoreText->setFillColor(sf::Color::White);
-    m_PlayerOneScoreText->setStyle(sf::Text::Bold);
-    m_PlayerOneScoreText->setPosition(75, m_Window->GetHeight() * 0.5f - m_PlayerOneScoreText->getGlobalBounds().height);
-
-    m_PlayerTwoScoreText = new sf::Text();
-    m_PlayerTwoScoreText->setFont(m_Font);
-    m_PlayerTwoScoreText->setString(m_PlayerTwo.GetName() + " : 0");
-    m_PlayerTwoScoreText->setCharacterSize(24);
-    m_PlayerTwoScoreText->setFillColor(sf::Color::White);
-    m_PlayerTwoScoreText->setStyle(sf::Text::Bold);
-    m_PlayerTwoScoreText->setPosition(m_PlayerOneScoreText->getPosition().x, m_Window->GetHeight() * 0.5f + m_PlayerTwoScoreText->getGlobalBounds().height);
-
-    m_Window->RegisterDrawable(m_PlayerOneScoreText);
-    m_Window->RegisterDrawable(m_PlayerTwoScoreText);
-
-    m_CurrentPlayer = &m_PlayerOne;
+    for (auto& player : m_PlayerManager.GetAllPlayers())
+    {
+        m_ScoreManager.CreateScoreForPlayer(player->GetPlayerData(), m_Window);
+    }
 
     m_PlayerTurnText = new sf::Text();
     m_PlayerTurnText->setFont(m_Font);
-    m_PlayerTurnText->setString(m_CurrentPlayer->GetName() + " turn");
+    m_PlayerTurnText->setString(m_PlayerManager.GetCurrentPlayer()->GetName() + " turn");
     m_PlayerTurnText->setCharacterSize(24);
     // TODO : Change color based on player turn
     m_PlayerTurnText->setFillColor(sf::Color::White);
@@ -81,7 +59,7 @@ void ClientApp::Init()
     // TODO : Change color based on player turn
     m_GameStateText->setFillColor(sf::Color::White);
     m_GameStateText->setStyle(sf::Text::Bold);
-    m_GameStateText->setPosition(m_PlayerTurnText->getPosition().x, m_PlayerTwoScoreText->getPosition().y);
+    m_GameStateText->setPosition(m_PlayerTurnText->getPosition().x, 100);
    
     m_Window->RegisterDrawable(m_GameStateText);
 
@@ -162,15 +140,12 @@ void ClientApp::CheckIfMouseHoverBoard()
                 {
                     std::cout << "Player " << winnerID << " won!\n";
 
-                    m_ScoreManager.NewGame(m_CurrentPlayer->GetPlayerData());
-                    m_ScoreManager.AddScoreToPlayer(m_CurrentPlayer->GetPlayerID());
+                    Player* winner = m_PlayerManager.GetCurrentPlayer();
 
-                    if (m_IsPlayerOneTurn)
-                        m_PlayerOneScoreText->setString(m_CurrentPlayer->GetName() + " : " + std::to_string(m_ScoreManager.GetPlayerScore(m_CurrentPlayer->GetPlayerID())));
-                    else
-                        m_PlayerTwoScoreText->setString(m_CurrentPlayer->GetName() + " : " + std::to_string(m_ScoreManager.GetPlayerScore(m_CurrentPlayer->GetPlayerID())));
+                    m_ScoreManager.SaveGame(winner->GetPlayerData());
+                    m_ScoreManager.AddScoreToPlayer(winner->GetPlayerData());
 
-                    m_GameStateText->setString(m_CurrentPlayer->GetName() + " won!");
+                    m_GameStateText->setString(winner->GetName() + " won!");
 
                     ClearBoard();
                 }
@@ -188,7 +163,8 @@ void ClientApp::CheckIfMouseHoverBoard()
 
 void ClientApp::PlacePlayerPieceOnBoard(size_t i)
 {
-    m_Board[i].SetPlayerPiece(m_CurrentPlayer);
+    Player* currentPlayer = m_PlayerManager.GetCurrentPlayer();
+    m_Board[i].SetPlayerPiece(currentPlayer);
 
     auto pos = sf::Vector2f( m_Board.GetGraphicPiece(i).GetPosition());
 
@@ -196,22 +172,24 @@ void ClientApp::PlacePlayerPieceOnBoard(size_t i)
     pos.x += static_cast<float>(m_Board.GetPieceSize()) * 0.5f;
     pos.y += static_cast<float>(m_Board.GetPieceSize()) * 0.5f;
 
+    auto piece = new GraphicPiece(currentPlayer->GetGraphicPiece());
+
     if (m_IsPlayerOneTurn)
     {
-        auto* piece = new PlayerCircleShape(&m_PlayerOne);
+        auto piece = new PlayerCircleShape(currentPlayer);
         piece->setPosition(pos);
         m_Window->RegisterDrawable(piece);
         m_GamePieces.push_back(piece);
     }
     else
     {
-        auto* piece = new PlayerCrossShape(&m_PlayerTwo);
+        auto* piece = new PlayerCrossShape(currentPlayer);
         piece->setPosition(pos);
         m_Window->RegisterDrawable(piece);
         m_GamePieces.push_back(piece);
     }
 
-    m_ScoreManager.AddMove(m_CurrentPlayer->GetPlayerID(), i);
+    m_ScoreManager.AddPlayerMove(currentPlayer->GetPlayerID(), i);
 }
 
 void ClientApp::ClearBoard()
@@ -228,12 +206,12 @@ void ClientApp::ClearBoard()
 
 void ClientApp::SwitchPlayerTurn()
 {
-    m_IsPlayerOneTurn = !m_IsPlayerOneTurn;
-    m_CurrentPlayer = m_IsPlayerOneTurn ? &m_PlayerOne : &m_PlayerTwo;
+    m_PlayerManager.SwitchPlayerTurn();
+
     m_PlayerTurnTimer = sf::seconds(PLAYER_TURN_DELAY);
+    m_PlayerTurnText->setString(m_PlayerManager.GetCurrentPlayer()->GetName() + " turn");
 
-    m_PlayerTurnText->setString(m_CurrentPlayer->GetName() + " turn");
-
+    // TODO : Change color based on player turn
     if (m_IsPlayerOneTurn)
         m_PlayerTurnText->setFillColor(sf::Color::Color(250, 92, 12));
     else 
@@ -260,9 +238,8 @@ void ClientApp::Cleanup()
         RELEASE(drawable);
     }
 
-    NULLPTR(m_PlayerTurnText)
-    NULLPTR(m_PlayerOneScoreText)
-    NULLPTR(m_PlayerTwoScoreText)
+    NULLPTR(m_PlayerTurnText);
+    NULLPTR(m_GameStateText);
 
     RELEASE(m_Window);
 }
