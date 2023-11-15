@@ -1,6 +1,8 @@
 #include "PlayerManager.h"
 
-TicTacToe::PlayerManager::PlayerManager()
+Player* PlayerManager::m_CurrentPlayer = nullptr;
+
+PlayerManager::PlayerManager()
 {
     m_PlayerCount = 0;
     m_RegisteredPlayers = std::vector<Player*>();
@@ -8,17 +10,17 @@ TicTacToe::PlayerManager::PlayerManager()
     m_CurrentPlayer = nullptr;
 }
 
-TicTacToe::PlayerManager::~PlayerManager()
+PlayerManager::~PlayerManager()
 {
    Clear();
 }
 
-void TicTacToe::PlayerManager::Init()
+void PlayerManager::Init()
 {
 
 }
 
-void TicTacToe::PlayerManager::Clear()
+void PlayerManager::Clear()
 {
     for (auto player : m_RegisteredPlayers)
     {
@@ -30,7 +32,7 @@ void TicTacToe::PlayerManager::Clear()
     m_RegisteredPlayers.clear();
 }
 
-void TicTacToe::PlayerManager::SwitchPlayerTurn()
+void PlayerManager::SwitchPlayerTurn()
 {
     m_CurrentPlayerIndex++;
 
@@ -44,7 +46,7 @@ void TicTacToe::PlayerManager::SwitchPlayerTurn()
     m_IsPlayerOneTurn = !m_IsPlayerOneTurn;
 }
 
-void TicTacToe::PlayerManager::CreateNewPlayer(std::string name)
+void PlayerManager::CreateNewPlayer(std::string name)
 {
     Player* newPlayer = new Player(name);
     m_RegisteredPlayers.push_back(newPlayer);
@@ -57,7 +59,7 @@ void TicTacToe::PlayerManager::CreateNewPlayer(std::string name)
     }
 }
 
-void TicTacToe::PlayerManager::UnregisterPlayer(Player* player)
+void PlayerManager::UnregisterPlayer(Player* player)
 {
     if (m_CurrentPlayer == player)
     {

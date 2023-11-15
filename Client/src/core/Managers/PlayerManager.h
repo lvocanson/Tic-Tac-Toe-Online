@@ -1,42 +1,38 @@
 #pragma once
-#include "Player.h"
+#include "src/core/Player.h"
 #include "IManager.h"
-#include <map>
 
-namespace TicTacToe {
+class PlayerManager : public IManager
+{
+public:
 
-    class PlayerManager : public IManager
-    {
-    public:
+    PlayerManager();
+    ~PlayerManager() override;
 
-        PlayerManager();
-        ~PlayerManager() override;
+    void Init() override;
+    void Clear() override;
 
-        void Init() override;
-        void Clear() override;
+    void SwitchPlayerTurn();
 
-        void SwitchPlayerTurn();
+    void CreateNewPlayer(std::string name);
+    void UnregisterPlayer(Player* player);
 
-        void CreateNewPlayer(std::string name);
-        void UnregisterPlayer(Player* player);
+    // TODO: rework this
+    bool IsPlayerOneTurn() const { return m_IsPlayerOneTurn; }
 
-        // TODO: rework this
-        bool IsPlayerOneTurn() { return m_IsPlayerOneTurn; }
+    const std::vector<Player*>& GetAllPlayers() { return m_RegisteredPlayers; }
+    Player* GetPlayer(int index) const { return m_RegisteredPlayers[index]; }
+    static Player* GetCurrentPlayer() { return m_CurrentPlayer; }
+    int GetPlayerCount() const { return m_PlayerCount; }
 
-        std::vector<Player*> GetAllPlayers() { return m_RegisteredPlayers; }
-        Player* GetPlayer(int index) { return m_RegisteredPlayers[index]; }
-        Player* GetCurrentPlayer() { return m_CurrentPlayer; }
-        int GetPlayerCount() { return m_PlayerCount; }
+private:
 
-    private:
+    std::vector<Player*> m_RegisteredPlayers;
+    static Player* m_CurrentPlayer;
 
-        std::vector<Player*> m_RegisteredPlayers;
-        Player* m_CurrentPlayer;
+    int m_PlayerCount;
+    int m_CurrentPlayerIndex;
 
-        int m_PlayerCount;
-        int m_CurrentPlayerIndex;
-
-        // TODO: rework this
-        bool m_IsPlayerOneTurn;
-    };
+    // TODO: rework this
+    bool m_IsPlayerOneTurn;
 };
