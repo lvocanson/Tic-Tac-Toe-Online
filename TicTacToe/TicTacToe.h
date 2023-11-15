@@ -55,7 +55,7 @@ namespace TicTacToe
         /// <summary>
         /// Returns the winning piece, or the empty piece if there is no winner.
         /// </summary>
-        Piece& GetWinner() const;
+        Piece IsThereAWinner() const;
 
         /// <summary>
         /// Resizes the board to the specified width and height.

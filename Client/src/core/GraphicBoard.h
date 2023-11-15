@@ -1,14 +1,16 @@
 #pragma once
 #include "TicTacToe.h"
+#include "Player.h"
 
-class GraphicPiece : public TicTacToe::Piece
+
+class GraphicPiece
 {
 public:
 
     GraphicPiece();
-    ~GraphicPiece() override;
+    ~GraphicPiece();
 
-    void SetEmpty() override;
+    void SetEmpty();
 
     void SetShape(sf::Shape* shape) { m_Shape = shape; };
     void SetPosition(sf::Vector2f position) const { m_Shape->setPosition(position); };
@@ -29,7 +31,7 @@ public:
 
     void Init();
 
-    void AddPlayerPieceInBoard(unsigned int cell, const TicTacToe::Player* player, GraphicPiece* piece);
+    void AddPlayerPieceInBoard(unsigned int cell, const Player* player, GraphicPiece* piece);
     void RemovePlayerPieceInBoard(unsigned int cell);
 
     GraphicPiece& GetGraphicPiece(unsigned int cell) { return *m_AllPiecesOnBoard[cell]; }

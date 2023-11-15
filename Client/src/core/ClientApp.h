@@ -52,8 +52,8 @@ private: // Fields
     Window* m_Window = nullptr;
 
     GraphicBoard m_Board;
-    TicTacToe::Player m_PlayerOne;
-    TicTacToe::Player m_PlayerTwo;
+    Player m_PlayerOne;
+    Player m_PlayerTwo;
 
     sf::Time m_PlayerTurnTimer = sf::seconds(0);
 

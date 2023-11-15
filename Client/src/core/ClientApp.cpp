@@ -81,7 +81,7 @@ void ClientApp::CheckIfMouseHoverBoard()
 {
     for (size_t i = 0; i < m_Board.GetTotalSize(); i++)
     {
-        if (m_Board[i].GetPlayerID() != EMPTY_PIECE) continue;
+        if (m_Board[i] != EMPTY_PIECE) continue;
 
         if (IsMouseHoverPiece(i))
         {
@@ -106,7 +106,7 @@ void ClientApp::CheckIfMouseHoverBoard()
 
 void ClientApp::PlacePlayerPieceOnBoard(unsigned int i)
 {
-    m_Board[i].SetPlayerPiece(m_IsPlayerOneTurn ? &m_PlayerOne : &m_PlayerTwo);
+    m_Board[i] = (m_IsPlayerOneTurn ? m_PlayerOne.GetPlayerID() : m_PlayerTwo.GetPlayerID());
 
     auto pos = sf::Vector2f( m_Board.GetGraphicPiece(i).GetPosition());
 

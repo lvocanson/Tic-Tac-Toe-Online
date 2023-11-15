@@ -19,22 +19,22 @@ GraphicBoard::~GraphicBoard()
 
 void GraphicBoard::Init()
 {
-    for (int i = 0; i < m_Size; i++)
+    for (unsigned int i = 0; i < m_Size; i++)
     {
         m_AllPiecesOnBoard.insert(std::pair(i, new GraphicPiece()));
     }
 }
 
-void GraphicBoard::AddPlayerPieceInBoard(unsigned int cell, const TicTacToe::Player* player, GraphicPiece* piece)
+void GraphicBoard::AddPlayerPieceInBoard(unsigned int cell, const Player* player, GraphicPiece* piece)
 {
     m_AllPiecesOnBoard[cell] = piece;
-    m_Board[cell].SetPlayerPiece(player);
+    m_Board[cell] = player->GetPlayerID();
 }
 
 void GraphicBoard::RemovePlayerPieceInBoard(unsigned int cell)
 {
-    m_AllPiecesOnBoard[cell] = nullptr;
-    m_Board[cell].SetEmpty();
+    m_AllPiecesOnBoard[cell]->SetEmpty();
+    m_Board[cell] = TicTacToe::EMPTY_PIECE;
 }
 
 GraphicPiece::GraphicPiece() : m_Shape(nullptr)
@@ -49,7 +49,5 @@ GraphicPiece::~GraphicPiece()
 
 void GraphicPiece::SetEmpty()
 {
-    Piece::SetEmpty();
-
     NULLPTR(m_Shape);
 }
