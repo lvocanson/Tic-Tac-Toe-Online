@@ -127,7 +127,8 @@ void ClientApp::Update(sf::Time delta)
         return;
     }
 
-    CheckIfMouseHoverBoard();
+    if (m_Window->IsFocused())
+        CheckIfMouseHoverBoard();
 }
 
 
@@ -139,7 +140,6 @@ void ClientApp::CheckIfMouseHoverBoard()
 
         if (IsMouseHoverPiece(i))
         {
-            bool tst = InputHandler::IsMouseButtonPressed(sf::Mouse::Left);
             if (InputHandler::IsMouseButtonPressed(sf::Mouse::Left))
             {
                 m_GameStateUI->UpdateGameStateText("");
