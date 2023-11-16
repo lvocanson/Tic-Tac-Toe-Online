@@ -1,5 +1,7 @@
 #include "Window.h"
 
+sf::RenderWindow* Window::m_Window = nullptr;
+
 Window::Window()
     : m_ClearColor(sf::Color::Color(51, 56, 63)), m_Drawables()
 {

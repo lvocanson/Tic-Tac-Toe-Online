@@ -14,7 +14,7 @@ private:
     FontRegistry() = delete;
     ~FontRegistry() = delete;
 
-    static std::map<std::string, sf::Font*> m_Fonts;
+    static std::unordered_map<std::string, sf::Font*> m_Fonts;
 
 };
 
