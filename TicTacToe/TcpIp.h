@@ -17,7 +17,7 @@ namespace TcpIp
     /// <summary>
     /// Initializes Winsock and returns WSADATA.
     /// </summary>
-    WSADATA InitializeWinsock();
+    WSADATA& InitializeWinsock();
 
     /// <summary>
     /// A custom exception for TCP/IP.

@@ -35,7 +35,7 @@ namespace TcpIp
         }
     };
 
-    WSADATA InitializeWinsock()
+    WSADATA& InitializeWinsock()
     {
         return WsaInit::GetInstance().WsaData;
     }

@@ -39,7 +39,7 @@ public:
 
 private:
 
-    WSADATA m_WsaData;
+    WSADATA& m_WsaData;
     SOCKET m_ConnectSocket;
     WSAEVENT m_ReadEvent;
 };
