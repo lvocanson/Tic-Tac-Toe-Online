@@ -26,7 +26,6 @@ private:
     sf::Text* m_GameStateText;
     sf::Text* m_Title;
 
-    std::map<TicTacToe::PieceID, sf::Text*> m_PlayerScoreTexts;
+    std::unordered_map<TicTacToe::PieceID, sf::Text*> m_PlayerScoreTexts;
 
 };
-

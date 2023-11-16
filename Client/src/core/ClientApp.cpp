@@ -56,6 +56,8 @@ void ClientApp::Run()
         const sf::Time elapsed = clock.restart();
 
         m_Window->PollEvents();
+        m_InputHandler.Update();
+
         Update(elapsed);
         m_Window->Render();
         m_IsRunning = m_Window->IsOpen();

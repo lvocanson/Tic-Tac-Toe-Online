@@ -1,7 +1,7 @@
 #include "src/pch.h"
 #include "FontRegistry.h"
 
-std::map<std::string, sf::Font*> FontRegistry::m_Fonts;
+std::unordered_map<std::string, sf::Font*> FontRegistry::m_Fonts;
 
 
 sf::Font* FontRegistry::GetFont(const std::string& fontName)

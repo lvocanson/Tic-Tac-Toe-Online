@@ -40,10 +40,12 @@ public:
     void CreateScoreForPlayer(PlayerData* playerData, Window* window);
 
     void AddPlayerMove(TicTacToe::PieceID pieceID, unsigned int lastCellPlayed);
-    void AddScoreToPlayer(const PlayerData& player);
+    void AddScoreToPlayer(TicTacToe::PieceID player);
     void SaveGame(const PlayerData* winner);
 
     unsigned int GetPlayerScore(TicTacToe::PieceID pieceID);
+
+    bool IsScoreExists(TicTacToe::PieceID& pieceID);
 
 private:
 
