@@ -21,6 +21,10 @@ public:
     /// Returns whether the window is open.
     /// </summary>
     bool IsOpen() const { return m_Window->isOpen(); }
+    /// <summary>
+    /// Returns if the window is focused.
+    /// </summary>
+    static bool const IsFocused() { return m_IsFocused; }
 
 #pragma endregion
 
@@ -60,6 +64,7 @@ public:
 
 private:
 
+    static bool m_IsFocused;
     static sf::RenderWindow* m_Window;
     sf::Color m_ClearColor;
     std::vector<sf::Drawable*> m_Drawables;
