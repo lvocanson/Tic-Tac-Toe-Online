@@ -88,6 +88,8 @@ void ClientApp::Run()
         const sf::Time elapsed = clock.restart();
 
         m_Window->PollEvents();
+        m_InputHandler.Update();
+
         Update(elapsed);
         m_Window->Render();
         m_IsRunning = m_Window->IsOpen();
@@ -139,7 +141,8 @@ void ClientApp::CheckIfMouseHoverBoard()
 
         if (IsMouseHoverPiece(i))
         {
-            if (Window::IsMouseButtonPressed(sf::Mouse::Left))
+            bool tst = InputHandler::IsMouseButtonPressed(sf::Mouse::Left);
+            if (InputHandler::IsMouseButtonPressed(sf::Mouse::Left))
             {
                 m_GameStateUI->UpdateGameStateText("");
 
@@ -236,7 +239,7 @@ void ClientApp::SwitchPlayerTurn()
 
 bool ClientApp::IsMouseHoverPiece(unsigned int i)
 {
-	const sf::Vector2f mousePos = static_cast<sf::Vector2f>(m_Window->GetMousePosition());
+	const sf::Vector2f mousePos = static_cast<sf::Vector2f>(InputHandler::GetMousePosition());
     const float size = m_Board.GetPieceSize();
     const sf::Vector2f piecePosition = m_Board.GetGraphicPiece(i).GetPosition();
 

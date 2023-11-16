@@ -97,6 +97,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\core\Managers\InputHandler.cpp" />
     <ClCompile Include="src\core\Managers\GameStateUI.cpp" />
     <ClCompile Include="src\core\Managers\FontRegistry.cpp" />
     <ClCompile Include="src\core\GraphicBoard.cpp" />
@@ -115,6 +116,7 @@
     <ClCompile Include="src\core\Managers\UIStateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\Managers\InputHandler.h" />
     <ClInclude Include="src\core\Managers\GameStateUI.h" />
     <ClInclude Include="src\core\Managers\FontRegistry.h" />
     <ClInclude Include="src\core\GraphicBoard.h" />

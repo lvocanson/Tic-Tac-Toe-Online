@@ -60,6 +60,7 @@ private: // Fields
     TcpIpClient* m_Client = nullptr;
     GameStateUI* m_GameStateUI = nullptr;
 
+    InputHandler m_InputHandler;
     GraphicBoard m_Board;
     PlayerManager m_PlayerManager;
     ScoreManager m_ScoreManager;
