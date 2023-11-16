@@ -150,7 +150,7 @@ void ClientApp::CheckIfMouseHoverBoard()
 
                     Player* winner = PlayerManager::GetCurrentPlayer();
 
-                    m_ScoreManager.AddScoreToPlayer(*winner->GetData());
+                    m_ScoreManager.AddScoreToPlayer(winner->GetPlayerID());
                     m_ScoreManager.SaveGame(winner->GetData());
 
                     m_GameStateUI->UpdatePlayerScore(*winner->GetData(), m_ScoreManager.GetPlayerScore(winner->GetPlayerID()));
@@ -195,7 +195,7 @@ void ClientApp::SetGraphicalPiece(unsigned cell, const Player* currentPlayer)
     {
         const auto piece = new PlayerCircleShape(currentPlayer);
         piece->setPosition(pos);
-        piece->setFillColor(currentPlayer->GetColor());
+        piece->setOutlineColor(currentPlayer->GetColor());
         m_Window->RegisterDrawable(piece);
         m_GamePieces.push_back(piece);
     }
@@ -203,7 +203,7 @@ void ClientApp::SetGraphicalPiece(unsigned cell, const Player* currentPlayer)
     {
         const auto piece = new PlayerCrossShape(currentPlayer);
         piece->setPosition(pos);
-        piece->setFillColor(currentPlayer->GetColor());
+        piece->setOutlineColor(currentPlayer->GetColor());
         m_Window->RegisterDrawable(piece);
         m_GamePieces.push_back(piece);
     }

@@ -55,14 +55,29 @@ void ScoreManager::AddPlayerMove(TicTacToe::PieceID pieceID, unsigned int lastCe
     m_CurrentGame.push_back(playerMove);
 }
 
-void ScoreManager::AddScoreToPlayer(const PlayerData& player)
+void ScoreManager::AddScoreToPlayer(TicTacToe::PieceID pieceID)
 {
-    m_PlayerScores[player.Id]++;
+    if (!IsScoreExists(pieceID)) return;
+
+    m_PlayerScores[pieceID]++;
 }
 
 unsigned int ScoreManager::GetPlayerScore(TicTacToe::PieceID pieceID)
 {
+    if (!IsScoreExists(pieceID)) return 0;
+
     return m_PlayerScores[pieceID];
+}
+
+bool ScoreManager::IsScoreExists(TicTacToe::PieceID& pieceID)
+{
+    if (!m_PlayerScores.contains(pieceID))
+    {
+        DebugLog("Score isn't created for this player");
+        return false;
+    }
+
+    return true;
 }
 
 void ScoreManager::SaveGame(const PlayerData* winner)
