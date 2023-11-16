@@ -7,6 +7,8 @@ class ButtonComponent : public sf::Drawable
 {
 public:
     ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor, const sf::Color& hoverColor, const std::string& buttonText, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment);
+    ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor, const sf::Color& hoverColor, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment);
+
     ~ButtonComponent();
 
     void Update(Window* m_Window);
