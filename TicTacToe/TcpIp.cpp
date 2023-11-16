@@ -8,20 +8,38 @@
 
 namespace TcpIp
 {
+    /// <summary>
+    /// Helper class to initialize and cleanup Winsock.
+    /// </summary>
+    struct WsaInit
+    {
+    public:
+        static WsaInit& GetInstance()
+        {
+            static WsaInit instance;
+            return instance;
+        }
+        WSADATA WsaData;
+
+    private:
+        WsaInit()
+        {
+            int iResult = WSAStartup(MAKEWORD(2, 2), &WsaData);
+            if (iResult != 0)
+                throw TcpIpException("WSAStartup", iResult);
+        }
+
+        ~WsaInit()
+        {
+            int iResult = WSACleanup();
+            if (iResult != 0)
+                throw TcpIpException("WSACleanup", iResult);
+        }
+    };
+
     WSADATA InitializeWinsock()
     {
-        WSADATA wsaData;
-        int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-        if (iResult != 0)
-            throw TcpIpException("WSAStartup", iResult);
-        return wsaData;
-    }
-
-    void CleanupWinsock()
-    {
-        int iResult = WSACleanup();
-        if (iResult != 0)
-            throw TcpIpException("WSACleanup", iResult);
+        return WsaInit::GetInstance().WsaData;
     }
 
     std::string GetErrMsg(const char* operation, int errCode)

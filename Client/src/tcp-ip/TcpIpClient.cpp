@@ -11,7 +11,6 @@ TcpIpClient::~TcpIpClient()
 {
     if (m_ConnectSocket != INVALID_SOCKET)
         Disconnect();
-    TcpIp::CleanupWinsock();
 }
 
 void TcpIpClient::Connect(const char* ip, int port)

@@ -18,10 +18,6 @@ namespace TcpIp
     /// Initializes Winsock and returns WSADATA.
     /// </summary>
     WSADATA InitializeWinsock();
-    /// <summary>
-    /// Cleans up Winsock.
-    /// </summary>
-    void CleanupWinsock();
 
     /// <summary>
     /// A custom exception for TCP/IP.

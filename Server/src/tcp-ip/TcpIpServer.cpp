@@ -26,7 +26,6 @@ TcpIpServer::~TcpIpServer()
 {
     if (m_ListenSocket != INVALID_SOCKET)
         Close();
-    TcpIp::CleanupWinsock();
 }
 
 void TcpIpServer::Open(unsigned int port)
