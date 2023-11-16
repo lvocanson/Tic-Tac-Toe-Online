@@ -25,6 +25,9 @@ void ClientApp::Init()
     m_StateMachine->AddState("HistoryState", new HistoryState(m_StateMachine, m_Window));
     m_StateMachine->AddState("EndState", new EndState(m_StateMachine, m_Window));
 
+    m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12));
+    m_PlayerManager.CreateNewPlayer("Player Two", sf::Color(255, 194, 0));
+
     m_StateMachine->InitState("MenuState");
     m_StateMachine->Start();
 }
@@ -88,7 +91,7 @@ void ClientApp::Run()
 
 void ClientApp::Update(sf::Time delta)
 {
-    m_StateMachine->Update(delta.asSeconds());
+    m_StateMachine->Update(delta);
 }
 
 void ClientApp::Cleanup()

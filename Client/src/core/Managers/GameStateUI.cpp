@@ -5,11 +5,15 @@
 
 GameStateUI::GameStateUI(Window* window) : UIStateManager(window)
 {
-
+    m_PlayerScoreTexts = std::map<TicTacToe::PieceID, sf::Text*>();
+    m_Title = nullptr;
+    m_PlayerTurnText = nullptr;
+    m_GameStateText = nullptr;
 }
 
 GameStateUI::~GameStateUI()
 {
+    Clear();
 }
 
 void GameStateUI::Init()
@@ -54,10 +58,14 @@ void GameStateUI::Init()
 
 void GameStateUI::Clear()
 {
-    for (auto text : m_PlayerScoreTexts)
+    for (auto& text : m_PlayerScoreTexts)
     {
         NULLPTR(text.second);
     }
+
+    NULLPTR(m_PlayerTurnText);
+    NULLPTR(m_GameStateText);
+    NULLPTR(m_Title);
 }
 
 void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
@@ -78,9 +86,10 @@ void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
     }
 }
 
-void GameStateUI::UpdatePlayerTurnText(const std::string& text)
+void GameStateUI::UpdatePlayerTurnText(const PlayerData& data)
 {
-    m_PlayerTurnText->setString(text + " turn");
+    m_PlayerTurnText->setString(data.Name + " turn");
+    m_PlayerTurnText->setFillColor(data.Color);
 }
 
 void GameStateUI::UpdateGameStateText(const std::string& text)
@@ -88,13 +97,13 @@ void GameStateUI::UpdateGameStateText(const std::string& text)
     m_GameStateText->setString(text);
 }
 
-void GameStateUI::UpdatePlayerScore(const PlayerData* player, const unsigned int score)
+void GameStateUI::UpdatePlayerScore(const PlayerData& player, const unsigned int score)
 {
-    if (!m_PlayerScoreTexts.contains(player->Id))
+    if (!m_PlayerScoreTexts.contains(player.Id))
     {
-        DebugLog("Player score text with " + std::to_string(player->Id) + " is not found !");
+        DebugLog("Player score text with " + std::to_string(player.Id) + " is not found !");
         return;
     }
 
-    m_PlayerScoreTexts[player->Id]->setString(player->Name + " : " + std::to_string(score));
+    m_PlayerScoreTexts[player.Id]->setString(player.Name + " : " + std::to_string(score));
 }

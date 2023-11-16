@@ -45,6 +45,7 @@ private: // Methods
 
 private: // Fields
     bool m_IsRunning = false;
+
     Window *m_Window = nullptr;
     StateMachine *m_StateMachine;
 };

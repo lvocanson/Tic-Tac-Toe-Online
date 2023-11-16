@@ -3,10 +3,6 @@
 #include <src/core/Window.h>
 #include "src/core/Managers/FontRegistry.h"
 
-enum AvaiblableFonts
-{
-    Bold,
-};
 
 class UIStateManager : public IManager
 {

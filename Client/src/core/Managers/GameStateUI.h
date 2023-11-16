@@ -16,9 +16,9 @@ public:
 
     void InitPlayerScores(const std::vector<Player*>& allPlayers);
 
-    void UpdatePlayerTurnText(const std::string& text);
+    void UpdatePlayerTurnText(const PlayerData& data);
     void UpdateGameStateText(const std::string& text);
-    void UpdatePlayerScore(const PlayerData* playerID, unsigned int score);
+    void UpdatePlayerScore(const PlayerData& playerID, unsigned int score);
 
 private:
 
