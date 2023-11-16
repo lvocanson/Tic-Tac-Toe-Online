@@ -13,27 +13,27 @@ void ServerApp::Init()
 {
     if (!InitGameServer())
     {
-        std::cout << ERR_CLR << "Aborting app initialization." << std::endl;
+        std::cout << ERR_CLR << "Aborting app initialization." << std::endl << DEF_CLR;
         return;
     }
     else
     {
-        std::cout << SCS_CLR << "Game server is listening on port " << DEFAULT_PORT << "..." << std::endl;
+        std::cout << SCS_CLR << "Game server is listening on port " << DEFAULT_PORT << "..." << std::endl << DEF_CLR;
     }
 
     if (!InitWebServer())
     {
-        std::cout << WRN_CLR << "Web server is unable to start, web interface will be disabled for this session." << std::endl;
+        std::cout << WRN_CLR << "Web server is unable to start, web interface will be disabled for this session." << std::endl << DEF_CLR;
     }
     else
     {
-        std::cout << SCS_CLR << "Web server is listening on port " << DEFAULT_PORT + 1 << "..." << std::endl;
+        std::cout << SCS_CLR << "Web server is listening on port " << DEFAULT_PORT + 1 << "..." << std::endl << DEF_CLR;
     }
 }
 
 void ServerApp::Run()
 {
-    std::cout << INF_CLR << "Press ESC to shutdown the app." << std::endl;
+    std::cout << INF_CLR << "Press ESC to shutdown the app." << std::endl << DEF_CLR;
     while (!IsKeyPressed(27)) // 27 = ESC
     {
         HandleGameServer();
@@ -63,7 +63,7 @@ bool ServerApp::InitGameServer()
     }
     catch (const TcpIp::TcpIpException& e)
     {
-        std::cout << INF_CLR << "The game server is unable to start: " << e.what() << std::endl;
+        std::cout << INF_CLR << "The game server is unable to start: " << e.what() << std::endl << DEF_CLR;
         return false;
     }
 }
@@ -76,7 +76,7 @@ void ServerApp::HandleGameServer()
         int count = m_GameServer->AcceptAllPendingConnections();
         if (count > 0)
         {
-            std::cout << STS_CLR << count << " new connection" << (count > 1 ? "s" : "") << " accepted." << std::endl;
+            std::cout << STS_CLR << count << " new connection" << (count > 1 ? "s" : "") << " accepted." << std::endl << DEF_CLR;
         }
 
         Client sender;
@@ -89,18 +89,18 @@ void ServerApp::HandleGameServer()
         count = m_GameServer->KillClosedConnections();
         if (count > 0)
         {
-            std::cout << STS_CLR << count << " connection" << (count > 1 ? "s" : "") << " closed." << std::endl;
+            std::cout << STS_CLR << count << " connection" << (count > 1 ? "s" : "") << " closed." << std::endl << DEF_CLR;
         }
     }
     catch (const TcpIp::TcpIpException& e)
     {
-        std::cout << ERR_CLR << "The game server has encountered an error: " << e.what() << std::endl;
+        std::cout << ERR_CLR << "The game server has encountered an error: " << e.what() << std::endl << DEF_CLR;
     }
 }
 
 void ServerApp::HandleData(const std::string& data, Client sender)
 {
-    std::cout << HASH_CLR(sender) << DEF_CLR << " sent " << data.size() << " bytes of data." << std::endl;
+    std::cout << HASH_CLR(sender) << DEF_CLR << " sent " << data.size() << " bytes of data." << std::endl << DEF_CLR;
     m_GameServer->Send(sender, data);
 }
 
@@ -113,7 +113,7 @@ void ServerApp::CleanUpGameServer()
     }
     catch (const TcpIp::TcpIpException& e)
     {
-        std::cout << ERR_CLR << "Game server clean up failed: " << e.what() << std::endl;
+        std::cout << ERR_CLR << "Game server clean up failed: " << e.what() << std::endl << DEF_CLR;
     }
 }
 
