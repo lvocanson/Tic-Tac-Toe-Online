@@ -1,11 +1,13 @@
 #pragma once
 #include <string>
+#include "Managers/PlayerShapeRegistry.h"
 
 struct PlayerData
 {
     std::string Name;
     TicTacToe::PieceID Id;
 	sf::Color Color;
+	PlayerShapeType ShapeType;
 };
 
 class Player
@@ -13,7 +15,7 @@ class Player
 public:
 
 	Player();
-	Player(const std::string& name, const sf::Color color);
+	Player(const std::string& name, const sf::Color color, const PlayerShapeType);
 	~Player();
 
 	void SetColor(const sf::Color color) { m_Data.Color = color; }
@@ -26,5 +28,6 @@ public:
 private:
 
 	PlayerData m_Data;
+
 
 };
