@@ -1,4 +1,5 @@
 #include "PlayerManager.h"
+#include "PlayerShapeRegistry.h"
 
 Player* PlayerManager::m_CurrentPlayer = nullptr;
 
@@ -44,9 +45,9 @@ void PlayerManager::SwitchPlayerTurn()
     m_IsPlayerOneTurn = !m_IsPlayerOneTurn;
 }
 
-void PlayerManager::CreateNewPlayer(const std::string& name, const sf::Color color)
+void PlayerManager::CreateNewPlayer(const std::string& name, const sf::Color color, const PlayerShapeType shapeType)
 {
-    const auto newPlayer = new Player(name, color);
+    const auto newPlayer = new Player(name, color, shapeType);
 
     m_RegisteredPlayers.push_back(newPlayer);
     m_PlayerCount++;
@@ -55,6 +56,8 @@ void PlayerManager::CreateNewPlayer(const std::string& name, const sf::Color col
     {
         m_CurrentPlayer = newPlayer;
     }
+
+    PlayerShapeRegistry::CreatePlayerShape(shapeType, newPlayer->GetPlayerID(), color);
 }
 
 void PlayerManager::UnregisterPlayer(Player* player)
