@@ -6,17 +6,11 @@
 /// </summary>
 class TcpIpClient final
 {
+public:
     TcpIpClient();
     ~TcpIpClient();
     TcpIpClient(const TcpIpClient&) = delete;
     TcpIpClient& operator=(const TcpIpClient&) = delete;
-
-public:
-    static TcpIpClient& GetInstance()
-    {
-        static TcpIpClient instance;
-        return instance;
-    }
 
     /// <summary>
     /// Connects to a server.

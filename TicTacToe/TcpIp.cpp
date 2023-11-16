@@ -31,9 +31,7 @@ namespace TcpIp
 
         ~WsaInit()
         {
-            int iResult = WSACleanup();
-            if (iResult != 0)
-                throw TcpIpException("WSACleanup", iResult);
+            WSACleanup();
         }
     };
 

@@ -13,7 +13,7 @@ void ClientApp::Init()
     m_Window = new Window();
     m_Window->Create("Tic Tac Toe Online!", 1280, 720);
     
-    std::cout << "Hello World! I'm a client!\n";
+    m_Client = new TcpIpClient();
 
     m_Board.Init();
 
@@ -51,12 +51,12 @@ void ClientApp::Run()
     if (!m_IsRunning)
         throw std::runtime_error("ClientApp is not initialized!");
 
-    auto& client = TcpIpClient::GetInstance();
+    m_Client = new TcpIpClient();
     try
     {
-        client.Connect("localhost", DEFAULT_PORT);
+        m_Client->Connect("localhost", DEFAULT_PORT);
         DebugLog("Connected to server!\n");
-        client.Send("Hello from client!");
+        m_Client->Send("Hello from client!");
     }
     catch (const TcpIp::TcpIpException& e)
     {
@@ -78,7 +78,7 @@ void ClientApp::Run()
 
         try
         {
-            while (client.FetchPendingData(ss))
+            while (m_Client->FetchPendingData(ss))
             {
                 DebugLog("Received data from server: \n");
                 DebugLog(ss.str().c_str());
@@ -92,14 +92,14 @@ void ClientApp::Run()
             m_IsRunning = false;
         }
 
-        if (!client.IsConnected())
+        if (!m_Client->IsConnected())
         {
             DebugLog("Disconnected from server!\n");
             m_IsRunning = false;
         }
     }
 
-    client.Disconnect();
+    m_Client->Disconnect();
     Cleanup();
 }
 
@@ -131,13 +131,13 @@ void ClientApp::CheckIfMouseHoverBoard()
                 if (winnerID != EMPTY_PIECE)
                 {
                     std::cout << "Player " << winnerID << " won!\n";
-                    TcpIpClient::GetInstance().Send("A player won ! " + winnerID);
+                    m_Client->Send("A player won ! " + winnerID);
                 }
 
                 if (m_Board.IsFull() || winnerID != EMPTY_PIECE)
                 {
                     ClearBoard();
-                    TcpIpClient::GetInstance().Send("It's a draw !");
+                    m_Client->Send("It's a draw !");
                 }
 
                 SwitchPlayerTurn();
@@ -153,7 +153,7 @@ void ClientApp::PlacePlayerPieceOnBoard(unsigned int i)
     int row = i / m_Board.GetWidth();
     int col = i % m_Board.GetWidth();
     std::string playerID = std::to_string(m_Board[i]);
-    TcpIpClient::GetInstance().Send("A piece has been placed at row: " + std::to_string(row) + "||col: " + std::to_string(col) + " by player " + playerID);
+    m_Client->Send("A piece has been placed at row: " + std::to_string(row) + "||col: " + std::to_string(col) + " by player " + playerID);
 
     auto pos = sf::Vector2f( m_Board.GetGraphicPiece(i).GetPosition());
 
@@ -194,9 +194,9 @@ void ClientApp::SwitchPlayerTurn()
     m_IsPlayerOneTurn = !m_IsPlayerOneTurn;
     m_PlayerTurnTimer = sf::seconds(PLAYER_TURN_DELAY);
     if(m_IsPlayerOneTurn)
-        TcpIpClient::GetInstance().Send(m_PlayerOne.GetName() + " Turn");
+        m_Client->Send(m_PlayerOne.GetName() + " Turn");
     else
-        TcpIpClient::GetInstance().Send(m_PlayerTwo.GetName() + " Turn");
+        m_Client->Send(m_PlayerTwo.GetName() + " Turn");
 }
 
 
@@ -220,4 +220,5 @@ void ClientApp::Cleanup()
     }
 
     RELEASE(m_Window);
+    RELEASE(m_Client);
 }

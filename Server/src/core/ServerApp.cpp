@@ -1,13 +1,11 @@
 #include "ServerApp.h"
-#include "src/tcp-ip/TcpIpServer.h"
 #include "ConsoleHelper.h"
 
-void AnalyseData(const std::string& data, Client sender);
 
 void ServerApp::Run()
 {
-    TcpIpServer& server = TcpIpServer::GetInstance();
-    server.Open(DEFAULT_PORT);
+    m_Server = new TcpIpServer();
+    m_Server->Open(DEFAULT_PORT);
     std::cout
         << Color::Green <<
         "Server is listening on port " << DEFAULT_PORT << "..." << std::endl
@@ -21,7 +19,7 @@ void ServerApp::Run()
     {
         try
         {
-            int count = server.AcceptAllPendingConnections();
+            int count = m_Server->AcceptAllPendingConnections();
             if (count > 0)
             {
                 std::cout
@@ -30,10 +28,10 @@ void ServerApp::Run()
                     << Color::White;
             }
 
-            while (server.FetchPendingData(ss, client))
+            while (m_Server->FetchPendingData(ss, client))
                 AnalyseData(ss.str(), client);
 
-            count = server.KillClosedConnections();
+            count = m_Server->KillClosedConnections();
             if (count > 0)
             {
                 std::cout
@@ -56,14 +54,15 @@ void ServerApp::Run()
         Sleep(1);
     }
 
-    server.Close();
+    m_Server->Close();
+    delete m_Server;
     std::cout
         << Color::Green <<
         "Server successfully shut down on user request." << std::endl
         << Color::White;
 }
 
-void AnalyseData(const std::string& data, Client sender)
+void ServerApp::AnalyseData(const std::string& data, Client sender)
 {
     Color clr = HshClr(sender->Address + ":" + std::to_string(sender->Port));
     std::cout << clr << sender->Address << ":" << sender->Port << Color::White << " sent " << data.size() << " bytes of data." << std::endl;
@@ -73,6 +72,6 @@ void AnalyseData(const std::string& data, Client sender)
 
     /* ... */
 
-    TcpIpServer::GetInstance().Send(sender, oss.str());
+    m_Server->Send(sender, oss.str());
     std::cout << "-> Replied with " << oss.str().size() << " bytes of data." << std::endl;
 }

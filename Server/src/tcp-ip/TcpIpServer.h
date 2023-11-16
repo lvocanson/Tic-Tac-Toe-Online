@@ -25,17 +25,11 @@ typedef Connection* Client;
 /// </summary>
 class TcpIpServer final
 {
+public:
     TcpIpServer();
     ~TcpIpServer();
     TcpIpServer(const TcpIpServer&) = delete;
     TcpIpServer& operator=(const TcpIpServer&) = delete;
-
-public:
-    static TcpIpServer& GetInstance()
-    {
-        static TcpIpServer instance;
-        return instance;
-    }
 
     /// <summary>
     /// Open server and start listening.

@@ -5,6 +5,7 @@
 
 class Window;
 class sf::Shape;
+class TcpIpClient;
 
 class ClientApp
 {
@@ -50,6 +51,7 @@ private: // Fields
     bool m_IsRunning = false;
 
     Window* m_Window = nullptr;
+    TcpIpClient* m_Client = nullptr;
 
     GraphicBoard m_Board;
     Player m_PlayerOne;
