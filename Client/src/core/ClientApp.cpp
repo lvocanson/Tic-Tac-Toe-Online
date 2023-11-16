@@ -14,11 +14,18 @@ void ClientApp::Init()
     m_Window = new Window();
     m_Window->Create("Tic Tac Toe Online!", 1280, 720);
 
+    m_GameSettings = {
+        .PlayerMoveLimitTime = 3.0f,
+        .AlignmentGoal = 3,
+        .TotalRow = 3,
+        .TotalColumn = 3,
+    };
+
     m_GameStateUI = new GameStateUI(m_Window);
 
     std::cout << "Hello World! I'm a client!\n";
 
-    m_Board.Init();
+    m_Board.Init(m_GameSettings.TotalColumn, m_GameSettings.TotalRow);
     m_ScoreManager.Init();
     m_PlayerManager.Init();
 

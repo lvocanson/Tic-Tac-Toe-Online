@@ -5,6 +5,7 @@
 #include "Managers/GameStateUI.h"
 #include "Managers/ScoreManager.h"
 #include "Managers/PlayerManager.h"
+#include <GameMode.h>
 
 class Window;
 class sf::Shape;
@@ -57,7 +58,7 @@ private: // Fields
 
     Window* m_Window = nullptr;
     GameStateUI* m_GameStateUI = nullptr;
-
+    GameSettings m_GameSettings;
     InputHandler m_InputHandler;
     GraphicBoard m_Board;
     PlayerManager m_PlayerManager;

@@ -11,12 +11,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameMode.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="TcpIp.h" />
     <ClInclude Include="IDGenerator.h" />
     <ClInclude Include="TicTacToe.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GameMode.cpp" />
     <ClCompile Include="TcpIp.cpp" />
     <ClCompile Include="IDGenerator.cpp" />
     <ClCompile Include="TicTacToe.cpp" />
