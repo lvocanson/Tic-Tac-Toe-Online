@@ -68,4 +68,3 @@ bool InputHandler::IsMouseButtonHeld(sf::Mouse::Button button)
 {
     return (m_CurrentKeyState[m_KeyCount + button + 1]);
 }
-
