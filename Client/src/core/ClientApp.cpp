@@ -8,6 +8,8 @@
 
 using namespace TicTacToe;
 
+using json = nlohmann::json;
+
 void ClientApp::Init()
 {
     m_IsRunning = true;
@@ -179,7 +181,12 @@ void ClientApp::PlacePlayerPieceOnBoard(unsigned int cell)
     int row = cell / (int)m_Board.GetWidth();
     int col = cell % (int)m_Board.GetWidth();
     std::string playerID = std::to_string(m_Board[cell]);
-    m_Client->Send("A piece has been placed at row: " + std::to_string(row) + "||col: " + std::to_string(col) + " by player " + playerID);
+    json j;
+    j["row"] = row;
+    j["col"] = col;
+    j["playerID"] = playerID;
+    m_Client->Send(j.dump());
+
 
     auto pos = sf::Vector2f( m_Board.GetGraphicPiece(cell).GetPosition());
     // Set piece id in board
