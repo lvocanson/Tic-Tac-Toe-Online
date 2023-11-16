@@ -11,9 +11,20 @@ public:
     ServerApp(const ServerApp&) = delete;
     ServerApp& operator=(const ServerApp&) = delete;
 
+    void Init();
     void Run();
-    void AnalyseData(const std::string& data, Client sender); 
+    void CleanUp();
 
 private:
-    TcpIpServer* m_Server = nullptr;
+
+    bool InitGameServer();
+    void HandleGameServer();
+    void HandleData(const std::string& data, Client sender);
+    void CleanUpGameServer();
+
+    bool InitWebServer();
+    void HandleWebServer();
+    void CleanUpWebServer();
+
+    TcpIpServer* m_GameServer = nullptr;
 };
