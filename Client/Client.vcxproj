@@ -97,27 +97,41 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\core\Managers\GameStateUI.cpp" />
+    <ClCompile Include="src\core\Managers\FontRegistry.cpp" />
     <ClCompile Include="src\core\GraphicBoard.cpp" />
+    <ClCompile Include="src\core\Managers\PlayerManager.cpp" />
     <ClCompile Include="src\core\Player.cpp" />
-    <ClCompile Include="src\core\PlayerPiece.cpp" />
+    <ClCompile Include="src\core\PlayerPieceShape.cpp" />
     <ClCompile Include="src\ClientMain.cpp" />
     <ClCompile Include="src\core\ClientApp.cpp" />
+    <ClCompile Include="src\core\Managers\ScoreManager.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\tcp-ip\TcpIpClient.cpp" />
+    <ClCompile Include="src\core\Managers\UIStateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\Managers\GameStateUI.h" />
+    <ClInclude Include="src\core\Managers\FontRegistry.h" />
     <ClInclude Include="src\core\GraphicBoard.h" />
+    <ClInclude Include="src\core\Managers\IManager.h" />
+    <ClInclude Include="src\core\Managers\PlayerManager.h" />
     <ClInclude Include="src\core\Player.h" />
-    <ClInclude Include="src\core\PlayerPiece.h" />
+    <ClInclude Include="src\core\PlayerPieceShape.h" />
     <ClInclude Include="src\core\ClientApp.h" />
     <ClInclude Include="src\core\CoreDefinitions.h" />
+    <ClInclude Include="src\core\Managers\ScoreManager.h" />
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\core\Managers\UIStateManager.h" />
     <ClInclude Include="src\tcp-ip\TcpIpClient.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\fonts\bold-font.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
