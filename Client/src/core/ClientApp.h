@@ -43,7 +43,7 @@ private: // Methods
     void CheckIfMouseHoverBoard();
     bool IsMouseHoverPiece(unsigned int i);
     void PlacePlayerPieceOnBoard(unsigned int cell);
-    void SetGraphicalPiece(unsigned cell, const Player* currentPlayer);
+    void InstanciateNewPlayerShape(const Player* currentPlayer, const unsigned int cell);
     void SwitchPlayerTurn();
 
     void ClearBoard();
