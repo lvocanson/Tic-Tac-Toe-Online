@@ -13,12 +13,13 @@ Player::Player()
 	};
 }
 
-Player::Player(const std::string& name, const sf::Color color)
+Player::Player(const std::string& name, const sf::Color color, const PlayerShapeType shapeType)
 {
 	m_Data = {
 		.Name = name,
 		.Id = IDGenerator::GenerateID(),
 		.Color = color,
+		.ShapeType = shapeType
 	};
 }
 

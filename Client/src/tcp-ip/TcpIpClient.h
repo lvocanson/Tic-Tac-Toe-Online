@@ -6,17 +6,11 @@
 /// </summary>
 class TcpIpClient final
 {
+public:
     TcpIpClient();
     ~TcpIpClient();
     TcpIpClient(const TcpIpClient&) = delete;
     TcpIpClient& operator=(const TcpIpClient&) = delete;
-
-public:
-    static TcpIpClient& GetInstance()
-    {
-        static TcpIpClient instance;
-        return instance;
-    }
 
     /// <summary>
     /// Connects to a server.
@@ -34,8 +28,8 @@ public:
     /// <summary>
     /// Sends data to the connected server.
     /// </summary>
-    void Send(const char* data, size_t size);
-    void Send(const std::string& data) { Send(data.c_str(), data.size()); }
+    void Send(const char* data, u_long size);
+    void Send(const std::string& data) { Send(data.c_str(), static_cast<u_long>(data.size())); }
     /// <summary>
     /// Fetches pending data from the server.
     /// </summary>
@@ -45,7 +39,7 @@ public:
 
 private:
 
-    WSADATA m_WsaData;
+    WSADATA& m_WsaData;
     SOCKET m_ConnectSocket;
     WSAEVENT m_ReadEvent;
 };

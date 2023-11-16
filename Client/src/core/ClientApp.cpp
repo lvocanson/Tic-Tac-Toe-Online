@@ -8,6 +8,8 @@
 
 using namespace TicTacToe;
 
+using json = nlohmann::json;
+
 void ClientApp::Init()
 {
     FontRegistry::LoadFont("bold-font");
@@ -15,6 +17,8 @@ void ClientApp::Init()
     m_IsRunning = true;
     m_Window = new Window();
     m_Window->Create("Tic Tac Toe Online!", 1280, 720);
+    
+    m_Client = new TcpIpClient();
 
     std::cout << "Hello World! I'm a client!\n";
 
@@ -36,11 +40,12 @@ void ClientApp::Run()
         throw std::runtime_error("ClientApp is not initialized!");
 
     auto &client = TcpIpClient::GetInstance();
+    m_Client = new TcpIpClient();
     try
     {
-        client.Connect("localhost", DEFAULT_PORT);
+        m_Client->Connect("localhost", DEFAULT_PORT);
         DebugLog("Connected to server!\n");
-        client.Send("Hello from client!");
+        m_Client->Send("Hello from client!");
     }
     catch (const TcpIp::TcpIpException &e)
     {
@@ -64,7 +69,7 @@ void ClientApp::Run()
 
         try
         {
-            if (client.FetchPendingData(ss))
+            while (m_Client->FetchPendingData(ss))
             {
                 DebugLog("Received data from server: \n");
                 DebugLog(ss.str().c_str());
@@ -78,14 +83,14 @@ void ClientApp::Run()
             m_IsRunning = false;
         }
 
-        if (!client.IsConnected())
+        if (!m_Client->IsConnected())
         {
             DebugLog("Disconnected from server!\n");
             m_IsRunning = false;
         }
     }
 
-    client.Disconnect();
+    m_Client->Disconnect();
     Cleanup();
 }
 
@@ -93,6 +98,7 @@ void ClientApp::Update(sf::Time delta)
 {
     m_StateMachine->Update(delta.asSeconds());
 }
+
 
 void ClientApp::Cleanup()
 {
@@ -104,6 +110,8 @@ void ClientApp::Cleanup()
     }
 
     RELEASE(m_Window);
+    RELEASE(m_Client);
+    RELEASE(m_GameStateUI);
 
     FontRegistry::ClearFonts();
 }

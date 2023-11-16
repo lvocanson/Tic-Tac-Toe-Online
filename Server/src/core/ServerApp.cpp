@@ -1,52 +1,138 @@
 #include "ServerApp.h"
-#include "src/tcp-ip/TcpIpServer.h"
-#include <conio.h>
+#include "ConsoleHelper.h"
+
+#define ERR_CLR Color::Red
+#define WRN_CLR Color::Yellow
+#define SCS_CLR Color::LightGreen
+#define STS_CLR Color::LightMagenta
+#define INF_CLR Color::Gray
+#define DEF_CLR Color::White
+#define HASH_CLR(c) HshClr(c->Address + std::to_string(c->Port)) << c->Address << ":" << c->Port
+
+void ServerApp::Init()
+{
+    if (!InitGameServer())
+    {
+        std::cout << ERR_CLR << "Aborting app initialization." << std::endl << DEF_CLR;
+        return;
+    }
+    else
+    {
+        std::cout << SCS_CLR << "Game server is listening on port " << DEFAULT_PORT << "..." << std::endl << DEF_CLR;
+    }
+
+    if (!InitWebServer())
+    {
+        std::cout << WRN_CLR << "Web server is unable to start, web interface will be disabled for this session." << std::endl << DEF_CLR;
+    }
+    else
+    {
+        std::cout << SCS_CLR << "Web server is listening on port " << DEFAULT_PORT + 1 << "..." << std::endl << DEF_CLR;
+    }
+}
 
 void ServerApp::Run()
 {
-    TcpIpServer& server = TcpIpServer::GetInstance();
-    server.Open(DEFAULT_PORT);
-    std::cout << "Server is listening on port " << DEFAULT_PORT << "..." << std::endl;
-
-    std::stringstream ss;
-    Client client;
-    char kbhit = 0;
-
-    std::cout << "Press ESC to shut down the server." << std::endl;
-    while (!(kbhit == 27))
+    std::cout << INF_CLR << "Press ESC to shutdown the app." << std::endl << DEF_CLR;
+    while (!IsKeyPressed(27)) // 27 = ESC
     {
-        try
-        {
-            if (server.AcceptPendingConnections())
-                std::cout << "A new client has connected." << std::endl;
-
-            // Echo back to the clients
-            while (server.FetchPendingData(ss, client))
-            {
-                std::cout << "Received: " << ss.str() << std::endl;
-
-                server.Send(client, ss.str());
-                std::cout << "Sent back." << std::endl;
-
-                ss.str(std::string());
-            }
-
-            auto count = server.KillClosedConnections();
-            if (count > 0)
-                std::cout << count << " connections were closed." << std::endl;
-        }
-        catch (const TcpIp::TcpIpException& e)
-        {
-            std::cout << "The server has encountered an error: " << e.what() << std::endl;
-        }
+        HandleGameServer();
+        HandleWebServer();
 
         // Sleep for 1ms to avoid 100% CPU usage
         Sleep(1);
-
-        // Check for keyboard input
-        _kbhit() && (kbhit = _getch());
     }
-
-    server.Close();
-    std::cout << "Server successfully shut down on user request." << std::endl;
 }
+
+void ServerApp::CleanUp()
+{
+    std::cout << INF_CLR << "User requested to shutdown the app." << std::endl << DEF_CLR;
+    CleanUpWebServer();
+    CleanUpGameServer();
+}
+
+#pragma region Game Server
+
+bool ServerApp::InitGameServer()
+{
+    try
+    {
+        m_GameServer = new TcpIpServer();
+        m_GameServer->Open(DEFAULT_PORT);
+        return true;
+    }
+    catch (const TcpIp::TcpIpException& e)
+    {
+        std::cout << INF_CLR << "The game server is unable to start: " << e.what() << std::endl << DEF_CLR;
+        return false;
+    }
+}
+
+void ServerApp::HandleGameServer()
+{
+    static std::stringstream ss;
+    try
+    {
+        int count = m_GameServer->AcceptAllPendingConnections();
+        if (count > 0)
+        {
+            std::cout << STS_CLR << count << " new connection" << (count > 1 ? "s" : "") << " accepted." << std::endl << DEF_CLR;
+        }
+
+        Client sender;
+        while (m_GameServer->FetchPendingData(ss, sender))
+        {
+            HandleData(ss.str(), sender);
+            ss.str(std::string()); // Clear the stringstream
+        }
+
+        count = m_GameServer->KillClosedConnections();
+        if (count > 0)
+        {
+            std::cout << STS_CLR << count << " connection" << (count > 1 ? "s" : "") << " closed." << std::endl << DEF_CLR;
+        }
+    }
+    catch (const TcpIp::TcpIpException& e)
+    {
+        std::cout << ERR_CLR << "The game server has encountered an error: " << e.what() << std::endl << DEF_CLR;
+    }
+}
+
+void ServerApp::HandleData(const std::string& data, Client sender)
+{
+    std::cout << HASH_CLR(sender) << DEF_CLR << " sent " << data.size() << " bytes of data." << std::endl << DEF_CLR;
+    m_GameServer->Send(sender, data);
+}
+
+void ServerApp::CleanUpGameServer()
+{
+    try
+    {
+        m_GameServer->Close();
+        delete m_GameServer;
+    }
+    catch (const TcpIp::TcpIpException& e)
+    {
+        std::cout << ERR_CLR << "Game server clean up failed: " << e.what() << std::endl << DEF_CLR;
+    }
+}
+
+#pragma endregion
+
+#pragma region Web Server
+
+bool ServerApp::InitWebServer()
+{
+    return false;
+}
+
+void ServerApp::HandleWebServer()
+{
+}
+
+void ServerApp::CleanUpWebServer()
+{
+}
+
+#pragma endregion
+

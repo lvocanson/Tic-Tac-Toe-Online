@@ -3,6 +3,8 @@
 #include "Managers/InputHandler.h"
 
 class Window;
+class sf::Shape;
+class TcpIpClient;
 
 class ClientApp
 {
@@ -46,5 +48,6 @@ private: // Fields
 
     Window *m_Window = nullptr;
     StateMachine *m_StateMachine;
+
     InputHandler m_InputHandler;
 };

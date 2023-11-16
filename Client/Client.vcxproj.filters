@@ -81,6 +81,9 @@
     <ClCompile Include="src\core\Components\BaseComponent.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\Managers\PlayerShapeRegistry.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h">
@@ -153,6 +156,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Components\BaseComponent.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Managers\PlayerShapeRegistry.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
