@@ -7,7 +7,7 @@
 
 constexpr unsigned int DEFAULT_PORT = 63064;
 constexpr size_t DEFAULT_BUFFER_SIZE = 1024;
-constexpr auto TCP_IP_WSA_ERROR = 0;
+constexpr int TCP_IP_WSA_ERROR = 0;
 
 /// <summary>
 /// Helper functions for TCP/IP.
@@ -18,24 +18,6 @@ namespace TcpIp
     /// Initializes Winsock and returns WSADATA.
     /// </summary>
     WSADATA& InitializeWinsock();
-
-    /// <summary>
-    /// A custom exception for TCP/IP.
-    /// </summary>
-    class TcpIpException : public std::runtime_error
-    {
-    public:
-        /// <summary>
-        /// Creates a TcpIpException with a custom message.
-        /// </summary>
-        TcpIpException(const char* message);
-        /// <summary>
-        /// Creates a TcpIpException with the specified error code.
-        /// </summary>
-        /// <param name="operation">The operation that failed.</param>
-        /// <param name="errCode">The error code. TCP_IP_WSA_ERROR will get the last error from WSA.</param>
-        TcpIpException(const char* operation, int errCode);
-    };
 
     /// <summary>
     /// Sends data to a socket.
@@ -58,4 +40,56 @@ namespace TcpIp
     /// Closes an event object and sets it to WSA_INVALID_EVENT.
     /// </summary>
     void CloseEventObject(WSAEVENT& event);
+
+    /// <summary>
+    /// Error codes for TCP/IP.
+    /// </summary>
+    enum class ErrorCode : unsigned int
+    {
+        WSA_StartupFailed,
+        WSA_CleanupFailed,
+        WSA_ResolveFailed,
+        SOCKET_CreateFailed,
+        SOCKET_ConnectFailed,
+        SOCKET_BindFailed,
+        SOCKET_ListenFailed,
+        SOCKET_AcceptFailed,
+        SOCKET_ShutdownFailed,
+        SOCKET_CloseFailed,
+        EVENT_CreateFailed,
+        EVENT_SelectFailed,
+        EVENT_EnumFailed,
+        EVENT_FdAcceptHadError,
+        EVENT_FdReadHadError,
+        EVENT_FdCloseHadError,
+        EVENT_CloseFailed,
+        SEND_HeaderFailed,
+        SEND_DataFailed,
+        RECEIVE_HeaderFailed,
+        RECEIVE_HeaderHadInvalidSize,
+        RECEIVE_HeaderHadInvalidSignature,
+        RECEIVE_DataFailed,
+        RECEIVE_DataHadInvalidSize,
+    };
+    /// <summary>
+    /// A custom exception for TCP/IP.
+    /// </summary>
+    class TcpIpException : public std::runtime_error
+    {
+        TcpIpException(const char* message, ErrorCode code, int context)
+            : std::runtime_error(message), Code(code), Context(context) {}
+    public:
+        /// <summary>
+        /// Creates a TcpIpException with the specified error code.
+        /// </summary>
+        static TcpIpException Create(ErrorCode code);
+        /// <summary>
+        /// Creates a TcpIpException with the specified error code and context.
+        /// </summary>
+        /// <param name="context">The context of the error. Pass TCP_IP_WSA_ERROR to get the last WSA error.</param>
+        static TcpIpException Create(ErrorCode code, int context);
+
+        const ErrorCode Code;
+        const int Context;
+    };
 }

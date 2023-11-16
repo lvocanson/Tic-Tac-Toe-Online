@@ -42,7 +42,10 @@ void ServerApp::Run()
             }
 
             while (m_Server->FetchPendingData(ss, client))
+            {
                 AnalyseData(ss.str(), client);
+                ss.str(std::string());
+            }
 
             count = m_Server->KillClosedConnections();
             if (count > 0)

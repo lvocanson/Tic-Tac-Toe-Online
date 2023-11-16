@@ -8,6 +8,8 @@
 
 namespace TcpIp
 {
+    using enum ErrorCode;
+
     /// <summary>
     /// Helper class to initialize and cleanup Winsock.
     /// </summary>
@@ -26,36 +28,20 @@ namespace TcpIp
         {
             int iResult = WSAStartup(MAKEWORD(2, 2), &WsaData);
             if (iResult != 0)
-                throw TcpIpException("WSAStartup", iResult);
+                throw TcpIpException::Create(WSA_StartupFailed, iResult);
         }
 
-        ~WsaInit()
+        ~WsaInit() noexcept(false)
         {
-            WSACleanup();
+            int iResult = WSACleanup();
+            if (iResult != 0)
+                throw TcpIpException::Create(WSA_CleanupFailed, iResult);
         }
     };
 
     WSADATA& InitializeWinsock()
     {
         return WsaInit::GetInstance().WsaData;
-    }
-
-    std::string GetErrMsg(const char* operation, int errCode)
-    {
-        if (errCode == TCP_IP_WSA_ERROR) errCode = WSAGetLastError();
-        std::ostringstream oss;
-        oss << operation << " failed with error: " << errCode;
-        return oss.str();
-    }
-
-    TcpIpException::TcpIpException(const char* message)
-        : std::runtime_error(message)
-    {
-    }
-
-    TcpIpException::TcpIpException(const char* operation, int errCode)
-        : std::runtime_error(GetErrMsg(operation, errCode))
-    {
     }
 
 #pragma region Header
@@ -101,12 +87,12 @@ namespace TcpIp
 
         // iResult is number of bytes sent
         if (iResult == SOCKET_ERROR)
-            throw TcpIpException("send (header)", TCP_IP_WSA_ERROR);
+            throw TcpIpException::Create(SEND_HeaderFailed, TCP_IP_WSA_ERROR);
 
         // Send data
         iResult = send(socket, data, static_cast<int>(size), 0);
         if (iResult == SOCKET_ERROR)
-            throw TcpIpException("send (data)", TCP_IP_WSA_ERROR);
+            throw TcpIpException::Create(SEND_DataFailed, TCP_IP_WSA_ERROR);
     }
 
     void Receive(const SOCKET& socket, std::stringstream& ss, const unsigned int bufferSize)
@@ -119,14 +105,20 @@ namespace TcpIp
         if (iResult == SOCKET_ERROR)
         {
             delete[] header;
-            throw TcpIpException("recv (header)", TCP_IP_WSA_ERROR);
+            throw TcpIpException::Create(RECEIVE_HeaderFailed, TCP_IP_WSA_ERROR);
+        }
+
+        if (iResult != HEADER_SIZE)
+        {
+            delete[] header;
+            throw TcpIpException::Create(RECEIVE_HeaderHadInvalidSize, HEADER_SIZE - iResult);
         }
 
         // Check header
         if (!IsHeaderValid(header))
         {
             delete[] header;
-            throw TcpIpException("Received invalid header.");
+            throw TcpIpException::Create(RECEIVE_HeaderHadInvalidSignature);
         }
 
         // Get the the data size
@@ -145,13 +137,13 @@ namespace TcpIp
             if (iResult == SOCKET_ERROR)
             {
                 delete[] buffer;
-                throw TcpIpException("recv (data)", TCP_IP_WSA_ERROR);
+                throw TcpIpException::Create(RECEIVE_DataFailed, TCP_IP_WSA_ERROR);
             }
 
             if (iResult != recvSize)
             {
                 delete[] buffer;
-                throw TcpIpException("Received data of unexpected size.");
+                throw TcpIpException::Create(RECEIVE_DataHadInvalidSize, recvSize - iResult);
             }
 
             // Write buffer to stream
@@ -162,14 +154,14 @@ namespace TcpIp
 
         if (dataSize != 0)
         {
-            throw TcpIpException("Received too much data.");
+            throw TcpIpException::Create(RECEIVE_DataHadInvalidSize, dataSize);
         }
     }
 
     void CloseSocket(SOCKET& socket)
     {
         if (closesocket(socket) == SOCKET_ERROR)
-            throw TcpIpException("closesocket", TCP_IP_WSA_ERROR);
+            throw TcpIpException::Create(ErrorCode::SOCKET_CloseFailed, TCP_IP_WSA_ERROR);
         socket = INVALID_SOCKET;
     }
 
@@ -177,14 +169,14 @@ namespace TcpIp
     {
         WSAEVENT eventObj = WSACreateEvent();
         if (eventObj == WSA_INVALID_EVENT)
-            throw TcpIpException("WSACreateEvent", TCP_IP_WSA_ERROR);
+            throw TcpIpException::Create(ErrorCode::EVENT_CreateFailed, TCP_IP_WSA_ERROR);
 
         // Set wanted flags on the event
         int iResult = WSAEventSelect(socket, eventObj, networkEvents);
         if (iResult == SOCKET_ERROR)
         {
             CloseEventObject(eventObj);
-            throw TcpIpException("WSAEventSelect", iResult);
+            throw TcpIpException::Create(ErrorCode::EVENT_SelectFailed, TCP_IP_WSA_ERROR);
         }
 
         return eventObj;
@@ -193,7 +185,103 @@ namespace TcpIp
     void CloseEventObject(WSAEVENT& event)
     {
         if (WSACloseEvent(event) == FALSE)
-            throw TcpIpException("WSACloseEvent", TCP_IP_WSA_ERROR);
+            throw TcpIpException::Create(ErrorCode::EVENT_CloseFailed, TCP_IP_WSA_ERROR);
         event = WSA_INVALID_EVENT;
+    }
+
+    std::string GetErrorMessage(ErrorCode code, int context)
+    {
+        std::ostringstream oss;
+        switch (code)
+        {
+        case WSA_StartupFailed:
+            oss << "WSAStartup failed with error: " << context;
+            break;
+        case WSA_CleanupFailed:
+            oss << "WSACleanup failed with error: " << context;
+            break;
+        case WSA_ResolveFailed:
+            oss << "getaddrinfo failed with error: " << context;
+            break;
+        case SOCKET_CreateFailed:
+            oss << "socket failed with error: " << context;
+            break;
+        case SOCKET_ConnectFailed:
+            oss << "connect failed with error: " << context;
+            break;
+        case SOCKET_BindFailed:
+            oss << "bind failed with error: " << context;
+            break;
+        case SOCKET_ListenFailed:
+            oss << "listen failed with error: " << context;
+            break;
+        case SOCKET_AcceptFailed:
+            oss << "accept failed with error: " << context;
+            break;
+        case SOCKET_ShutdownFailed:
+            oss << "shutdown failed with error: " << context;
+            break;
+        case SOCKET_CloseFailed:
+            oss << "closesocket failed with error: " << context;
+            break;
+        case EVENT_CreateFailed:
+            oss << "WSACreateEvent failed with error: " << context;
+            break;
+        case EVENT_SelectFailed:
+            oss << "WSAEventSelect failed with error: " << context;
+            break;
+        case EVENT_EnumFailed:
+            oss << "WSAEnumNetworkEvents failed with error: " << context;
+            break;
+        case EVENT_FdAcceptHadError:
+            oss << "FD_ACCEPT had error: " << context;
+            break;
+        case EVENT_FdReadHadError:
+            oss << "FD_READ had error: " << context;
+            break;
+        case EVENT_FdCloseHadError:
+            oss << "FD_CLOSE had error: " << context;
+            break;
+        case EVENT_CloseFailed:
+            oss << "WSACloseEvent failed with error: " << context;
+            break;
+        case SEND_HeaderFailed:
+            oss << "send (header) failed with error: " << context;
+            break;
+        case SEND_DataFailed:
+            oss << "send (data) failed with error: " << context;
+            break;
+        case RECEIVE_HeaderFailed:
+            oss << "recv (header) failed with error: " << context;
+            break;
+        case RECEIVE_HeaderHadInvalidSize:
+            oss << "recv (header) had invalid size. Difference (expected - actual): " << context;
+            break;
+        case RECEIVE_HeaderHadInvalidSignature:
+            oss << "recv (header) had invalid signature.";
+            break;
+        case RECEIVE_DataFailed:
+            oss << "recv (data) failed with error: " << context;
+            break;
+        case RECEIVE_DataHadInvalidSize:
+            oss << "recv (data) had invalid size. Difference (expected - actual): " << context;
+            break;
+        default:
+            oss << "Unknown error code: " << static_cast<unsigned int>(code);
+            break;
+        }
+        return oss.str();
+    }
+
+    TcpIpException TcpIpException::Create(ErrorCode code)
+    {
+        return TcpIpException(GetErrorMessage(code, 0).c_str(), code, 0);
+    }
+
+    TcpIpException TcpIpException::Create(ErrorCode code, int context)
+    {
+        if (context == 0)
+            context = WSAGetLastError();
+        return TcpIpException(GetErrorMessage(code, context).c_str(), code, context);
     }
 }
