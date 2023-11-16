@@ -21,4 +21,3 @@ private:
     inline static std::unordered_map<TicTacToe::PieceID, sf::Drawable*> m_PlayerShapes = {};
 
 };
-
