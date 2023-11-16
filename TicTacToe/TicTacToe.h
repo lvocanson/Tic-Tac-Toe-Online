@@ -1,5 +1,9 @@
 #pragma once
+
+
+// Row, columns, alignment goal
 #define DEFAULT_BOARD_ARGS 3, 3, 3
+
 
 namespace TicTacToe
 {
@@ -7,8 +11,8 @@ namespace TicTacToe
     /// <summary>
     /// Represents a piece on the board.
     /// </summary>
-    typedef unsigned int Piece;
-    constexpr const Piece EMPTY_PIECE = 0;
+    typedef unsigned int PieceID;
+    constexpr const PieceID EMPTY_PIECE = 0;
 
     /// <summary>
     /// Represents a board of Tic-Tac-Toe.
@@ -33,19 +37,19 @@ namespace TicTacToe
         /// <summary>
         /// Returns a reference to the piece at the specified row and column.
         /// </summary>
-        Piece& operator()(size_t row, size_t col) { return m_Board[row * m_Width + col]; }
+        PieceID& operator()(size_t row, size_t col) { return m_Board[row * m_Width + col]; }
         /// <summary>
         /// Returns a const reference to the piece at the specified row and column.
         /// </summary>
-        const Piece& operator()(size_t row, size_t col) const { return m_Board[row * m_Width + col]; }
+        const PieceID& operator()(size_t row, size_t col) const { return m_Board[row * m_Width + col]; }
         /// <summary>
         /// Returns a reference to the piece at the specified index.
         /// </summary>
-        Piece& operator[](size_t index) { return m_Board[index]; }
+        PieceID& operator[](size_t index) { return m_Board[index]; }
         /// <summary>
         /// Returns a const reference to the piece at the specified index.
         /// </summary>
-        const Piece& operator[](size_t index) const { return m_Board[index]; }
+        const PieceID& operator[](size_t index) const { return m_Board[index]; }
 
         /// <summary>
         /// Returns true if the board does not contain any empty pieces.
@@ -55,7 +59,7 @@ namespace TicTacToe
         /// <summary>
         /// Returns the winning piece, or the empty piece if there is no winner.
         /// </summary>
-        Piece IsThereAWinner() const;
+        PieceID IsThereAWinner() const;
 
         /// <summary>
         /// Resizes the board to the specified width and height.
@@ -71,6 +75,6 @@ namespace TicTacToe
 
         size_t m_Width = 3, m_Height = 3, m_Size = 9;
         unsigned int m_AlignementGoal = 3;
-        Piece* m_Board;
+        PieceID* m_Board;
     };
 }

@@ -15,7 +15,7 @@ namespace TicTacToe
 		, m_Height(height)
 		, m_Size(width* height)
 		, m_AlignementGoal(alignementGoal)
-		, m_Board(new Piece[m_Size])
+		, m_Board(new PieceID[m_Size])
 	{
         SetEmpty();
 	}
@@ -39,9 +39,9 @@ namespace TicTacToe
 	}
 
 	// TODO: Needs to be reworked cauz it doesn't work if we change the grid size and the win condition
-	Piece Board::IsThereAWinner() const
+	PieceID Board::IsThereAWinner() const
 	{
-		Piece winner = EMPTY_PIECE;
+		PieceID winner = EMPTY_PIECE;
 		unsigned int continuousPiecesCount = 0;
 
 		for (int i = 0; i < m_Size; i++)
@@ -148,7 +148,7 @@ namespace TicTacToe
 		m_Height = height;
 		m_Size = width * height;
 		delete[] m_Board;
-		m_Board = new Piece[m_Size];
+		m_Board = new PieceID[m_Size];
 		SetEmpty();
 	}
 

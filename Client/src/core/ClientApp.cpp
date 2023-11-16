@@ -1,9 +1,10 @@
 #include "ClientApp.h"
+
 #include "Player.h"
 #include "TicTacToe.h"
 #include "Window.h"
 #include "src/tcp-ip/TcpIpClient.h"
-#include "src/core/PlayerPiece.h"
+#include "src/core/PlayerPieceShape.h"
 
 using namespace TicTacToe;
 
@@ -15,10 +16,23 @@ void ClientApp::Init()
     
     m_Client = new TcpIpClient();
 
-    m_Board.Init();
+    m_GameStateUI = new GameStateUI(m_Window);
 
-    m_PlayerOne.SetName("Player One");
-    m_PlayerTwo.SetName("Player Two");
+    m_Board.Init();
+    m_ScoreManager.Init();
+    m_PlayerManager.Init();
+
+    m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12));
+    m_PlayerManager.CreateNewPlayer("Player Two", sf::Color(255, 194, 0));
+
+    m_GameStateUI->Init();
+
+    for (const auto& player : m_PlayerManager.GetAllPlayers())
+    {
+        m_ScoreManager.CreateScoreForPlayer(player->GetData(), m_Window);
+    }
+
+    m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
 
     DrawBoard();
 }
@@ -123,21 +137,33 @@ void ClientApp::CheckIfMouseHoverBoard()
 
         if (IsMouseHoverPiece(i))
         {
-            if (m_Window->IsMouseButtonPressed(sf::Mouse::Left))
+            if (Window::IsMouseButtonPressed(sf::Mouse::Left))
             {
+                m_GameStateUI->UpdateGameStateText("");
+
                 PlacePlayerPieceOnBoard(i);
 
-                const int winnerID = m_Board.IsThereAWinner();
+                const PieceID winnerID = m_Board.IsThereAWinner();
                 if (winnerID != EMPTY_PIECE)
                 {
-                    std::cout << "Player " << winnerID << " won!\n";
-                    m_Client->Send("A player won ! " + winnerID);
-                }
+                    DebugLog("Player " + std::to_string(winnerID) + " won!\n");
 
-                if (m_Board.IsFull() || winnerID != EMPTY_PIECE)
-                {
+                    Player* winner = PlayerManager::GetCurrentPlayer();
+
+                    m_ScoreManager.AddScoreToPlayer(winner->GetPlayerID());
+                    m_ScoreManager.SaveGame(winner->GetData());
+
+                    m_GameStateUI->UpdatePlayerScore(*winner->GetData(), m_ScoreManager.GetPlayerScore(winner->GetPlayerID()));
+                    m_GameStateUI->UpdateGameStateText(winner->GetName() + " won!");
+                    m_Client->Send("A player won ! " + winnerID);
+
                     ClearBoard();
+                }
+                else if (m_Board.IsFull())
+                {
+                    m_GameStateUI->UpdateGameStateText("It's a draw!");
                     m_Client->Send("It's a draw !");
+                    ClearBoard();
                 }
 
                 SwitchPlayerTurn();
@@ -146,9 +172,9 @@ void ClientApp::CheckIfMouseHoverBoard()
     }
 }
 
-void ClientApp::PlacePlayerPieceOnBoard(unsigned int i)
+void ClientApp::PlacePlayerPieceOnBoard(unsigned int cell)
 {
-    m_Board[i] = (m_IsPlayerOneTurn ? m_PlayerOne.GetPlayerID() : m_PlayerTwo.GetPlayerID());
+    const Player* currentPlayer = PlayerManager::GetCurrentPlayer();
 
     int row = i / m_Board.GetWidth();
     int col = i % m_Board.GetWidth();
@@ -156,47 +182,48 @@ void ClientApp::PlacePlayerPieceOnBoard(unsigned int i)
     m_Client->Send("A piece has been placed at row: " + std::to_string(row) + "||col: " + std::to_string(col) + " by player " + playerID);
 
     auto pos = sf::Vector2f( m_Board.GetGraphicPiece(i).GetPosition());
+    // Set piece id in board
+    m_Board[cell] = currentPlayer->GetPlayerID();
+
+    SetGraphicalPiece(cell, currentPlayer);
+
+    m_ScoreManager.AddPlayerMove(currentPlayer->GetPlayerID(), cell);
+}
+
+void ClientApp::SetGraphicalPiece(unsigned cell, const Player* currentPlayer)
+{
+    auto pos = sf::Vector2f(m_Board.GetGraphicPiece(cell).GetPosition());
 
     // Center the piece
-    pos.x += static_cast<float>(m_Board.GetPieceSize()) * 0.5f;
-    pos.y += static_cast<float>(m_Board.GetPieceSize()) * 0.5f;
+    pos.x += m_Board.GetPieceSize() * 0.5f;
+    pos.y += m_Board.GetPieceSize() * 0.5f;
 
-    if (m_IsPlayerOneTurn)
+    // TODO: rework this shit
+    if (m_PlayerManager.IsPlayerOneTurn())
     {
-        auto* piece = new PlayerCircleShape(&m_PlayerOne);
+        const auto piece = new PlayerCircleShape(currentPlayer);
         piece->setPosition(pos);
+        piece->setOutlineColor(currentPlayer->GetColor());
         m_Window->RegisterDrawable(piece);
         m_GamePieces.push_back(piece);
     }
     else
     {
-        auto* piece = new PlayerCrossShape(&m_PlayerTwo);
+        const auto piece = new PlayerCrossShape(currentPlayer);
         piece->setPosition(pos);
+        piece->setOutlineColor(currentPlayer->GetColor());
         m_Window->RegisterDrawable(piece);
         m_GamePieces.push_back(piece);
     }
-}
-
-void ClientApp::ClearBoard()
-{
-    for (auto& piece : m_GamePieces)
-    {
-        m_Window->UnregisterDrawable(piece);
-        RELEASE(piece);
-    }
-
-    m_GamePieces.clear();
-    m_Board.SetEmpty();
 }
 
 void ClientApp::SwitchPlayerTurn()
 {
-    m_IsPlayerOneTurn = !m_IsPlayerOneTurn;
+    m_PlayerManager.SwitchPlayerTurn();
+
     m_PlayerTurnTimer = sf::seconds(PLAYER_TURN_DELAY);
-    if(m_IsPlayerOneTurn)
-        m_Client->Send(m_PlayerOne.GetName() + " Turn");
-    else
-        m_Client->Send(m_PlayerTwo.GetName() + " Turn");
+
+    m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetCurrentPlayer()->GetData());
 }
 
 
@@ -212,6 +239,18 @@ bool ClientApp::IsMouseHoverPiece(unsigned int i)
 			mousePos.y < piecePosition.y + size;
 }
 
+void ClientApp::ClearBoard()
+{
+    for (auto& piece : m_GamePieces)
+    {
+        m_Window->UnregisterDrawable(piece);
+        RELEASE(piece);
+    }
+
+    m_GamePieces.clear();
+    m_Board.SetEmpty();
+}
+
 void ClientApp::Cleanup()
 {
     for (auto& drawable : m_Window->GetDrawables())
@@ -221,4 +260,7 @@ void ClientApp::Cleanup()
 
     RELEASE(m_Window);
     RELEASE(m_Client);
+    RELEASE(m_GameStateUI);
+
+    FontRegistry::ClearFonts();
 }
