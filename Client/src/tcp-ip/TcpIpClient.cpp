@@ -1,4 +1,5 @@
 #include "TcpIpClient.h"
+using enum TcpIp::ErrorCode;
 
 TcpIpClient::TcpIpClient()
     : m_WsaData(TcpIp::InitializeWinsock())
@@ -9,9 +10,7 @@ TcpIpClient::TcpIpClient()
 
 TcpIpClient::~TcpIpClient()
 {
-    if (m_ConnectSocket != INVALID_SOCKET)
-        Disconnect();
-    TcpIp::CleanupWinsock();
+    Disconnect();
 }
 
 void TcpIpClient::Connect(const char* ip, int port)
@@ -27,14 +26,17 @@ void TcpIpClient::Connect(const char* ip, int port)
     // Resolve the server address and port
     int iResult = getaddrinfo(ip, std::to_string(port).c_str(), &hints, &result);
     if (iResult != 0)
-        throw TcpIp::TcpIpException("getaddrinfo", iResult);
+    {
+        freeaddrinfo(result);
+        throw TcpIp::TcpIpException::Create(WSA_ResolveFailed, iResult);
+    }
 
     // Create a SOCKET for connecting to server 
     m_ConnectSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
     if (m_ConnectSocket == INVALID_SOCKET)
     {
         freeaddrinfo(result);
-        throw TcpIp::TcpIpException("socket");
+        throw TcpIp::TcpIpException::Create(SOCKET_CreateFailed, TCP_IP_WSA_ERROR);
     }
 
     // Connect to server.
@@ -44,7 +46,7 @@ void TcpIpClient::Connect(const char* ip, int port)
     if (iResult == SOCKET_ERROR)
         TcpIp::CloseSocket(m_ConnectSocket);
     if (m_ConnectSocket == INVALID_SOCKET)
-        throw TcpIp::TcpIpException("connect");
+        throw TcpIp::TcpIpException::Create(SOCKET_ConnectFailed, iResult);
 
     m_ReadEvent = TcpIp::CreateEventObject(m_ConnectSocket, FD_READ | FD_CLOSE);
 }
@@ -56,7 +58,7 @@ void TcpIpClient::Disconnect()
 
     int iResult = shutdown(m_ConnectSocket, SD_SEND);
     if (iResult == SOCKET_ERROR)
-        throw TcpIp::TcpIpException("shutdown");
+        throw TcpIp::TcpIpException::Create(SOCKET_ShutdownFailed, TCP_IP_WSA_ERROR);
 
     TcpIp::CloseEventObject(m_ReadEvent);
     TcpIp::CloseSocket(m_ConnectSocket);
@@ -67,7 +69,7 @@ bool TcpIpClient::IsConnected() const
     return m_ConnectSocket != INVALID_SOCKET;
 }
 
-void TcpIpClient::Send(const char* data, size_t size)
+void TcpIpClient::Send(const char* data, u_long size)
 {
     TcpIp::Send(m_ConnectSocket, data, size);
 }
@@ -77,15 +79,21 @@ bool TcpIpClient::FetchPendingData(std::stringstream& ss)
     WSANETWORKEVENTS networkEvents;
     int iResult = WSAEnumNetworkEvents(m_ConnectSocket, m_ReadEvent, &networkEvents);
     if (iResult == SOCKET_ERROR)
-        throw TcpIp::TcpIpException("WSAEnumNetworkEvents");
+        throw TcpIp::TcpIpException::Create(EVENT_EnumFailed, TCP_IP_WSA_ERROR);
 
     if (networkEvents.lNetworkEvents & FD_READ)
     {
+        if (networkEvents.iErrorCode[FD_READ_BIT] != 0)
+            throw TcpIp::TcpIpException::Create(EVENT_FdReadHadError, networkEvents.iErrorCode[FD_READ_BIT]);
+
         TcpIp::Receive(m_ConnectSocket, ss, DEFAULT_BUFFER_SIZE);
         return true;
     }
     if (networkEvents.lNetworkEvents & FD_CLOSE)
     {
+        if (networkEvents.iErrorCode[FD_CLOSE_BIT] != 0)
+            throw TcpIp::TcpIpException::Create(EVENT_FdCloseHadError, networkEvents.iErrorCode[FD_CLOSE_BIT]);
+
         Disconnect();
     }
     return false;

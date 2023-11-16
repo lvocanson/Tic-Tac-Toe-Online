@@ -8,15 +8,17 @@
 
 using namespace TicTacToe;
 
+using json = nlohmann::json;
+
 void ClientApp::Init()
 {
     m_IsRunning = true;
     m_Window = new Window();
     m_Window->Create("Tic Tac Toe Online!", 1280, 720);
+    
+    m_Client = new TcpIpClient();
 
     m_GameStateUI = new GameStateUI(m_Window);
-
-    std::cout << "Hello World! I'm a client!\n";
 
     m_Board.Init();
     m_ScoreManager.Init();
@@ -65,12 +67,12 @@ void ClientApp::Run()
     if (!m_IsRunning)
         throw std::runtime_error("ClientApp is not initialized!");
 
-    auto& client = TcpIpClient::GetInstance();
+    m_Client = new TcpIpClient();
     try
     {
-        client.Connect("localhost", DEFAULT_PORT);
+        m_Client->Connect("localhost", DEFAULT_PORT);
         DebugLog("Connected to server!\n");
-        client.Send("Hello from client!");
+        m_Client->Send("Hello from client!");
     }
     catch (const TcpIp::TcpIpException& e)
     {
@@ -94,7 +96,7 @@ void ClientApp::Run()
 
         try
         {
-            if (client.FetchPendingData(ss))
+            while (m_Client->FetchPendingData(ss))
             {
                 DebugLog("Received data from server: \n");
                 DebugLog(ss.str().c_str());
@@ -108,14 +110,14 @@ void ClientApp::Run()
             m_IsRunning = false;
         }
 
-        if (!client.IsConnected())
+        if (!m_Client->IsConnected())
         {
             DebugLog("Disconnected from server!\n");
             m_IsRunning = false;
         }
     }
 
-    client.Disconnect();
+    m_Client->Disconnect();
     Cleanup();
 }
 
@@ -158,12 +160,14 @@ void ClientApp::CheckIfMouseHoverBoard()
 
                     m_GameStateUI->UpdatePlayerScore(*winner->GetData(), m_ScoreManager.GetPlayerScore(winner->GetPlayerID()));
                     m_GameStateUI->UpdateGameStateText(winner->GetName() + " won!");
+                    m_Client->Send("A player won ! " + winnerID);
 
                     ClearBoard();
                 }
                 else if (m_Board.IsFull())
                 {
                     m_GameStateUI->UpdateGameStateText("It's a draw!");
+                    m_Client->Send("It's a draw !");
                     ClearBoard();
                 }
 
@@ -177,6 +181,17 @@ void ClientApp::PlacePlayerPieceOnBoard(unsigned int cell)
 {
     const Player* currentPlayer = PlayerManager::GetCurrentPlayer();
 
+    int row = cell / (int)m_Board.GetWidth();
+    int col = cell % (int)m_Board.GetWidth();
+    std::string playerID = std::to_string(m_Board[cell]);
+    json j;
+    j["row"] = row;
+    j["col"] = col;
+    j["playerID"] = playerID;
+    m_Client->Send(j.dump());
+
+
+    auto pos = sf::Vector2f( m_Board.GetGraphicPiece(cell).GetPosition());
     // Set piece id in board
     m_Board[cell] = currentPlayer->GetPlayerID();
 
@@ -240,6 +255,7 @@ void ClientApp::Cleanup()
     }
 
     RELEASE(m_Window);
+    RELEASE(m_Client);
     RELEASE(m_GameStateUI);
 
     FontRegistry::ClearFonts();

@@ -104,6 +104,7 @@
     <ClCompile Include="src\tcp-ip\TcpIpServer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\ConsoleHelper.h" />
     <ClInclude Include="src\core\ServerApp.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\tcp-ip\TcpIpServer.h" />
