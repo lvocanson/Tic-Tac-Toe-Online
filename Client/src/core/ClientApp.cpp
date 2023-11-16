@@ -152,7 +152,7 @@ void ClientApp::PlacePlayerPieceOnBoard(unsigned int i)
 
     int row = i / m_Board.GetWidth();
     int col = i % m_Board.GetWidth();
-    std::string playerID = std::to_string((m_IsPlayerOneTurn ? m_PlayerOne.GetPlayerID() : m_PlayerTwo.GetPlayerID()));
+    std::string playerID = std::to_string(m_Board[i]);
     TcpIpClient::GetInstance().Send("A piece has been placed at row: " + std::to_string(row) + "||col: " + std::to_string(col) + " by player " + playerID);
 
     auto pos = sf::Vector2f( m_Board.GetGraphicPiece(i).GetPosition());
