@@ -36,10 +36,10 @@ void GameState::OnEnter()
     m_GameStateUI->Init();
     m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
 
-    m_ReturnButton = new ButtonComponent(100, 500, 200, 100, sf::Color::Red, sf::Color::Red, "Return", sf::Color::White, 30, TextAlignment::Center);
+    m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red, sf::Color::White, "Return", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]() {
         m_StateMachine->SwitchState("MenuState");
-        });
+      });
 
     m_Window->RegisterDrawable(m_ReturnButton);
     DrawBoard();
@@ -54,18 +54,10 @@ void GameState::OnUpdate(float dt)
         return;
     }
 
-    if (m_ReturnButton->IsMouseOver(m_Window) && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
-    {
-        m_StateMachine->SwitchState("MenuState");
-        return;
-    }
+    // TODO : REWORK THIS SHIT FUCKEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEER
+    m_ReturnButton->Update(m_Window);
 
     CheckIfMouseHoverBoard();
-}
-
-void GameState::OnExit()
-{
-    Cleanup();
 }
 
 void GameState::DrawBoard()
@@ -207,8 +199,7 @@ bool GameState::IsMouseHoverPiece(unsigned int i)
         mousePos.y < piecePosition.y + size;
 }
 
-
-void GameState::Cleanup()
+void GameState::OnExit()
 {
     ClearBoard();
     RELEASE(m_GameStateUI);

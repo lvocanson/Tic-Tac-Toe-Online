@@ -29,7 +29,8 @@ public:
 
 private:
 
-	State* m_CurrentState;
+	State* m_CurrentState = nullptr;
+	State* m_NextState = nullptr;
 
 	std::map <std::string, State*> m_States;
 

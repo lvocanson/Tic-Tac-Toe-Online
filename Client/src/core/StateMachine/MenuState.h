@@ -17,8 +17,6 @@ public:
 	MenuState& operator=(const MenuState& other) = delete;
 	~MenuState();
 
-	void Cleanup();
-
 private:
 	Window* m_Window;
 

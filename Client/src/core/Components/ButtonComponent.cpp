@@ -1,17 +1,17 @@
 #include "ButtonComponent.h"
 
-ButtonComponent::ButtonComponent(float x, float y, float width, float height, const sf::Color& idleColor, const sf::Color& hoverColor, const std::string& buttonText, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment)
+ButtonComponent::ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor, const sf::Color& hoverColor, const std::string& buttonText, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment)
     : idleColor(idleColor)
     , hoverColor(hoverColor)
     , onClickCallback(nullptr)
     , m_Window(nullptr)
     , m_Text(buttonText, *this, textColor, textSize, textAlignment)
 {
-    shape.setPosition(sf::Vector2f(x, y));
-    shape.setSize(sf::Vector2f(width, height));
+    shape.setPosition(pos);
+    shape.setSize(size);
     shape.setFillColor(idleColor);
 
-    m_Text.SetPosition(sf::Vector2f(x, y));
+    m_Text.SetPosition(pos);
 }
 
 ButtonComponent::~ButtonComponent()
@@ -20,12 +20,10 @@ ButtonComponent::~ButtonComponent()
 
 void ButtonComponent::Update(Window* m_Window)
 {
-    if (IsMouseOver(m_Window))
-    {
+    if (IsMouseOver(m_Window)) {
         shape.setFillColor(hoverColor);
     }
-    else
-    {
+    else {
         shape.setFillColor(idleColor);
     }
 
@@ -33,7 +31,7 @@ void ButtonComponent::Update(Window* m_Window)
         if (onClickCallback) {
             onClickCallback();
         }
-    }
+    }    
 }
 
 bool ButtonComponent::IsMouseOver(Window* m_Window)

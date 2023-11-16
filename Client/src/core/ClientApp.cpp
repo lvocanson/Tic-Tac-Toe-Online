@@ -94,13 +94,14 @@ void ClientApp::Update(sf::Time delta)
 
 void ClientApp::Cleanup()
 {
+    RELEASE(m_StateMachine);
+
     for (auto &drawable : m_Window->GetDrawables())
     {
         RELEASE(drawable);
     }
 
     RELEASE(m_Window);
-    RELEASE(m_StateMachine);
 
     FontRegistry::ClearFonts();
 }

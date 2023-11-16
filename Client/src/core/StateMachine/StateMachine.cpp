@@ -1,8 +1,8 @@
 #include "StateMachine.h"
 
 StateMachine::StateMachine()
+	: m_States()
 {
-	m_CurrentState = nullptr;
 }
 
 StateMachine::~StateMachine()
@@ -33,6 +33,13 @@ void StateMachine::Start()
 
 void StateMachine::Update(float dt)
 {
+	if (m_NextState)
+	{
+		m_CurrentState->OnExit();
+		m_CurrentState = m_NextState;
+		m_CurrentState->OnEnter();
+		NULLPTR(m_NextState);
+	}
 	m_CurrentState->OnUpdate(dt);
 }
 
@@ -45,13 +52,16 @@ void StateMachine::SwitchState(std::string newState)
 		return;
 	}
 
-	m_CurrentState->OnExit();
-	m_CurrentState = state;
-	m_CurrentState->OnEnter();
+	m_NextState = state;
 }
 
 void StateMachine::Cleanup()
 {
+	if (m_CurrentState)
+	{
+		m_CurrentState->OnExit();
+	}
+
 	for (auto state : m_States)
 	{
 		RELEASE(state.second);

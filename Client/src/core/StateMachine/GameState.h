@@ -34,8 +34,6 @@ public:
 
 	void ClearBoard();
 
-	void Cleanup();
-
 private:
 	Window* m_Window;
 	ButtonComponent* m_ReturnButton;
