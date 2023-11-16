@@ -49,23 +49,6 @@ public:
 
 #pragma endregion
 
-#pragma region Input
-
-    /// <summary>
-    /// Returns whether the given key is pressed.
-    /// </summary>
-    static bool IsKeyPressed(sf::Keyboard::Key key) { return sf::Keyboard::isKeyPressed(key); }
-    /// <summary>
-    /// Returns whether the given mouse button is pressed.
-    /// </summary>
-    static bool IsMouseButtonPressed(sf::Mouse::Button button) { return sf::Mouse::isButtonPressed(button); }
-    /// <summary>
-    /// Returns the mouse position relative to the window.
-    /// </summary>
-    sf::Vector2i GetMousePosition() const { return sf::Mouse::getPosition(*m_Window); }
-
-#pragma endregion
-
 #pragma region Other
 
     sf::Vector2f GetCenter() const { return sf::Vector2f(m_Window->getSize().x * 0.5f, m_Window->getSize().y *0.5f); }
