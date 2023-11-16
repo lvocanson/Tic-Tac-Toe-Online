@@ -5,7 +5,7 @@
 
 GameStateUI::GameStateUI(Window* window) : UIStateManager(window)
 {
-    m_PlayerScoreTexts = std::map<TicTacToe::PieceID, sf::Text*>();
+    m_PlayerScoreTexts = std::unordered_map<TicTacToe::PieceID, sf::Text*>();
     m_Title = nullptr;
     m_PlayerTurnText = nullptr;
     m_GameStateText = nullptr;
@@ -105,5 +105,5 @@ void GameStateUI::UpdatePlayerScore(const PlayerData& player, const unsigned int
         return;
     }
 
-    m_PlayerScoreTexts[player.Id]->setString(player.Name + " : " + std::to_string(score));
+    m_PlayerScoreTexts.at(player.Id)->setString(player.Name + " : " + std::to_string(score));
 }

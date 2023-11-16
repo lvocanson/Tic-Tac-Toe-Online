@@ -30,5 +30,3 @@ public:
 
     PlayerCircleShape(const Player* player);
 };
-
-
