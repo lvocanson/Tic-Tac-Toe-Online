@@ -4,14 +4,27 @@
 
 void ServerApp::Run()
 {
-    m_Server = new TcpIpServer();
-    m_Server->Open(DEFAULT_PORT);
-    std::cout
-        << Color::Green <<
-        "Server is listening on port " << DEFAULT_PORT << "..." << std::endl
-        << Color::Gray <<
-        "Press ESC to shut down the server." << std::endl
-        << Color::White;
+    try
+    {
+        m_Server = new TcpIpServer();
+        m_Server->Open(DEFAULT_PORT);
+        std::cout
+            << Color::Green <<
+            "Server is listening on port " << DEFAULT_PORT << "..." << std::endl
+            << Color::Gray <<
+            "Press ESC to shut down the server." << std::endl
+            << Color::White;
+    }
+    catch (const TcpIp::TcpIpException& e)
+    {
+        std::cout
+            << Color::Red <<
+            "The server is unable to start: " << std::endl
+            << Color::Yellow <<
+            "  " << e.what() << std::endl
+            << Color::White;
+        return;
+    }
 
     std::stringstream ss;
     Client client;
@@ -54,12 +67,24 @@ void ServerApp::Run()
         Sleep(1);
     }
 
-    m_Server->Close();
-    delete m_Server;
-    std::cout
-        << Color::Green <<
-        "Server successfully shut down on user request." << std::endl
-        << Color::White;
+    try
+    {
+        m_Server->Close();
+        delete m_Server;
+        std::cout
+            << Color::Green <<
+            "Server successfully shut down on user request." << std::endl
+            << Color::White;
+    }
+    catch (const TcpIp::TcpIpException& e)
+    {
+        std::cout
+            << Color::Red <<
+            "The server has encountered an error while shutting down: " << std::endl
+            << Color::Yellow <<
+            "  " << e.what() << std::endl
+            << Color::White;
+    }
 }
 
 void ServerApp::AnalyseData(const std::string& data, Client sender)
