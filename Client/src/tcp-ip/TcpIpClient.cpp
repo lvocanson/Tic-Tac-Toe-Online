@@ -9,8 +9,7 @@ TcpIpClient::TcpIpClient()
 
 TcpIpClient::~TcpIpClient()
 {
-    if (m_ConnectSocket != INVALID_SOCKET)
-        Disconnect();
+    Disconnect();
 }
 
 void TcpIpClient::Connect(const char* ip, int port)

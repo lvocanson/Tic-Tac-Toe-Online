@@ -23,8 +23,8 @@ void ServerApp::Run()
             if (count > 0)
             {
                 std::cout
-                    << Color::Blue <<
-                    count << " new connection" << (count > 1 ? "s" : "") << " accepted." << std::endl
+                    << Color::LightMagenta <<
+                    count << " new connection" << (count > 1 ? "s" : "") << " accepted. (" << m_Server->ConnectionCount() << " total)" << std::endl
                     << Color::White;
             }
 
@@ -36,7 +36,7 @@ void ServerApp::Run()
             {
                 std::cout
                     << Color::LightMagenta <<
-                    count << " connection" << (count > 1 ? "s" : "") << " closed." << std::endl
+                    count << " connection" << (count > 1 ? "s" : "") << " closed. (" << m_Server->ConnectionCount() << " total)" << std::endl
                     << Color::White;
             }
         }
