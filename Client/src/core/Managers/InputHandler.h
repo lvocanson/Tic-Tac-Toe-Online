@@ -25,7 +25,7 @@ public:
     /// <summary>
     /// Returns the mouse position relative to the window.
     /// </summary>
-    static sf::Vector2i GetMousePosition() { return sf::Mouse::getPosition(Window::GetWindow()); }
+    static sf::Vector2i GetMousePosition() { return sf::Mouse::getPosition(*Window::m_Window); }
 
 private:
 

@@ -58,11 +58,12 @@ public:
     sf::Vector2f GetCenter() const { return sf::Vector2f(m_Window->getSize().x * 0.5f, m_Window->getSize().y *0.5f); }
     int GetWidth() const { return m_Window->getSize().x; }
     int GetHeight() const { return m_Window->getSize().y; }
-    static sf::RenderWindow& GetWindow() { return *m_Window; }
 
 #pragma endregion
 
 private:
+
+    friend class InputHandler;
 
     static bool m_IsFocused;
     static sf::RenderWindow* m_Window;
