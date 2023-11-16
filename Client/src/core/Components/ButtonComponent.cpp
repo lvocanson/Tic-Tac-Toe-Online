@@ -1,57 +1,63 @@
 #include "ButtonComponent.h"
+#include "src/core/Managers/PlayerManager.h"
 
-ButtonComponent::ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor, const sf::Color& hoverColor, const std::string& buttonText, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment)
-    : idleColor(idleColor)
-    , hoverColor(hoverColor)
-    , onClickCallback(nullptr)
-    , m_Text(buttonText, *this, textColor, textSize, textAlignment)
+ButtonComponent::ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor, const sf::Color& hoverColor)
+    : idleColor(idleColor), hoverColor(hoverColor), onClickCallback(nullptr)
 {
     shape.setPosition(pos);
     shape.setSize(size);
     shape.setFillColor(idleColor);
-
-    m_Text.SetPosition(pos);
-}
-
-ButtonComponent::ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor, const sf::Color& hoverColor)
-    : idleColor(idleColor)
-    , hoverColor(hoverColor)
-    , onClickCallback(nullptr)
-{
-	shape.setPosition(pos);
-	shape.setSize(size);
-	shape.setFillColor(idleColor);
 }
 
 ButtonComponent::~ButtonComponent()
 {
 }
 
-void ButtonComponent::Update(Window* m_Window)
+void ButtonComponent::Update()
 {
-    if (IsMouseOver(m_Window)) {
+    if (IsMouseOver())
+    {
         shape.setFillColor(hoverColor);
 
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && onClickCallback) {
+        if (InputHandler::IsMouseButtonPressed(sf::Mouse::Left) && onClickCallback)
+        {
             onClickCallback();
         }
     }
-    else {
+    else
+    {
         shape.setFillColor(idleColor);
     }
 }
 
-bool ButtonComponent::IsMouseOver(Window* m_Window)
+void ButtonComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	sf::Vector2f mousePosition = (sf::Vector2f)m_Window->GetMousePosition();
-	sf::FloatRect bounds = shape.getGlobalBounds();
+    target.draw(shape, states);
 
-	return bounds.contains(mousePosition);
+    if (m_Text)
+    {
+        target.draw(*m_Text, states);
+    }
 }
 
-void ButtonComponent::SetOnClickCallback(std::function<void()> onClickCallback)
+bool ButtonComponent::IsMouseOver()
 {
-	this->onClickCallback = onClickCallback;
+	sf::Vector2f mousePos = (sf::Vector2f)InputHandler::GetMousePosition();
+	sf::Vector2f buttonPos = shape.getPosition();
+	sf::Vector2f buttonSize = shape.getSize();
+
+	return mousePos.x >= buttonPos.x && mousePos.x <= buttonPos.x + buttonSize.x &&
+		mousePos.y >= buttonPos.y && mousePos.y <= buttonPos.y + buttonSize.y;
+}
+
+void ButtonComponent::SetPosition(const sf::Vector2f& position)
+{
+    shape.setPosition(position);
+
+    if (m_Text)
+    {
+        m_Text->SetPosition(position);
+    }
 }
 
 sf::Vector2f ButtonComponent::GetPosition() const
@@ -64,8 +70,22 @@ sf::Vector2f ButtonComponent::GetSize() const
     return shape.getSize();
 }
 
-void ButtonComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void ButtonComponent::SetOnClickCallback(std::function<void()> onClickCallback)
 {
-    target.draw(shape, states);
-    target.draw(m_Text, states);
+    this->onClickCallback = onClickCallback;
+}
+
+void ButtonComponent::SetButtonText(const std::string& text, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment)
+{
+    if (!m_Text)
+    {
+        m_Text = std::make_unique<TextComponent>(text, *this, textColor, textSize, textAlignment);
+    }
+    else
+    {
+        m_Text->SetText(text);
+        m_Text->SetColor(textColor);
+        m_Text->SetCharacterSize(textSize);
+        m_Text->SetTextAlignment(textAlignment);
+    }
 }

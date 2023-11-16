@@ -1,5 +1,6 @@
 #pragma once
 #include "src/core/StateMachine/StateMachine.h"
+#include "Managers/InputHandler.h"
 
 class Window;
 
@@ -45,4 +46,5 @@ private: // Fields
 
     Window *m_Window = nullptr;
     StateMachine *m_StateMachine;
+    InputHandler m_InputHandler;
 };

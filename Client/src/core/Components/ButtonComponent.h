@@ -1,30 +1,36 @@
+// ButtonComponent.h
 #pragma once
-#include "src/core/Window.h"
-#include <functional>
+#include <SFML/Graphics.hpp>
+#include "BaseComponent.h"
 #include "TextComponent.h"
+#include "src/core/Managers/InputHandler.h"
+#include <memory>
 
-class ButtonComponent : public sf::Drawable
+class ButtonComponent : public BaseComponent
 {
 public:
-    ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor, const sf::Color& hoverColor, const std::string& buttonText, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment);
     ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor, const sf::Color& hoverColor);
 
-    ~ButtonComponent();
+    ~ButtonComponent() override;
 
-    void Update(Window* m_Window);
-    bool IsMouseOver(Window* m_Window);
+    void Update() override;
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+    void SetPosition(const sf::Vector2f& position) override;
+    sf::Vector2f GetPosition() const override;
+    sf::Vector2f GetSize() const override;
+
     void SetOnClickCallback(std::function<void()> onClickCallback);
-    sf::Vector2f GetPosition() const;
-    sf::Vector2f GetSize() const;
+
+    void SetButtonText(const std::string& text, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment);
 
 private:
     sf::RectangleShape shape;
     sf::Color idleColor;
     sf::Color hoverColor;
-
     std::function<void()> onClickCallback;
 
-    TextComponent m_Text;
+    std::unique_ptr<TextComponent> m_Text;
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    bool IsMouseOver();
 };

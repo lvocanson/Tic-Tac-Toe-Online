@@ -36,15 +36,16 @@ void GameState::OnEnter()
     m_GameStateUI->Init();
     m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
 
-    m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red, sf::Color::White, "Return", sf::Color::White, 30, TextAlignment::Center);
+    m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red, sf::Color::White);
+    m_ReturnButton->SetButtonText("Return", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]() {
         m_StateMachine->SwitchState("MenuState");
-      });
+        });
 
     m_Window->RegisterDrawable(m_ReturnButton);
     DrawBoard();
-
 }
+
 
 void GameState::OnUpdate(float dt)
 {
@@ -55,7 +56,7 @@ void GameState::OnUpdate(float dt)
     }
 
     // TODO : REWORK THIS SHIT FUCKEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEER
-    m_ReturnButton->Update(m_Window);
+    m_ReturnButton->Update();
 
     CheckIfMouseHoverBoard();
 }
@@ -91,7 +92,7 @@ void GameState::CheckIfMouseHoverBoard()
 
         if (IsMouseHoverPiece(i))
         {
-            if (Window::IsMouseButtonPressed(sf::Mouse::Left))
+            if (InputHandler::IsMouseButtonPressed(sf::Mouse::Left))
             {
                 m_GameStateUI->UpdateGameStateText("");
 
@@ -105,7 +106,7 @@ void GameState::CheckIfMouseHoverBoard()
                     Player* winner = PlayerManager::GetCurrentPlayer();
 
                     m_ScoreManager.SaveGame(winner->GetData());
-                    m_ScoreManager.AddScoreToPlayer(*winner->GetData());
+                    m_ScoreManager.AddScoreToPlayer(winner->GetPlayerID());
 
                     m_GameStateUI->UpdatePlayerScore(*winner->GetData(), m_ScoreManager.GetPlayerScore(winner->GetPlayerID()));
                     m_GameStateUI->UpdateGameStateText(winner->GetName() + " won!");
@@ -189,7 +190,7 @@ void GameState::SwitchPlayerTurn()
 
 bool GameState::IsMouseHoverPiece(unsigned int i)
 {
-    const sf::Vector2f mousePos = static_cast<sf::Vector2f>(m_Window->GetMousePosition());
+    const sf::Vector2f mousePos = static_cast<sf::Vector2f>(InputHandler::GetMousePosition());
     const float size = m_Board.GetPieceSize();
     const sf::Vector2f piecePosition = m_Board.GetGraphicPiece(i).GetPosition();
 
@@ -198,6 +199,7 @@ bool GameState::IsMouseHoverPiece(unsigned int i)
         mousePos.y > piecePosition.y &&
         mousePos.y < piecePosition.y + size;
 }
+
 
 void GameState::OnExit()
 {
