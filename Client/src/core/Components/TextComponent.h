@@ -8,13 +8,10 @@ enum TextAlignment
     Right
 };
 
-class ButtonComponent;
-
 class TextComponent : public sf::Drawable
 {
 public:
     TextComponent(const std::string& text, ButtonComponent& parentButton, const sf::Color& color, unsigned int size, TextAlignment alignment);
-    TextComponent(ButtonComponent& parentButton, const sf::Color& color, unsigned int size, TextAlignment alignment);
 
     void SetPosition(const sf::Vector2f& position);
     void SetPositionCentered(const sf::Vector2f& position);

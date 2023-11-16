@@ -7,7 +7,7 @@ class ButtonComponent : public sf::Drawable
 {
 public:
     ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor, const sf::Color& hoverColor, const std::string& buttonText, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment);
-    ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor, const sf::Color& hoverColor, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment);
+    ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor, const sf::Color& hoverColor);
 
     ~ButtonComponent();
 
@@ -22,7 +22,6 @@ private:
     sf::Color idleColor;
     sf::Color hoverColor;
 
-    Window* m_Window;
     std::function<void()> onClickCallback;
 
     TextComponent m_Text;

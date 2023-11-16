@@ -13,16 +13,6 @@ TextComponent::TextComponent(const std::string& text, ButtonComponent& parentBut
     SetPosition(m_ParentButton.GetPosition());
 }
 
-TextComponent::TextComponent(ButtonComponent& parentButton, const sf::Color& color, unsigned int size, TextAlignment alignment)
-    : m_Alignment(alignment), m_ParentButton(parentButton)
-{
-	m_Text.setFont(*FontRegistry::GetFont("bold-font"));
-	m_Text.setFillColor(color);
-	m_Text.setCharacterSize(size);
-
-	SetPosition(m_ParentButton.GetPosition());
-}
-
 void TextComponent::SetPosition(const sf::Vector2f& position)
 {
     if (m_Alignment == TextAlignment::Center)
