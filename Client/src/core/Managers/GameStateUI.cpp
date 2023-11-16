@@ -20,7 +20,6 @@ void GameStateUI::Init()
 {
     UIStateManager::Init();
 
-    FontRegistry::LoadFont("bold-font");
     const auto& font = *FontRegistry::GetFont("bold-font");
 
     m_Title = new sf::Text();

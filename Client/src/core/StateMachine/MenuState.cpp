@@ -17,17 +17,17 @@ MenuState::~MenuState()
 
 void MenuState::OnEnter()
 {
-	m_PlayButton = new ButtonComponent(100, 100, 200, 100, sf::Color::Blue, sf::Color::Red);
+	m_PlayButton = new ButtonComponent(100, 100, 200, 100, sf::Color::Blue, sf::Color::Red, "Play", sf::Color::White, 30, TextAlignment::Center);
 	m_PlayButton->SetOnClickCallback([this]() {
 		m_StateMachine->SwitchState("GameState");
 	});
 
-	m_HistoryButton = new ButtonComponent(100, 300, 200, 100, sf::Color::Green, sf::Color::Red);
+	m_HistoryButton = new ButtonComponent(100, 300, 200, 100, sf::Color::Green, sf::Color::Red, "History", sf::Color::White, 30, TextAlignment::Center);
 	m_HistoryButton->SetOnClickCallback([this]() {
 		m_StateMachine->SwitchState("HistoryState");
 	});
 
-	m_QuitButton = new ButtonComponent(100, 500, 200, 100, sf::Color::Red, sf::Color::Red);
+	m_QuitButton = new ButtonComponent(100, 500, 200, 100, sf::Color::Red, sf::Color::Red, "Quit", sf::Color::White, 30, TextAlignment::Center);
 	m_QuitButton->SetOnClickCallback([this]() {
 		// TODO: Quit the game
 	});
@@ -67,8 +67,6 @@ void MenuState::OnExit()
 	RELEASE(m_PlayButton);
 	RELEASE(m_HistoryButton);
 	RELEASE(m_QuitButton);
-
-	Cleanup();
 }
 
 void MenuState::Cleanup()

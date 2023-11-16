@@ -38,7 +38,7 @@ public:
 
 private:
 	Window* m_Window;
-	ButtonComponent* m_ButtonComponent;
+	ButtonComponent* m_ReturnButton;
 
 	GraphicBoard m_Board;
 

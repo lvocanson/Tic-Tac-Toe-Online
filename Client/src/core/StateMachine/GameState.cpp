@@ -11,33 +11,37 @@ GameState::GameState(StateMachine* stateMachine, Window* m_Window)
 	: State(stateMachine)
 	, m_Window(m_Window)
 {
-}
-
-GameState::~GameState()
-{
-    Cleanup();
-}
-
-void GameState::OnEnter()
-{
-    m_GameStateUI = new GameStateUI(m_Window);
+    m_StateMachine = stateMachine;
+    m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12));
+    m_PlayerManager.CreateNewPlayer("Player Two", sf::Color(255, 194, 0));
 
     m_Board.Init();
     m_ScoreManager.Init();
     m_PlayerManager.Init();
 
-    m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12));
-    m_PlayerManager.CreateNewPlayer("Player Two", sf::Color(255, 194, 0));
-
-    m_GameStateUI->Init();
-
     for (const auto& player : m_PlayerManager.GetAllPlayers())
     {
         m_ScoreManager.CreateScoreForPlayer(player->GetData(), m_Window);
     }
+}
 
+GameState::~GameState()
+{
+    NULLPTR(m_Window);
+}
+
+void GameState::OnEnter()
+{
+    m_GameStateUI = new GameStateUI(m_Window);
+    m_GameStateUI->Init();
     m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
 
+    m_ReturnButton = new ButtonComponent(100, 500, 200, 100, sf::Color::Red, sf::Color::Red, "Return", sf::Color::White, 30, TextAlignment::Center);
+    m_ReturnButton->SetOnClickCallback([this]() {
+        m_StateMachine->SwitchState("MenuState");
+        });
+
+    m_Window->RegisterDrawable(m_ReturnButton);
     DrawBoard();
 
 }
@@ -47,6 +51,12 @@ void GameState::OnUpdate(float dt)
     if (m_PlayerTurnTimer > sf::Time::Zero)
     {
         m_PlayerTurnTimer -= sf::seconds(dt);
+        return;
+    }
+
+    if (m_ReturnButton->IsMouseOver(m_Window) && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
+    {
+        m_StateMachine->SwitchState("MenuState");
         return;
     }
 
@@ -197,13 +207,11 @@ bool GameState::IsMouseHoverPiece(unsigned int i)
         mousePos.y < piecePosition.y + size;
 }
 
+
 void GameState::Cleanup()
 {
-    for (auto& drawable : m_Window->GetDrawables())
-    {
-        RELEASE(drawable);
-    }
-
+    ClearBoard();
     RELEASE(m_GameStateUI);
-    NULLPTR(m_Window);
+
+    m_Window->ClearAllDrawables();
 }

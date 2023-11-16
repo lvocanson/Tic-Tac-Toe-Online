@@ -47,3 +47,13 @@ void Window::Render()
     }
     m_Window->display();
 }
+
+void Window::ClearAllDrawables()
+{
+    for (auto drawable : m_Drawables)
+    {
+        RELEASE(drawable);
+    }
+
+    m_Drawables.clear();
+}

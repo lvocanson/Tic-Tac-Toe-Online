@@ -72,6 +72,9 @@
     <ClCompile Include="src\core\Components\ButtonComponent.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\Components\TextComponent.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h">
@@ -135,6 +138,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Components\ButtonComponent.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Components\TextComponent.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

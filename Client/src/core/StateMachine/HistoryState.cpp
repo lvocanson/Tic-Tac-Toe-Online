@@ -7,6 +7,7 @@ HistoryState::HistoryState(StateMachine* stateMachine, Window* m_Window)
 	, m_LArrowButton()
 	, m_BackToMenu()
 {
+	m_StateMachine = stateMachine;
 }
 
 HistoryState::~HistoryState()
@@ -16,17 +17,17 @@ HistoryState::~HistoryState()
 
 void HistoryState::OnEnter()
 {
-	m_RArrowButton = new ButtonComponent(50, 50, 50, 50, sf::Color::Green, sf::Color::Red);
+	m_RArrowButton = new ButtonComponent(50, 50, 50, 50, sf::Color::Green, sf::Color::Red, ">", sf::Color::White, 30, TextAlignment::Center);
 	m_RArrowButton->SetOnClickCallback([this]() {
 		// TODO
 	});
 
-	m_LArrowButton = new ButtonComponent(150, 50, 50, 50, sf::Color::Green, sf::Color::Red);
+	m_LArrowButton = new ButtonComponent(150, 50, 50, 50, sf::Color::Green, sf::Color::Red, "<", sf::Color::White, 30, TextAlignment::Center);
 	m_LArrowButton->SetOnClickCallback([this]() {
 		// TODO
 	});
 
-	m_BackToMenu = new ButtonComponent(150, 400, 200, 100, sf::Color::Blue, sf::Color::Red);
+	m_BackToMenu = new ButtonComponent(150, 400, 200, 100, sf::Color::Blue, sf::Color::Red, "Back to Menu", sf::Color::White, 30, TextAlignment::Center);
 	m_BackToMenu->SetOnClickCallback([this]() {
 		m_StateMachine->SwitchState("MenuState");
 	});
@@ -41,6 +42,7 @@ void HistoryState::OnUpdate(float dt)
 	if (m_BackToMenu->IsMouseOver(m_Window) && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
 	{
 		m_StateMachine->SwitchState("MenuState");
+		return;
 	}
 }
 
@@ -53,8 +55,6 @@ void HistoryState::OnExit()
 	RELEASE(m_RArrowButton);
 	RELEASE(m_LArrowButton);
 	RELEASE(m_BackToMenu);
-
-	Cleanup();
 }
 
 void HistoryState::Cleanup()

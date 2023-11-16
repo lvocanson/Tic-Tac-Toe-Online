@@ -10,6 +10,8 @@ using namespace TicTacToe;
 
 void ClientApp::Init()
 {
+    FontRegistry::LoadFont("bold-font");
+
     m_IsRunning = true;
     m_Window = new Window();
     m_Window->Create("Tic Tac Toe Online!", 1280, 720);

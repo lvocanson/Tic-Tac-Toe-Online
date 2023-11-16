@@ -4,6 +4,7 @@ EndState::EndState(StateMachine* stateMachine, Window* m_Window)
     : State(stateMachine)
     , m_Window(m_Window)
 {
+    m_StateMachine = stateMachine;
 }
 
 EndState::~EndState()
@@ -42,7 +43,6 @@ void EndState::OnUpdate(float dt)
 
 void EndState::OnExit()
 {
-    Cleanup();
 }
 
 void EndState::Cleanup()
