@@ -11,6 +11,7 @@
 #include <json.hpp>
 
 #include "TicTacToe.h"
+#include "src/core/Managers/InputHandler.h"
 #include "core/CoreDefinitions.h"
 #include <cassert>
 
