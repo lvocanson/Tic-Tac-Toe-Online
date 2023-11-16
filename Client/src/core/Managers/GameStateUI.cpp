@@ -56,18 +56,6 @@ void GameStateUI::Init()
     RegisterText(m_GameStateText);
 }
 
-void GameStateUI::Clear()
-{
-    for (auto& text : m_PlayerScoreTexts)
-    {
-        NULLPTR(text.second);
-    }
-
-    NULLPTR(m_PlayerTurnText);
-    NULLPTR(m_GameStateText);
-    NULLPTR(m_Title);
-}
-
 void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
 {
     for (const auto player : allPlayers)
@@ -106,4 +94,16 @@ void GameStateUI::UpdatePlayerScore(const PlayerData& player, const unsigned int
     }
 
     m_PlayerScoreTexts[player.Id]->setString(player.Name + " : " + std::to_string(score));
+}
+
+void GameStateUI::Clear()
+{
+    for (auto& text : m_PlayerScoreTexts)
+    {
+        NULLPTR(text.second);
+    }
+
+    NULLPTR(m_PlayerTurnText);
+    NULLPTR(m_GameStateText);
+    NULLPTR(m_Title);
 }

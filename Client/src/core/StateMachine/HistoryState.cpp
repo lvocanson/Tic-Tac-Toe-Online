@@ -9,6 +9,11 @@ HistoryState::HistoryState(StateMachine* stateMachine, Window* m_Window)
 {
 }
 
+HistoryState::~HistoryState()
+{
+	Cleanup();
+}
+
 void HistoryState::OnEnter()
 {
 	m_RArrowButton = new ButtonComponent(50, 50, 50, 50, sf::Color::Green, sf::Color::Red);
@@ -44,4 +49,15 @@ void HistoryState::OnExit()
 	m_Window->UnregisterDrawable(m_RArrowButton);
 	m_Window->UnregisterDrawable(m_LArrowButton);
 	m_Window->UnregisterDrawable(m_BackToMenu);
+
+	RELEASE(m_RArrowButton);
+	RELEASE(m_LArrowButton);
+	RELEASE(m_BackToMenu);
+
+	Cleanup();
+}
+
+void HistoryState::Cleanup()
+{
+	NULLPTR(m_Window);
 }

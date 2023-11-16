@@ -6,6 +6,11 @@ EndState::EndState(StateMachine* stateMachine, Window* m_Window)
 {
 }
 
+EndState::~EndState()
+{
+	Cleanup();
+}
+
 void EndState::OnEnter()
 {
     //sf::Text* scoreText = new sf::Text("Score : " + std::to_string(m_Score), font, 20);
@@ -37,5 +42,10 @@ void EndState::OnUpdate(float dt)
 
 void EndState::OnExit()
 {
+    Cleanup();
+}
 
+void EndState::Cleanup()
+{
+    NULLPTR(m_Window);
 }

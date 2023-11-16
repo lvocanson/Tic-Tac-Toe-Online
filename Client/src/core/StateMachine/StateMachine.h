@@ -6,7 +6,8 @@ class StateMachine
 {
 public:
 	StateMachine();
-	 
+	~StateMachine();
+
 	/// <summary>
 	/// Add the state ref to the dictionnary
 	/// </summary>
@@ -23,6 +24,8 @@ public:
 	void SwitchState(std::string newState);
 
 	inline State* GetCurrentState() const { return m_CurrentState; }
+
+	void Cleanup();
 
 private:
 

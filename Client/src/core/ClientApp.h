@@ -1,8 +1,5 @@
 #pragma once
 #include "src/core/StateMachine/StateMachine.h"
-#include "Managers/GameStateUI.h"
-#include "Managers/ScoreManager.h"
-#include "Managers/PlayerManager.h"
 
 class Window;
 

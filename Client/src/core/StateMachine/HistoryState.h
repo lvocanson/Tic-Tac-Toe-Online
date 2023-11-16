@@ -14,6 +14,9 @@ public:
 	HistoryState(StateMachine* stateMachine, Window* m_Window);
 	HistoryState(const HistoryState& other) = delete;
 	HistoryState& operator=(const HistoryState& other) = delete;
+	~HistoryState();
+
+	void Cleanup();
 
 private:
 	Window* m_Window;

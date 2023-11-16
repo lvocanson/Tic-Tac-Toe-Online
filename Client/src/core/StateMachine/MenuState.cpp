@@ -10,6 +10,11 @@ MenuState::MenuState(StateMachine* stateMachine, Window* window)
 	m_StateMachine = stateMachine;
 }
 
+MenuState::~MenuState()
+{
+	Cleanup();
+}
+
 void MenuState::OnEnter()
 {
 	m_PlayButton = new ButtonComponent(100, 100, 200, 100, sf::Color::Blue, sf::Color::Red);
@@ -37,16 +42,19 @@ void MenuState::OnUpdate(float dt)
 	if (m_PlayButton->IsMouseOver(m_Window) && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
 	{
 		m_StateMachine->SwitchState("GameState");
+		return;
 	}
 
 	if (m_HistoryButton->IsMouseOver(m_Window) && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
 	{
 		m_StateMachine->SwitchState("HistoryState");
+		return;
 	}
 
 	if (m_QuitButton->IsMouseOver(m_Window) && (sf::Mouse::isButtonPressed(sf::Mouse::Left)))
 	{
 		// TODO
+		return;
 	}
 }
 
@@ -55,4 +63,15 @@ void MenuState::OnExit()
 	m_Window->UnregisterDrawable(m_PlayButton);
 	m_Window->UnregisterDrawable(m_HistoryButton);
 	m_Window->UnregisterDrawable(m_QuitButton);
+
+	RELEASE(m_PlayButton);
+	RELEASE(m_HistoryButton);
+	RELEASE(m_QuitButton);
+
+	Cleanup();
+}
+
+void MenuState::Cleanup()
+{
+	NULLPTR(m_Window);
 }

@@ -14,6 +14,9 @@ public:
 	EndState(StateMachine* stateMachine, Window* m_Window);
 	EndState(const EndState& other) = delete;
 	EndState& operator=(const EndState& other) = delete;
+	~EndState();
+
+	void Cleanup();
 
 private:
 	Window* m_Window;	
