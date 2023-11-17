@@ -1,6 +1,7 @@
 #include "Window.h"
 
 sf::RenderWindow* Window::m_Window = nullptr;
+bool Window::m_IsFocused = true;
 
 Window::Window()
     : m_ClearColor(sf::Color::Color(51, 56, 63)), m_Drawables()
@@ -35,6 +36,12 @@ void Window::PollEvents()
         {
         case sf::Event::Closed:
             m_Window->close();
+            break;
+        case sf::Event::GainedFocus:
+            m_IsFocused = true;
+            break;
+        case sf::Event::LostFocus:
+            m_IsFocused = false;
             break;
         }
     }

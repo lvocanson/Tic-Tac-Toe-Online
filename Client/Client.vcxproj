@@ -99,6 +99,7 @@
   <ItemGroup>
     <ClCompile Include="src\core\Components\ButtonComponent.cpp" />
     <ClCompile Include="src\core\Components\TextComponent.cpp" />
+    <ClCompile Include="src\core\Managers\PlayerShapeRegistry.cpp" />
     <ClCompile Include="src\core\Managers\InputHandler.cpp" />
     <ClCompile Include="src\core\Managers\GameStateUI.cpp" />
     <ClCompile Include="src\core\Managers\FontRegistry.cpp" />
@@ -126,6 +127,7 @@
     <ClInclude Include="src\core\Components\BaseComponent.h" />
     <ClInclude Include="src\core\Components\ButtonComponent.h" />
     <ClInclude Include="src\core\Components\TextComponent.h" />
+    <ClInclude Include="src\core\Managers\PlayerShapeRegistry.h" />
     <ClInclude Include="src\core\Managers\InputHandler.h" />
     <ClInclude Include="src\core\Managers\GameStateUI.h" />
     <ClInclude Include="src\core\Managers\FontRegistry.h" />
