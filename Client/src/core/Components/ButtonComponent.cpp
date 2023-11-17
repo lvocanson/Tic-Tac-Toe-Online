@@ -76,7 +76,7 @@ void ButtonComponent::SetOnClickCallback(std::function<void()> onClickCallback)
 }
 
 void ButtonComponent::SetButtonText(const std::string& text, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment)
-{
+{   
     if (!m_Text)
     {
         m_Text = std::make_unique<TextComponent>(text, *this, textColor, textSize, textAlignment);
