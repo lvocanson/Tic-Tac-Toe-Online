@@ -84,6 +84,7 @@ namespace TcpIp
         char* header = CreateHeader(size);
         char* buffer = new char[HEADER_SIZE + size];
         memcpy(buffer, header, HEADER_SIZE);
+        memcpy(buffer + HEADER_SIZE, data, size);
         delete[] header;
 
         // Send header and data
