@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Headers">
@@ -36,6 +36,21 @@
     <ClCompile Include="src\core\GraphicBoard.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\StateMachine\StateMachine.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\StateMachine\EndState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\StateMachine\GameState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\StateMachine\HistoryState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\StateMachine\MenuState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
     <ClCompile Include="src\core\Managers\ScoreManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -52,6 +67,12 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\core\Player.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Components\ButtonComponent.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Components\TextComponent.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\core\Managers\InputHandler.cpp">
@@ -83,6 +104,24 @@
     <ClInclude Include="src\core\GraphicBoard.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\core\StateMachine\StateMachine.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\StateMachine\State.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\StateMachine\EndState.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\StateMachine\GameState.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\StateMachine\HistoryState.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\StateMachine\MenuState.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
     <ClInclude Include="src\core\Managers\ScoreManager.h">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -104,7 +143,16 @@
     <ClInclude Include="src\core\Player.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\core\Components\ButtonComponent.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Components\TextComponent.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
     <ClInclude Include="src\core\Managers\InputHandler.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Components\BaseComponent.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Managers\PlayerShapeRegistry.h">
