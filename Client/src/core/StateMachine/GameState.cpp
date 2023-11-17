@@ -12,8 +12,10 @@ using json = nlohmann::json;
 
 
 GameState::GameState(StateMachine* stateMachine, Window* m_Window)
-	: State(stateMachine)
-	, m_Window(m_Window)
+    : State(stateMachine)
+    , m_Window(m_Window)
+    , m_GameStateUI(nullptr)
+    , m_ReturnButton(nullptr)
 {
     m_StateMachine = stateMachine;
     m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12), Square);
@@ -53,12 +55,6 @@ void GameState::OnEnter()
 
 void GameState::OnUpdate(float dt)
 {
-    if (m_PlayerTurnTimer > sf::Time::Zero)
-    {
-        m_PlayerTurnTimer -= sf::seconds(dt);
-        return;
-    }
-
     // TODO : REWORK THIS SHIT FUCKEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEER
     m_ReturnButton->Update();
 
@@ -180,15 +176,7 @@ void GameState::ClearBoard()
 void GameState::SwitchPlayerTurn()
 {
     m_PlayerManager.SwitchPlayerTurn();
-
-    m_PlayerTurnTimer = sf::seconds(PLAYER_TURN_DELAY);
     m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetCurrentPlayer()->GetData());
-
-    // TODO : Change color based on player turn
-    /*if (m_PlayerManager.IsPlayerOneTurn())
-        m_PlayerTurnText->setFillColor(sf::Color::Color(250, 92, 12));
-    else
-        m_PlayerTurnText->setFillColor(sf::Color::Color(255, 194, 0));*/
 }
 
 bool GameState::IsMouseHoverPiece(unsigned int i)
