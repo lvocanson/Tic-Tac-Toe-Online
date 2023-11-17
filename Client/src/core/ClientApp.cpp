@@ -36,7 +36,6 @@ void ClientApp::Run()
     if (!m_IsRunning)
         throw std::runtime_error("ClientApp is not initialized!");
 
-    m_Client = new TcpIpClient();
     try
     {
         m_Client->Connect("localhost", DEFAULT_PORT);
@@ -48,7 +47,7 @@ void ClientApp::Run()
         DebugLog("Failed to connect to server: " + std::string(e.what()) + "\n");
         m_IsRunning = false;
     }
-
+    
     std::stringstream ss;
     sf::Clock clock;
     Json j;
