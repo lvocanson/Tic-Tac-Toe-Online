@@ -3,17 +3,21 @@
 
 #include "src/core/Window.h"
 #include "src/core/PlayerPieceShape.h"
+#include "src/core/ClientApp.h"
+
 #include <SFML/System/Time.hpp>
 
 using namespace TicTacToe;
+using json = nlohmann::json;
+
 
 GameState::GameState(StateMachine* stateMachine, Window* m_Window)
 	: State(stateMachine)
 	, m_Window(m_Window)
 {
     m_StateMachine = stateMachine;
-    m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12));
-    m_PlayerManager.CreateNewPlayer("Player Two", sf::Color(255, 194, 0));
+    m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12), Square);
+    m_PlayerManager.CreateNewPlayer("Player Two", sf::Color(255, 194, 0), Circle);
 
     m_Board.Init();
     m_ScoreManager.Init();
@@ -129,15 +133,26 @@ void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
 {
     const Player* currentPlayer = PlayerManager::GetCurrentPlayer();
 
+    int row = cell / (int)m_Board.GetWidth();
+    int col = cell % (int)m_Board.GetWidth();
+    std::string playerID = std::to_string(m_Board[cell]);
+    json j;
+    j["row"] = row;
+    j["col"] = col;
+    j["playerID"] = playerID;
+
+    ClientApp::GetInstance().Send(j.dump());
+
+    auto pos = sf::Vector2f(m_Board.GetGraphicPiece(cell).GetPosition());
     // Set piece id in board
     m_Board[cell] = currentPlayer->GetPlayerID();
 
-    SetGraphicalPiece(cell, currentPlayer);
+    InstanciateNewPlayerShape(currentPlayer, cell);
 
     m_ScoreManager.AddPlayerMove(currentPlayer->GetPlayerID(), cell);
 }
 
-void GameState::SetGraphicalPiece(unsigned cell, const Player* currentPlayer)
+void GameState::InstanciateNewPlayerShape(const Player* currentPlayer, unsigned int cell)
 {
     auto pos = sf::Vector2f(m_Board.GetGraphicPiece(cell).GetPosition());
 
@@ -145,21 +160,9 @@ void GameState::SetGraphicalPiece(unsigned cell, const Player* currentPlayer)
     pos.x += m_Board.GetPieceSize() * 0.5f;
     pos.y += m_Board.GetPieceSize() * 0.5f;
 
-    // TODO: rework this shit
-    if (m_PlayerManager.IsPlayerOneTurn())
-    {
-        auto piece = new PlayerCircleShape(currentPlayer);
-        piece->setPosition(pos);
-        m_Window->RegisterDrawable(piece);
-        m_GamePieces.push_back(piece);
-    }
-    else
-    {
-        auto* piece = new PlayerCrossShape(currentPlayer);
-        piece->setPosition(pos);
-        m_Window->RegisterDrawable(piece);
-        m_GamePieces.push_back(piece);
-    }
+    auto playerPieceShape = new PlayerPieceShape(currentPlayer->GetPlayerID(), pos);
+    m_GamePieces.push_back(playerPieceShape);
+    m_Window->RegisterDrawable(playerPieceShape);
 }
 
 void GameState::ClearBoard()

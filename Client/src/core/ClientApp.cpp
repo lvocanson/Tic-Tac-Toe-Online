@@ -4,7 +4,6 @@
 #include "src/core/StateMachine/GameState.h"
 #include "src/core/StateMachine/HistoryState.h"
 #include "src/core/StateMachine/MenuState.h"
-#include "src/tcp-ip/TcpIpClient.h"
 
 using namespace TicTacToe;
 
@@ -39,7 +38,6 @@ void ClientApp::Run()
     if (!m_IsRunning)
         throw std::runtime_error("ClientApp is not initialized!");
 
-    auto &client = TcpIpClient::GetInstance();
     m_Client = new TcpIpClient();
     try
     {
@@ -94,6 +92,12 @@ void ClientApp::Run()
     Cleanup();
 }
 
+void ClientApp::Send(const std::string& data)
+{
+    if (!data.empty())
+        m_Client->Send(data);
+}
+
 void ClientApp::Update(sf::Time delta)
 {
     m_StateMachine->Update(delta.asSeconds());
@@ -111,7 +115,6 @@ void ClientApp::Cleanup()
 
     RELEASE(m_Window);
     RELEASE(m_Client);
-    RELEASE(m_GameStateUI);
 
     FontRegistry::ClearFonts();
 }
