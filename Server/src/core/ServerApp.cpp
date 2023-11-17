@@ -73,25 +73,28 @@ void ServerApp::HandleGameServer()
 {
     try
     {
-        size_t count = m_GameServer->AcceptAllPendingConnections().size();
-        if (count > 0)
-        {
-            std::cout << STS_CLR << count << " new connection" << (count > 1 ? "s" : "") << " accepted." << std::endl << DEF_CLR;
-        }
-
-        // Check for pending data / closed connections
+        // Check for new connections / pending data / closed connections
         m_GameServer->CheckNetwork();
+
+        // For each new connection
+        ClientPtr newClient;
+        while ((newClient = m_GameServer->FindNewClient()) != nullptr)
+        {
+            std::cout << STS_CLR << "New connection from " << HASH_CLR(newClient) << STS_CLR << " has been established." << std::endl << DEF_CLR;
+        }
 
         // For each client with pending data
         ClientPtr sender;
         while ((sender = m_GameServer->FindClientWithPendingData()) != nullptr)
-            HandleRecv(sender);
-
-        count = m_GameServer->CleanClosedConnections();
-        if (count > 0)
         {
-            std::cout << STS_CLR << count << " connection" << (count > 1 ? "s" : "") << " closed." << std::endl << DEF_CLR;
+            HandleRecv(sender);
         }
+
+        // For each closed connection
+        m_GameServer->CleanClosedConnections([](ClientPtr c)
+            {
+                std::cout << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR;
+            });
     }
     catch (const TcpIp::TcpIpException& e)
     {

@@ -17,8 +17,6 @@ void ClientApp::Init()
     
     m_Client = new TcpIpClient();
 
-    std::cout << "Hello World! I'm a client!\n";
-
     m_StateMachine = new StateMachine();
 
     m_StateMachine->AddState("MenuState", new MenuState(m_StateMachine, m_Window));

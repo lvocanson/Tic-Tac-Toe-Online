@@ -1,6 +1,10 @@
 #include "TcpIpServer.h"
 using enum TcpIp::ErrorCode;
 
+#ifdef NO_EVENTS
+#define WM_SOCKET (WM_USER + 1)
+#endif // NO_EVENTS
+
 std::string Connection::Receive()
 {
     if (!ReadPending)
@@ -17,9 +21,16 @@ void Connection::Send(const std::string& data)
     TcpIp::Send(Socket, data.c_str(), static_cast<u_long>(data.size()));
 }
 
+void Connection::Kick()
+{
+    ClosePending = true;
+}
+
 Connection::Connection(SOCKET socket)
     : Socket(socket)
+#ifndef NO_EVENTS
     , Event(TcpIp::CreateEventObject(socket, FD_READ | FD_CLOSE))
+#endif // NO_EVENTS
 {
     sockaddr_in clientAddress;
     int clientAddressLength = sizeof(clientAddress);
@@ -35,7 +46,9 @@ Connection::Connection(SOCKET socket)
 TcpIpServer::TcpIpServer()
     : m_WsaData(TcpIp::InitializeWinsock())
     , m_ListenSocket(INVALID_SOCKET)
+#ifndef NO_EVENTS
     , m_AcceptEvent(WSA_INVALID_EVENT)
+#endif // !NO_EVENTS
 {
 }
 
@@ -84,14 +97,48 @@ void TcpIpServer::Open(unsigned int port)
     if (listen(m_ListenSocket, SOMAXCONN) == SOCKET_ERROR)
         throw TcpIp::TcpIpException::Create(SOCKET_ListenFailed, TCP_IP_WSA_ERROR);
 
+#ifdef NO_EVENTS
+    // Create an invisible window for message processing
+    const auto title = L"Server " + std::to_wstring(port);
+    WNDCLASSEX wcex =
+    {
+        .cbSize = sizeof(WNDCLASSEX),
+        .style = 0,
+        .lpfnWndProc = [](HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) -> LRESULT
+        {
+            return reinterpret_cast<TcpIpServer*>(GetWindowLongPtr(hWnd, GWLP_USERDATA))->WndProc(hWnd, message, wParam, lParam);
+        },
+        .cbClsExtra = 0,
+        .cbWndExtra = 0,
+        .hInstance = GetModuleHandle(nullptr),
+        .hIcon = nullptr,
+        .hCursor = nullptr,
+        .hbrBackground = nullptr,
+        .lpszMenuName = nullptr,
+        .lpszClassName = title.c_str(),
+        .hIconSm = nullptr
+    };
+    RegisterClassEx(&wcex);
+    HWND hWnd = CreateWindowEx(0, title.c_str(), title.c_str(), 0, 0, 0, 0, 0, HWND_MESSAGE, nullptr, GetModuleHandle(nullptr), nullptr);
+
+    if (hWnd == nullptr)
+        throw TcpIp::TcpIpException::Create(EVENT_CreateFailed, GetLastError());
+
+    iResult = WSAAsyncSelect(m_ListenSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_READ | FD_CLOSE);
+    if (iResult != 0)
+        throw TcpIp::TcpIpException::Create(EVENT_SelectFailed, TCP_IP_WSA_ERROR);
+#else
     m_AcceptEvent = TcpIp::CreateEventObject(m_ListenSocket, FD_ACCEPT);
+#endif
 }
 
 void TcpIpServer::Close()
 {
     if (m_ListenSocket != INVALID_SOCKET)
     {
+#ifndef NO_EVENTS
         TcpIp::CloseEventObject(m_AcceptEvent);
+#endif // NO_EVENTS
         TcpIp::CloseSocket(m_ListenSocket);
     }
 
@@ -100,21 +147,99 @@ void TcpIpServer::Close()
         if (connection.Socket == INVALID_SOCKET)
             continue; // Already closed
 
+#ifndef NO_EVENTS
         TcpIp::CloseEventObject(connection.Event);
+#endif // NO_EVENTS
         TcpIp::CloseSocket(connection.Socket);
     }
     m_Connections.clear();
 }
 
-ClientPtr TcpIpServer::AcceptPendingConnection()
+#ifdef NO_EVENTS
+
+LRESULT TcpIpServer::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    // Check the listening socket for accept events
+    if (message == WM_SOCKET)
+    {
+        switch (WSAGETSELECTEVENT(lParam))
+        {
+        case FD_ACCEPT:
+        {
+            if (WSAGETSELECTERROR(lParam) != 0)
+                throw TcpIp::TcpIpException::Create(EVENT_FdAcceptHadError, WSAGETSELECTERROR(lParam));
+
+            SOCKET connectionSocket = accept(wParam, nullptr, nullptr);
+            if (connectionSocket == INVALID_SOCKET)
+                throw TcpIp::TcpIpException::Create(SOCKET_CreateFailed, TCP_IP_WSA_ERROR);
+
+            // Create a new connection, and place it at the end of the vector
+            int iResult = WSAAsyncSelect(connectionSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
+            if (iResult != 0)
+                throw TcpIp::TcpIpException::Create(EVENT_SelectFailed, TCP_IP_WSA_ERROR);
+
+            m_Connections.emplace_back(connectionSocket);
+            break;
+        }
+        case FD_READ:
+        {
+            if (WSAGETSELECTERROR(lParam) != 0)
+                throw TcpIp::TcpIpException::Create(EVENT_FdReadHadError, WSAGETSELECTERROR(lParam));
+
+            for (Connection& connection : m_Connections)
+            {
+                if (connection.Socket == wParam)
+                {
+                    connection.ReadPending = true;
+                    break;
+                }
+            }
+            break;
+        }
+        case FD_CLOSE:
+        {
+            if (WSAGETSELECTERROR(lParam) != 0)
+                throw TcpIp::TcpIpException::Create(EVENT_FdCloseHadError, WSAGETSELECTERROR(lParam));
+
+            for (Connection& connection : m_Connections)
+            {
+                if (connection.Socket == wParam)
+                {
+                    connection.ClosePending = true;
+                    break;
+                }
+            }
+            break;
+        }
+        default: break;
+        }
+        return 0;
+    }
+    return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+#endif // NO_EVENTS
+
+void TcpIpServer::CheckNetwork()
+{
+#ifdef NO_EVENTS
+
+    MSG msg;
+    while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+
+#else // NO_EVENTS
+
     WSANETWORKEVENTS networkEvents;
+
+    // Check for accept events
     int iResult = WSAEnumNetworkEvents(m_ListenSocket, m_AcceptEvent, &networkEvents);
     if (iResult == SOCKET_ERROR)
         throw TcpIp::TcpIpException::Create(EVENT_EnumFailed, TCP_IP_WSA_ERROR);
 
-    if (networkEvents.lNetworkEvents & FD_ACCEPT)
+    while (networkEvents.lNetworkEvents & FD_ACCEPT)
     {
         if (networkEvents.iErrorCode[FD_ACCEPT_BIT] != 0)
             throw TcpIp::TcpIpException::Create(EVENT_FdAcceptHadError, networkEvents.iErrorCode[FD_ACCEPT_BIT]);
@@ -125,32 +250,15 @@ ClientPtr TcpIpServer::AcceptPendingConnection()
 
         // Create a new connection, and place it at the end of the vector
         m_Connections.emplace_back(connectionSocket);
-        return &m_Connections.back();
+
+        int iResult = WSAEnumNetworkEvents(m_ListenSocket, m_AcceptEvent, &networkEvents);
+        if (iResult == SOCKET_ERROR)
+            throw TcpIp::TcpIpException::Create(EVENT_EnumFailed, TCP_IP_WSA_ERROR);
     }
-    return nullptr;
-}
 
-std::vector<ClientPtr> TcpIpServer::AcceptAllPendingConnections()
-{
-    std::vector<ClientPtr> clients;
-    ClientPtr client = nullptr;
-    while ((client = AcceptPendingConnection()) != nullptr)
-        clients.push_back(client);
-    return clients;
-}
-
-void TcpIpServer::Kick(ClientPtr& client)
-{
-    client->ClosePending = true;
-}
-
-void TcpIpServer::CheckNetwork()
-{
-    WSANETWORKEVENTS networkEvents;
+    // Check for read/close events on all connections
     for (Connection& connection : m_Connections)
     {
-
-        // Enumerate the network events for this connection
         int iResult = WSAEnumNetworkEvents(connection.Socket, connection.Event, &networkEvents);
         if (iResult == SOCKET_ERROR)
             throw TcpIp::TcpIpException::Create(EVENT_EnumFailed, TCP_IP_WSA_ERROR);
@@ -171,6 +279,20 @@ void TcpIpServer::CheckNetwork()
             connection.ClosePending = true;
         }
     }
+#endif // NO_EVENTS
+}
+
+ClientPtr TcpIpServer::FindNewClient()
+{
+    for (Connection& connection : m_Connections)
+    {
+        if (connection.IsNew)
+        {
+            connection.IsNew = false;
+            return &connection;
+        }
+    }
+    return nullptr;
 }
 
 ClientPtr TcpIpServer::FindClientWithPendingData()
@@ -183,7 +305,7 @@ ClientPtr TcpIpServer::FindClientWithPendingData()
     return nullptr;
 }
 
-size_t TcpIpServer::CleanClosedConnections()
+int TcpIpServer::CleanClosedConnections(std::function<void(ClientPtr)> lastCallback)
 {
     // Move all connections that have a close pending to the end of the vector
     auto partition = std::partition(m_Connections.begin(), m_Connections.end(),
@@ -192,11 +314,15 @@ size_t TcpIpServer::CleanClosedConnections()
     // Close them all & remove them from the vector
     for (auto it = partition; it != m_Connections.end(); ++it)
     {
+        if (lastCallback != nullptr)
+            lastCallback(&*it);
+#ifndef NO_EVENTS
         TcpIp::CloseEventObject(it->Event);
+#endif // NO_EVENTS
         TcpIp::CloseSocket(it->Socket);
     }
 
-    size_t closedConnections = std::distance(partition, m_Connections.end());
+    int closedConnections = (int)std::distance(partition, m_Connections.end());
     m_Connections.erase(partition, m_Connections.end());
     return closedConnections;
 }

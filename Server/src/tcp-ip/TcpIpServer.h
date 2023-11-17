@@ -12,6 +12,7 @@ struct Connection
 
     std::string Receive();
     void Send(const std::string& data);
+    void Kick();
 
     // Creates the event object and associate it with the socket.
     Connection(SOCKET socket);
@@ -19,8 +20,11 @@ private:
     friend class TcpIpServer;
 
     SOCKET Socket;
+#ifndef NO_EVENTS
     WSAEVENT Event;
+#endif // !NO_EVENTS
 
+    bool IsNew = true;
     bool ReadPending = false;
     bool ClosePending = false;
 };
@@ -51,25 +55,22 @@ public:
     /// </summary>
     void Close();
 
+#ifdef NO_EVENTS
     /// <summary>
-    /// Accept the first pending connection, if any.
+    /// Custom WNDPROC for the server.
     /// </summary>
-    /// <returns>The client that connected, or nullptr.</returns>
-    ClientPtr AcceptPendingConnection();
-    /// <summary>
-    /// Accept all pending connections.
-    /// </summary>
-    /// <returns>The clients that connected.</returns>
-    std::vector<ClientPtr> AcceptAllPendingConnections();
-    /// <summary>
-    /// Mark a client for closing.
-    /// </summary>
-    void Kick(ClientPtr& ClientPtr);
+    LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+#endif // NO_EVENTS
 
     /// <summary>
-    /// Check all clients for pending data and close requests.
+    /// Accept new connections and check all clients for pending data and close requests.
     /// </summary>
     void CheckNetwork();
+    /// <summary>
+    /// Find a client that has just connected.
+    /// </summary>
+    /// <returns>A client that is new, or nullptr.</returns>
+    ClientPtr FindNewClient();
     /// <summary>
     /// Find a client that has pending data.
     /// </summary>
@@ -78,14 +79,17 @@ public:
     /// <summary>
     /// Close all clients that are marked for closing.
     /// </summary>
+    /// <param name="lastCallback">A callback that will be called for each client that is closed.</param>
     /// <returns>The number of connections that were closed.</returns>
-    size_t CleanClosedConnections();
+    int CleanClosedConnections(std::function<void(ClientPtr)> lastCallback = nullptr);
 
 private:
 
     WSADATA m_WsaData;
     SOCKET m_ListenSocket;
+#ifndef NO_EVENTS
     WSAEVENT m_AcceptEvent;
+#endif // !NO_EVENTS
 
     std::vector<Connection> m_Connections;
 };
