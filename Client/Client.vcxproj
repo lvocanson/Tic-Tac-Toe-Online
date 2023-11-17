@@ -98,6 +98,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Components\ButtonComponent.cpp" />
+    <ClCompile Include="src\core\Components\InsertFieldComponent.cpp" />
     <ClCompile Include="src\core\Components\TextComponent.cpp" />
     <ClCompile Include="src\core\Managers\PlayerShapeRegistry.cpp" />
     <ClCompile Include="src\core\Managers\InputHandler.cpp" />
@@ -109,6 +110,7 @@
     <ClCompile Include="src\core\PlayerPieceShape.cpp" />
     <ClCompile Include="src\ClientMain.cpp" />
     <ClCompile Include="src\core\ClientApp.cpp" />
+    <ClCompile Include="src\core\StateMachine\ConnectionState.cpp" />
     <ClCompile Include="src\core\StateMachine\EndState.cpp" />
     <ClCompile Include="src\core\StateMachine\GameState.cpp" />
     <ClCompile Include="src\core\StateMachine\HistoryState.cpp" />
@@ -126,6 +128,7 @@
   <ItemGroup>
     <ClInclude Include="src\core\Components\BaseComponent.h" />
     <ClInclude Include="src\core\Components\ButtonComponent.h" />
+    <ClInclude Include="src\core\Components\InsertFieldComponent.h" />
     <ClInclude Include="src\core\Components\TextComponent.h" />
     <ClInclude Include="src\core\Managers\PlayerShapeRegistry.h" />
     <ClInclude Include="src\core\Managers\InputHandler.h" />
@@ -138,6 +141,7 @@
     <ClInclude Include="src\core\PlayerPieceShape.h" />
     <ClInclude Include="src\core\ClientApp.h" />
     <ClInclude Include="src\core\CoreDefinitions.h" />
+    <ClInclude Include="src\core\StateMachine\ConnectionState.h" />
     <ClInclude Include="src\core\StateMachine\EndState.h" />
     <ClInclude Include="src\core\StateMachine\GameState.h" />
     <ClInclude Include="src\core\StateMachine\HistoryState.h" />

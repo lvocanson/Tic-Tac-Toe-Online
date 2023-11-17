@@ -1,6 +1,5 @@
 // ButtonComponent.h
 #pragma once
-#include <SFML/Graphics.hpp>
 #include "BaseComponent.h"
 #include "TextComponent.h"
 #include "src/core/Managers/InputHandler.h"

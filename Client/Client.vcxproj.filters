@@ -81,6 +81,12 @@
     <ClCompile Include="src\core\Managers\PlayerShapeRegistry.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\StateMachine\ConnectionState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Components\InsertFieldComponent.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h">
@@ -156,6 +162,12 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Managers\PlayerShapeRegistry.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\StateMachine\ConnectionState.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Components\InsertFieldComponent.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
