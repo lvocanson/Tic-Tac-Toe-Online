@@ -43,8 +43,6 @@ private:
 	PlayerManager m_PlayerManager;
 	ScoreManager m_ScoreManager;
 
-	sf::Time m_PlayerTurnTimer = sf::seconds(0);
-
 	std::vector<sf::Drawable*> m_GamePieces;
 
 	GameStateUI* m_GameStateUI;

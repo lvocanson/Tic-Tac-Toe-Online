@@ -117,4 +117,5 @@ void ClientApp::Cleanup()
     RELEASE(m_Client);
 
     FontRegistry::ClearFonts();
+    PlayerShapeRegistry::ClearPlayerShapes();
 }

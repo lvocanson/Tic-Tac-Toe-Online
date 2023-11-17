@@ -9,6 +9,16 @@ sf::Drawable* PlayerShapeRegistry::GetPlayerShape(TicTacToe::PieceID id)
     return m_PlayerShapes[id];
 }
 
+void PlayerShapeRegistry::ClearPlayerShapes()
+{
+   for (auto& shape : m_PlayerShapes)
+    {
+        delete shape.second;
+    }
+
+    m_PlayerShapes.clear();
+}
+
 void PlayerShapeRegistry::CreatePlayerShape(PlayerShapeType shapeType, TicTacToe::PieceID id, sf::Color color)
 {
     switch (shapeType)
