@@ -10,8 +10,5 @@ public:
     virtual sf::Vector2f GetPosition() const = 0;
     virtual sf::Vector2f GetSize() const = 0;
 
-    virtual void SetText(const std::string& text) {}
-    virtual std::string GetText() const { return ""; }
-
     virtual ~BaseComponent() {}
 };

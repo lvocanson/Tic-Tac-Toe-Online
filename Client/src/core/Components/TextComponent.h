@@ -17,6 +17,7 @@ public:
     void SetPosition(const sf::Vector2f& position) override;
     void SetTextAlignment(TextAlignment alignment);
     void SetPositionCentered(const sf::Vector2f& position);
+    void SetText(const std::string& text);
     void SetColor(const sf::Color& color);
     void SetCharacterSize(unsigned int size);
 

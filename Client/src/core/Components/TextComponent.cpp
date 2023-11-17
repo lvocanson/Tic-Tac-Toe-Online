@@ -38,6 +38,11 @@ void TextComponent::SetTextAlignment(TextAlignment alignment)
     m_Alignment = alignment;
 }
 
+void TextComponent::SetText(const std::string& text)
+{
+	m_Text.setString(text);
+}
+
 void TextComponent::SetColor(const sf::Color& color)
 {
     m_Text.setFillColor(color);

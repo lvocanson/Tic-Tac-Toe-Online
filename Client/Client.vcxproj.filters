@@ -78,9 +78,6 @@
     <ClCompile Include="src\core\Managers\InputHandler.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Components\BaseComponent.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h">
