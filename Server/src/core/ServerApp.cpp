@@ -71,23 +71,23 @@ bool ServerApp::InitGameServer()
 
 void ServerApp::HandleGameServer()
 {
-    static std::stringstream ss;
     try
     {
-        int count = m_GameServer->AcceptAllPendingConnections();
+        size_t count = m_GameServer->AcceptAllPendingConnections().size();
         if (count > 0)
         {
             std::cout << STS_CLR << count << " new connection" << (count > 1 ? "s" : "") << " accepted." << std::endl << DEF_CLR;
         }
 
-        Client sender;
-        while (m_GameServer->FetchPendingData(ss, sender))
-        {
-            HandleData(ss.str(), sender);
-            ss.str(std::string()); // Clear the stringstream
-        }
+        // Check for pending data / closed connections
+        m_GameServer->CheckNetwork();
 
-        count = m_GameServer->KillClosedConnections();
+        // For each client with pending data
+        ClientPtr sender;
+        while ((sender = m_GameServer->FindClientWithPendingData()) != nullptr)
+            HandleRecv(sender);
+
+        count = m_GameServer->CleanClosedConnections();
         if (count > 0)
         {
             std::cout << STS_CLR << count << " connection" << (count > 1 ? "s" : "") << " closed." << std::endl << DEF_CLR;
@@ -99,10 +99,13 @@ void ServerApp::HandleGameServer()
     }
 }
 
-void ServerApp::HandleData(const std::string& data, Client sender)
+void ServerApp::HandleRecv(ClientPtr sender)
 {
+    std::string data = sender->Receive();
     std::cout << HASH_CLR(sender) << DEF_CLR << " sent " << data.size() << " bytes of data." << std::endl << DEF_CLR;
-    m_GameServer->Send(sender, data);
+
+    // Echo back
+    sender->Send(data);
 }
 
 void ServerApp::CleanUpGameServer()

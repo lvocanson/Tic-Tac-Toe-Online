@@ -7,8 +7,11 @@
 /// </summary>
 struct Connection
 {
-    std::string Address;
-    unsigned int Port;
+    std::string Address = "Unknown";
+    unsigned int Port = 0;
+
+    std::string Receive();
+    void Send(const std::string& data);
 
     // Creates the event object and associate it with the socket.
     Connection(SOCKET socket);
@@ -17,8 +20,15 @@ private:
 
     SOCKET Socket;
     WSAEVENT Event;
+
+    bool ReadPending = false;
+    bool ClosePending = false;
 };
-typedef Connection* Client;
+/// <summary>
+/// A pointer to a connection.
+/// Do not store this pointer, it may become invalid.
+/// </summary>
+typedef Connection* ClientPtr;
 
 /// <summary>
 /// TCP/IP server.
@@ -42,37 +52,34 @@ public:
     void Close();
 
     /// <summary>
-    /// Accept the first pending connection.
+    /// Accept the first pending connection, if any.
     /// </summary>
-    /// <returns>True if a connection was accepted, false otherwise.</returns>
-    bool AcceptPendingConnection();
+    /// <returns>The client that connected, or nullptr.</returns>
+    ClientPtr AcceptPendingConnection();
     /// <summary>
     /// Accept all pending connections.
     /// </summary>
-    /// <returns>The number of connections accepted.</returns>
-    int AcceptAllPendingConnections();
+    /// <returns>The clients that connected.</returns>
+    std::vector<ClientPtr> AcceptAllPendingConnections();
     /// <summary>
-    /// Fetches pending data from the first client that has data to read.
-    /// If a client has closed the connection, the connection will be closed.
+    /// Mark a client for closing.
     /// </summary>
-    /// <param name="ss">The stringstream to write the data to.</param>
-    /// <param name="client">The client to respond to.</param>
-    /// <returns>True if data was fetched, false otherwise.</returns>
-    bool FetchPendingData(std::stringstream& ss, Client& client);
+    void Kick(ClientPtr& ClientPtr);
+
     /// <summary>
-    /// Sends data to a client.
+    /// Check all clients for pending data and close requests.
     /// </summary>
-    void Send(const Client& Client, const char* data, u_long size);
-    void Send(const Client& Client, const std::string& data) { Send(Client, data.c_str(), static_cast<u_long>(data.size())); }
+    void CheckNetwork();
     /// <summary>
-    /// Kills all closed connections. Call this function after FetchPendingData.
+    /// Find a client that has pending data.
     /// </summary>
-    /// <returns>The number of connections killed.</returns>
-    unsigned int KillClosedConnections();
+    /// <returns>A client that has pending data, or nullptr.</returns>
+    ClientPtr FindClientWithPendingData();
     /// <summary>
-    /// Get the number of connections.
+    /// Close all clients that are marked for closing.
     /// </summary>
-    size_t ConnectionCount() const { return m_Connections.size(); }
+    /// <returns>The number of connections that were closed.</returns>
+    size_t CleanClosedConnections();
 
 private:
 

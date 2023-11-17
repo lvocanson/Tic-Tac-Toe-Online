@@ -1,6 +1,22 @@
 #include "TcpIpServer.h"
 using enum TcpIp::ErrorCode;
 
+std::string Connection::Receive()
+{
+    if (!ReadPending)
+        throw TcpIp::TcpIpException::Create(SOCKET_NoDataAvailable);
+
+    std::stringstream ss;
+    TcpIp::Receive(Socket, ss, DEFAULT_BUFFER_SIZE);
+    ReadPending = false;
+    return ss.str();
+}
+
+void Connection::Send(const std::string& data)
+{
+    TcpIp::Send(Socket, data.c_str(), static_cast<u_long>(data.size()));
+}
+
 Connection::Connection(SOCKET socket)
     : Socket(socket)
     , Event(TcpIp::CreateEventObject(socket, FD_READ | FD_CLOSE))
@@ -90,7 +106,7 @@ void TcpIpServer::Close()
     m_Connections.clear();
 }
 
-bool TcpIpServer::AcceptPendingConnection()
+ClientPtr TcpIpServer::AcceptPendingConnection()
 {
     // Check the listening socket for accept events
     WSANETWORKEVENTS networkEvents;
@@ -109,28 +125,32 @@ bool TcpIpServer::AcceptPendingConnection()
 
         // Create a new connection, and place it at the end of the vector
         m_Connections.emplace_back(connectionSocket);
-        return true;
+        return &m_Connections.back();
     }
-    return false;
+    return nullptr;
 }
 
-int TcpIpServer::AcceptAllPendingConnections()
+std::vector<ClientPtr> TcpIpServer::AcceptAllPendingConnections()
 {
-    int count = 0;
-    while (AcceptPendingConnection())
-        count++;
-    return count;
+    std::vector<ClientPtr> clients;
+    ClientPtr client = nullptr;
+    while ((client = AcceptPendingConnection()) != nullptr)
+        clients.push_back(client);
+    return clients;
 }
 
-bool TcpIpServer::FetchPendingData(std::stringstream& ss, Client& client)
+void TcpIpServer::Kick(ClientPtr& client)
+{
+    client->ClosePending = true;
+}
+
+void TcpIpServer::CheckNetwork()
 {
     WSANETWORKEVENTS networkEvents;
     for (Connection& connection : m_Connections)
     {
-        if (connection.Socket == INVALID_SOCKET)
-            continue; // The connection is closed
 
-        // Check the connection socket for read and close events
+        // Enumerate the network events for this connection
         int iResult = WSAEnumNetworkEvents(connection.Socket, connection.Event, &networkEvents);
         if (iResult == SOCKET_ERROR)
             throw TcpIp::TcpIpException::Create(EVENT_EnumFailed, TCP_IP_WSA_ERROR);
@@ -140,38 +160,43 @@ bool TcpIpServer::FetchPendingData(std::stringstream& ss, Client& client)
             if (networkEvents.iErrorCode[FD_READ_BIT] != 0)
                 throw TcpIp::TcpIpException::Create(EVENT_FdReadHadError, networkEvents.iErrorCode[FD_READ_BIT]);
 
-            client = &connection;
-            TcpIp::Receive(connection.Socket, ss, DEFAULT_BUFFER_SIZE);
-            return true;
+            connection.ReadPending = true;
         }
+
         if (networkEvents.lNetworkEvents & FD_CLOSE)
         {
             if (networkEvents.iErrorCode[FD_CLOSE_BIT] != 0)
                 throw TcpIp::TcpIpException::Create(EVENT_FdCloseHadError, networkEvents.iErrorCode[FD_CLOSE_BIT]);
 
-            TcpIp::CloseEventObject(connection.Event);
-            TcpIp::CloseSocket(connection.Socket);
+            connection.ClosePending = true;
         }
     }
-    return false;
 }
 
-void TcpIpServer::Send(const Client& client, const char* data, u_long size)
+ClientPtr TcpIpServer::FindClientWithPendingData()
 {
-    TcpIp::Send(client->Socket, data, size);
+    for (Connection& connection : m_Connections)
+    {
+        if (connection.ReadPending)
+            return &connection;
+    }
+    return nullptr;
 }
 
-unsigned int TcpIpServer::KillClosedConnections()
+size_t TcpIpServer::CleanClosedConnections()
 {
-    // Get all closed connections
-    auto StillOpen = [](const Connection& connection)
-        {
-            return connection.Socket != INVALID_SOCKET;
-        };
-    auto it = std::partition(m_Connections.begin(), m_Connections.end(), StillOpen);
-    unsigned int count = static_cast<unsigned int>(std::distance(it, m_Connections.end()));
+    // Move all connections that have a close pending to the end of the vector
+    auto partition = std::partition(m_Connections.begin(), m_Connections.end(),
+        [](const Connection& connection) { return !connection.ClosePending; });
 
-    // Erase them from the vector
-    m_Connections.erase(it, m_Connections.end());
-    return count;
+    // Close them all & remove them from the vector
+    for (auto it = partition; it != m_Connections.end(); ++it)
+    {
+        TcpIp::CloseEventObject(it->Event);
+        TcpIp::CloseSocket(it->Socket);
+    }
+
+    size_t closedConnections = std::distance(partition, m_Connections.end());
+    m_Connections.erase(partition, m_Connections.end());
+    return closedConnections;
 }

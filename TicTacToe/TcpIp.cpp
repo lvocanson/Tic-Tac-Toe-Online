@@ -108,7 +108,7 @@ namespace TcpIp
             throw TcpIpException::Create(RECEIVE_HeaderFailed, TCP_IP_WSA_ERROR);
         }
 
-        if (iResult != HEADER_SIZE)
+        if (iResult != HEADER_SIZE) // Received less than expected
         {
             throw TcpIpException::Create(RECEIVE_HeaderHadInvalidSize, HEADER_SIZE - iResult);
         }
@@ -214,6 +214,9 @@ namespace TcpIp
             break;
         case SOCKET_AcceptFailed:
             oss << "accept failed with error: " << context;
+            break;
+        case SOCKET_NoDataAvailable:
+            oss << "no data available";
             break;
         case SOCKET_ShutdownFailed:
             oss << "shutdown failed with error: " << context;

@@ -18,7 +18,7 @@ private:
 
     bool InitGameServer();
     void HandleGameServer();
-    void HandleData(const std::string& data, Client sender);
+    void HandleRecv(ClientPtr sender);
     void CleanUpGameServer();
 
     bool InitWebServer();
