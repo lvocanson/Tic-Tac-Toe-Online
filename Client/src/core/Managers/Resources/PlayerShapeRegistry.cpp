@@ -1,7 +1,6 @@
 #include "src/pch.h"
 #include "PlayerShapeRegistry.h"
 #include <SFML/Graphics.hpp>
-#include <src/core/PlayerPieceShape.h>
 
 
 sf::Drawable* PlayerShapeRegistry::GetPlayerShape(TicTacToe::PieceID id)
