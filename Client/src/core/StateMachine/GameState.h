@@ -33,6 +33,8 @@ public:
 	void InstanciateNewPlayerShape(const Player* currentPlayer, const unsigned int cell);
 	void SwitchPlayerTurn();
 
+	void SendPlacedPieceToServer(unsigned int cell);
+
 	void ClearBoard();
 
 private:

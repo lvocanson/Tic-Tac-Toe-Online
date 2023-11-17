@@ -40,7 +40,7 @@ void ClientApp::Run()
     {
         m_Client->Connect("localhost", DEFAULT_PORT);
         DebugLog("Connected to server!\n");
-        m_Client->Send("Hello from client!");
+        
     }
     catch (const TcpIp::TcpIpException &e)
     {
@@ -67,6 +67,7 @@ void ClientApp::Run()
         {
             while (m_Client->FetchPendingData(ss))
             {
+                j = Json::parse(ss.str());
                 ss.str(std::string());
             }
         }

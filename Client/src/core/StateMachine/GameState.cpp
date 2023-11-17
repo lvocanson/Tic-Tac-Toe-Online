@@ -129,16 +129,6 @@ void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
 {
     const Player* currentPlayer = PlayerManager::GetCurrentPlayer();
 
-    int row = cell / (int)m_Board.GetWidth();
-    int col = cell % (int)m_Board.GetWidth();
-    std::string playerID = std::to_string(m_Board[cell]);
-    json j;
-    j["row"] = row;
-    j["col"] = col;
-    j["playerID"] = playerID;
-
-    ClientApp::GetInstance().Send(j.dump());
-
     auto pos = sf::Vector2f(m_Board.GetGraphicPiece(cell).GetPosition());
     // Set piece id in board
     m_Board[cell] = currentPlayer->GetPlayerID();
@@ -146,6 +136,8 @@ void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
     InstanciateNewPlayerShape(currentPlayer, cell);
 
     m_ScoreManager.AddPlayerMove(currentPlayer->GetPlayerID(), cell);
+
+    SendPlacedPieceToServer(cell);
 }
 
 void GameState::InstanciateNewPlayerShape(const Player* currentPlayer, unsigned int cell)
@@ -179,6 +171,19 @@ void GameState::SwitchPlayerTurn()
     m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetCurrentPlayer()->GetData());
 }
 
+void GameState::SendPlacedPieceToServer(unsigned int cell)
+{
+    int row = cell / (int)m_Board.GetWidth();
+    int col = cell % (int)m_Board.GetWidth();
+    std::string playerID = std::to_string(m_Board[cell]);
+    json j;
+    j["row"] = row;
+    j["col"] = col;
+    j["playerID"] = playerID;
+
+    ClientApp::GetInstance().Send(j.dump());
+}
+
 bool GameState::IsMouseHoverPiece(unsigned int i)
 {
     const sf::Vector2f mousePos = static_cast<sf::Vector2f>(InputHandler::GetMousePosition());
@@ -202,5 +207,5 @@ void GameState::OnExit()
 
 void GameState::OnReceiveData(const Json& serializeData)
 {
-
+    std::string playerID = serializeData["playerID"];
 }
