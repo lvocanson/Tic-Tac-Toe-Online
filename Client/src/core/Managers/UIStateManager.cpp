@@ -20,7 +20,7 @@ void UIStateManager::Clear()
 {
     for (auto text : m_Texts)
     {
-        NULLPTR(text);
+        UnregisterText(text);
     }
 
     m_Texts.clear();
@@ -35,6 +35,5 @@ void UIStateManager::RegisterText(sf::Text* text)
 void UIStateManager::UnregisterText(sf::Text* text)
 {
     m_Window->UnregisterDrawable(text);
-    std::erase(m_Texts, text);
-    delete text;
+    RELEASE(text);
 }

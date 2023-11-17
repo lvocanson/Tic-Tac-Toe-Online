@@ -14,7 +14,7 @@ public:
 
     void SwitchPlayerTurn();
 
-    void CreateNewPlayer(const std::string& name, const sf::Color color);
+    void CreateNewPlayer(const std::string& name, const sf::Color color, const PlayerShapeType shapeType);
     void UnregisterPlayer(Player* player);
 
     // TODO: rework this
