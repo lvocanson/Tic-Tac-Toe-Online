@@ -1,23 +1,15 @@
 #include "PlayerPieceShape.h"
 #include "Player.h"
 
-PlayerPieceShape::PlayerPieceShape(const Player* player)
+PlayerPieceShape::PlayerPieceShape(const TicTacToe::PieceID id, const sf::Vector2f& position)
 {
-    m_ID = player->GetPlayerID();
+    m_ID = id;
+    m_Position = position;
 }
 
-PlayerCrossShape::PlayerCrossShape(const Player* player) : PlayerPieceShape(player), RectangleShape(sf::Vector2f(DEFAULT_PIECE_SIZE * 0.5f, DEFAULT_PIECE_SIZE * 0.5f))
+void PlayerPieceShape::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    setFillColor(sf::Color::Transparent);
-    setOutlineThickness(OUTLINE_THICKNESS);
-    setOutlineColor(player->GetColor());
-    setOrigin(getSize().x * 0.5f, getSize().y * 0.5f);
+    states.transform.translate(m_Position);
+    target.draw(*PlayerShapeRegistry::GetPlayerShape(m_ID), states);
 }
 
-PlayerCircleShape::PlayerCircleShape(const Player* player) : CircleShape(DEFAULT_PIECE_SIZE * 0.25f), PlayerPieceShape(player)
-{
-    setFillColor(sf::Color::Transparent);
-    setOutlineThickness(OUTLINE_THICKNESS);
-    setOutlineColor(player->GetColor());
-    setOrigin(getRadius(), getRadius());
-}
