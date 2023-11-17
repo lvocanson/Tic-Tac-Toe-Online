@@ -1,5 +1,5 @@
 #pragma once
-#include "StateMachine.h"
+#include "src/core/StateMachine/StateMachine.h"
 #include "src/core/Components/ButtonComponent.h"
 #include "src/core/GraphicBoard.h"
 #include "src/core/Player.h"
