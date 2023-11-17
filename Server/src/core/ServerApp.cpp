@@ -126,8 +126,8 @@ bool ServerApp::InitWebServer()
 {
     try
     {
-        m_WebServer = new HtmlServer();
         throw TcpIp::TcpIpException::Create(TcpIp::ErrorCode::WSA_StartupFailed);
+        m_WebServer = new HtmlServer();
         //m_WebServer->Open(DEFAULT_PORT + 1);
         return true;
     }
