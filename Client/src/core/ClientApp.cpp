@@ -67,8 +67,6 @@ void ClientApp::Run()
         {
             while (m_Client->FetchPendingData(ss))
             {
-                j = Json::parse(ss.str());
-                //m_StateMachine->OnReceiveData(j);
                 ss.str(std::string());
             }
         }
