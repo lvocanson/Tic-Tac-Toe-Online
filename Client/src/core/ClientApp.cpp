@@ -7,8 +7,6 @@
 
 using namespace TicTacToe;
 
-using json = nlohmann::json;
-
 void ClientApp::Init()
 {
     FontRegistry::LoadFont("bold-font");
@@ -53,6 +51,7 @@ void ClientApp::Run()
 
     std::stringstream ss;
     sf::Clock clock;
+    Json j;
 
     while (m_IsRunning)
     {
@@ -69,9 +68,8 @@ void ClientApp::Run()
         {
             while (m_Client->FetchPendingData(ss))
             {
-                DebugLog("Received data from server: \n");
-                DebugLog(ss.str().c_str());
-                DebugLog("\n");
+                j = Json::parse(ss.str());
+                //m_StateMachine->OnReceiveData(j);
                 ss.str(std::string());
             }
         }

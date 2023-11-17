@@ -199,3 +199,8 @@ void GameState::OnExit()
 
     m_Window->ClearAllDrawables();
 }
+
+void GameState::OnReceiveData(const Json& serializeData)
+{
+
+}

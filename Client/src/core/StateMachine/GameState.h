@@ -18,6 +18,7 @@ public:
 	void OnEnter() override;
 	void OnUpdate(float dt) override;
 	void OnExit() override;
+	void OnReceiveData(const Json& serializeData) override;
 
 	GameState(StateMachine* stateMachine, Window* m_Window);
 	GameState(const GameState& other) = delete;
