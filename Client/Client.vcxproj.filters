@@ -60,10 +60,10 @@
     <ClCompile Include="src\core\Managers\UIStateManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Managers\FontRegistry.cpp">
+    <ClCompile Include="src\core\Managers\Resources\FontRegistry.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Managers\GameStateUI.cpp">
+    <ClCompile Include="src\core\UIState\GameStateUI.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\core\Player.cpp">
@@ -79,6 +79,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\core\Managers\PlayerShapeRegistry.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Managers\Resources\PlayerShapeRegistry.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -134,10 +137,10 @@
     <ClInclude Include="src\core\Managers\UIStateManager.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Managers\FontRegistry.h">
+    <ClInclude Include="src\core\Managers\Resources\FontRegistry.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Managers\GameStateUI.h">
+    <ClInclude Include="src\core\UIState\GameStateUI.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Player.h">
@@ -156,6 +159,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Managers\PlayerShapeRegistry.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Managers\Resources\PlayerShapeRegistry.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

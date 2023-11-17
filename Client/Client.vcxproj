@@ -101,8 +101,9 @@
     <ClCompile Include="src\core\Components\TextComponent.cpp" />
     <ClCompile Include="src\core\Managers\PlayerShapeRegistry.cpp" />
     <ClCompile Include="src\core\Managers\InputHandler.cpp" />
-    <ClCompile Include="src\core\Managers\GameStateUI.cpp" />
-    <ClCompile Include="src\core\Managers\FontRegistry.cpp" />
+    <ClCompile Include="src\core\Managers\Resources\PlayerShapeRegistry.cpp" />
+    <ClCompile Include="src\core\UIState\GameStateUI.cpp" />
+    <ClCompile Include="src\core\Managers\Resources\FontRegistry.cpp" />
     <ClCompile Include="src\core\GraphicBoard.cpp" />
     <ClCompile Include="src\core\Managers\PlayerManager.cpp" />
     <ClCompile Include="src\core\Player.cpp" />
@@ -129,8 +130,9 @@
     <ClInclude Include="src\core\Components\TextComponent.h" />
     <ClInclude Include="src\core\Managers\PlayerShapeRegistry.h" />
     <ClInclude Include="src\core\Managers\InputHandler.h" />
-    <ClInclude Include="src\core\Managers\GameStateUI.h" />
-    <ClInclude Include="src\core\Managers\FontRegistry.h" />
+    <ClInclude Include="src\core\Managers\Resources\PlayerShapeRegistry.h" />
+    <ClInclude Include="src\core\UIState\GameStateUI.h" />
+    <ClInclude Include="src\core\Managers\Resources\FontRegistry.h" />
     <ClInclude Include="src\core\GraphicBoard.h" />
     <ClInclude Include="src\core\Managers\IManager.h" />
     <ClInclude Include="src\core\Managers\PlayerManager.h" />
