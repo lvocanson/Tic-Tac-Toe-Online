@@ -107,6 +107,7 @@
     <ClInclude Include="src\core\ConsoleHelper.h" />
     <ClInclude Include="src\core\ServerApp.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\tcp-ip\HtmlServer.h" />
     <ClInclude Include="src\tcp-ip\TcpIpServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

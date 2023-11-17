@@ -1,13 +1,14 @@
 #include "ServerApp.h"
 #include "ConsoleHelper.h"
 
-#define ERR_CLR Color::Red
-#define WRN_CLR Color::Yellow
-#define SCS_CLR Color::LightGreen
-#define STS_CLR Color::LightMagenta
-#define INF_CLR Color::Gray
-#define DEF_CLR Color::White
-#define HASH_CLR(c) HshClr(c->Address + std::to_string(c->Port)) << c->Address << ":" << c->Port
+#define ERR_CLR Color::Red // Error color
+#define WRN_CLR Color::Yellow // Warning color
+#define SCS_CLR Color::LightGreen // Success color
+#define STS_CLR Color::LightMagenta // Status color
+#define INF_CLR Color::Gray // Information color
+#define DEF_CLR Color::White // Default color
+#define HASH_CLR(c) HshClr(c->Address + std::to_string(c->Port)) << c->Address << ':' << c->Port
+#define WEB_PFX INF_CLR << '[' << STS_CLR << "WEB" << INF_CLR << ']' << DEF_CLR << ' '
 
 void ServerApp::Init()
 {
@@ -23,11 +24,11 @@ void ServerApp::Init()
 
     if (!InitWebServer())
     {
-        std::cout << WRN_CLR << "Web server is unable to start, web interface will be disabled for this session." << std::endl << DEF_CLR;
+        std::cout << WEB_PFX << WRN_CLR << "Web server is unable to start, web interface will be disabled for this session." << std::endl << DEF_CLR;
     }
     else
     {
-        std::cout << SCS_CLR << "Web server is listening on port " << DEFAULT_PORT + 1 << "..." << std::endl << DEF_CLR;
+        std::cout << WEB_PFX << SCS_CLR << "Web server is listening on port " << DEFAULT_PORT + 1 << "..." << std::endl << DEF_CLR;
     }
 }
 
@@ -63,7 +64,7 @@ bool ServerApp::InitGameServer()
     }
     catch (const TcpIp::TcpIpException& e)
     {
-        std::cout << INF_CLR << "The game server is unable to start: " << e.what() << std::endl << DEF_CLR;
+        std::cout << ERR_CLR << "The game server is unable to start: " << e.what() << std::endl << DEF_CLR;
         return false;
     }
 }
@@ -123,12 +124,37 @@ void ServerApp::CleanUpGameServer()
 
 bool ServerApp::InitWebServer()
 {
-    return false;
+    try
+    {
+        m_WebServer = new HtmlServer();
+        throw TcpIp::TcpIpException::Create(TcpIp::ErrorCode::WSA_StartupFailed);
+        //m_WebServer->Open(DEFAULT_PORT + 1);
+        return true;
+    }
+    catch (const TcpIp::TcpIpException& e)
+    {
+        std::cout << WEB_PFX << WRN_CLR << "The web server is unable to start: " << e.what() << std::endl << DEF_CLR;
+        return false;
+    }
 }
 
 void ServerApp::HandleWebServer()
 {
+    try
+    {
+
+    }
+    catch (const TcpIp::TcpIpException& e)
+    {
+        std::cout << WEB_PFX << ERR_CLR << "The web server has encountered an error: " << e.what() << std::endl << DEF_CLR;
+    }
 }
+
+void ServerApp::HandleWebConnection()
+{
+    // std::cout << WEB_PFX << HASH_CLR(sender) << DEF_CLR << " has been handled." << std::endl;
+}
+
 
 void ServerApp::CleanUpWebServer()
 {
