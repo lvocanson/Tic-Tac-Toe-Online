@@ -1,5 +1,6 @@
 #include "TicTacToe.h"
 #include <iostream>
+#include <vector>
 
 
 #if defined(DEBUG) | defined(_DEBUG)
@@ -140,6 +141,23 @@ namespace TicTacToe
 		}
 
 		return EMPTY_PIECE;
+	}
+
+	unsigned int Board::GetRandomEmptyCell() const
+	{
+		srand(static_cast<unsigned>(time(nullptr)));
+
+		std::vector<unsigned int> emptyCells;
+
+		for (unsigned int i = 0; i < m_Size; i++)
+		{
+		    if (m_Board[i] == EMPTY_PIECE)
+		    {
+		        emptyCells.push_back(i);
+            }
+        }
+
+		return emptyCells[rand() % emptyCells.size()];
 	}
 
 	void Board::Resize(size_t width, size_t height)
