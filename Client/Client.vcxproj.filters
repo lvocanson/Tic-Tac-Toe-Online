@@ -81,6 +81,9 @@
     <ClCompile Include="src\core\Managers\Resources\PlayerShapeRegistry.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\Components\ProgressBar.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h">
@@ -156,6 +159,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Managers\Resources\PlayerShapeRegistry.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Components\ProgressBar.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
