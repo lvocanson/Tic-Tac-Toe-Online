@@ -113,6 +113,7 @@
     <ClCompile Include="src\core\StateMachine\GameState.cpp" />
     <ClCompile Include="src\core\StateMachine\HistoryState.cpp" />
     <ClCompile Include="src\core\StateMachine\MenuState.cpp" />
+    <ClCompile Include="src\core\StateMachine\SelectState.cpp" />
     <ClCompile Include="src\core\StateMachine\StateMachine.cpp" />
     <ClCompile Include="src\core\Managers\ScoreManager.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
@@ -142,6 +143,7 @@
     <ClInclude Include="src\core\StateMachine\GameState.h" />
     <ClInclude Include="src\core\StateMachine\HistoryState.h" />
     <ClInclude Include="src\core\StateMachine\MenuState.h" />
+    <ClInclude Include="src\core\StateMachine\SelectState.h" />
     <ClInclude Include="src\core\StateMachine\State.h" />
     <ClInclude Include="src\core\StateMachine\StateMachine.h" />
     <ClInclude Include="src\core\Managers\ScoreManager.h" />

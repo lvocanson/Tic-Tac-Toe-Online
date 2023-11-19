@@ -176,6 +176,7 @@ void GameState::SendPlacedPieceToServer(unsigned int cell)
     int row = cell / (int)m_Board.GetWidth();
     int col = cell % (int)m_Board.GetWidth();
     std::string playerID = std::to_string(m_Board[cell]);
+
     json j;
     j["row"] = row;
     j["col"] = col;
@@ -208,5 +209,7 @@ void GameState::OnExit()
 void GameState::OnReceiveData(const Json& serializeData)
 {
     std::string playerID = serializeData["playerID"];
+    int row = serializeData["row"];
+    int col = serializeData["col"];
     //Use player manager to to set player  
 }
