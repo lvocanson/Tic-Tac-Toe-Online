@@ -39,16 +39,16 @@
     <ClCompile Include="src\core\StateMachine\StateMachine.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\StateMachine\GameStates\EndState.cpp">
+    <ClCompile Include="src\core\StateMachine\AppStates\EndState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\StateMachine\GameStates\GameState.cpp">
+    <ClCompile Include="src\core\StateMachine\AppStates\GameState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\StateMachine\GameStates\HistoryState.cpp">
+    <ClCompile Include="src\core\StateMachine\AppStates\HistoryState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\StateMachine\GameStates\MenuState.cpp">
+    <ClCompile Include="src\core\StateMachine\AppStates\MenuState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\core\Managers\ScoreManager.cpp">
@@ -113,16 +113,16 @@
     <ClInclude Include="src\core\StateMachine\State.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\StateMachine\GameStates\EndState.h">
+    <ClInclude Include="src\core\StateMachine\AppStates\EndState.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\StateMachine\GameStates\GameState.h">
+    <ClInclude Include="src\core\StateMachine\AppStates\GameState.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\StateMachine\GameStates\HistoryState.h">
+    <ClInclude Include="src\core\StateMachine\AppStates\HistoryState.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\StateMachine\GameStates\MenuState.h">
+    <ClInclude Include="src\core\StateMachine\AppStates\MenuState.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Managers\ScoreManager.h">

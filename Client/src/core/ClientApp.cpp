@@ -1,9 +1,9 @@
 #include "ClientApp.h"
 #include "Window.h"
-#include "src/core/StateMachine/GameStates/EndState.h"
-#include "src/core/StateMachine/GameStates/GameState.h"
-#include "src/core/StateMachine/GameStates/HistoryState.h"
-#include "src/core/StateMachine/GameStates/MenuState.h"
+#include "src/core/StateMachine/AppStates/EndState.h"
+#include "src/core/StateMachine/AppStates/GameState.h"
+#include "src/core/StateMachine/AppStates/HistoryState.h"
+#include "src/core/StateMachine/AppStates/MenuState.h"
 
 using namespace TicTacToe;
 
