@@ -1,6 +1,14 @@
 #include "TextComponent.h"
 #include "src/core/Managers/Resources/FontRegistry.h"
 
+TextComponent::TextComponent()
+{
+    m_Text.setFont(*FontRegistry::GetFont("bold-font"));
+    m_Text.setFillColor(sf::Color::White);
+    m_Text.setCharacterSize(24);
+    m_Text.setString("");
+}
+
 TextComponent::TextComponent(const std::string& text, BaseComponent& parentComponent, const sf::Color& color, unsigned int size, TextAlignment alignment)
     : m_Alignment(alignment)
 {
