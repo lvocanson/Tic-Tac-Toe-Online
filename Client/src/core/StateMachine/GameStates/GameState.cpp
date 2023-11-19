@@ -21,7 +21,7 @@ GameState::GameState(StateMachine* stateMachine, Window* m_Window)
     m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12), Square);
     m_PlayerManager.CreateNewPlayer("Player Two", sf::Color(255, 194, 0), Circle);
 
-    m_Board.Init();
+    m_Board.Init(ClientApp::GetGameSettings().TotalColumn, ClientApp::GetGameSettings().TotalRow);
     m_ScoreManager.Init();
     m_PlayerManager.Init();
 
@@ -50,7 +50,7 @@ void GameState::OnEnter()
     m_ReturnButton->SetButtonText("Return", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]() {
         m_StateMachine->SwitchState("MenuState");
-        });
+    });
 
     m_Window->RegisterDrawable(m_ReturnButton);
     DrawBoard();
@@ -121,28 +121,7 @@ void GameState::CheckIfMouseHoverBoard()
                 m_GameStateUI->UpdateGameStateText("");
 
                 PlacePlayerPieceOnBoard(i);
-
-                const PieceID winnerID = m_Board.IsThereAWinner();
-                if (winnerID != EMPTY_PIECE)
-                {
-                    std::cout << "Player " << winnerID << " won!\n";
-
-                    Player* winner = PlayerManager::GetCurrentPlayer();
-
-                    m_ScoreManager.SaveGame(winner->GetData());
-                    m_ScoreManager.AddScoreToPlayer(winner->GetPlayerID());
-
-                    m_GameStateUI->UpdatePlayerScore(*winner->GetData(), m_ScoreManager.GetPlayerScore(winner->GetPlayerID()));
-                    m_GameStateUI->UpdateGameStateText(winner->GetName() + " won!");
-
-                    ClearBoard();
-                }
-                else if (m_Board.IsFull())
-                {
-                    m_GameStateUI->UpdateGameStateText("It's a draw!");
-                    ClearBoard();
-                }
-
+                WinCheck();
                 SwitchPlayerTurn();
             }
         }
@@ -185,6 +164,30 @@ void GameState::InstanciateNewPlayerShape(const Player* currentPlayer, unsigned 
     m_Window->RegisterDrawable(playerPieceShape);
 }
 
+void GameState::WinCheck()
+{
+    const PieceID winnerID = m_Board.IsThereAWinner();
+    if (winnerID != EMPTY_PIECE)
+    {
+        std::cout << "Player " << winnerID << " won!\n";
+
+        Player* winner = PlayerManager::GetCurrentPlayer();
+
+        m_ScoreManager.SaveGame(winner->GetData());
+        m_ScoreManager.AddScoreToPlayer(winner->GetPlayerID());
+
+        m_GameStateUI->UpdatePlayerScore(*winner->GetData(), m_ScoreManager.GetPlayerScore(winner->GetPlayerID()));
+        m_GameStateUI->UpdateGameStateText(winner->GetName() + " won!");
+
+        ClearBoard();
+    }
+    else if (m_Board.IsFull())
+    {
+        m_GameStateUI->UpdateGameStateText("It's a draw!");
+        ClearBoard();
+    }
+}
+
 void GameState::ClearBoard()
 {
     for (auto& piece : m_GamePieces)
@@ -201,6 +204,9 @@ void GameState::SwitchPlayerTurn()
 {
     m_PlayerManager.SwitchPlayerTurn();
     m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetCurrentPlayer()->GetData());
+
+    m_PlayerTurnTime = m_MaxPlayerTurnTime;
+    m_GameStateUI->UpdateProgressBar(m_PlayerTurnTime);
 }
 
 bool GameState::IsMouseHoverPiece(unsigned int i)
