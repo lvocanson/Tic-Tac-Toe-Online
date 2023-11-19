@@ -208,4 +208,5 @@ void GameState::OnExit()
 void GameState::OnReceiveData(const Json& serializeData)
 {
     std::string playerID = serializeData["playerID"];
+    //Use player manager to to set player  
 }

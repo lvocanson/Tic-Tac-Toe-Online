@@ -38,7 +38,6 @@ void ClientApp::Run()
     {
         m_Client->Connect("localhost", DEFAULT_PORT);
         DebugLog("Connected to server!\n");
-        
     }
     catch (const TcpIp::TcpIpException &e)
     {
@@ -65,7 +64,16 @@ void ClientApp::Run()
         {
             while (m_Client->FetchPendingData(ss))
             {
-                j = Json::parse(ss.str());
+                std::string data = ss.str();
+                if (!data.empty() && data[0] == '{' && data[data.size() - 1] == '}')
+                {
+                    Json j = Json::parse(data);
+                    m_StateMachine->OnReceiveData(j);
+                }
+                else
+                {
+                    DebugLog("Data is not in json format!");
+                }
                 ss.str(std::string());
             }
         }
