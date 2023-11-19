@@ -7,7 +7,6 @@ MenuState::MenuState(StateMachine* stateMachine, Window* window)
 	, m_HistoryButton()
 	, m_QuitButton()
 {
-	m_StateMachine = stateMachine;
 }
 
 MenuState::~MenuState()

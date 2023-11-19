@@ -5,7 +5,9 @@
 #include "src/core/PlayerPieceShape.h"
 #include "src/core/ClientApp.h"
 
-#include <SFML/System/Time.hpp>
+#include "src/core/StateMachine/GameViewStates/FinishedState.h"
+#include "src/core/StateMachine/GameViewStates/InitState.h"
+#include "src/core/StateMachine/GameViewStates/InProgressState.h"
 
 using namespace TicTacToe;
 using json = nlohmann::json;
@@ -14,10 +16,17 @@ using json = nlohmann::json;
 GameState::GameState(StateMachine* stateMachine, Window* m_Window)
     : State(stateMachine)
     , m_Window(m_Window)
-    , m_GameStateUI(nullptr)
     , m_ReturnButton(nullptr)
+    , m_GameStateUI(nullptr)
 {
-    m_StateMachine = stateMachine;
+    m_GameStateMachine = new StateMachine();
+    m_GameStateMachine->AddState("Init", new InitState(m_GameStateMachine, m_Window));
+    m_GameStateMachine->AddState("InProgress", new InProgressState(m_GameStateMachine, m_Window));
+    m_GameStateMachine->AddState("Finished", new FinishedState(m_GameStateMachine, m_Window));
+
+    m_GameStateMachine->InitState("Init");
+    m_GameStateMachine->Start();
+
     m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12), Square);
     m_PlayerManager.CreateNewPlayer("Player Two", sf::Color(255, 194, 0), Circle);
 
@@ -34,6 +43,7 @@ GameState::GameState(StateMachine* stateMachine, Window* m_Window)
 GameState::~GameState()
 {
     NULLPTR(m_Window);
+    RELEASE(m_GameStateMachine)
 }
 
 void GameState::OnEnter()
@@ -142,7 +152,6 @@ void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
 
     ClientApp::GetInstance().Send(j.dump());
 
-    auto pos = sf::Vector2f(m_Board.GetGraphicPiece(cell).GetPosition());
     // Set piece id in board
     m_Board[cell] = currentPlayer->GetPlayerID();
 
@@ -159,7 +168,7 @@ void GameState::InstanciateNewPlayerShape(const Player* currentPlayer, unsigned 
     pos.x += m_Board.GetPieceSize() * 0.5f;
     pos.y += m_Board.GetPieceSize() * 0.5f;
 
-    auto playerPieceShape = new PlayerPieceShape(currentPlayer->GetPlayerID(), pos);
+    const auto playerPieceShape = new PlayerPieceShape(currentPlayer->GetPlayerID(), pos);
     m_GamePieces.push_back(playerPieceShape);
     m_Window->RegisterDrawable(playerPieceShape);
 }
@@ -169,8 +178,6 @@ void GameState::WinCheck()
     const PieceID winnerID = m_Board.IsThereAWinner();
     if (winnerID != EMPTY_PIECE)
     {
-        std::cout << "Player " << winnerID << " won!\n";
-
         Player* winner = PlayerManager::GetCurrentPlayer();
 
         m_ScoreManager.SaveGame(winner->GetData());
