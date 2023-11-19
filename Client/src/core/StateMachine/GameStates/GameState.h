@@ -15,25 +15,32 @@ class GameState : public State
 {
 public:
 	void OnEnter() override;
-	void OnUpdate(float dt) override;
+    void OnUpdate(float dt) override;
 	void OnExit() override;
 
 	GameState(StateMachine* stateMachine, Window* m_Window);
 	GameState(const GameState& other) = delete;
 	GameState& operator=(const GameState& other) = delete;
-	~GameState();
+	~GameState() override;
+
+
+private:
 
 	void DrawBoard();
+	void UpdatePlayerTimer(float dt);
+	void CheckIfTimerIsUp();
 
-	void CheckIfMouseHoverBoard();
+    void CheckIfMouseHoverBoard();
 	bool IsMouseHoverPiece(unsigned int i);
 	void PlacePlayerPieceOnBoard(unsigned int cell);
 	void InstanciateNewPlayerShape(const Player* currentPlayer, const unsigned int cell);
+	void WinCheck();
 	void SwitchPlayerTurn();
 
 	void ClearBoard();
 
 private:
+
 	Window* m_Window;
 	ButtonComponent* m_ReturnButton;
 
@@ -41,6 +48,9 @@ private:
 
 	PlayerManager m_PlayerManager;
 	ScoreManager m_ScoreManager;
+
+	float m_PlayerTurnTime;
+	float m_MaxPlayerTurnTime;
 
 	std::vector<sf::Drawable*> m_GamePieces;
 

@@ -38,9 +38,13 @@ GameState::~GameState()
 
 void GameState::OnEnter()
 {
+    m_MaxPlayerTurnTime = ClientApp::GetGameSettings().PlayerMoveLimitTime;
+    m_PlayerTurnTime = m_MaxPlayerTurnTime;
+
     m_GameStateUI = new GameStateUI(m_Window);
     m_GameStateUI->Init();
     m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
+    m_GameStateUI->InitProgressBar(m_MaxPlayerTurnTime);
 
     m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red, sf::Color::White);
     m_ReturnButton->SetButtonText("Return", sf::Color::White, 30, TextAlignment::Center);
@@ -55,10 +59,30 @@ void GameState::OnEnter()
 
 void GameState::OnUpdate(float dt)
 {
-    // TODO : REWORK THIS SHIT FUCKEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEER
     m_ReturnButton->Update();
 
     CheckIfMouseHoverBoard();
+
+    UpdatePlayerTimer(dt);
+    CheckIfTimerIsUp();
+}
+
+void GameState::UpdatePlayerTimer(float dt)
+{
+    m_PlayerTurnTime -= dt;
+    m_GameStateUI->UpdateProgressBar(m_PlayerTurnTime);
+}
+
+void GameState::CheckIfTimerIsUp()
+{
+    if (m_PlayerTurnTime <= 0.0f)
+    {
+        m_GameStateUI->UpdateGameStateText("Time's up!");
+
+        PlacePlayerPieceOnBoard(m_Board.GetRandomEmptyCell());
+        WinCheck();
+        SwitchPlayerTurn();
+    }
 }
 
 void GameState::DrawBoard()
