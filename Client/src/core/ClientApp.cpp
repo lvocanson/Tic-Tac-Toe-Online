@@ -25,10 +25,7 @@ void ClientApp::Init()
     };
     
     m_Client = new TcpIpClient();
-
     m_StateMachine = new StateMachine();
-    m_ScoreManager.Init();
-    m_PlayerManager.Init();
 
     m_StateMachine->AddState("MenuState", new MenuState(m_StateMachine, m_Window));
     m_StateMachine->AddState("GameState", new GameState(m_StateMachine, m_Window));

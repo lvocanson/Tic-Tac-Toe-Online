@@ -1,4 +1,5 @@
 #pragma once
+#include "GameMode.h"
 #include "src/core/StateMachine/StateMachine.h"
 #include "Managers/InputHandler.h"
 #include "src/tcp-ip/TcpIpClient.h"
@@ -38,6 +39,7 @@ public:
     void Shutdown() { m_IsRunning = false; }
 
     void Send(const std::string& data);
+    static GameSettings& GetGameSettings() { return GetInstance().m_GameSettings; }
 
 private: // Methods
     /// Update the ClientApp. Called once per frame.
