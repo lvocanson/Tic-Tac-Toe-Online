@@ -1,5 +1,5 @@
 #include "TextComponent.h"
-#include "src/core/Managers/FontRegistry.h"
+#include "src/core/Managers/Resources/FontRegistry.h"
 
 TextComponent::TextComponent(const std::string& text, BaseComponent& parentComponent, const sf::Color& color, unsigned int size, TextAlignment alignment)
     : m_Alignment(alignment)
