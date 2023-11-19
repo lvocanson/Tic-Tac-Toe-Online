@@ -1,7 +1,7 @@
 #include "src/pch.h"
 #include "GameStateUI.h"
 
-#include "PlayerManager.h"
+#include "src/core/Managers/PlayerManager.h"
 
 GameStateUI::GameStateUI(Window* window) : UIStateManager(window)
 {
@@ -20,7 +20,6 @@ void GameStateUI::Init()
 {
     UIStateManager::Init();
 
-    FontRegistry::LoadFont("bold-font");
     const auto& font = *FontRegistry::GetFont("bold-font");
 
     m_Title = new sf::Text();
@@ -54,18 +53,6 @@ void GameStateUI::Init()
     m_GameStateText->setPosition(m_PlayerTurnText->getPosition().x, 100);
 
     RegisterText(m_GameStateText);
-}
-
-void GameStateUI::Clear()
-{
-    for (auto& text : m_PlayerScoreTexts)
-    {
-        NULLPTR(text.second);
-    }
-
-    NULLPTR(m_PlayerTurnText);
-    NULLPTR(m_GameStateText);
-    NULLPTR(m_Title);
 }
 
 void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
@@ -106,4 +93,16 @@ void GameStateUI::UpdatePlayerScore(const PlayerData& player, const unsigned int
     }
 
     m_PlayerScoreTexts.at(player.Id)->setString(player.Name + " : " + std::to_string(score));
+}
+
+void GameStateUI::Clear()
+{
+    for (auto& text : m_PlayerScoreTexts)
+    {
+        NULLPTR(text.second);
+    }
+
+    NULLPTR(m_PlayerTurnText);
+    NULLPTR(m_GameStateText);
+    NULLPTR(m_Title);
 }

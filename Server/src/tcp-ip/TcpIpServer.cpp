@@ -1,4 +1,20 @@
 #include "TcpIpServer.h"
+using enum TcpIp::ErrorCode;
+
+Connection::Connection(SOCKET socket)
+    : Socket(socket)
+    , Event(TcpIp::CreateEventObject(socket, FD_READ | FD_CLOSE))
+{
+    sockaddr_in clientAddress;
+    int clientAddressLength = sizeof(clientAddress);
+    if (getpeername(socket, (sockaddr*)&clientAddress, &clientAddressLength) == 0)
+    {
+        char clientIP[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(clientAddress.sin_addr), clientIP, INET_ADDRSTRLEN);
+        Address = clientIP;
+        Port = ntohs(clientAddress.sin_port);
+    }
+}
 
 TcpIpServer::TcpIpServer()
     : m_WsaData(TcpIp::InitializeWinsock())
@@ -11,7 +27,6 @@ TcpIpServer::~TcpIpServer()
 {
     if (m_ListenSocket != INVALID_SOCKET)
         Close();
-    TcpIp::CleanupWinsock();
 }
 
 void TcpIpServer::Open(unsigned int port)
@@ -28,7 +43,10 @@ void TcpIpServer::Open(unsigned int port)
     // Resolve the server address and port
     int iResult = getaddrinfo(nullptr, std::to_string(port).c_str(), &hints, &result);
     if (iResult != 0)
-        throw TcpIp::TcpIpException("getaddrinfo", iResult);
+    {
+        freeaddrinfo(result);
+        throw TcpIp::TcpIpException::Create(WSA_ResolveFailed, iResult);
+    }
 
     // Create listening socket
     m_ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
@@ -36,7 +54,7 @@ void TcpIpServer::Open(unsigned int port)
     if (m_ListenSocket == INVALID_SOCKET)
     {
         freeaddrinfo(result);
-        throw TcpIp::TcpIpException("socket");
+        throw TcpIp::TcpIpException::Create(SOCKET_CreateFailed, TCP_IP_WSA_ERROR);
     }
 
     // Setup the TCP listening socket
@@ -44,11 +62,11 @@ void TcpIpServer::Open(unsigned int port)
     freeaddrinfo(result);
 
     if (iResult == SOCKET_ERROR)
-        throw TcpIp::TcpIpException("bind");
+        throw TcpIp::TcpIpException::Create(SOCKET_BindFailed, TCP_IP_WSA_ERROR);
 
     // Start listening on the socket
     if (listen(m_ListenSocket, SOMAXCONN) == SOCKET_ERROR)
-        throw TcpIp::TcpIpException("listen");
+        throw TcpIp::TcpIpException::Create(SOCKET_ListenFailed, TCP_IP_WSA_ERROR);
 
     m_AcceptEvent = TcpIp::CreateEventObject(m_ListenSocket, FD_ACCEPT);
 }
@@ -57,41 +75,51 @@ void TcpIpServer::Close()
 {
     if (m_ListenSocket != INVALID_SOCKET)
     {
-        if (closesocket(m_ListenSocket) == SOCKET_ERROR)
-            throw TcpIp::TcpIpException("closesocket");
-        m_ListenSocket = INVALID_SOCKET;
+        TcpIp::CloseEventObject(m_AcceptEvent);
+        TcpIp::CloseSocket(m_ListenSocket);
     }
 
-    KillClosedConnections(); // In case some connections are already closed
     for (Connection& connection : m_Connections)
     {
+        if (connection.Socket == INVALID_SOCKET)
+            continue; // Already closed
+
         TcpIp::CloseEventObject(connection.Event);
         TcpIp::CloseSocket(connection.Socket);
     }
     m_Connections.clear();
 }
 
-bool TcpIpServer::AcceptPendingConnections()
+bool TcpIpServer::AcceptPendingConnection()
 {
     // Check the listening socket for accept events
     WSANETWORKEVENTS networkEvents;
     int iResult = WSAEnumNetworkEvents(m_ListenSocket, m_AcceptEvent, &networkEvents);
     if (iResult == SOCKET_ERROR)
-        throw TcpIp::TcpIpException("WSAEnumNetworkEvents");
+        throw TcpIp::TcpIpException::Create(EVENT_EnumFailed, TCP_IP_WSA_ERROR);
 
     if (networkEvents.lNetworkEvents & FD_ACCEPT)
     {
         if (networkEvents.iErrorCode[FD_ACCEPT_BIT] != 0)
-            throw TcpIp::TcpIpException("FD_ACCEPT", networkEvents.iErrorCode[FD_ACCEPT_BIT]);
+            throw TcpIp::TcpIpException::Create(EVENT_FdAcceptHadError, networkEvents.iErrorCode[FD_ACCEPT_BIT]);
 
         SOCKET connectionSocket = accept(m_ListenSocket, nullptr, nullptr);
         if (connectionSocket == INVALID_SOCKET)
-            throw TcpIp::TcpIpException("accept");
+            throw TcpIp::TcpIpException::Create(SOCKET_CreateFailed, TCP_IP_WSA_ERROR);
 
+        // Create a new connection, and place it at the end of the vector
         m_Connections.emplace_back(connectionSocket);
         return true;
     }
     return false;
+}
+
+int TcpIpServer::AcceptAllPendingConnections()
+{
+    int count = 0;
+    while (AcceptPendingConnection())
+        count++;
+    return count;
 }
 
 bool TcpIpServer::FetchPendingData(std::stringstream& ss, Client& client)
@@ -99,24 +127,27 @@ bool TcpIpServer::FetchPendingData(std::stringstream& ss, Client& client)
     WSANETWORKEVENTS networkEvents;
     for (Connection& connection : m_Connections)
     {
+        if (connection.Socket == INVALID_SOCKET)
+            continue; // The connection is closed
+
         // Check the connection socket for read and close events
         int iResult = WSAEnumNetworkEvents(connection.Socket, connection.Event, &networkEvents);
         if (iResult == SOCKET_ERROR)
-            throw TcpIp::TcpIpException("WSAEnumNetworkEvents");
+            throw TcpIp::TcpIpException::Create(EVENT_EnumFailed, TCP_IP_WSA_ERROR);
 
         if (networkEvents.lNetworkEvents & FD_READ)
         {
             if (networkEvents.iErrorCode[FD_READ_BIT] != 0)
-                throw TcpIp::TcpIpException("FD_READ", networkEvents.iErrorCode[FD_READ_BIT]);
+                throw TcpIp::TcpIpException::Create(EVENT_FdReadHadError, networkEvents.iErrorCode[FD_READ_BIT]);
 
-            client = connection.Socket;
+            client = &connection;
             TcpIp::Receive(connection.Socket, ss, DEFAULT_BUFFER_SIZE);
             return true;
         }
         if (networkEvents.lNetworkEvents & FD_CLOSE)
         {
             if (networkEvents.iErrorCode[FD_CLOSE_BIT] != 0)
-                throw TcpIp::TcpIpException("FD_CLOSE", networkEvents.iErrorCode[FD_CLOSE_BIT]);
+                throw TcpIp::TcpIpException::Create(EVENT_FdCloseHadError, networkEvents.iErrorCode[FD_CLOSE_BIT]);
 
             TcpIp::CloseEventObject(connection.Event);
             TcpIp::CloseSocket(connection.Socket);
@@ -125,9 +156,9 @@ bool TcpIpServer::FetchPendingData(std::stringstream& ss, Client& client)
     return false;
 }
 
-void TcpIpServer::Send(const Client& client, const char* data, size_t size)
+void TcpIpServer::Send(const Client& client, const char* data, u_long size)
 {
-    TcpIp::Send(client, data, size);
+    TcpIp::Send(client->Socket, data, size);
 }
 
 unsigned int TcpIpServer::KillClosedConnections()
@@ -143,10 +174,4 @@ unsigned int TcpIpServer::KillClosedConnections()
     // Erase them from the vector
     m_Connections.erase(it, m_Connections.end());
     return count;
-}
-
-TcpIpServer::Connection::Connection(SOCKET socket)
-    : Socket(socket)
-    , Event(TcpIp::CreateEventObject(socket, FD_READ | FD_CLOSE))
-{
 }

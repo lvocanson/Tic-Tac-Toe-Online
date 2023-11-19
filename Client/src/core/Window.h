@@ -51,6 +51,8 @@ public:
     /// </summary>
     std::vector<sf::Drawable*>& GetDrawables() { return m_Drawables; }
 
+    void ClearAllDrawables();
+
 #pragma endregion
 
 #pragma region Other

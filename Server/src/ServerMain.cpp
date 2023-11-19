@@ -12,7 +12,9 @@ int wmain()
 #endif
 
     ServerApp app;
+    app.Init();
     app.Run();
+    app.CleanUp();
 
     return 0;
 }

@@ -1,12 +1,21 @@
 #include "src/pch.h"
 #include "PlayerShapeRegistry.h"
 #include <SFML/Graphics.hpp>
-#include <src/core/PlayerPieceShape.h>
 
 
 sf::Drawable* PlayerShapeRegistry::GetPlayerShape(TicTacToe::PieceID id)
 {
     return m_PlayerShapes[id];
+}
+
+void PlayerShapeRegistry::ClearPlayerShapes()
+{
+   for (auto& shape : m_PlayerShapes)
+    {
+        delete shape.second;
+    }
+
+    m_PlayerShapes.clear();
 }
 
 void PlayerShapeRegistry::CreatePlayerShape(PlayerShapeType shapeType, TicTacToe::PieceID id, sf::Color color)
