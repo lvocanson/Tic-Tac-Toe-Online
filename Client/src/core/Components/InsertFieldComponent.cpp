@@ -1,6 +1,6 @@
 #include "InsertFieldComponent.h"
 #include "src/core/Managers/InputHandler.h"
-#include "src/core/Managers/FontRegistry.h"
+#include "src/core/Managers/Resources/FontRegistry.h"
 
 InsertFieldComponent::InsertFieldComponent(const sf::Vector2f& pos, const sf::Vector2f& size,
     const sf::Color& idleColor, const sf::Color& hoverColor,
