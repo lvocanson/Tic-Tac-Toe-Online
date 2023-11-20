@@ -1,5 +1,5 @@
 #pragma once
-#include "src/core/Managers/PlayerShapeRegistry.h"
+#include "src/core/Managers/Resources/PlayerShapeRegistry.h"
 
 class Player;
 

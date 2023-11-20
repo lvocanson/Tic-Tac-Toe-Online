@@ -1,7 +1,7 @@
 #include "src/pch.h"
 #include "GameStateUI.h"
 
-#include "PlayerManager.h"
+#include "src/core/Managers/PlayerManager.h"
 
 GameStateUI::GameStateUI(Window* window) : UIStateManager(window)
 {

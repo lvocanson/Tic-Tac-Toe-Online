@@ -1,12 +1,11 @@
 #pragma once
-#include "StateMachine.h"
-#include "State.h"
+#include "src/core/StateMachine/StateMachine.h"
 #include "src/core/Components/ButtonComponent.h"
 #include "src/core/GraphicBoard.h"
 #include "src/core/Player.h"
+#include "src/core/UIState/GameStateUI.h"
 
 #include "src/core/Managers/PlayerManager.h"
-#include "src/core/Managers/GameStateUI.h"
 #include "src/core/Managers/ScoreManager.h"
 #include "src/core/Managers/UIStateManager.h"
 

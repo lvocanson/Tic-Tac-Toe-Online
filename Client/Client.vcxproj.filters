@@ -39,16 +39,16 @@
     <ClCompile Include="src\core\StateMachine\StateMachine.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\StateMachine\EndState.cpp">
+    <ClCompile Include="src\core\StateMachine\GameStates\EndState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\StateMachine\GameState.cpp">
+    <ClCompile Include="src\core\StateMachine\GameStates\GameState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\StateMachine\HistoryState.cpp">
+    <ClCompile Include="src\core\StateMachine\GameStates\HistoryState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\StateMachine\MenuState.cpp">
+    <ClCompile Include="src\core\StateMachine\GameStates\MenuState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\core\Managers\ScoreManager.cpp">
@@ -60,10 +60,10 @@
     <ClCompile Include="src\core\Managers\UIStateManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Managers\FontRegistry.cpp">
+    <ClCompile Include="src\core\Managers\Resources\FontRegistry.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Managers\GameStateUI.cpp">
+    <ClCompile Include="src\core\UIState\GameStateUI.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\core\Player.cpp">
@@ -78,7 +78,7 @@
     <ClCompile Include="src\core\Managers\InputHandler.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Managers\PlayerShapeRegistry.cpp">
+    <ClCompile Include="src\core\Managers\Resources\PlayerShapeRegistry.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\core\StateMachine\SelectState.cpp">
@@ -113,16 +113,16 @@
     <ClInclude Include="src\core\StateMachine\State.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\StateMachine\EndState.h">
+    <ClInclude Include="src\core\StateMachine\GameStates\EndState.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\StateMachine\GameState.h">
+    <ClInclude Include="src\core\StateMachine\GameStates\GameState.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\StateMachine\HistoryState.h">
+    <ClInclude Include="src\core\StateMachine\GameStates\HistoryState.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\StateMachine\MenuState.h">
+    <ClInclude Include="src\core\StateMachine\GameStates\MenuState.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Managers\ScoreManager.h">
@@ -137,10 +137,10 @@
     <ClInclude Include="src\core\Managers\UIStateManager.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Managers\FontRegistry.h">
+    <ClInclude Include="src\core\Managers\Resources\FontRegistry.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Managers\GameStateUI.h">
+    <ClInclude Include="src\core\UIState\GameStateUI.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Player.h">
@@ -158,7 +158,7 @@
     <ClInclude Include="src\core\Components\BaseComponent.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Managers\PlayerShapeRegistry.h">
+    <ClInclude Include="src\core\Managers\Resources\PlayerShapeRegistry.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\StateMachine\SelectState.h">
