@@ -5,75 +5,48 @@
 #include "src/core/StateMachine/GameStates/HistoryState.h"
 #include "src/core/StateMachine/GameStates/MenuState.h"
 #include "src/core/StateMachine/GameStates/SelectState.h"
+#include "src/tcp-ip/TcpIpClient.h"
+#include "threading/Thread.h"
 
 using namespace TicTacToe;
-
-
-DWORD WINAPI PullServer(LPVOID lpParam);
 
 void ClientApp::Init()
 {
     FontRegistry::LoadFont("bold-font");
 
-    m_IsRunning.WaitGet().operator->() = true;
+    m_IsRunning = true;
+    m_SharedIsRunning.WaitGet().Get() = true;
 
     m_Window = new Window();
     m_Window->Create("Tic Tac Toe Online!", 1280, 720);
-    
-    m_Client = new TcpIpClient();
-
-    m_StateMachine = new StateMachine();
-
-    m_StateMachine->AddState("MenuState", new MenuState(m_StateMachine, m_Window));
-    m_StateMachine->AddState("SelectState", new SelectState(m_StateMachine, m_Window));
-    m_StateMachine->AddState("GameState", new GameState(m_StateMachine, m_Window));
-    m_StateMachine->AddState("HistoryState", new HistoryState(m_StateMachine, m_Window));
-    m_StateMachine->AddState("EndState", new EndState(m_StateMachine, m_Window));
-
-    m_StateMachine->InitState("MenuState");
-
-    m_StateMachine->Start();
+    m_StateMachine = new Shared<StateMachine>();
+    {
+        auto lock = m_StateMachine->WaitGet();
+        lock->AddState("MenuState", new MenuState(&lock.Get(), m_Window));
+        lock->AddState("SelectState", new SelectState(&lock.Get(), m_Window));
+        lock->AddState("GameState", new GameState(&lock.Get(), m_Window));
+        lock->AddState("HistoryState", new HistoryState(&lock.Get(), m_Window));
+        lock->AddState("EndState", new EndState(&lock.Get(), m_Window));
+        lock->InitState("MenuState");
+        lock->Start();
+    }
 }
 
 void ClientApp::Run()
 {
-    if (!m_IsRunning.WaitGet().operator->())
+    if (!m_IsRunning)
         throw std::runtime_error("ClientApp is not initialized!");
 
-    try
-    {
-        m_Client->Connect("localhost", DEFAULT_PORT);
-        DebugLog("Connected to server!\n");
-
-        m_PullServerData = (PPULLSERVERDATA)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(PULLSERVERDATA));
-        if (m_PullServerData == NULL)
-        {
-            ExitProcess(2);
-        }
-
-        m_PullServerData->Client = m_Client;
-        m_PullServerData->StateMachine = m_StateMachine;
-        m_PullServerData->IsRunning = &m_IsRunning;
-
-        m_PullServerThread = CreateThread(
-            NULL,
-            0,
-            PullServer,
-            m_PullServerData,
-            0,
-            0
-        );
-    }
-    catch (const TcpIp::TcpIpException &e)
-    {
-        DebugLog("Failed to connect to server: " + std::string(e.what()) + "\n");
-        m_IsRunning.WaitGet().operator->() = false;
-    }
-    
     sf::Clock clock;
     Json j;
 
-    while (m_IsRunning.WaitGet().operator->())
+    m_ClientThread = Thread::Create([](LPVOID i)
+        {
+            ClientApp::GetInstance().RunClient();
+            return (DWORD)0;
+        }, true);
+
+    while (m_IsRunning)
     {
         const sf::Time elapsed = clock.restart();
 
@@ -82,42 +55,44 @@ void ClientApp::Run()
 
         Update(elapsed);
         m_Window->Render();
-        m_IsRunning.WaitGet().operator->() = m_Window->IsOpen();
-       
-        if (!m_Client->IsConnected())
-        {
-            DebugLog("Disconnected from server!\n");
-            m_IsRunning.WaitGet().operator->() = false;
-        }
+        m_IsRunning &= m_Window->IsOpen();
+        auto sharedRunning = m_SharedIsRunning.TryGet();
+        if (sharedRunning.IsValid())
+            m_IsRunning &= sharedRunning.Get();
+
     }
 
-    m_Client->Disconnect();
+    m_SharedIsRunning.WaitGet().Get() = false;
     Cleanup();
 }
 
-void ClientApp::Send(const std::string& data)
+void ClientApp::RunClient()
 {
-    if (!data.empty())
-        m_Client->Send(data);
-}
-
-DWORD WINAPI PullServer(LPVOID lpParam)
-{
-    PPULLSERVERDATA threadData = (PPULLSERVERDATA)lpParam;
+    try
+    {
+        m_Client = new TcpIpClient();
+        m_Client->Connect("localhost", DEFAULT_PORT);
+        m_IsClientRunning = true;
+        DebugLog("Connected to server!\n");
+    }
+    catch (const TcpIp::TcpIpException& e)
+    {
+        DebugLog("Failed to connect to server: " + std::string(e.what()) + "\n");
+        m_IsClientRunning = false;
+    }
 
     std::stringstream ss;
-
-    while (threadData->IsRunning->WaitGet().operator->())
+    while (m_IsClientRunning)
     {
         try
         {
-            while (threadData->Client->FetchPendingData(ss))
+            while (m_Client->FetchPendingData(ss))
             {
                 std::string data = ss.str();
                 if (!data.empty() && data[0] == '{' && data[data.size() - 1] == '}')
                 {
                     Json j = Json::parse(data);
-                    threadData->StateMachine->OnReceiveData(j);
+                    m_StateMachine->WaitGet()->OnReceiveData(j);
                 }
                 else
                 {
@@ -129,38 +104,61 @@ DWORD WINAPI PullServer(LPVOID lpParam)
         catch (const TcpIp::TcpIpException& e)
         {
             DebugLog("Failed to fetch data from server: " + std::string(e.what()) + "\n");
-            threadData->IsRunning->WaitGet().operator->() = false;
+            m_IsClientRunning = false;
         }
-    }
-    
 
-    return 0;
+        if (!m_Client->IsConnected())
+        {
+            DebugLog("Disconnected from server!\n");
+            m_IsClientRunning = false;
+        }
+
+        auto sharedRunning = m_SharedIsRunning.TryGet();
+        if (sharedRunning.IsValid())
+            m_IsClientRunning &= sharedRunning.Get();
+    }
+
+    m_SharedIsRunning.WaitGet().Get() = false;
+    m_Client->Disconnect();
+    RELEASE(m_Client);
+}
+
+void ClientApp::Send(const std::string& data)
+{
+    if (!data.empty())
+        m_Client->Send(data);
 }
 
 void ClientApp::Update(sf::Time delta)
 {
-    m_StateMachine->Update(delta.asSeconds());
+    static float timeSinceLastUpdate = 0.0f;
+    timeSinceLastUpdate += delta.asSeconds();
+    auto lock = m_StateMachine->TryGet();
+    if (lock.IsValid())
+    {
+        lock->Update(timeSinceLastUpdate);
+        timeSinceLastUpdate = 0.0f;
+    }
+    else if (timeSinceLastUpdate > 0.3f)
+    {
+        auto lock2 = m_StateMachine->WaitGet();
+        lock2->Update(timeSinceLastUpdate);
+    }
 }
-
 
 void ClientApp::Cleanup()
 {
     RELEASE(m_StateMachine);
 
-    for (auto &drawable : m_Window->GetDrawables())
+    for (auto& drawable : m_Window->GetDrawables())
     {
         RELEASE(drawable);
     }
 
     RELEASE(m_Window);
-    RELEASE(m_Client);
-
-    CloseHandle(m_PullServerThread);
-    if (m_PullServerData != NULL)
-    {
-        HeapFree(GetProcessHeap(), 0, m_PullServerData);
-        m_PullServerData = NULL;    // Ensure address is not reused.
-    }
+    m_ClientThread->Start();
+    m_ClientThread->Wait();
+    RELEASE(m_ClientThread);
 
     FontRegistry::ClearFonts();
     PlayerShapeRegistry::ClearPlayerShapes();

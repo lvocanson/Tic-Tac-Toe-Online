@@ -16,6 +16,7 @@
     <ClInclude Include="tcp-ip\TcpIp.h" />
     <ClInclude Include="game\IDGenerator.h" />
     <ClInclude Include="game\TicTacToe.h" />
+    <ClInclude Include="threading\Thread.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tcp-ip\TcpIp.cpp" />

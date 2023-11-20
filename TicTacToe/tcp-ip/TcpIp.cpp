@@ -126,7 +126,7 @@ namespace TcpIp
         char* buffer = new char[bufferSize];
         while (dataSize > 0)
         {
-            // recvSize = min(dataSize, bufferSize), because there might be more data to receive
+            // recvSize = min(dataSize, bufferSize), because there might be more data to receive 
             int recvSize = dataSize > bufferSize ? bufferSize : static_cast<int>(dataSize);
             iResult = recv(socket, buffer, recvSize, 0);
 

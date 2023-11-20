@@ -1,19 +1,11 @@
 #pragma once
 #include "src/core/StateMachine/StateMachine.h"
 #include "Managers/InputHandler.h"
-#include "src/tcp-ip/TcpIpClient.h"
 
 class Window;
 class sf::Shape;
 class TcpIpClient;
-
-
-typedef struct PullServerThreadData
-{
-    TcpIpClient* Client;
-    StateMachine* StateMachine;
-    Shared<bool>* IsRunning;
-} PULLSERVERDATA, * PPULLSERVERDATA;
+class Thread;
 
 class ClientApp
 {
@@ -43,11 +35,13 @@ public:
     /// <summary>
     /// Shutdown the ClientApp. This method will cause Run() to return.
     /// </summary>
-    void Shutdown() { m_IsRunning.WaitGet().Get() = false; }
+    void Shutdown() { m_IsRunning = false; }
 
     void Send(const std::string& data);
 
+    void RunClient();
 private: // Methods
+
     /// Update the ClientApp. Called once per frame.
     void Update(sf::Time delta);
 
@@ -56,13 +50,14 @@ private: // Methods
 
 private: // Fields
 
-    Shared<bool> m_IsRunning = false;
+    bool m_IsRunning = false; // Access this only in the main thread
+    bool m_IsClientRunning = false; // Access this only in the client thread
+    Shared<bool> m_SharedIsRunning = false; // Use this to share between threads
 
     Window* m_Window = nullptr;
-    StateMachine* m_StateMachine = nullptr;
-    HANDLE m_PullServerThread = nullptr;
-    PPULLSERVERDATA m_PullServerData = nullptr;
+    Shared<StateMachine>* m_StateMachine = nullptr;
     InputHandler m_InputHandler;
 
+    Thread* m_ClientThread = nullptr;
     TcpIpClient* m_Client = nullptr;
 };

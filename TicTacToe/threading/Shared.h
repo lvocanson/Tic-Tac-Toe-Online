@@ -50,6 +50,9 @@ private:
     LPCRITICAL_SECTION m_CriticalSection;
 };
 
+/// <summary>
+/// A lock on a resource. The resource is unlocked when the lock goes out of scope.
+/// </summary>
 template <typename T>
 class Lock final
 {
@@ -68,6 +71,9 @@ public:
     {
         return m_Resource != nullptr;
     }
+    /// <summary>
+    /// Get the resource.
+    /// </summary>
     T& Get()
     {
         return *m_Resource;
@@ -75,9 +81,9 @@ public:
     /// <summary>
     /// Get the resource.
     /// </summary>
-    T& operator->()
+    T* operator->()
     {
-        return *m_Resource;
+        return m_Resource;
     }
 
 private:
