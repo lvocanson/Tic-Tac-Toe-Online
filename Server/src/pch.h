@@ -5,6 +5,11 @@
     This file is pre-compiled and included in all source files.
 */
 
+#ifdef NO_EVENTS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#pragma comment(lib, "User32.lib")
+#endif // NO_EVENTS
+
 #include <iostream>
 #include <TcpIp.h>
 #include <vector>

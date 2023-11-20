@@ -15,15 +15,14 @@ TcpIpClient::~TcpIpClient()
 
 void TcpIpClient::Connect(const char* ip, int port)
 {
-    m_ConnectSocket = INVALID_SOCKET;
-    ADDRINFO* result = nullptr;
-    addrinfo hints = {};
+    ADDRINFO hints;
     ZeroMemory(&hints, sizeof(hints));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
 
     // Resolve the server address and port
+    ADDRINFO* result = nullptr;
     int iResult = getaddrinfo(ip, std::to_string(port).c_str(), &hints, &result);
     if (iResult != 0)
     {
@@ -32,6 +31,7 @@ void TcpIpClient::Connect(const char* ip, int port)
     }
 
     // Create a SOCKET for connecting to server 
+    m_ConnectSocket = INVALID_SOCKET;
     m_ConnectSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
     if (m_ConnectSocket == INVALID_SOCKET)
     {
@@ -44,24 +44,27 @@ void TcpIpClient::Connect(const char* ip, int port)
     freeaddrinfo(result);
 
     if (iResult == SOCKET_ERROR)
+    {
         TcpIp::CloseSocket(m_ConnectSocket);
-    if (m_ConnectSocket == INVALID_SOCKET)
         throw TcpIp::TcpIpException::Create(SOCKET_ConnectFailed, iResult);
+    }
 
-    m_ReadEvent = TcpIp::CreateEventObject(m_ConnectSocket, FD_READ | FD_CLOSE);
+     m_ReadEvent = TcpIp::CreateEventObject(m_ConnectSocket, FD_READ | FD_CLOSE);
 }
 
 void TcpIpClient::Disconnect()
 {
-    if (m_ConnectSocket == INVALID_SOCKET)
-        return;
+    if (m_ConnectSocket != INVALID_SOCKET)
+    {
+        int iResult = shutdown(m_ConnectSocket, SD_SEND);
+        if (iResult == SOCKET_ERROR)
+            throw TcpIp::TcpIpException::Create(SOCKET_ShutdownFailed, TCP_IP_WSA_ERROR);
 
-    int iResult = shutdown(m_ConnectSocket, SD_SEND);
-    if (iResult == SOCKET_ERROR)
-        throw TcpIp::TcpIpException::Create(SOCKET_ShutdownFailed, TCP_IP_WSA_ERROR);
+        TcpIp::CloseSocket(m_ConnectSocket);
+    }
 
-    TcpIp::CloseEventObject(m_ReadEvent);
-    TcpIp::CloseSocket(m_ConnectSocket);
+    if (m_ReadEvent != WSA_INVALID_EVENT)
+        TcpIp::CloseEventObject(m_ReadEvent);
 }
 
 bool TcpIpClient::IsConnected() const

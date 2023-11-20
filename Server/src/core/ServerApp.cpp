@@ -1,13 +1,14 @@
 #include "ServerApp.h"
 #include "ConsoleHelper.h"
 
-#define ERR_CLR Color::Red
-#define WRN_CLR Color::Yellow
-#define SCS_CLR Color::LightGreen
-#define STS_CLR Color::LightMagenta
-#define INF_CLR Color::Gray
-#define DEF_CLR Color::White
-#define HASH_CLR(c) HshClr(c->Address + std::to_string(c->Port)) << c->Address << ":" << c->Port
+#define ERR_CLR Color::Red // Error color
+#define WRN_CLR Color::Yellow // Warning color
+#define SCS_CLR Color::LightGreen // Success color
+#define STS_CLR Color::LightMagenta // Status color
+#define INF_CLR Color::Gray // Information color
+#define DEF_CLR Color::White // Default color
+#define HASH_CLR(c) HshClr(c->Address + std::to_string(c->Port)) << c->Address << ':' << c->Port
+#define WEB_PFX INF_CLR << '[' << STS_CLR << "WEB" << INF_CLR << ']' << DEF_CLR << ' '
 
 void ServerApp::Init()
 {
@@ -23,11 +24,11 @@ void ServerApp::Init()
 
     if (!InitWebServer())
     {
-        std::cout << WRN_CLR << "Web server is unable to start, web interface will be disabled for this session." << std::endl << DEF_CLR;
+        std::cout << WEB_PFX << WRN_CLR << "Web server is unable to start, web interface will be disabled for this session." << std::endl << DEF_CLR;
     }
     else
     {
-        std::cout << SCS_CLR << "Web server is listening on port " << DEFAULT_PORT + 1 << "..." << std::endl << DEF_CLR;
+        std::cout << WEB_PFX << SCS_CLR << "Web server is listening on port " << DEFAULT_PORT + 1 << "..." << std::endl << DEF_CLR;
     }
 }
 
@@ -63,34 +64,37 @@ bool ServerApp::InitGameServer()
     }
     catch (const TcpIp::TcpIpException& e)
     {
-        std::cout << INF_CLR << "The game server is unable to start: " << e.what() << std::endl << DEF_CLR;
+        std::cout << ERR_CLR << "The game server is unable to start: " << e.what() << std::endl << DEF_CLR;
         return false;
     }
 }
 
 void ServerApp::HandleGameServer()
 {
-    static std::stringstream ss;
     try
     {
-        int count = m_GameServer->AcceptAllPendingConnections();
-        if (count > 0)
+        // Check for new connections / pending data / closed connections
+        m_GameServer->CheckNetwork();
+
+        // For each new connection
+        ClientPtr newClient;
+        while ((newClient = m_GameServer->FindNewClient()) != nullptr)
         {
-            std::cout << STS_CLR << count << " new connection" << (count > 1 ? "s" : "") << " accepted." << std::endl << DEF_CLR;
+            std::cout << STS_CLR << "New connection from " << HASH_CLR(newClient) << STS_CLR << " has been established." << std::endl << DEF_CLR;
         }
 
-        Client sender;
-        while (m_GameServer->FetchPendingData(ss, sender))
+        // For each client with pending data
+        ClientPtr sender;
+        while ((sender = m_GameServer->FindClientWithPendingData()) != nullptr)
         {
-            HandleData(ss.str(), sender);
-            ss.str(std::string()); // Clear the stringstream
+            HandleRecv(sender);
         }
 
-        count = m_GameServer->KillClosedConnections();
-        if (count > 0)
-        {
-            std::cout << STS_CLR << count << " connection" << (count > 1 ? "s" : "") << " closed." << std::endl << DEF_CLR;
-        }
+        // For each closed connection
+        m_GameServer->CleanClosedConnections([](ClientPtr c)
+            {
+                std::cout << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR;
+            });
     }
     catch (const TcpIp::TcpIpException& e)
     {
@@ -98,10 +102,13 @@ void ServerApp::HandleGameServer()
     }
 }
 
-void ServerApp::HandleData(const std::string& data, Client sender)
+void ServerApp::HandleRecv(ClientPtr sender)
 {
+    std::string data = sender->Receive();
     std::cout << HASH_CLR(sender) << DEF_CLR << " sent " << data.size() << " bytes of data." << std::endl << DEF_CLR;
-    m_GameServer->Send(sender, data);
+
+    // Echo back
+    sender->Send(data);
 }
 
 void ServerApp::CleanUpGameServer()
@@ -123,12 +130,37 @@ void ServerApp::CleanUpGameServer()
 
 bool ServerApp::InitWebServer()
 {
-    return false;
+    try
+    {
+        throw TcpIp::TcpIpException::Create(TcpIp::ErrorCode::WSA_StartupFailed);
+        m_WebServer = new HtmlServer();
+        //m_WebServer->Open(DEFAULT_PORT + 1);
+        return true;
+    }
+    catch (const TcpIp::TcpIpException& e)
+    {
+        std::cout << WEB_PFX << WRN_CLR << "The web server is unable to start: " << e.what() << std::endl << DEF_CLR;
+        return false;
+    }
 }
 
 void ServerApp::HandleWebServer()
 {
+    try
+    {
+
+    }
+    catch (const TcpIp::TcpIpException& e)
+    {
+        std::cout << WEB_PFX << ERR_CLR << "The web server has encountered an error: " << e.what() << std::endl << DEF_CLR;
+    }
 }
+
+void ServerApp::HandleWebConnection()
+{
+    // std::cout << WEB_PFX << HASH_CLR(sender) << DEF_CLR << " has been handled." << std::endl;
+}
+
 
 void ServerApp::CleanUpWebServer()
 {

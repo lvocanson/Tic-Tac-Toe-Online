@@ -54,6 +54,7 @@ namespace TcpIp
         SOCKET_BindFailed,
         SOCKET_ListenFailed,
         SOCKET_AcceptFailed,
+        SOCKET_NoDataAvailable,
         SOCKET_ShutdownFailed,
         SOCKET_CloseFailed,
         EVENT_CreateFailed,
@@ -70,6 +71,10 @@ namespace TcpIp
         RECEIVE_HeaderHadInvalidSignature,
         RECEIVE_DataFailed,
         RECEIVE_DataHadInvalidSize,
+
+#ifdef WINDOW_EVENT
+        WINDOW_CreateFailed,
+#endif // WINDOW_EVENT
     };
     /// <summary>
     /// A custom exception for TCP/IP.

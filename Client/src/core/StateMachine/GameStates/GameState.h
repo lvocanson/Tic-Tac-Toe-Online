@@ -17,6 +17,7 @@ public:
 	void OnEnter() override;
 	void OnUpdate(float dt) override;
 	void OnExit() override;
+	void OnReceiveData(const Json& serializeData) override;
 
 	GameState(StateMachine* stateMachine, Window* m_Window);
 	GameState(const GameState& other) = delete;
@@ -30,6 +31,8 @@ public:
 	void PlacePlayerPieceOnBoard(unsigned int cell);
 	void InstanciateNewPlayerShape(const Player* currentPlayer, const unsigned int cell);
 	void SwitchPlayerTurn();
+
+	void SendPlacedPieceToServer(unsigned int cell);
 
 	void ClearBoard();
 
