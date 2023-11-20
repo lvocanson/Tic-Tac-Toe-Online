@@ -47,7 +47,7 @@ private: // Methods
 
     /// Perform any cleanup tasks (e.g. delete pointers). Called before Run() returns.
     void Cleanup();
-
+    
 private: // Fields
     bool m_IsRunning = false;
 
