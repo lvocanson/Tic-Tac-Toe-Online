@@ -81,7 +81,7 @@
     <ClCompile Include="src\core\Managers\Resources\PlayerShapeRegistry.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\StateMachine\GameStates\SelectState.cpp">
+    <ClCompile Include="src\core\StateMachine\GameStates\LobbyState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -161,7 +161,7 @@
     <ClInclude Include="src\core\Managers\Resources\PlayerShapeRegistry.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\StateMachine\GameStates\SelectState.h">
+    <ClInclude Include="src\core\StateMachine\GameStates\LobbyState.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
