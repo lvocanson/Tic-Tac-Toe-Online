@@ -21,7 +21,6 @@ void ClientApp::Init()
     m_StateMachine = new StateMachine();
 
     m_StateMachine->AddState("MenuState", new MenuState(m_StateMachine, m_Window));
-    m_StateMachine->AddState("ConnectionState", new ConnectionState(m_StateMachine, m_Window));
     m_StateMachine->AddState("SelectState", new SelectState(m_StateMachine, m_Window));
     m_StateMachine->AddState("GameState", new GameState(m_StateMachine, m_Window));
     m_StateMachine->AddState("HistoryState", new HistoryState(m_StateMachine, m_Window));
@@ -36,17 +35,6 @@ void ClientApp::Run()
 {
     if (!m_IsRunning)
         throw std::runtime_error("ClientApp is not initialized!");
-
-    try
-    {
-        m_Client->Connect("localhost", DEFAULT_PORT);
-        DebugLog("Connected to server!\n");
-    }
-    catch (const TcpIp::TcpIpException &e)
-    {
-        DebugLog("Failed to connect to server: " + std::string(e.what()) + "\n");
-        m_IsRunning = false;
-    }
 
     std::stringstream ss;
     sf::Clock clock;
