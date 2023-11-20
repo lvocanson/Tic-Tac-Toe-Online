@@ -4,6 +4,7 @@
 #include "src/core/Window.h"
 #include "src/core/Components/ButtonComponent.h"
 #include "src/core/Components/InsertFieldComponent.h"
+#include "src/tcp-ip/TcpIpClient.h"
 
 class ConnectionState : public State
 {
@@ -20,8 +21,8 @@ public:
 private:
 	Window* m_Window;
 
-	ButtonComponent* m_ConnectButton;
-	ButtonComponent* m_QuitButton;
-
+	ButtonComponent* m_BackButton;
 	InsertFieldComponent* m_IpField;
+
+	TcpIpClient* m_Client;
 };

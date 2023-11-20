@@ -11,7 +11,8 @@ enum TextAlignment
 class TextComponent : public BaseComponent
 {
 public:
-    TextComponent(const std::string& text, BaseComponent& parentComponent, const sf::Color& color, unsigned int size, TextAlignment alignment);
+    TextComponent();
+    TextComponent(const std::string& text, BaseComponent* parentComponent, const sf::Color& color, unsigned int size, TextAlignment alignment);
 
     void Update() override;
     void SetPosition(const sf::Vector2f& position) override;
@@ -29,5 +30,6 @@ private:
     sf::Text m_Text;
     TextAlignment m_Alignment;
 
+    BaseComponent* m_ParentComponent;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };

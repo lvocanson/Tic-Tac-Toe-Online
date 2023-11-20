@@ -2,11 +2,15 @@
 #include "src/core/Managers/PlayerManager.h"
 
 ButtonComponent::ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor, const sf::Color& hoverColor)
-    : idleColor(idleColor), hoverColor(hoverColor), onClickCallback(nullptr)
+    : idleColor(idleColor)
+    , hoverColor(hoverColor)
+    , onClickCallback(nullptr)
 {
     shape.setPosition(pos);
     shape.setSize(size);
     shape.setFillColor(idleColor);
+
+    m_Text = nullptr;
 }
 
 ButtonComponent::~ButtonComponent()
@@ -56,7 +60,12 @@ void ButtonComponent::SetPosition(const sf::Vector2f& position)
 
     if (m_Text)
     {
-        m_Text->SetPosition(position);
+        sf::FloatRect buttonBounds = shape.getLocalBounds();
+        sf::Vector2f buttonTextPosition = position;
+        buttonTextPosition.x += (buttonBounds.width - m_Text->GetSize().x) / 2.0f;
+        buttonTextPosition.y += (buttonBounds.height - m_Text->GetSize().y) / 2.0f;
+
+        m_Text->SetPosition(buttonTextPosition);
     }
 }
 
@@ -76,16 +85,21 @@ void ButtonComponent::SetOnClickCallback(std::function<void()> onClickCallback)
 }
 
 void ButtonComponent::SetButtonText(const std::string& text, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment)
-{   
-    if (!m_Text)
-    {
-        m_Text = std::make_unique<TextComponent>(text, *this, textColor, textSize, textAlignment);
-    }
-    else
+{
+    if (m_Text)
     {
         m_Text->SetText(text);
         m_Text->SetColor(textColor);
         m_Text->SetCharacterSize(textSize);
         m_Text->SetTextAlignment(textAlignment);
     }
+    else
+    {
+        m_Text = new TextComponent(text, this, textColor, textSize, textAlignment);
+    }
+
+    sf::Vector2f buttonPosition = GetPosition();
+    sf::Vector2f buttonSize = GetSize();
+    sf::Vector2f textPosition = buttonPosition + sf::Vector2f((buttonSize.x - m_Text->GetSize().x) / 2.0f, (buttonSize.y - m_Text->GetSize().y) / 2.0f);
+    m_Text->SetPosition(textPosition);
 }

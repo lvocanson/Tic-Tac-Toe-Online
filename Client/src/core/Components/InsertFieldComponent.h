@@ -1,33 +1,40 @@
 #pragma once
-#include "BaseComponent.h"
-#include "src/core/Managers/InputHandler.h"
-#include <iostream>
-#include <sstream>
 
-class InsertFieldComponent : public BaseComponent
+#include <SFML/Graphics.hpp>
+#include <sstream>
+#include <functional>
+#include "src/core/Components/TextComponent.h"
+
+class InsertFieldComponent : public sf::Drawable
 {
 public:
+    InsertFieldComponent(const sf::Vector2f& pos, const sf::Vector2f& size,
+        const sf::Color& idleColor, const sf::Color& hoverColor,
+        float outlineThickness);
 
-	InsertFieldComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor, const sf::Color& hoverColor, float outlineThickness);
-	~InsertFieldComponent() override;
+    ~InsertFieldComponent();
 
-	void Update() override;
-	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    void Update();
 
-	void SetPosition(const sf::Vector2f& position) override;
-	sf::Vector2f GetPosition() const override;
-	sf::Vector2f GetSize() const override;
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-	void SetFocus(bool focus);
-	bool GetFocus() const;
+    bool IsMouseOver();
+
+    void SetPosition(const sf::Vector2f& position);
+
+    sf::Vector2f GetPosition() const { return m_Rectangle.getPosition(); }
+
+    sf::Vector2f GetSize() const { return m_Rectangle.getSize(); }
+
+    void SetFocus(bool focus);
+
+    bool GetFocus() const { return m_Focus; }
+
+    const std::string& GetText() { return m_TextStream.str(); }
 
 private:
-	sf::RectangleShape m_Rectangle;
-	sf::Text m_Text;
-	std::ostringstream m_TextStream;
-	bool m_Focus;
-	bool m_HasLimit;
-	int limit;
-
-	bool IsMouseOver();
+    sf::RectangleShape m_Rectangle;
+    TextComponent m_Text;
+    std::ostringstream m_TextStream;
+    bool m_Focus;
 };

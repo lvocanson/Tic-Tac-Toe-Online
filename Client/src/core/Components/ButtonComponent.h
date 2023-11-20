@@ -5,7 +5,7 @@
 #include "src/core/Managers/InputHandler.h"
 #include <memory>
 
-class ButtonComponent : public BaseComponent
+class ButtonComponent : public BaseComponent, public sf::Transformable
 {
 public:
     ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor, const sf::Color& hoverColor);
@@ -29,7 +29,7 @@ private:
     sf::Color hoverColor;
     std::function<void()> onClickCallback;
 
-    std::unique_ptr<TextComponent> m_Text;
+    TextComponent* m_Text;
 
     bool IsMouseOver();
 };
