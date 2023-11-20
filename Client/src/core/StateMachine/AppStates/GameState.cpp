@@ -5,9 +5,6 @@
 #include "src/core/PlayerPieceShape.h"
 #include "src/core/ClientApp.h"
 
-#include "src/core/StateMachine/GameViewStates/FinishedState.h"
-#include "src/core/StateMachine/GameViewStates/InitState.h"
-#include "src/core/StateMachine/GameViewStates/InProgressState.h"
 
 using namespace TicTacToe;
 using json = nlohmann::json;
@@ -19,14 +16,6 @@ GameState::GameState(StateMachine* stateMachine, Window* m_Window)
     , m_ReturnButton(nullptr)
     , m_GameStateUI(nullptr)
 {
-    m_GameStateMachine = new StateMachine();
-    m_GameStateMachine->AddState("Init", new InitState(m_GameStateMachine, m_Window));
-    m_GameStateMachine->AddState("InProgress", new InProgressState(m_GameStateMachine, m_Window));
-    m_GameStateMachine->AddState("Finished", new FinishedState(m_GameStateMachine, m_Window));
-
-    m_GameStateMachine->InitState("Init");
-    m_GameStateMachine->Start();
-
     m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12), Square);
     m_PlayerManager.CreateNewPlayer("Player Two", sf::Color(255, 194, 0), Circle);
 
@@ -43,7 +32,6 @@ GameState::GameState(StateMachine* stateMachine, Window* m_Window)
 GameState::~GameState()
 {
     NULLPTR(m_Window);
-    RELEASE(m_GameStateMachine)
 }
 
 void GameState::OnEnter()
@@ -152,12 +140,15 @@ void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
 
     ClientApp::GetInstance().Send(j.dump());
 
+    auto pos = sf::Vector2f(m_Board.GetGraphicPiece(cell).GetPosition());
     // Set piece id in board
     m_Board[cell] = currentPlayer->GetPlayerID();
 
     InstanciateNewPlayerShape(currentPlayer, cell);
 
     m_ScoreManager.AddPlayerMove(currentPlayer->GetPlayerID(), cell);
+
+    SendPlacedPieceToServer(cell);
 }
 
 void GameState::InstanciateNewPlayerShape(const Player* currentPlayer, unsigned int cell)
@@ -216,6 +207,20 @@ void GameState::SwitchPlayerTurn()
     m_GameStateUI->UpdateProgressBar(m_PlayerTurnTime);
 }
 
+void GameState::SendPlacedPieceToServer(unsigned int cell)
+{
+    int row = cell / (int)m_Board.GetWidth();
+    int col = cell % (int)m_Board.GetWidth();
+    std::string playerID = std::to_string(m_Board[cell]);
+
+    json j;
+    j["row"] = row;
+    j["col"] = col;
+    j["playerID"] = playerID;
+
+    ClientApp::GetInstance().Send(j.dump());
+}
+
 bool GameState::IsMouseHoverPiece(unsigned int i)
 {
     const sf::Vector2f mousePos = static_cast<sf::Vector2f>(InputHandler::GetMousePosition());
@@ -235,4 +240,12 @@ void GameState::OnExit()
     RELEASE(m_GameStateUI);
 
     m_Window->ClearAllDrawables();
+}
+
+void GameState::OnReceiveData(const Json& serializeData)
+{
+    std::string playerID = serializeData["playerID"];
+    int row = serializeData["row"];
+    int col = serializeData["col"];
+    //Use player manager to to set player  
 }

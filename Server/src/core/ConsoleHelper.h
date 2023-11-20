@@ -1,6 +1,5 @@
 #pragma once
 #include <conio.h>
-#include <wincon.h>
 
 enum class Color
 {

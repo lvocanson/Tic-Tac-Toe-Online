@@ -7,8 +7,12 @@
 /// </summary>
 struct Connection
 {
-    std::string Address;
-    unsigned int Port;
+    std::string Address = "Unknown";
+    unsigned int Port = 0;
+
+    std::string Receive();
+    void Send(const std::string& data);
+    void Kick();
 
     // Creates the event object and associate it with the socket.
     Connection(SOCKET socket);
@@ -16,9 +20,19 @@ private:
     friend class TcpIpServer;
 
     SOCKET Socket;
+#ifndef NO_EVENTS
     WSAEVENT Event;
+#endif // !NO_EVENTS
+
+    bool IsNew = true;
+    bool ReadPending = false;
+    bool ClosePending = false;
 };
-typedef Connection* Client;
+/// <summary>
+/// A pointer to a connection.
+/// Do not store this pointer, it may become invalid.
+/// </summary>
+typedef Connection* ClientPtr;
 
 /// <summary>
 /// TCP/IP server.
@@ -41,44 +55,41 @@ public:
     /// </summary>
     void Close();
 
+#ifdef NO_EVENTS
     /// <summary>
-    /// Accept the first pending connection.
+    /// Custom WNDPROC for the server.
     /// </summary>
-    /// <returns>True if a connection was accepted, false otherwise.</returns>
-    bool AcceptPendingConnection();
+    LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+#endif // NO_EVENTS
+
     /// <summary>
-    /// Accept all pending connections.
+    /// Accept new connections and check all clients for pending data and close requests.
     /// </summary>
-    /// <returns>The number of connections accepted.</returns>
-    int AcceptAllPendingConnections();
+    void CheckNetwork();
     /// <summary>
-    /// Fetches pending data from the first client that has data to read.
-    /// If a client has closed the connection, the connection will be closed.
+    /// Find a client that has just connected.
     /// </summary>
-    /// <param name="ss">The stringstream to write the data to.</param>
-    /// <param name="client">The client to respond to.</param>
-    /// <returns>True if data was fetched, false otherwise.</returns>
-    bool FetchPendingData(std::stringstream& ss, Client& client);
+    /// <returns>A client that is new, or nullptr.</returns>
+    ClientPtr FindNewClient();
     /// <summary>
-    /// Sends data to a client.
+    /// Find a client that has pending data.
     /// </summary>
-    void Send(const Client& Client, const char* data, u_long size);
-    void Send(const Client& Client, const std::string& data) { Send(Client, data.c_str(), static_cast<u_long>(data.size())); }
+    /// <returns>A client that has pending data, or nullptr.</returns>
+    ClientPtr FindClientWithPendingData();
     /// <summary>
-    /// Kills all closed connections. Call this function after FetchPendingData.
+    /// Close all clients that are marked for closing.
     /// </summary>
-    /// <returns>The number of connections killed.</returns>
-    unsigned int KillClosedConnections();
-    /// <summary>
-    /// Get the number of connections.
-    /// </summary>
-    size_t ConnectionCount() const { return m_Connections.size(); }
+    /// <param name="lastCallback">A callback that will be called for each client that is closed.</param>
+    /// <returns>The number of connections that were closed.</returns>
+    int CleanClosedConnections(std::function<void(ClientPtr)> lastCallback = nullptr);
 
 private:
 
     WSADATA m_WsaData;
     SOCKET m_ListenSocket;
+#ifndef NO_EVENTS
     WSAEVENT m_AcceptEvent;
+#endif // !NO_EVENTS
 
     std::vector<Connection> m_Connections;
 };

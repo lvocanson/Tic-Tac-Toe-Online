@@ -80,14 +80,18 @@ namespace TcpIp
 
     void Send(const SOCKET& socket, const char* data, const u_long size)
     {
-        // Create header and add the data to it
-        char* header = CreateHeader(size);
         char* buffer = new char[HEADER_SIZE + size];
+
+        // Create header and copy it to buffer
+        char* header = CreateHeader(size);
         memcpy(buffer, header, HEADER_SIZE);
         delete[] header;
 
-        // Send header and data
+        // Copy data to buffer and send it
+        memcpy(buffer + HEADER_SIZE, data, size);
         int iResult = send(socket, buffer, HEADER_SIZE + static_cast<int>(size), 0);
+        delete[] buffer;
+
         if (iResult == SOCKET_ERROR)
             throw TcpIpException::Create(SEND_DataFailed, TCP_IP_WSA_ERROR);
     }
@@ -104,7 +108,7 @@ namespace TcpIp
             throw TcpIpException::Create(RECEIVE_HeaderFailed, TCP_IP_WSA_ERROR);
         }
 
-        if (iResult != HEADER_SIZE)
+        if (iResult != HEADER_SIZE) // Received less than expected
         {
             throw TcpIpException::Create(RECEIVE_HeaderHadInvalidSize, HEADER_SIZE - iResult);
         }
@@ -210,6 +214,9 @@ namespace TcpIp
             break;
         case SOCKET_AcceptFailed:
             oss << "accept failed with error: " << context;
+            break;
+        case SOCKET_NoDataAvailable:
+            oss << "no data available";
             break;
         case SOCKET_ShutdownFailed:
             oss << "shutdown failed with error: " << context;

@@ -1,169 +1,59 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Headers">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Source">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Resources">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <ClCompile Include="src\core\Components\ProgressBar.cpp" />
+    <ClCompile Include="src\core\Components\ButtonComponent.cpp" />
+    <ClCompile Include="src\core\Components\TextComponent.cpp" />
+    <ClCompile Include="src\core\Managers\InputHandler.cpp" />
+    <ClCompile Include="src\core\Managers\Resources\PlayerShapeRegistry.cpp" />
+    <ClCompile Include="src\core\UIState\GameStateUI.cpp" />
+    <ClCompile Include="src\core\Managers\Resources\FontRegistry.cpp" />
+    <ClCompile Include="src\core\GraphicBoard.cpp" />
+    <ClCompile Include="src\core\Managers\PlayerManager.cpp" />
+    <ClCompile Include="src\core\Player.cpp" />
+    <ClCompile Include="src\core\PlayerPieceShape.cpp" />
+    <ClCompile Include="src\ClientMain.cpp" />
+    <ClCompile Include="src\core\ClientApp.cpp" />
+    <ClCompile Include="src\core\StateMachine\AppStates\EndState.cpp" />
+    <ClCompile Include="src\core\StateMachine\AppStates\GameState.cpp" />
+    <ClCompile Include="src\core\StateMachine\AppStates\HistoryState.cpp" />
+    <ClCompile Include="src\core\StateMachine\AppStates\MenuState.cpp" />
+    <ClCompile Include="src\core\StateMachine\AppStates\SelectState.cpp" />
+    <ClCompile Include="src\core\StateMachine\StateMachine.cpp" />
+    <ClCompile Include="src\core\Managers\ScoreManager.cpp" />
+    <ClCompile Include="src\core\Window.cpp" />
+    <ClCompile Include="src\pch.cpp" />
+    <ClCompile Include="src\tcp-ip\TcpIpClient.cpp" />
+    <ClCompile Include="src\core\Managers\UIStateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\ClientMain.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\pch.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\ClientApp.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Window.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\tcp-ip\TcpIpClient.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\PlayerPieceShape.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\GraphicBoard.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\StateMachine\StateMachine.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\StateMachine\AppStates\EndState.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\StateMachine\AppStates\GameState.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\StateMachine\AppStates\HistoryState.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\StateMachine\AppStates\MenuState.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Managers\ScoreManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Managers\PlayerManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Managers\UIStateManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Managers\Resources\FontRegistry.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\UIState\GameStateUI.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Player.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Components\ButtonComponent.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Components\TextComponent.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Managers\InputHandler.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Managers\Resources\PlayerShapeRegistry.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Components\ProgressBar.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\pch.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\ClientApp.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Window.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tcp-ip\TcpIpClient.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\CoreDefinitions.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\PlayerPieceShape.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\GraphicBoard.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\StateMachine\StateMachine.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\StateMachine\State.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\StateMachine\AppStates\EndState.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\StateMachine\AppStates\GameState.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\StateMachine\AppStates\HistoryState.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\StateMachine\AppStates\MenuState.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Managers\ScoreManager.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Managers\PlayerManager.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Managers\IManager.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Managers\UIStateManager.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Managers\Resources\FontRegistry.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\UIState\GameStateUI.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Player.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Components\ButtonComponent.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Components\TextComponent.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Managers\InputHandler.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Components\BaseComponent.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Managers\Resources\PlayerShapeRegistry.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Components\ProgressBar.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
+    <ClInclude Include="src\core\Components\ProgressBar.h" />
+    <ClInclude Include="src\core\Components\BaseComponent.h" />
+    <ClInclude Include="src\core\Components\ButtonComponent.h" />
+    <ClInclude Include="src\core\Components\TextComponent.h" />
+    <ClInclude Include="src\core\Managers\InputHandler.h" />
+    <ClInclude Include="src\core\Managers\Resources\PlayerShapeRegistry.h" />
+    <ClInclude Include="src\core\UIState\GameStateUI.h" />
+    <ClInclude Include="src\core\Managers\Resources\FontRegistry.h" />
+    <ClInclude Include="src\core\GraphicBoard.h" />
+    <ClInclude Include="src\core\Managers\IManager.h" />
+    <ClInclude Include="src\core\Managers\PlayerManager.h" />
+    <ClInclude Include="src\core\Player.h" />
+    <ClInclude Include="src\core\PlayerPieceShape.h" />
+    <ClInclude Include="src\core\ClientApp.h" />
+    <ClInclude Include="src\core\CoreDefinitions.h" />
+    <ClInclude Include="src\core\StateMachine\AppStates\EndState.h" />
+    <ClInclude Include="src\core\StateMachine\AppStates\GameState.h" />
+    <ClInclude Include="src\core\StateMachine\AppStates\HistoryState.h" />
+    <ClInclude Include="src\core\StateMachine\AppStates\MenuState.h" />
+    <ClInclude Include="src\core\StateMachine\AppStates\SelectState.h" />
+    <ClInclude Include="src\core\StateMachine\State.h" />
+    <ClInclude Include="src\core\StateMachine\StateMachine.h" />
+    <ClInclude Include="src\core\Managers\ScoreManager.h" />
+    <ClInclude Include="src\core\Window.h" />
+    <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\core\Managers\UIStateManager.h" />
+    <ClInclude Include="src\tcp-ip\TcpIpClient.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\bold-font.ttf" />

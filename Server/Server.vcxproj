@@ -67,8 +67,6 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>TicTacToe.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)bin\out\$(Configuration)\TicTacToe\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -90,8 +88,6 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>TicTacToe.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)bin\out\$(Configuration)\TicTacToe\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -107,7 +103,13 @@
     <ClInclude Include="src\core\ConsoleHelper.h" />
     <ClInclude Include="src\core\ServerApp.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\tcp-ip\HtmlServer.h" />
     <ClInclude Include="src\tcp-ip\TcpIpServer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TicTacToe\TicTacToe.vcxproj">
+      <Project>{11c755ae-e4e1-44c4-b129-205f96ad3271}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -9,6 +9,7 @@
 #include <SFML/Graphics.hpp>
 #include <TcpIp.h>
 #include <json.hpp>
+using Json = nlohmann::json;
 
 #include "TicTacToe.h"
 #include "src/core/Managers/InputHandler.h"
