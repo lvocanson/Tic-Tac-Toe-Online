@@ -1,10 +1,11 @@
 #pragma once
-#include "StateMachine.h"
-#include "State.h"
+#include "src/core/StateMachine/StateMachine.h"
 #include "src/core/Window.h"
 #include "src/core/Components/ButtonComponent.h"
 #include "src/core/Components/InsertFieldComponent.h"
 #include "src/tcp-ip/TcpIpClient.h"
+
+class TcpIpClient;
 
 class ConnectionState : public State
 {
@@ -19,6 +20,8 @@ public:
 	~ConnectionState();
 
 	bool IsValidIpAddress(const char* ip);
+
+	void Send(const std::string& data);
 
 private:
 	Window* m_Window;

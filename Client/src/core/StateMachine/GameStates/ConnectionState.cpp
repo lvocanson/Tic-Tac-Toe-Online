@@ -1,5 +1,5 @@
 #include "ConnectionState.h"
-#include "src/core/Managers/FontRegistry.h"
+#include "src/core/Managers/Resources/FontRegistry.h"
 #include <regex>
 
 ConnectionState::ConnectionState(StateMachine* stateMachine, Window* window)
@@ -38,6 +38,7 @@ void ConnectionState::OnUpdate(float dt)
 {
     m_IpField->Update();
     m_BackButton->Update();
+    std::stringstream ss;
 
     if (InputHandler::IsKeyPressed(sf::Keyboard::Enter) && m_IpField != nullptr)
     {
@@ -61,9 +62,37 @@ void ConnectionState::OnUpdate(float dt)
         {
             DebugLog("Invalid IP address format!\n");
         }
-    }
-}
 
+        try
+        {
+            while (m_Client->FetchPendingData(ss))
+            {
+                std::string data = ss.str();
+                if (!data.empty() && data[0] == '{' && data[data.size() - 1] == '}')
+                {
+                    Json j = Json::parse(data);
+                    m_StateMachine->OnReceiveData(j);
+                }
+                else
+                {
+                    DebugLog("Data is not in json format!");
+                }
+                ss.str(std::string());
+            }
+        }
+        catch (const TcpIp::TcpIpException& e)
+        {
+			DebugLog("Failed to fetch data from server: " + std::string(e.what()) + "\n");
+		}
+
+    }
+    m_Client->Disconnect();
+}
+void ConnectionState::Send(const std::string& data)
+{
+    if (!data.empty())
+        m_Client->Send(data);
+}
 
 void ConnectionState::OnExit()
 {

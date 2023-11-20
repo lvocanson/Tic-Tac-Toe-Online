@@ -84,10 +84,10 @@
     <ClCompile Include="src\core\StateMachine\GameStates\SelectState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\StateMachine\ConnectionState.cpp">
+    <ClCompile Include="src\core\Components\InsertFieldComponent.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Components\InsertFieldComponent.cpp">
+    <ClCompile Include="src\core\StateMachine\GameStates\ConnectionState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -170,10 +170,10 @@
     <ClInclude Include="src\core\StateMachine\GameStates\SelectState.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\StateMachine\ConnectionState.h">
+    <ClInclude Include="src\core\Components\InsertFieldComponent.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Components\InsertFieldComponent.h">
+    <ClInclude Include="src\core\StateMachine\GameStates\ConnectionState.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
