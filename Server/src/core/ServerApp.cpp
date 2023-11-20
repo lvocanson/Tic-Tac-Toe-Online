@@ -124,10 +124,12 @@ void ServerApp::HandleRecv(ClientPtr sender)
     if (j["Type"] == "Login")
     {
         // TODO: Check for username, add {username, sende.GetName()} to m_Players (unordered_map)
+        m_Players.insert(std::make_pair(j["UserName"], sender->GetName()));
     }
     else if (j["Type"] == "LobbyList")
     {
-        // TODO: Parse m_Lobbies into JSON and send it to the client
+        CreateLobbies();
+        SerializeLobbiesToJson(sender);
     }
     else if (j["Type"] == "JoinLobby")
     {
@@ -209,3 +211,31 @@ size_t ServerApp::FindPlayer(const std::string& name)
     }
     return -1;
 }
+
+#pragma region Lobbying
+
+void ServerApp::CreateLobbies()
+{
+    for (int i = 0; i < 3; i++)
+    {
+        Lobby lb;
+        m_Lobbies.push_back(lb);
+    }
+}
+
+void ServerApp::SerializeLobbiesToJson(ClientPtr sender)
+{
+    Json lobbyListJson;
+    for (int i = 0; i < m_Lobbies.size(); i++)
+    {
+        Json lbJson;
+        lbJson["ID"] = m_Lobbies[i].ID;
+        lbJson["PlayerX"] = m_Lobbies[i].PlayerX.empty() ? "None" : m_Lobbies[i].PlayerX;
+        lbJson["PlayerO"] = m_Lobbies[i].PlayerO.empty() ? "None" : m_Lobbies[i].PlayerO;
+
+        lobbyListJson["Lobbies"].push_back(lbJson);
+    }
+    sender->Send(lobbyListJson.dump());
+}
+
+#pragma endregion
