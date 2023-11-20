@@ -31,7 +31,7 @@ public:
     bool GetFocus() const { return m_Focus; }
     std::string GetText() const { return m_TextStream.str(); }
     unsigned int GetCharacterLimit() const { return m_CharacterLimit; }
-    unsigned int GetTextSize() const { return m_TextStream.str().length(); }
+    size_t GetTextSize() const { return m_TextStream.str().length(); }
 
 private:
 
