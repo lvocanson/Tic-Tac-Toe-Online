@@ -54,6 +54,7 @@ private:
 
 	float m_PlayerTurnTime;
 	float m_MaxPlayerTurnTime;
+	bool m_IsTimerOn;
 
 	std::vector<sf::Drawable*> m_GamePieces;
 

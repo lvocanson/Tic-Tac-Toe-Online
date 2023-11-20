@@ -9,6 +9,7 @@ GameStateUI::GameStateUI(Window* window) : UIStateManager(window)
     m_Title = nullptr;
     m_PlayerTurnText = nullptr;
     m_GameStateText = nullptr;
+    m_ProgressBar = nullptr;
 }
 
 GameStateUI::~GameStateUI()
@@ -52,14 +53,6 @@ void GameStateUI::Init()
     m_GameStateText->setPosition(m_PlayerTurnText->getPosition().x, 100);
 
     RegisterText(m_GameStateText);
-
-    m_ProgressBar = new ProgressBar();
-    m_ProgressBar->SetPosition(sf::Vector2f(m_PlayerTurnText->getPosition().x, m_PlayerTurnText->getPosition().y + 60));
-    m_ProgressBar->SetSize(sf::Vector2f(200, 20));
-    m_ProgressBar->SetMaxValue(100);
-    m_ProgressBar->SetForegroundColor(playerData->Color);
-
-    m_Window->RegisterDrawable(m_ProgressBar);
 }
 
 void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
@@ -82,6 +75,14 @@ void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
 
 void GameStateUI::InitProgressBar(const float maxValue)
 {
+    m_ProgressBar = new ProgressBar();
+    m_ProgressBar->SetPosition(sf::Vector2f(m_PlayerTurnText->getPosition().x, m_PlayerTurnText->getPosition().y + 60));
+    m_ProgressBar->SetSize(sf::Vector2f(200, 20));
+    m_ProgressBar->SetMaxValue(100);
+    m_ProgressBar->SetForegroundColor(PlayerManager::GetCurrentPlayer()->GetColor());
+
+    m_Window->RegisterDrawable(m_ProgressBar);
+
     m_ProgressBar->SetMaxValue(maxValue);
     m_ProgressBar->SetValue(maxValue);
 }
@@ -90,7 +91,9 @@ void GameStateUI::UpdatePlayerTurnText(const PlayerData& data)
 {
     m_PlayerTurnText->setString(data.Name + " turn");
     m_PlayerTurnText->setFillColor(data.Color);
-    m_ProgressBar->SetForegroundColor(data.Color);
+
+    if (m_ProgressBar)
+        m_ProgressBar->SetForegroundColor(data.Color);
 }
 
 void GameStateUI::UpdateGameStateText(const std::string& text)

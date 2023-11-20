@@ -17,12 +17,7 @@ void ClientApp::Init()
     m_Window = new Window();
     m_Window->Create("Tic Tac Toe Online!", 1280, 720);
 
-    m_GameSettings = {
-        .PlayerMoveLimitTime = 3.0f,
-        .AlignmentGoal = 3,
-        .TotalRow = 3,
-        .TotalColumn = 3,
-    };
+    m_GameSettings.SetGameMode(GAMEMODE_FAST);
     
     m_Client = new TcpIpClient();
 

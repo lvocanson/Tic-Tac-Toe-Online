@@ -15,11 +15,12 @@ GameState::GameState(StateMachine* stateMachine, Window* m_Window)
     , m_Window(m_Window)
     , m_ReturnButton(nullptr)
     , m_GameStateUI(nullptr)
+    , m_IsTimerOn(false)
 {
     m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12), Square);
     m_PlayerManager.CreateNewPlayer("Player Two", sf::Color(255, 194, 0), Circle);
 
-    m_Board.Init(ClientApp::GetGameSettings().TotalColumn, ClientApp::GetGameSettings().TotalRow);
+    m_Board.Init(ClientApp::GetGameSettings().GetTotalColumn(), ClientApp::GetGameSettings().GetTotalRow());
     m_ScoreManager.Init();
     m_PlayerManager.Init();
 
@@ -36,13 +37,18 @@ GameState::~GameState()
 
 void GameState::OnEnter()
 {
-    m_MaxPlayerTurnTime = ClientApp::GetGameSettings().PlayerMoveLimitTime;
+    m_MaxPlayerTurnTime = ClientApp::GetGameSettings().GetPlayerMoveLimitTime();
+    m_IsTimerOn = ClientApp::GetGameSettings().IsTimerOn();
     m_PlayerTurnTime = m_MaxPlayerTurnTime;
 
     m_GameStateUI = new GameStateUI(m_Window);
     m_GameStateUI->Init();
     m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
-    m_GameStateUI->InitProgressBar(m_MaxPlayerTurnTime);
+
+    if (m_IsTimerOn) 
+    {
+        m_GameStateUI->InitProgressBar(m_MaxPlayerTurnTime);
+    }
 
     m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red, sf::Color::White);
     m_ReturnButton->SetButtonText("Return", sf::Color::White, 30, TextAlignment::Center);
@@ -61,8 +67,11 @@ void GameState::OnUpdate(float dt)
 
     CheckIfMouseHoverBoard();
 
-    UpdatePlayerTimer(dt);
-    CheckIfTimerIsUp();
+    if (m_IsTimerOn)
+    {
+        UpdatePlayerTimer(dt);
+        CheckIfTimerIsUp();
+    }
 }
 
 void GameState::UpdatePlayerTimer(float dt)
@@ -203,8 +212,11 @@ void GameState::SwitchPlayerTurn()
     m_PlayerManager.SwitchPlayerTurn();
     m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetCurrentPlayer()->GetData());
 
-    m_PlayerTurnTime = m_MaxPlayerTurnTime;
-    m_GameStateUI->UpdateProgressBar(m_PlayerTurnTime);
+    if (m_IsTimerOn)
+    {
+        m_PlayerTurnTime = m_MaxPlayerTurnTime;
+        m_GameStateUI->UpdateProgressBar(m_PlayerTurnTime);
+    }
 }
 
 void GameState::SendPlacedPieceToServer(unsigned int cell)
