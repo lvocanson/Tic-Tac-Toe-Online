@@ -98,9 +98,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Components\ButtonComponent.cpp" />
+    <ClCompile Include="src\core\Components\InsertFieldComponent.cpp" />
     <ClCompile Include="src\core\Components\TextComponent.cpp" />
     <ClCompile Include="src\core\Managers\InputHandler.cpp" />
     <ClCompile Include="src\core\Managers\Resources\PlayerShapeRegistry.cpp" />
+    <ClCompile Include="src\core\StateMachine\GameStates\ConnectionState.cpp" />
+    <ClCompile Include="src\core\StateMachine\GameStates\SelectState.cpp" />
     <ClCompile Include="src\core\StateMachine\GameStates\LobbyState.cpp" />
     <ClCompile Include="src\core\UIState\GameStateUI.cpp" />
     <ClCompile Include="src\core\Managers\Resources\FontRegistry.cpp" />
@@ -127,9 +130,12 @@
   <ItemGroup>
     <ClInclude Include="src\core\Components\BaseComponent.h" />
     <ClInclude Include="src\core\Components\ButtonComponent.h" />
+    <ClInclude Include="src\core\Components\InsertFieldComponent.h" />
     <ClInclude Include="src\core\Components\TextComponent.h" />
     <ClInclude Include="src\core\Managers\InputHandler.h" />
     <ClInclude Include="src\core\Managers\Resources\PlayerShapeRegistry.h" />
+    <ClInclude Include="src\core\StateMachine\GameStates\ConnectionState.h" />
+    <ClInclude Include="src\core\StateMachine\GameStates\SelectState.h" />
     <ClInclude Include="src\core\StateMachine\GameStates\LobbyState.h" />
     <ClInclude Include="src\core\UIState\GameStateUI.h" />
     <ClInclude Include="src\core\Managers\Resources\FontRegistry.h" />

@@ -84,6 +84,12 @@
     <ClCompile Include="src\core\StateMachine\GameStates\LobbyState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\Components\InsertFieldComponent.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\StateMachine\GameStates\ConnectionState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h">
@@ -162,6 +168,12 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\StateMachine\GameStates\LobbyState.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Components\InsertFieldComponent.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\StateMachine\GameStates\ConnectionState.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

@@ -18,10 +18,9 @@ MenuState::~MenuState()
 void MenuState::OnEnter()
 {
     m_PlayButton = new ButtonComponent(sf::Vector2f(100, 100), sf::Vector2f(200, 100), sf::Color::Blue, sf::Color::Red);
-    m_PlayButton->SetButtonText("Play", sf::Color::White, 30, TextAlignment::Center);
+    m_PlayButton->SetButtonText("Connection", sf::Color::White, 30, TextAlignment::Center);
     m_PlayButton->SetOnClickCallback([this]() {
-        
-        m_StateMachine->SwitchState("GameState");
+        m_StateMachine->SwitchState("ConnectionState");
         });
 
     m_HistoryButton = new ButtonComponent(sf::Vector2f(100, 300), sf::Vector2f(200, 100), sf::Color::Green, sf::Color::Red);
@@ -52,6 +51,7 @@ void MenuState::OnUpdate(float dt)
 void MenuState::OnExit()
 {
 	m_Window->UnregisterDrawable(m_PlayButton);
+
 	m_Window->UnregisterDrawable(m_HistoryButton);
 	m_Window->UnregisterDrawable(m_QuitButton);
 
