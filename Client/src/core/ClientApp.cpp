@@ -1,5 +1,6 @@
 #include "ClientApp.h"
 #include "Window.h"
+#include "src/core/StateMachine/AppStates/ConnectionState.h"
 #include "src/core/StateMachine/AppStates/EndState.h"
 #include "src/core/StateMachine/AppStates/GameState.h"
 #include "src/core/StateMachine/AppStates/HistoryState.h"
@@ -24,6 +25,7 @@ void ClientApp::Init()
     m_StateMachine = new StateMachine();
 
     m_StateMachine->AddState("MenuState", new MenuState(m_StateMachine, m_Window));
+    m_StateMachine->AddState("ConnectionState", new ConnectionState(m_StateMachine, m_Window));
     m_StateMachine->AddState("SelectState", new SelectState(m_StateMachine, m_Window));
     m_StateMachine->AddState("GameState", new GameState(m_StateMachine, m_Window));
     m_StateMachine->AddState("HistoryState", new HistoryState(m_StateMachine, m_Window));
@@ -39,17 +41,6 @@ void ClientApp::Run()
     if (!m_IsRunning)
         throw std::runtime_error("ClientApp is not initialized!");
 
-    try
-    {
-        m_Client->Connect("localhost", DEFAULT_PORT);
-        DebugLog("Connected to server!\n");
-    }
-    catch (const TcpIp::TcpIpException &e)
-    {
-        DebugLog("Failed to connect to server: " + std::string(e.what()) + "\n");
-        m_IsRunning = false;
-    }
-    
     std::stringstream ss;
     sf::Clock clock;
     Json j;
@@ -65,33 +56,31 @@ void ClientApp::Run()
         m_Window->Render();
         m_IsRunning = m_Window->IsOpen();
 
-        try
-        {
-            while (m_Client->FetchPendingData(ss))
-            {
-                std::string data = ss.str();
-                if (!data.empty() && data[0] == '{' && data[data.size() - 1] == '}')
-                {
-                    Json j = Json::parse(data);
-                    m_StateMachine->OnReceiveData(j);
-                }
-                else
-                {
-                    DebugLog("Data is not in json format!");
-                }
-                ss.str(std::string());
-            }
-        }
-        catch (const TcpIp::TcpIpException &e)
-        {
-            DebugLog("Failed to fetch data from server: " + std::string(e.what()) + "\n");
-            m_IsRunning = false;
-        }
 
-        if (!m_Client->IsConnected())
+        if (m_Client->IsConnected())
         {
-            DebugLog("Disconnected from server!\n");
-            m_IsRunning = false;
+            try
+            {
+                while (m_Client->FetchPendingData(ss))
+                {
+                    std::string data = ss.str();
+                    if (!data.empty() && data[0] == '{' && data[data.size() - 1] == '}')
+                    {
+                        Json j = Json::parse(data);
+                        m_StateMachine->OnReceiveData(j);
+                    }
+                    else
+                    {
+                        DebugLog("Data is not in json format!");
+                    }
+                    ss.str(std::string());
+                }
+            }
+            catch (const TcpIp::TcpIpException& e)
+            {
+                DebugLog("Failed to fetch data from server: " + std::string(e.what()) + "\n");
+                m_IsRunning = false;
+            }
         }
     }
 
@@ -110,12 +99,11 @@ void ClientApp::Update(sf::Time delta)
     m_StateMachine->Update(delta.asSeconds());
 }
 
-
 void ClientApp::Cleanup()
 {
     RELEASE(m_StateMachine);
 
-    for (auto &drawable : m_Window->GetDrawables())
+    for (auto& drawable : m_Window->GetDrawables())
     {
         RELEASE(drawable);
     }
@@ -125,4 +113,19 @@ void ClientApp::Cleanup()
 
     FontRegistry::ClearFonts();
     PlayerShapeRegistry::ClearPlayerShapes();
+}
+
+void ClientApp::Connection(const std::string& ip)
+{
+    try
+    {
+        m_Client->Connect(ip.c_str(), DEFAULT_PORT);
+        DebugLog("Connected to server!\n");
+        m_Client->Send("Hello from client!");
+        m_StateMachine->SwitchState("GameState");
+    }
+    catch (const TcpIp::TcpIpException& e)
+    {
+        DebugLog("Failed to connect to server: " + std::string(e.what()) + "\n");
+    }
 }

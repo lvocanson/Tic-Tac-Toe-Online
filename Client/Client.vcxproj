@@ -99,10 +99,12 @@
   <ItemGroup>
     <ClCompile Include="src\core\Components\ProgressBar.cpp" />
     <ClCompile Include="src\core\Components\ButtonComponent.cpp" />
+    <ClCompile Include="src\core\Components\InsertFieldComponent.cpp" />
     <ClCompile Include="src\core\Components\TextComponent.cpp" />
     <ClCompile Include="src\core\Managers\InputHandler.cpp" />
     <ClCompile Include="src\core\Managers\Resources\PlayerShapeRegistry.cpp" />
     <ClCompile Include="src\core\StateMachine\AppStates\SelectState.cpp" />
+    <ClCompile Include="src\core\StateMachine\AppStates\ConnectionState.cpp" />
     <ClCompile Include="src\core\UIState\GameStateUI.cpp" />
     <ClCompile Include="src\core\Managers\Resources\FontRegistry.cpp" />
     <ClCompile Include="src\core\GraphicBoard.cpp" />
@@ -129,9 +131,11 @@
     <ClInclude Include="src\core\Components\ProgressBar.h" />
     <ClInclude Include="src\core\Components\BaseComponent.h" />
     <ClInclude Include="src\core\Components\ButtonComponent.h" />
+    <ClInclude Include="src\core\Components\InsertFieldComponent.h" />
     <ClInclude Include="src\core\Components\TextComponent.h" />
     <ClInclude Include="src\core\Managers\InputHandler.h" />
     <ClInclude Include="src\core\Managers\Resources\PlayerShapeRegistry.h" />
+    <ClInclude Include="src\core\StateMachine\AppStates\ConnectionState.h" />
     <ClInclude Include="src\core\StateMachine\AppStates\SelectState.h" />
     <ClInclude Include="src\core\UIState\GameStateUI.h" />
     <ClInclude Include="src\core\Managers\Resources\FontRegistry.h" />

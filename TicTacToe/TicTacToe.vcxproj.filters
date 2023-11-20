@@ -41,6 +41,9 @@
     <ClCompile Include="IDGenerator.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="TcpIpExceptions.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
     <ClCompile Include="GameMode.cpp">
       <Filter>Source</Filter>
     </ClCompile>

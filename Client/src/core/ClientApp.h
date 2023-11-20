@@ -12,14 +12,14 @@ class ClientApp
 {
     // Private constructor for singleton
     ClientApp() = default;
-    ClientApp(const ClientApp &) = delete;
+    ClientApp(const ClientApp&) = delete;
     ~ClientApp() = default;
 
 public:
     /// <summary>
     /// Get the singleton instance of the ClientApp. The instance is created on the first call to this method.
     /// </summary>
-    static ClientApp &GetInstance()
+    static ClientApp& GetInstance()
     {
         static ClientApp instance;
         return instance;
@@ -41,18 +41,20 @@ public:
     void Send(const std::string& data);
     static GameSettings& GetGameSettings() { return GetInstance().m_GameSettings; }
 
+    void Connection(const std::string& ip);
+
 private: // Methods
     /// Update the ClientApp. Called once per frame.
     void Update(sf::Time delta);
 
     /// Perform any cleanup tasks (e.g. delete pointers). Called before Run() returns.
     void Cleanup();
-    
+
 private: // Fields
     bool m_IsRunning = false;
 
-    Window *m_Window = nullptr;
-    StateMachine *m_StateMachine;
+    Window* m_Window = nullptr;
+    StateMachine* m_StateMachine;
 
     GameSettings m_GameSettings;
     InputHandler m_InputHandler;
