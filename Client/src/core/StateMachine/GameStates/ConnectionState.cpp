@@ -1,6 +1,7 @@
 #include "ConnectionState.h"
 #include "src/core/Managers/Resources/FontRegistry.h"
 #include <regex>
+#include "src/core/ClientApp.h"
 
 ConnectionState::ConnectionState(StateMachine* stateMachine, Window* window)
     : State(stateMachine)
@@ -17,10 +18,9 @@ ConnectionState::~ConnectionState()
 void ConnectionState::OnEnter()
 {
 
-    m_Client = new TcpIpClient();
 
     sf::Font font = *FontRegistry::GetFont("bold-font");
-   
+
     sf::Color color(171, 171, 171);
     m_IpField = new InsertFieldComponent(sf::Vector2f(100, 300), sf::Vector2f(300, 50), color, sf::Color::White, 1.0f);
 
@@ -38,7 +38,6 @@ void ConnectionState::OnUpdate(float dt)
 {
     m_IpField->Update();
     m_BackButton->Update();
-    std::stringstream ss;
 
     if (InputHandler::IsKeyPressed(sf::Keyboard::Enter) && m_IpField != nullptr)
     {
@@ -46,53 +45,16 @@ void ConnectionState::OnUpdate(float dt)
 
         if (IsValidIpAddress(ip.c_str()))
         {
-            try
-            {
-                m_Client->Connect(ip.c_str(), DEFAULT_PORT);
-                DebugLog("Connected to server!\n");
-                m_Client->Send("Hello from client!");
-                m_StateMachine->SwitchState("GameState");
-            }
-            catch (const TcpIp::TcpIpException& e)
-            {
-                DebugLog("Failed to connect to server: " + std::string(e.what()) + "\n");
-            }
+            ClientApp::GetInstance().Connection(ip.c_str());
+			m_StateMachine->SwitchState("GameState");
         }
         else
         {
             DebugLog("Invalid IP address format!\n");
         }
-
-        try
-        {
-            while (m_Client->FetchPendingData(ss))
-            {
-                std::string data = ss.str();
-                if (!data.empty() && data[0] == '{' && data[data.size() - 1] == '}')
-                {
-                    Json j = Json::parse(data);
-                    m_StateMachine->OnReceiveData(j);
-                }
-                else
-                {
-                    DebugLog("Data is not in json format!");
-                }
-                ss.str(std::string());
-            }
-        }
-        catch (const TcpIp::TcpIpException& e)
-        {
-			DebugLog("Failed to fetch data from server: " + std::string(e.what()) + "\n");
-		}
-
     }
-    m_Client->Disconnect();
 }
-void ConnectionState::Send(const std::string& data)
-{
-    if (!data.empty())
-        m_Client->Send(data);
-}
+
 
 void ConnectionState::OnExit()
 {

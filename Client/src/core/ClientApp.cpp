@@ -5,7 +5,7 @@
 #include "src/core/StateMachine/GameStates/HistoryState.h"
 #include "src/core/StateMachine/GameStates/MenuState.h"
 #include "src/core/StateMachine/GameStates/SelectState.h"
-#include "src/core//StateMachine/GameStates/ConnectionState.h"
+#include "src/core/StateMachine/GameStates/ConnectionState.h"
 
 using namespace TicTacToe;
 
@@ -17,6 +17,7 @@ void ClientApp::Init()
     m_Window = new Window();
     m_Window->Create("Tic Tac Toe Online!", 1280, 720);
 
+    m_Client = new TcpIpClient();
 
     m_StateMachine = new StateMachine();
 
@@ -37,6 +38,7 @@ void ClientApp::Run()
     if (!m_IsRunning)
         throw std::runtime_error("ClientApp is not initialized!");
 
+    std::stringstream ss;
     sf::Clock clock;
     Json j;
 
@@ -51,12 +53,39 @@ void ClientApp::Run()
         m_Window->Render();
         m_IsRunning = m_Window->IsOpen();
 
+
+        if (m_Client->IsConnected())
+        {
+            try
+            {
+                while (m_Client->FetchPendingData(ss))
+                {
+                    std::string data = ss.str();
+                    if (!data.empty() && data[0] == '{' && data[data.size() - 1] == '}')
+                    {
+                        Json j = Json::parse(data);
+                        m_StateMachine->OnReceiveData(j);
+                    }
+                    else
+                    {
+                        DebugLog("Data is not in json format!");
+                    }
+                    ss.str(std::string());
+                }
+            }
+            catch (const TcpIp::TcpIpException& e)
+            {
+                DebugLog("Failed to fetch data from server: " + std::string(e.what()) + "\n");
+                m_IsRunning = false;
+            }
+        }
     }
 
+    m_Client->Disconnect();
     Cleanup();
 }
 
-void ClientApp::Send(const std::string &data)
+void ClientApp::Send(const std::string& data)
 {
     if (!data.empty())
         m_Client->Send(data);
@@ -71,7 +100,7 @@ void ClientApp::Cleanup()
 {
     RELEASE(m_StateMachine);
 
-    for (auto &drawable : m_Window->GetDrawables())
+    for (auto& drawable : m_Window->GetDrawables())
     {
         RELEASE(drawable);
     }
@@ -81,4 +110,19 @@ void ClientApp::Cleanup()
 
     FontRegistry::ClearFonts();
     PlayerShapeRegistry::ClearPlayerShapes();
+}
+
+void ClientApp::Connection(const std::string& ip)
+{
+    try
+    {
+        m_Client->Connect(ip.c_str(), DEFAULT_PORT);
+        DebugLog("Connected to server!\n");
+        m_Client->Send("Hello from client!");
+        m_StateMachine->SwitchState("GameState");
+    }
+    catch (const TcpIp::TcpIpException& e)
+    {
+        DebugLog("Failed to connect to server: " + std::string(e.what()) + "\n");
+    }
 }
