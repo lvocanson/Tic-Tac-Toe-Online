@@ -15,6 +15,7 @@
 #include <vector>
 #include <algorithm>
 #include <json.hpp>
+using Json = nlohmann::json;
 
 #pragma region Our defines
 

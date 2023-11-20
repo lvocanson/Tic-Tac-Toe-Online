@@ -9,7 +9,7 @@ int wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
     // Enable run-time memory check for debug builds.
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-
+    srand(timeGetTime());
     ClientApp& app = ClientApp::GetInstance();
     app.Init();
     app.Run();

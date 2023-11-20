@@ -11,6 +11,8 @@
 #include <json.hpp>
 using Json = nlohmann::json;
 
+#pragma comment(lib, "winmm.lib")
+
 #include "TicTacToe.h"
 #include "src/core/Managers/InputHandler.h"
 #include "core/CoreDefinitions.h"
