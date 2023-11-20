@@ -14,6 +14,7 @@ public:
         float outlineThickness, unsigned int characterLimit);
 
     ~InsertFieldComponent() override;
+    void BlinkCursor(float dt);
 
     void Update(float dt) override;
 
@@ -37,6 +38,7 @@ private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     bool IsMouseOver();
+    void ReplaceCursor();
     void AppendCharacter(const char& c);
 
 private:

@@ -3,7 +3,7 @@
 #include "src/core/Managers/Resources/FontRegistry.h"
 
 InsertFieldComponent::InsertFieldComponent()
-    : m_CharacterLimit(15)
+    : m_CharacterLimit(20)
     , m_Focus(false)
     , m_CursorTimer(0.0f)
 {
@@ -40,23 +40,8 @@ InsertFieldComponent::InsertFieldComponent(const sf::Vector2f& pos, const sf::Ve
 InsertFieldComponent::~InsertFieldComponent()
 = default;
 
-void InsertFieldComponent::Update(float dt)
+void InsertFieldComponent::BlinkCursor(float dt)
 {
-    if (IsMouseOver())
-    {
-        m_Rectangle.setOutlineThickness(2.0f);
-
-        if (InputHandler::IsMouseButtonPressed(sf::Mouse::Left))
-        {
-            m_Focus = true;
-        }
-    }
-    else
-    {
-        m_Rectangle.setOutlineThickness(0.0f);
-        m_Focus = false;
-    }
-
     if (m_CursorTimer > m_BlinkTime)
     {
         m_CursorTimer = 0.0f;
@@ -66,8 +51,34 @@ void InsertFieldComponent::Update(float dt)
     {
         m_CursorTimer += dt;
     }
+}
 
-    if (m_Focus && Window::IsFocused())
+void InsertFieldComponent::Update(float dt)
+{
+    if (IsMouseOver())
+    {
+        m_Rectangle.setOutlineThickness(2.0f);
+
+        if (InputHandler::IsMouseButtonPressed(sf::Mouse::Left))
+        {
+            m_Focus = true;
+            m_Cursor.SetVisible(true);
+        }
+    }
+    else
+    {
+        m_Rectangle.setOutlineThickness(0.0f);
+        m_Focus = false;
+        m_Cursor.SetVisible(false);
+        m_CursorTimer = 0.0f;
+    }
+
+
+    if (!m_Focus) return;
+
+    BlinkCursor(dt);
+
+    if (Window::IsFocused())
     {
         if (InputHandler::IsKeyPressed(sf::Keyboard::BackSpace) && GetTextSize() > 0)
         {
@@ -75,6 +86,7 @@ void InsertFieldComponent::Update(float dt)
             s.pop_back();
             m_TextStream.str(s);
             m_Text.SetText(m_TextStream.str());
+            ReplaceCursor();
         }
 
 
@@ -143,7 +155,7 @@ void InsertFieldComponent::AppendCharacter(const char& c)
 {
     m_TextStream << c;
     m_Text.SetText(m_TextStream.str());
-    m_Cursor.SetPosition(m_Text.GetPosition() + sf::Vector2f(GetTextSize() * m_Text.GetCharacterSize(), 0));
+    ReplaceCursor();
 }
 
 void InsertFieldComponent::SetPosition(const sf::Vector2f& position)
@@ -156,6 +168,11 @@ void InsertFieldComponent::SetPosition(const sf::Vector2f& position)
     const float yPos = position.y + m_Rectangle.getOutlineThickness();
 
     m_Text.SetPosition(sf::Vector2f(xPos, yPos));
-    m_Cursor.SetPosition(m_Text.GetPosition() + sf::Vector2f( GetTextSize() * m_Text.GetCharacterSize(), 0));
+    ReplaceCursor();
+}
+
+void InsertFieldComponent::ReplaceCursor()
+{
+    m_Cursor.SetPosition(m_Text.GetPosition() + sf::Vector2f(m_Text.GetSize().x + 3, m_Text.GetSize().y * 0.3f));
 }
 
