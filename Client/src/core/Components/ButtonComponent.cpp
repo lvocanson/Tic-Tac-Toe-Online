@@ -15,6 +15,7 @@ ButtonComponent::ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size
 
 ButtonComponent::~ButtonComponent()
 {
+    RELEASE(m_Text);
 }
 
 void ButtonComponent::Update()

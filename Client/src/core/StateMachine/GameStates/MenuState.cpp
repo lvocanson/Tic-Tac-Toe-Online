@@ -51,6 +51,7 @@ void MenuState::OnUpdate(float dt)
 void MenuState::OnExit()
 {
 	m_Window->UnregisterDrawable(m_PlayButton);
+
 	m_Window->UnregisterDrawable(m_HistoryButton);
 	m_Window->UnregisterDrawable(m_QuitButton);
 
