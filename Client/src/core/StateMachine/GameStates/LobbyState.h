@@ -3,13 +3,7 @@
 #include "src/core/Window.h"
 #include "src/core/Components/ButtonComponent.h"
 #include "src/core/Managers/PlayerManager.h"
-
-struct Lobby
-{
-	int ID;
-	int PlayerCount;
-	const int MaxPlayerCount = 2;
-};
+#include "src/core/UIState/GameStateUI.h"
 
 class LobbyState : public State
 {
@@ -23,20 +17,16 @@ public:
 	LobbyState& operator=(const LobbyState& other) = delete;
 	~LobbyState();
 
-private:
-	void CreateLobbies();
-	bool IsLobbyFull(Lobby& lb);
+	void JoinLobby();
+	void LeaveLobby();
 
 private:
-	int m_MaxLobbyNumber;
-	bool m_IsLobbyCreated;
+	
 
-	Lobby* m_CurrentLobby;
-
+private:
 	Window* m_Window;
 
 	ButtonComponent* m_ReturnButton;
-
-	std::vector<Lobby*> m_Lobbies;
-	std::vector<ButtonComponent*> m_LobbyButtons;
+	ButtonComponent* m_LobbyButton;
+	GameStateUI* m_GameStateUI;
 };

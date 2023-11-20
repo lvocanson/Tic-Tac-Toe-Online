@@ -20,6 +20,7 @@ void MenuState::OnEnter()
     m_PlayButton = new ButtonComponent(sf::Vector2f(100, 100), sf::Vector2f(200, 100), sf::Color::Blue, sf::Color::Red);
     m_PlayButton->SetButtonText("Play", sf::Color::White, 30, TextAlignment::Center);
     m_PlayButton->SetOnClickCallback([this]() {
+        
         m_StateMachine->SwitchState("LobbyState");
         });
 

@@ -177,7 +177,7 @@ void GameState::SendPlacedPieceToServer(unsigned int cell)
     int col = cell % (int)m_Board.GetWidth();
     std::string playerID = std::to_string(m_Board[cell]);
 
-    json j;
+    Json j;
     j["row"] = row;
     j["col"] = col;
     j["playerID"] = playerID;
