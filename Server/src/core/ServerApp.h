@@ -1,6 +1,7 @@
 #pragma once
 #include "src/tcp-ip/TcpIpServer.h"
 #include <src/tcp-ip/HtmlServer.h>
+#include "Lobby.h"
 
 class ServerApp
 {
@@ -28,4 +29,6 @@ private:
 
     TcpIpServer* m_GameServer = nullptr;
     HtmlServer* m_WebServer = nullptr;
+
+    Lobby m_Lobby;
 };

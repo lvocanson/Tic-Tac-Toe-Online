@@ -81,6 +81,7 @@ void ServerApp::HandleGameServer()
         while ((newClient = m_GameServer->FindNewClient()) != nullptr)
         {
             std::cout << STS_CLR << "New connection from " << HASH_CLR(newClient) << STS_CLR << " has been established." << std::endl << DEF_CLR;
+            m_Lobby.AddPlayerToLobby(newClient);
         }
 
         // For each client with pending data
@@ -107,8 +108,13 @@ void ServerApp::HandleRecv(ClientPtr sender)
     std::string data = sender->Receive();
     std::cout << HASH_CLR(sender) << DEF_CLR << " sent " << data.size() << " bytes of data." << std::endl << DEF_CLR;
     std::cout << HASH_CLR(sender) << DEF_CLR << " sent: " << data << std::endl << DEF_CLR;
-    // Echo back
-    sender->Send(data);
+    for (ClientPtr c : m_Lobby.PlayerConnections)
+    {
+        if (c != sender)
+        {
+            c->Send(data);
+        }
+    }
 }
 
 void ServerApp::CleanUpGameServer()

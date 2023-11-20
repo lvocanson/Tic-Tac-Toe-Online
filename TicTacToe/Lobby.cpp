@@ -15,3 +15,8 @@ void Lobby::Deserialize(Json j)
 
 }
 
+void Lobby::AddPlayerToLobby(ClientPtr playerConnection)
+{
+    PlayerConnections.emplace_back(playerConnection);
+}
+
