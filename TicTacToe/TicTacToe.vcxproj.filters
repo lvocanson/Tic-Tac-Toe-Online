@@ -47,5 +47,8 @@
     <ClCompile Include="Lobby.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="TcpIpExceptions.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
