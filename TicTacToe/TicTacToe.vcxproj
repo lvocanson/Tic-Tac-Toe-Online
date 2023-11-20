@@ -19,6 +19,7 @@
   <ItemGroup>
     <ClCompile Include="TcpIp.cpp" />
     <ClCompile Include="IDGenerator.cpp" />
+    <ClCompile Include="TcpIpExceptions.cpp" />
     <ClCompile Include="TicTacToe.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
