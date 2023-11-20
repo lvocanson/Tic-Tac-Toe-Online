@@ -7,6 +7,14 @@ class Window;
 class sf::Shape;
 class TcpIpClient;
 
+
+typedef struct PullServerThreadData
+{
+    TcpIpClient* Client;
+    StateMachine* StateMachine;
+    Shared<bool>* IsRunning;
+} PULLSERVERDATA, * PPULLSERVERDATA;
+
 class ClientApp
 {
     // Private constructor for singleton
@@ -35,7 +43,7 @@ public:
     /// <summary>
     /// Shutdown the ClientApp. This method will cause Run() to return.
     /// </summary>
-    void Shutdown() { m_IsRunning = false; }
+    void Shutdown() { m_IsRunning.WaitGet().operator->() = false; }
 
     void Send(const std::string& data);
 
@@ -47,11 +55,13 @@ private: // Methods
     void Cleanup();
     
 private: // Fields
-    bool m_IsRunning = false;
+
+    Shared<bool> m_IsRunning;
 
     Window *m_Window = nullptr;
     StateMachine *m_StateMachine;
-
+    HANDLE m_PullServerThread;
+    PPULLSERVERDATA m_PullServerData;
     InputHandler m_InputHandler;
 
     TcpIpClient* m_Client;
