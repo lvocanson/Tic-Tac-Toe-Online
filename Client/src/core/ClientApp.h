@@ -43,7 +43,7 @@ public:
     /// <summary>
     /// Shutdown the ClientApp. This method will cause Run() to return.
     /// </summary>
-    void Shutdown() { m_IsRunning.WaitGet().operator->() = false; }
+    void Shutdown() { m_IsRunning.WaitGet().Get() = false; }
 
     void Send(const std::string& data);
 
@@ -56,7 +56,7 @@ private: // Methods
 
 private: // Fields
 
-    Shared<bool> m_IsRunning;
+    Shared<bool> m_IsRunning = false;
 
     Window* m_Window = nullptr;
     StateMachine* m_StateMachine = nullptr;

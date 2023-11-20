@@ -14,6 +14,11 @@ public:
     {
         InitializeCriticalSection(m_CriticalSection);
     }
+    Shared(const T& resource)
+        : m_Resource(resource), m_CriticalSection(new CRITICAL_SECTION)
+    {
+        InitializeCriticalSection(m_CriticalSection);
+    }
     ~Shared() noexcept(false)
     {
         DeleteCriticalSection(m_CriticalSection);
@@ -62,6 +67,10 @@ public:
     bool IsValid() const
     {
         return m_Resource != nullptr;
+    }
+    T& Get()
+    {
+        return *m_Resource;
     }
     /// <summary>
     /// Get the resource.
