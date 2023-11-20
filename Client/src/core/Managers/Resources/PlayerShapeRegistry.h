@@ -12,6 +12,7 @@ class PlayerShapeRegistry
 public:
 
     static sf::Drawable* GetPlayerShape(TicTacToe::PieceID);
+    static void ClearPlayerShapes();
 
 private:
 

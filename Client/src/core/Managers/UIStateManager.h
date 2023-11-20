@@ -1,7 +1,7 @@
 #pragma once
 #include "IManager.h"
 #include <src/core/Window.h>
-#include "src/core/Managers/FontRegistry.h"
+#include "src/core/Managers/Resources/FontRegistry.h"
 
 
 class UIStateManager : public IManager

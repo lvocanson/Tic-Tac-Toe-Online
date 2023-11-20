@@ -80,14 +80,18 @@ namespace TcpIp
 
     void Send(const SOCKET& socket, const char* data, const u_long size)
     {
-        // Create header and add the data to it
-        char* header = CreateHeader(size);
         char* buffer = new char[HEADER_SIZE + size];
+
+        // Create header and copy it to buffer
+        char* header = CreateHeader(size);
         memcpy(buffer, header, HEADER_SIZE);
         delete[] header;
 
-        // Send header and data
+        // Copy data to buffer and send it
+        memcpy(buffer + HEADER_SIZE, data, size);
         int iResult = send(socket, buffer, HEADER_SIZE + static_cast<int>(size), 0);
+        delete[] buffer;
+
         if (iResult == SOCKET_ERROR)
             throw TcpIpException::Create(SEND_DataFailed, TCP_IP_WSA_ERROR);
     }
@@ -104,7 +108,7 @@ namespace TcpIp
             throw TcpIpException::Create(RECEIVE_HeaderFailed, TCP_IP_WSA_ERROR);
         }
 
-        if (iResult != HEADER_SIZE)
+        if (iResult != HEADER_SIZE) // Received less than expected
         {
             throw TcpIpException::Create(RECEIVE_HeaderHadInvalidSize, HEADER_SIZE - iResult);
         }
@@ -180,101 +184,5 @@ namespace TcpIp
         if (WSACloseEvent(event) == FALSE)
             throw TcpIpException::Create(ErrorCode::EVENT_CloseFailed, TCP_IP_WSA_ERROR);
         event = WSA_INVALID_EVENT;
-    }
-
-    std::string GetErrorMessage(ErrorCode code, int context)
-    {
-        std::ostringstream oss;
-        switch (code)
-        {
-        case WSA_StartupFailed:
-            oss << "WSAStartup failed with error: " << context;
-            break;
-        case WSA_CleanupFailed:
-            oss << "WSACleanup failed with error: " << context;
-            break;
-        case WSA_ResolveFailed:
-            oss << "getaddrinfo failed with error: " << context;
-            break;
-        case SOCKET_CreateFailed:
-            oss << "socket failed with error: " << context;
-            break;
-        case SOCKET_ConnectFailed:
-            oss << "connect failed with error: " << context;
-            break;
-        case SOCKET_BindFailed:
-            oss << "bind failed with error: " << context;
-            break;
-        case SOCKET_ListenFailed:
-            oss << "listen failed with error: " << context;
-            break;
-        case SOCKET_AcceptFailed:
-            oss << "accept failed with error: " << context;
-            break;
-        case SOCKET_ShutdownFailed:
-            oss << "shutdown failed with error: " << context;
-            break;
-        case SOCKET_CloseFailed:
-            oss << "closesocket failed with error: " << context;
-            break;
-        case EVENT_CreateFailed:
-            oss << "WSACreateEvent failed with error: " << context;
-            break;
-        case EVENT_SelectFailed:
-            oss << "WSAEventSelect failed with error: " << context;
-            break;
-        case EVENT_EnumFailed:
-            oss << "WSAEnumNetworkEvents failed with error: " << context;
-            break;
-        case EVENT_FdAcceptHadError:
-            oss << "FD_ACCEPT had error: " << context;
-            break;
-        case EVENT_FdReadHadError:
-            oss << "FD_READ had error: " << context;
-            break;
-        case EVENT_FdCloseHadError:
-            oss << "FD_CLOSE had error: " << context;
-            break;
-        case EVENT_CloseFailed:
-            oss << "WSACloseEvent failed with error: " << context;
-            break;
-        case SEND_HeaderFailed:
-            oss << "send (header) failed with error: " << context;
-            break;
-        case SEND_DataFailed:
-            oss << "send (data) failed with error: " << context;
-            break;
-        case RECEIVE_HeaderFailed:
-            oss << "recv (header) failed with error: " << context;
-            break;
-        case RECEIVE_HeaderHadInvalidSize:
-            oss << "recv (header) had invalid size. Difference (expected - actual): " << context;
-            break;
-        case RECEIVE_HeaderHadInvalidSignature:
-            oss << "recv (header) had invalid signature.";
-            break;
-        case RECEIVE_DataFailed:
-            oss << "recv (data) failed with error: " << context;
-            break;
-        case RECEIVE_DataHadInvalidSize:
-            oss << "recv (data) had invalid size. Difference (expected - actual): " << context;
-            break;
-        default:
-            oss << "Unknown error code: " << static_cast<unsigned int>(code);
-            break;
-        }
-        return oss.str();
-    }
-
-    TcpIpException TcpIpException::Create(ErrorCode code)
-    {
-        return TcpIpException(GetErrorMessage(code, 0).c_str(), code, 0);
-    }
-
-    TcpIpException TcpIpException::Create(ErrorCode code, int context)
-    {
-        if (context == 0)
-            context = WSAGetLastError();
-        return TcpIpException(GetErrorMessage(code, context).c_str(), code, context);
     }
 }

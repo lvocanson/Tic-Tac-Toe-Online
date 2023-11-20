@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "Managers/PlayerShapeRegistry.h"
+#include "Managers/Resources/PlayerShapeRegistry.h"
 
 struct PlayerData
 {
@@ -28,6 +28,5 @@ public:
 private:
 
 	PlayerData m_Data;
-
 
 };

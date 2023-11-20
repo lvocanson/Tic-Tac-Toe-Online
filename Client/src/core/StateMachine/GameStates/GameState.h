@@ -1,12 +1,11 @@
 #pragma once
-#include "StateMachine.h"
-#include "State.h"
+#include "src/core/StateMachine/StateMachine.h"
 #include "src/core/Components/ButtonComponent.h"
 #include "src/core/GraphicBoard.h"
 #include "src/core/Player.h"
+#include "src/core/UIState/GameStateUI.h"
 
 #include "src/core/Managers/PlayerManager.h"
-#include "src/core/Managers/GameStateUI.h"
 #include "src/core/Managers/ScoreManager.h"
 #include "src/core/Managers/UIStateManager.h"
 
@@ -18,6 +17,7 @@ public:
 	void OnEnter() override;
 	void OnUpdate(float dt) override;
 	void OnExit() override;
+	void OnReceiveData(const Json& serializeData) override;
 
 	GameState(StateMachine* stateMachine, Window* m_Window);
 	GameState(const GameState& other) = delete;
@@ -32,6 +32,8 @@ public:
 	void InstanciateNewPlayerShape(const Player* currentPlayer, const unsigned int cell);
 	void SwitchPlayerTurn();
 
+	void SendPlacedPieceToServer(unsigned int cell);
+
 	void ClearBoard();
 
 private:
@@ -42,8 +44,6 @@ private:
 
 	PlayerManager m_PlayerManager;
 	ScoreManager m_ScoreManager;
-
-	sf::Time m_PlayerTurnTimer = sf::seconds(0);
 
 	std::vector<sf::Drawable*> m_GamePieces;
 

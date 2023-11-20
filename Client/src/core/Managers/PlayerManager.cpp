@@ -1,5 +1,4 @@
 #include "PlayerManager.h"
-#include "PlayerShapeRegistry.h"
 
 Player* PlayerManager::m_CurrentPlayer = nullptr;
 

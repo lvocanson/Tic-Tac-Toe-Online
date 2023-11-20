@@ -31,6 +31,11 @@ void StateMachine::Start()
 	m_CurrentState->OnEnter();
 }
 
+void StateMachine::OnReceiveData(const Json& data)
+{
+	m_CurrentState->OnReceiveData(data);
+}
+
 void StateMachine::Update(float dt)
 {
 	if (m_NextState)

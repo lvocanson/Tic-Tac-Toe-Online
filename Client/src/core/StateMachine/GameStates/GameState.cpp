@@ -12,8 +12,10 @@ using json = nlohmann::json;
 
 
 GameState::GameState(StateMachine* stateMachine, Window* m_Window)
-	: State(stateMachine)
-	, m_Window(m_Window)
+    : State(stateMachine)
+    , m_Window(m_Window)
+    , m_GameStateUI(nullptr)
+    , m_ReturnButton(nullptr)
 {
     m_StateMachine = stateMachine;
     m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12), Square);
@@ -53,12 +55,6 @@ void GameState::OnEnter()
 
 void GameState::OnUpdate(float dt)
 {
-    if (m_PlayerTurnTimer > sf::Time::Zero)
-    {
-        m_PlayerTurnTimer -= sf::seconds(dt);
-        return;
-    }
-
     // TODO : REWORK THIS SHIT FUCKEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEER
     m_ReturnButton->Update();
 
@@ -133,16 +129,6 @@ void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
 {
     const Player* currentPlayer = PlayerManager::GetCurrentPlayer();
 
-    int row = cell / (int)m_Board.GetWidth();
-    int col = cell % (int)m_Board.GetWidth();
-    std::string playerID = std::to_string(m_Board[cell]);
-    json j;
-    j["row"] = row;
-    j["col"] = col;
-    j["playerID"] = playerID;
-
-    ClientApp::GetInstance().Send(j.dump());
-
     auto pos = sf::Vector2f(m_Board.GetGraphicPiece(cell).GetPosition());
     // Set piece id in board
     m_Board[cell] = currentPlayer->GetPlayerID();
@@ -150,6 +136,8 @@ void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
     InstanciateNewPlayerShape(currentPlayer, cell);
 
     m_ScoreManager.AddPlayerMove(currentPlayer->GetPlayerID(), cell);
+
+    SendPlacedPieceToServer(cell);
 }
 
 void GameState::InstanciateNewPlayerShape(const Player* currentPlayer, unsigned int cell)
@@ -180,15 +168,21 @@ void GameState::ClearBoard()
 void GameState::SwitchPlayerTurn()
 {
     m_PlayerManager.SwitchPlayerTurn();
-
-    m_PlayerTurnTimer = sf::seconds(PLAYER_TURN_DELAY);
     m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetCurrentPlayer()->GetData());
+}
 
-    // TODO : Change color based on player turn
-    /*if (m_PlayerManager.IsPlayerOneTurn())
-        m_PlayerTurnText->setFillColor(sf::Color::Color(250, 92, 12));
-    else
-        m_PlayerTurnText->setFillColor(sf::Color::Color(255, 194, 0));*/
+void GameState::SendPlacedPieceToServer(unsigned int cell)
+{
+    int row = cell / (int)m_Board.GetWidth();
+    int col = cell % (int)m_Board.GetWidth();
+    std::string playerID = std::to_string(m_Board[cell]);
+
+    json j;
+    j["row"] = row;
+    j["col"] = col;
+    j["playerID"] = playerID;
+
+    ClientApp::GetInstance().Send(j.dump());
 }
 
 bool GameState::IsMouseHoverPiece(unsigned int i)
@@ -210,4 +204,12 @@ void GameState::OnExit()
     RELEASE(m_GameStateUI);
 
     m_Window->ClearAllDrawables();
+}
+
+void GameState::OnReceiveData(const Json& serializeData)
+{
+    std::string playerID = serializeData["playerID"];
+    int row = serializeData["row"];
+    int col = serializeData["col"];
+    //Use player manager to to set player  
 }

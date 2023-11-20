@@ -41,5 +41,8 @@
     <ClInclude Include="src\core\ConsoleHelper.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\tcp-ip\HtmlServer.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

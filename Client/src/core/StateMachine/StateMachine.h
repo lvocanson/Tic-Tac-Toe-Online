@@ -17,7 +17,7 @@ public:
 
 	void Update(float dt);
 	void Start();
-
+	void OnReceiveData(const Json& serializeData);
 	/// <summary>
 	/// Switch the current state to the state with the name newState
 	/// </summary>

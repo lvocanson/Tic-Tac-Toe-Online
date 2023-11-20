@@ -1,5 +1,5 @@
 #include "TextComponent.h"
-#include "src/core/Managers/FontRegistry.h"
+#include "src/core/Managers/Resources/FontRegistry.h"
 
 TextComponent::TextComponent() 
     : m_Alignment(Center)
