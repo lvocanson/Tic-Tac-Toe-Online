@@ -88,6 +88,10 @@ public:
     /// Return all connections.
     /// </summary>
     const std::vector<Connection>& GetConnections() { return m_Connections; }
+    /// <summary>
+    /// Return a connection by its name.
+    /// </summary>
+    ClientPtr GetClientByName(const std::string& name);
 
 private:
 

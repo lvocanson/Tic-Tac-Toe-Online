@@ -1,4 +1,12 @@
 #include "Lobby.h"
+#include "IDGenerator.h"
+
+Lobby::Lobby()
+    : ID(IDGenerator::GenerateLobbyID())
+    , PlayerX()
+    , PlayerO()
+{
+}
 
 Json Lobby::Serialize()
 {
@@ -16,11 +24,10 @@ void Lobby::Deserialize(Json j)
     PlayerX = j["PlayerX"];
 }
 
-void Lobby::AddPlayerToLobby(ClientPtr player)
+void Lobby::AddPlayerToLobby(const std::string& name)
 {
     if (PlayerX.empty())
-        PlayerX = player->GetName();
+        PlayerX = name;
     else if (PlayerO.empty())
-        PlayerO = player->GetName();
+        PlayerO = name;
 }
-

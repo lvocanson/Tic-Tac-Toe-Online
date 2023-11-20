@@ -106,24 +106,41 @@ void ServerApp::HandleGameServer()
 void ServerApp::HandleRecv(ClientPtr sender)
 {
     std::string data = sender->Receive();
-    std::cout << HASH_CLR(sender) << DEF_CLR << " sent " << data.size() << " bytes of data." << std::endl << DEF_CLR;
-    std::cout << HASH_CLR(sender) << DEF_CLR << " sent: " << data << std::endl << DEF_CLR;
-    std::string other;
-    if (m_Lobby.PlayerO == sender->GetName())
+    Json j;
+    try
     {
-        other = m_Lobby.PlayerX;
+        j = Json::parse(data);
     }
-    else if (m_Lobby.PlayerX == sender->GetName())
+    catch (const std::exception& e)
     {
-        other = m_Lobby.PlayerO;
+        std::cout << ERR_CLR << "Failed to parse JSON from " << HASH_CLR(sender) << ERR_CLR << ": " << e.what() << std::endl << DEF_CLR;
+        return;
     }
-    if (!other.empty())
+    if (!j.contains("Type"))
     {
-        for (const Connection& c : m_GameServer->GetConnections())
-        {
-            if (c.GetName() == other)
-                c.Send(data);
-        }
+        std::cout << ERR_CLR << "Received JSON from " << HASH_CLR(sender) << ERR_CLR << " does not contain a type." << std::endl << DEF_CLR;
+        return;
+    }
+
+    if (j["Type"] == "Login")
+    {
+        // TODO: Check for username, add {username, sende.GetName()} to m_Players (unordered_map)
+    }
+    else if (j["Type"] == "LobbyList")
+    {
+        // TODO: Parse m_Lobbies into JSON and send it to the client
+    }
+    else if (j["Type"] == "JoinLobby")
+    {
+        // TODO: Check for lobby ID, add player to lobby
+    }
+    else if (j["Type"] == "Play")
+    {
+        // TODO: Check if player is in a lobby, check if it's their turn, check if the move is valid, send the move to the other player
+    }
+    else
+    {
+        std::cout << WRN_CLR << "Received JSON from " << HASH_CLR(sender) << WRN_CLR << " contains an unknown type." << std::endl << DEF_CLR;
     }
 }
 
@@ -184,3 +201,12 @@ void ServerApp::CleanUpWebServer()
 
 #pragma endregion
 
+size_t ServerApp::FindPlayer(const std::string& name)
+{
+    for (size_t i = 0; i < m_Lobbies.size(); ++i)
+    {
+        if (m_Lobbies[i].IsInLobby(name))
+            return i;
+    }
+    return -1;
+}

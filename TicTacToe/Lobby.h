@@ -1,22 +1,20 @@
 #pragma once
 #include <string>
-#include <vector>
 #include "ISerializable.h"
-#include "../Server/src/tcp-ip/TcpIpServer.h"
-#include "IDGenerator.h"
 
 struct Lobby : ISerializable
 {
     Json Serialize() override;
     void Deserialize(Json j) override;
 
-    Lobby() : ID(IDGenerator::GenerateLobbyID())
-        , PlayerX()
-        , PlayerO()
-    {}
-    ~Lobby(){}
+    Lobby();
+    ~Lobby() = default;
 
-    void AddPlayerToLobby(ClientPtr playerConnection);
+    void AddPlayerToLobby(const std::string& name);
+    bool IsInLobby(const std::string& name)
+    {
+        return PlayerX == name || PlayerO == name;
+    }
 
     int ID;
     std::string PlayerX, PlayerO;

@@ -331,3 +331,13 @@ int TcpIpServer::CleanClosedConnections(std::function<void(ClientPtr)> lastCallb
     m_Connections.erase(partition, m_Connections.end());
     return closedConnections;
 }
+
+ClientPtr TcpIpServer::GetClientByName(const std::string& name)
+{
+    for (Connection& connection : m_Connections)
+    {
+        if (connection.GetName() == name)
+            return &connection;
+    }
+    return nullptr;
+}

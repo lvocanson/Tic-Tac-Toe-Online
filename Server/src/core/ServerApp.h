@@ -15,20 +15,26 @@ public:
     void Run();
     void CleanUp();
 
-private:
-
+private: // Game Server
     bool InitGameServer();
     void HandleGameServer();
     void HandleRecv(ClientPtr sender);
     void CleanUpGameServer();
 
+    TcpIpServer* m_GameServer = nullptr;
+
+private: // Web Server
     bool InitWebServer();
     void HandleWebServer();
     void HandleWebConnection();
     void CleanUpWebServer();
 
-    TcpIpServer* m_GameServer = nullptr;
     HtmlServer* m_WebServer = nullptr;
 
-    Lobby m_Lobby;
+private: // Lobbies
+    size_t FindPlayer(const std::string& name);
+
+    // HashMap <Username, Address (connection name)>
+    std::unordered_map<std::string, std::string> m_Players;
+    std::vector<Lobby> m_Lobbies;
 };
