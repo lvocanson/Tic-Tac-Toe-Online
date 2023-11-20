@@ -5,7 +5,12 @@ using enum TcpIp::ErrorCode;
 #define WM_SOCKET (WM_USER + 1)
 #endif // NO_EVENTS
 
-std::string Connection::Receive()
+std::string Connection::GetName() const
+{
+    return Address + ":" + std::to_string(Port);
+}
+
+std::string Connection::Receive() const
 {
     if (!ReadPending)
         throw TcpIp::TcpIpException::Create(SOCKET_NoDataAvailable);
@@ -16,7 +21,7 @@ std::string Connection::Receive()
     return ss.str();
 }
 
-void Connection::Send(const std::string& data)
+void Connection::Send(const std::string& data) const
 {
     TcpIp::Send(Socket, data.c_str(), static_cast<u_long>(data.size()));
 }

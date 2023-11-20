@@ -38,7 +38,7 @@ void ClientApp::Run()
 
     try
     {
-        m_Client->Connect("localhost", DEFAULT_PORT);
+        m_Client->Connect("10.1.170.11", DEFAULT_PORT);
         DebugLog("Connected to server!\n");
     }
     catch (const TcpIp::TcpIpException &e)

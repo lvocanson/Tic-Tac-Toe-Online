@@ -7,7 +7,7 @@
 #define STS_CLR Color::LightMagenta // Status color
 #define INF_CLR Color::Gray // Information color
 #define DEF_CLR Color::White // Default color
-#define HASH_CLR(c) HshClr(c->Address + std::to_string(c->Port)) << c->Address << ':' << c->Port
+#define HASH_CLR(c) HshClr(c->GetName()) << c->GetName()
 #define WEB_PFX INF_CLR << '[' << STS_CLR << "WEB" << INF_CLR << ']' << DEF_CLR << ' '
 
 void ServerApp::Init()
@@ -108,11 +108,21 @@ void ServerApp::HandleRecv(ClientPtr sender)
     std::string data = sender->Receive();
     std::cout << HASH_CLR(sender) << DEF_CLR << " sent " << data.size() << " bytes of data." << std::endl << DEF_CLR;
     std::cout << HASH_CLR(sender) << DEF_CLR << " sent: " << data << std::endl << DEF_CLR;
-    for (ClientPtr c : m_Lobby.PlayerConnections)
+    std::string other;
+    if (m_Lobby.PlayerO == sender->GetName())
     {
-        if (c != sender)
+        other = m_Lobby.PlayerX;
+    }
+    else if (m_Lobby.PlayerX == sender->GetName())
+    {
+        other = m_Lobby.PlayerO;
+    }
+    if (!other.empty())
+    {
+        for (const Connection& c : m_GameServer->GetConnections())
         {
-            c->Send(data);
+            if (c.GetName() == other)
+                c.Send(data);
         }
     }
 }
