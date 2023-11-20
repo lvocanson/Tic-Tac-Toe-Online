@@ -83,6 +83,11 @@ public:
     /// <returns>The number of connections that were closed.</returns>
     int CleanClosedConnections(std::function<void(ClientPtr)> lastCallback = nullptr);
 
+    /// <summary>
+    /// Return all connections.
+    /// </summary>
+    const std::vector<Connection>& GetConnections() { return m_Connections; }
+
 private:
 
     WSADATA m_WsaData;
