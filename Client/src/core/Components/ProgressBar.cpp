@@ -15,12 +15,6 @@ ProgressBar::ProgressBar()
     m_Foreground.setPosition(m_Background.getPosition());
     m_Foreground.setFillColor(sf::Color::White);
 
-    /*
-    m_Text.SetCharacterSize(20);
-    m_Text.SetColor(sf::Color::White);
-    m_Text.SetPosition(m_Background.getPosition() + sf::Vector2f(0, 100));
-    m_Text.SetText("0/0");
-    */
 }
 
 ProgressBar::ProgressBar(const sf::Vector2f& position, const sf::Vector2f& size, const sf::Color& backgroundColor, const sf::Color& foregroundColor, const sf::Font& font, float maxValue)
@@ -34,12 +28,6 @@ ProgressBar::ProgressBar(const sf::Vector2f& position, const sf::Vector2f& size,
     m_Foreground.setSize(size);
     m_Foreground.setPosition(position);
     m_Foreground.setFillColor(foregroundColor);
-    /*
-    m_Text.SetCharacterSize(20);
-    m_Text.SetColor(sf::Color::White);
-    m_Text.SetPosition(position);
-    m_Text.SetText("0/0");
-    */
 }
 
 ProgressBar::~ProgressBar()
@@ -49,14 +37,12 @@ void ProgressBar::SetSize(const sf::Vector2f& size)
 {
     m_Background.setSize(size);
     m_Foreground.setSize(size);
-    //m_Text.SetPosition(sf::Vector2f(m_Background.getPosition().x + m_Background.getSize().x / 2.0f, m_Background.getPosition().y + m_Background.getSize().y / 2.0f));
 }
 
 void ProgressBar::SetPosition(const sf::Vector2f& position)
 {
     m_Background.setPosition(position);
     m_Foreground.setPosition(position);
-    //m_Text.SetPosition(position + sf::Vector2f(0, 500));
 }
 
 sf::Vector2f ProgressBar::GetPosition() const
@@ -81,12 +67,10 @@ void ProgressBar::SetValue(float currentValue)
 
     m_CurrentValue = currentValue;
     m_Foreground.setSize(sf::Vector2f(m_Background.getSize().x * (m_CurrentValue / m_MaxValue), m_Background.getSize().y));
-   // m_Text.SetText(std::to_string(static_cast<int>(m_CurrentValue)) + "/" + std::to_string(static_cast<int>(m_MaxValue)));
 }
 
 void ProgressBar::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(m_Background, states);
     target.draw(m_Foreground, states);
-    //target.draw(m_Text, states);
 }

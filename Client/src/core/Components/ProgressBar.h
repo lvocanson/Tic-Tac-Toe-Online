@@ -34,7 +34,6 @@ private:
 
     sf::RectangleShape m_Background;
     sf::RectangleShape m_Foreground;
-    //TextComponent m_Text;
 
     float m_MaxValue;
     float m_CurrentValue;
