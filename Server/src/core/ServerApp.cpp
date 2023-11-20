@@ -69,6 +69,22 @@ bool ServerApp::InitGameServer()
     }
 }
 
+void ServerApp::HandleJson(ClientPtr sender, const std::string& jsonstring)
+{
+    //Check if the string is a json format
+    if (!jsonstring.empty() && jsonstring[0] == '{' && jsonstring[jsonstring.size() - 1] == '}')
+    {
+        std::cout << HASH_CLR(sender) << DEF_CLR << " sent: " << jsonstring << std::endl << DEF_CLR;
+        Json j = Json::parse(jsonstring);
+        //Handle lobby creation
+    }
+    else
+    {
+        std::cout << HASH_CLR(sender) << ERR_CLR << " sent invalid data " << std::endl << DEF_CLR;
+    }
+
+}
+
 void ServerApp::HandleGameServer()
 {
     try
@@ -106,7 +122,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
 {
     std::string data = sender->Receive();
     std::cout << HASH_CLR(sender) << DEF_CLR << " sent " << data.size() << " bytes of data." << std::endl << DEF_CLR;
-
+    std::cout << HASH_CLR(sender) << DEF_CLR << " sent: " << data << std::endl << DEF_CLR;
     // Echo back
     sender->Send(data);
 }

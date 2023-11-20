@@ -17,6 +17,7 @@ public:
 private:
 
     bool InitGameServer();
+    void HandleJson(ClientPtr sender, const std::string& jsonstring);
     void HandleGameServer();
     void HandleRecv(ClientPtr sender);
     void CleanUpGameServer();
