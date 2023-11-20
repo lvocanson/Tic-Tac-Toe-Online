@@ -11,6 +11,7 @@
 #include <json.hpp>
 using Json = nlohmann::json;
 
+#include "Shared.h"
 #include "TicTacToe.h"
 #include "src/core/Managers/InputHandler.h"
 #include "core/CoreDefinitions.h"
