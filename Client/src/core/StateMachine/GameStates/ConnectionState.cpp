@@ -37,10 +37,19 @@ void ConnectionState::OnUpdate(float dt)
 	m_IpField->Update();
 	m_BackButton->Update();
 
-	if (InputHandler::IsKeyPressed(sf::Keyboard::Enter) && m_IpField != nullptr && IsValidIpAddress)
+	if (InputHandler::IsKeyPressed(sf::Keyboard::Enter) && m_IpField != nullptr)
 	{
-		ClientApp::GetInstance().Connection(m_IpField->GetText());
-		m_StateMachine->SwitchState("GameState");
+		std::string ip = m_IpField->GetText();
+
+		if (IsValidIpAddress(ip.c_str()))
+		{
+			ClientApp::GetInstance().Connection(m_IpField->GetText());
+			m_StateMachine->SwitchState("GameState");
+		}
+		else
+		{
+			DebugLog("Invalid IP address format!\n");
+		}
 	}
 }
 
