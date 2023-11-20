@@ -11,12 +11,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ISerializable.h" />
     <ClInclude Include="json.hpp" />
+    <ClInclude Include="Lobby.h" />
     <ClInclude Include="TcpIp.h" />
     <ClInclude Include="IDGenerator.h" />
     <ClInclude Include="TicTacToe.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Lobby.cpp" />
     <ClCompile Include="TcpIp.cpp" />
     <ClCompile Include="IDGenerator.cpp" />
     <ClCompile Include="TicTacToe.cpp" />
