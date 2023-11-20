@@ -10,13 +10,14 @@ class Shared final
 {
 public:
     Shared()
-        : m_Resource(), m_CriticalSection()
+        : m_Resource(), m_CriticalSection(new CRITICAL_SECTION)
     {
         InitializeCriticalSection(m_CriticalSection);
     }
     ~Shared() noexcept(false)
     {
         DeleteCriticalSection(m_CriticalSection);
+        delete m_CriticalSection;
     }
     /// <summary>
     /// Try to get the resource.

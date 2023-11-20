@@ -19,14 +19,14 @@ class ClientApp
 {
     // Private constructor for singleton
     ClientApp() = default;
-    ClientApp(const ClientApp &) = delete;
+    ClientApp(const ClientApp&) = delete;
     ~ClientApp() = default;
 
 public:
     /// <summary>
     /// Get the singleton instance of the ClientApp. The instance is created on the first call to this method.
     /// </summary>
-    static ClientApp &GetInstance()
+    static ClientApp& GetInstance()
     {
         static ClientApp instance;
         return instance;
@@ -53,16 +53,16 @@ private: // Methods
 
     /// Perform any cleanup tasks (e.g. delete pointers). Called before Run() returns.
     void Cleanup();
-    
+
 private: // Fields
 
     Shared<bool> m_IsRunning;
 
-    Window *m_Window = nullptr;
-    StateMachine *m_StateMachine;
-    HANDLE m_PullServerThread;
-    PPULLSERVERDATA m_PullServerData;
+    Window* m_Window = nullptr;
+    StateMachine* m_StateMachine = nullptr;
+    HANDLE m_PullServerThread = nullptr;
+    PPULLSERVERDATA m_PullServerData = nullptr;
     InputHandler m_InputHandler;
 
-    TcpIpClient* m_Client;
+    TcpIpClient* m_Client = nullptr;
 };
