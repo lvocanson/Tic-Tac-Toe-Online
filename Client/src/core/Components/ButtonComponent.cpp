@@ -18,7 +18,7 @@ ButtonComponent::~ButtonComponent()
     RELEASE(m_Text);
 }
 
-void ButtonComponent::Update()
+void ButtonComponent::Update(float dt)
 {
     if (IsMouseOver())
     {

@@ -12,7 +12,7 @@ public:
 
     ~ButtonComponent() override;
 
-    void Update() override;
+    void Update(float dt) override;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     void SetPosition(const sf::Vector2f& position) override;

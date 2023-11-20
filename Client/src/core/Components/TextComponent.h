@@ -14,7 +14,8 @@ public:
     TextComponent();
     TextComponent(const std::string& text, BaseComponent* parentComponent, const sf::Color& color, unsigned int size, TextAlignment alignment);
 
-    void Update() override;
+    void Update(float dt) override;
+
     void SetPosition(const sf::Vector2f& position) override;
     void SetTextAlignment(TextAlignment alignment);
     void SetPositionCentered(const sf::Vector2f& position);
@@ -24,6 +25,7 @@ public:
 
     sf::Vector2f GetPosition() const override;
     sf::Vector2f GetSize() const override { return sf::Vector2f(m_Text.getLocalBounds().width, m_Text.getLocalBounds().height); }
+    unsigned int GetCharacterSize() const { return m_Text.getCharacterSize(); }
 
 
 private:

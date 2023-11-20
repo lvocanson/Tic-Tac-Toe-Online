@@ -25,7 +25,7 @@ TextComponent::TextComponent(const std::string& text, BaseComponent* parentCompo
     SetPosition(m_ParentComponent->GetPosition());
 }
 
-void TextComponent::Update()
+void TextComponent::Update(float dt)
 {
 }
 
