@@ -1,5 +1,5 @@
 #pragma once
-#include "TicTacToe.h"
+#include <game/TicTacToe.h>
 
 class Player;
 

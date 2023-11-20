@@ -1,5 +1,4 @@
 #include "GameState.h"
-#include "TicTacToe.h"
 
 #include "src/core/Window.h"
 #include "src/core/PlayerPieceShape.h"

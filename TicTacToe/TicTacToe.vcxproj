@@ -11,17 +11,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="json.hpp" />
-    <ClInclude Include="Shared.h" />
-    <ClInclude Include="TcpIp.h" />
-    <ClInclude Include="IDGenerator.h" />
-    <ClInclude Include="TicTacToe.h" />
+    <ClInclude Include="tcp-ip\json.hpp" />
+    <ClInclude Include="threading\Shared.h" />
+    <ClInclude Include="tcp-ip\TcpIp.h" />
+    <ClInclude Include="game\IDGenerator.h" />
+    <ClInclude Include="game\TicTacToe.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TcpIp.cpp" />
-    <ClCompile Include="IDGenerator.cpp" />
-    <ClCompile Include="TcpIpExceptions.cpp" />
-    <ClCompile Include="TicTacToe.cpp" />
+    <ClCompile Include="tcp-ip\TcpIp.cpp" />
+    <ClCompile Include="game\IDGenerator.cpp" />
+    <ClCompile Include="tcp-ip\TcpIpExceptions.cpp" />
+    <ClCompile Include="game\TicTacToe.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

@@ -15,33 +15,33 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TicTacToe.h">
+    <ClInclude Include="game\TicTacToe.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="TcpIp.h">
+    <ClInclude Include="tcp-ip\TcpIp.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="IDGenerator.h">
+    <ClInclude Include="game\IDGenerator.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="json.hpp">
+    <ClInclude Include="tcp-ip\json.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Shared.h">
+    <ClInclude Include="threading\Shared.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TicTacToe.cpp">
+    <ClCompile Include="game\TicTacToe.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TcpIp.cpp">
+    <ClCompile Include="tcp-ip\TcpIp.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="IDGenerator.cpp">
+    <ClCompile Include="game\IDGenerator.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TcpIpExceptions.cpp">
+    <ClCompile Include="tcp-ip\TcpIpExceptions.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

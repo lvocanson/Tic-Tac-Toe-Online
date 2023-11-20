@@ -7,18 +7,12 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include <TcpIp.h>
-#include <json.hpp>
+#include <tcp-ip/TcpIp.h>
+#include <tcp-ip/json.hpp>
 using Json = nlohmann::json;
 
-#include "Shared.h"
-#include "TicTacToe.h"
+#include <threading/Shared.h>
+#include <game/TicTacToe.h>
 #include "src/core/Managers/InputHandler.h"
 #include "core/CoreDefinitions.h"
 #include <cassert>
-
-#pragma region SFML
-
-#include <SFML/Graphics.hpp>
-
-#pragma endregion
