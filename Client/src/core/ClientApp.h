@@ -40,6 +40,7 @@ public:
     void Send(const std::string& data);
 
     void Connection(const std::string& ip);
+    void SetPlayerName(const std::string& name) { m_PlayerName = name; }
 
 private: // Methods
     /// Update the ClientApp. Called once per frame.
@@ -55,6 +56,6 @@ private: // Fields
     StateMachine* m_StateMachine;
 
     InputHandler m_InputHandler;
-
+    std::string m_PlayerName;
     TcpIpClient* m_Client;
 };

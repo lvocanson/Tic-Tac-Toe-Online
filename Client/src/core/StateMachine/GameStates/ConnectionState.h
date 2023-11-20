@@ -25,5 +25,9 @@ private:
 	Window* m_Window;
 
 	ButtonComponent* m_BackButton;
+	ButtonComponent* m_ConnectButton;
+
 	InsertFieldComponent* m_IpField;
+	InsertFieldComponent* m_NameField;
+
 };

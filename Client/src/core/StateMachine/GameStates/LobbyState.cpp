@@ -42,8 +42,8 @@ void LobbyState::OnEnter()
 
 void LobbyState::OnUpdate(float dt)
 {
-    m_LobbyButton->Update();
-    m_ReturnButton->Update(); 
+    m_LobbyButton->Update(dt);
+    m_ReturnButton->Update(dt);
 }
 
 void LobbyState::OnExit()

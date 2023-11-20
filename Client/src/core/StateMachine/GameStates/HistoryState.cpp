@@ -43,9 +43,9 @@ void HistoryState::OnEnter()
 
 void HistoryState::OnUpdate(float dt)
 {
-	m_RArrowButton->Update();
-	m_LArrowButton->Update();
-	m_BackToMenu->Update();
+	m_RArrowButton->Update(dt);
+	m_LArrowButton->Update(dt);
+	m_BackToMenu->Update(dt);
 }
 
 void HistoryState::OnExit()

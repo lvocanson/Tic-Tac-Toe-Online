@@ -55,8 +55,7 @@ void GameState::OnEnter()
 
 void GameState::OnUpdate(float dt)
 {
-    // TODO : REWORK THIS SHIT FUCKEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEER
-    m_ReturnButton->Update();
+    m_ReturnButton->Update(dt);
 
     CheckIfMouseHoverBoard();
 }

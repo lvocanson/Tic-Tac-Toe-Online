@@ -43,9 +43,9 @@ void MenuState::OnEnter()
 
 void MenuState::OnUpdate(float dt)
 {
-	m_PlayButton->Update();
-	m_HistoryButton->Update();
-	m_QuitButton->Update();
+	m_PlayButton->Update(dt);
+	m_HistoryButton->Update(dt);
+	m_QuitButton->Update(dt);
 }
 
 void MenuState::OnExit()
