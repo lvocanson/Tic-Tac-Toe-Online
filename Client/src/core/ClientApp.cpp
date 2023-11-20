@@ -4,7 +4,7 @@
 #include "src/core/StateMachine/GameStates/GameState.h"
 #include "src/core/StateMachine/GameStates/HistoryState.h"
 #include "src/core/StateMachine/GameStates/MenuState.h"
-#include "src/core/StateMachine/SelectState.h"
+#include "src/core/StateMachine/GameStates/SelectState.h"
 
 using namespace TicTacToe;
 

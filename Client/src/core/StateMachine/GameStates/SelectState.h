@@ -1,6 +1,5 @@
 #pragma once
-#include "StateMachine.h"
-#include "State.h"
+#include "src/core/StateMachine/StateMachine.h"
 #include "src/core/Window.h"
 #include "src/core/Components/ButtonComponent.h"
 
