@@ -30,7 +30,7 @@ public:
 
     bool GetFocus() const { return m_Focus; }
 
-    const std::string& GetText() { return m_TextStream.str(); }
+    const std::string GetText() { return m_TextStream.str(); }
 
 private:
     sf::RectangleShape m_Rectangle;

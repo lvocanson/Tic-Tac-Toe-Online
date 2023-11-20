@@ -18,6 +18,8 @@ public:
 	ConnectionState& operator=(const ConnectionState& other) = delete;
 	~ConnectionState();
 
+	bool IsValidIpAddress(const char* ip);
+
 private:
 	Window* m_Window;
 

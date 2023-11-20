@@ -1,5 +1,6 @@
 #include "ConnectionState.h"
 #include "src/core/Managers/FontRegistry.h"
+#include <regex>
 
 ConnectionState::ConnectionState(StateMachine* stateMachine, Window* window)
     : State(stateMachine)
@@ -38,22 +39,31 @@ void ConnectionState::OnUpdate(float dt)
     m_IpField->Update();
     m_BackButton->Update();
 
-    if (InputHandler::IsKeyPressed(sf::Keyboard::Enter) && m_IpField != NULL)
+    if (InputHandler::IsKeyPressed(sf::Keyboard::Enter) && m_IpField != nullptr)
     {
-		//std::string ip = m_IpField->GetText();
-        try
+        std::string ip = m_IpField->GetText();
+
+        if (IsValidIpAddress(ip.c_str()))
         {
-            m_Client->Connect("localhost", DEFAULT_PORT);
-			DebugLog("Connected to server!\n");
-			m_Client->Send("Hello from client!");
-			m_StateMachine->SwitchState("GameState");
-		}
-        catch (const TcpIp::TcpIpException& e)
+            try
+            {
+                m_Client->Connect(ip.c_str(), DEFAULT_PORT);
+                DebugLog("Connected to server!\n");
+                m_Client->Send("Hello from client!");
+                m_StateMachine->SwitchState("GameState");
+            }
+            catch (const TcpIp::TcpIpException& e)
+            {
+                DebugLog("Failed to connect to server: " + std::string(e.what()) + "\n");
+            }
+        }
+        else
         {
-			DebugLog("Failed to connect to server: " + std::string(e.what()) + "\n");
-		}
-	}
+            DebugLog("Invalid IP address format!\n");
+        }
+    }
 }
+
 
 void ConnectionState::OnExit()
 {
@@ -62,4 +72,10 @@ void ConnectionState::OnExit()
 
     RELEASE(m_IpField);
     RELEASE(m_BackButton);
+}
+
+bool ConnectionState::IsValidIpAddress(const char* ip)
+{
+    const std::regex ipRegex("^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$");
+    return std::regex_match(ip, ipRegex);
 }
