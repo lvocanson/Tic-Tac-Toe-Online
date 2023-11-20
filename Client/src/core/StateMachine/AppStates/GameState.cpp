@@ -139,17 +139,6 @@ void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
 {
     const Player* currentPlayer = PlayerManager::GetCurrentPlayer();
 
-    int row = cell / (int)m_Board.GetWidth();
-    int col = cell % (int)m_Board.GetWidth();
-    std::string playerID = std::to_string(m_Board[cell]);
-    json j;
-    j["row"] = row;
-    j["col"] = col;
-    j["playerID"] = playerID;
-
-    ClientApp::GetInstance().Send(j.dump());
-
-    auto pos = sf::Vector2f(m_Board.GetGraphicPiece(cell).GetPosition());
     // Set piece id in board
     m_Board[cell] = currentPlayer->GetPlayerID();
 
