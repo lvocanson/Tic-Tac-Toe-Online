@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="json.hpp" />
+    <ClInclude Include="Shared.h" />
     <ClInclude Include="TcpIp.h" />
     <ClInclude Include="IDGenerator.h" />
     <ClInclude Include="TicTacToe.h" />
