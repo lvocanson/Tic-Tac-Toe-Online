@@ -33,7 +33,7 @@ void LobbyState::OnEnter()
             {
                 TryToJoinLobby(i);
             });
-        //CreateLeaveLobbyButton(sf::Vector2f(300, (i * 110)), i);
+        CreateLeaveLobbyButton(sf::Vector2f(300, (i * 110)), i);
         m_LobbyButtons.push_back(m_LobbyButton);
         m_Window->RegisterDrawable(m_LobbyButton);
     }
@@ -55,6 +55,12 @@ void LobbyState::OnUpdate(float dt)
     {
         lbButton->Update(dt);
     }
+
+    for (const auto& lvButton : m_LeaveButtons)
+    {
+        lvButton->Update(dt);
+    }
+
     m_ReturnButton->Update(dt);
 }
 
@@ -66,12 +72,22 @@ void LobbyState::OnExit()
         RELEASE(lbButton);
     }
 
+    for (auto& lvButton : m_LeaveButtons)
+    {
+        m_Window->UnregisterDrawable(lvButton);
+        RELEASE(lvButton);
+    }
+
     m_Window->UnregisterDrawable(m_ReturnButton);
     RELEASE(m_ReturnButton);
 }
 
 void LobbyState::OnReceiveData(const Json& serializeData)
 {
+    if (serializeData.contains("UserName"))
+    {
+        m_PlayerName = serializeData["UserName"];
+    }
     for (const auto& lobbyJson : serializeData["Lobbies"])
     {
         int id = lobbyJson["ID"];
@@ -103,7 +119,11 @@ void LobbyState::CreateLeaveLobbyButton(sf::Vector2f pos, int lobbyID)
     leavebutton->SetButtonText("Leave Lobby", sf::Color::White, 30, TextAlignment::Center);
     leavebutton->SetOnClickCallback([=]()
         {
-            LeaveLobby(lobbyID);
+            if (m_Lobbies[lobbyID].IsInLobby(m_PlayerName))
+            {
+                LeaveLobby(lobbyID);
+            }
         });
-
+    m_LeaveButtons.push_back(leavebutton);
+    m_Window->RegisterDrawable(leavebutton);
 }

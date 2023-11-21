@@ -25,13 +25,15 @@ public:
 private:
 	void CreateLeaveLobbyButton(sf::Vector2f pos, int lobbyID);
 
+
 private:
 	Window* m_Window;
 
 	ButtonComponent* m_ReturnButton;
 	std::vector<ButtonComponent*> m_LobbyButtons;
+	std::vector<ButtonComponent*> m_LeaveButtons;
 	GameStateUI* m_GameStateUI;
 
 	std::vector<Lobby> m_Lobbies;
-
+	std::string m_PlayerName;
 };

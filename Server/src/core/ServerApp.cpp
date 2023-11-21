@@ -129,6 +129,9 @@ void ServerApp::HandleRecv(ClientPtr sender)
     {
         CreateLobbies();
         SerializeLobbiesToJson(sender);
+        Json j; 
+        j["UserName"] = m_Players[sender->GetName()];
+        sender->Send(j.dump());
     }
     else if (j["Type"] == "JoinLobby")
     {
