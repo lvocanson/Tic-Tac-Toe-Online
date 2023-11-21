@@ -27,5 +27,4 @@ private:
 
 	InsertFieldComponent* m_IpField;
 	InsertFieldComponent* m_NameField;
-
 };

@@ -1,7 +1,9 @@
 #include "ConnectionState.h"
 #include "src/core/Managers/Resources/FontRegistry.h"
-#include <regex>
 #include "src/core/ClientApp.h"
+
+#include <regex>
+#include "SFML/Network/IpAddress.hpp"
 
 ConnectionState::ConnectionState(StateMachine* stateMachine, Window* window)
 	: State(stateMachine)
@@ -20,6 +22,7 @@ void ConnectionState::OnEnter()
 	m_IpField = new InsertFieldComponent();
 	m_IpField->SetPosition(sf::Vector2f(100, 200));
 	m_IpField->SetLabel("IP Address");
+	m_IpField->SetText(sf::IpAddress::getLocalAddress().toString());
 
 	m_NameField = new InsertFieldComponent();
 	m_NameField->SetPosition(sf::Vector2f(100, 300));
