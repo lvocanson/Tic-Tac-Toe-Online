@@ -42,7 +42,7 @@ void GameState::OnEnter()
     m_GameStateUI->Init();
     m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
 
-    m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red, sf::Color::White);
+    m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
     m_ReturnButton->SetButtonText("Return", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]() {
         m_StateMachine->SwitchState("MenuState");

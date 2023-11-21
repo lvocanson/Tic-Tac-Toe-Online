@@ -20,7 +20,7 @@ LobbyState::~LobbyState()
 
 void LobbyState::OnEnter()
 {
-    m_LobbyButton = new ButtonComponent(sf::Vector2f(100, 100), sf::Vector2f(200, 100), sf::Color::Blue, sf::Color::White);
+    m_LobbyButton = new ButtonComponent(sf::Vector2f(100, 100), sf::Vector2f(200, 100), sf::Color::Blue);
     m_LobbyButton->SetButtonText("Lobby 1", sf::Color::White, 30, TextAlignment::Center);
     m_LobbyButton->SetOnClickCallback([&]()
             {
@@ -29,7 +29,7 @@ void LobbyState::OnEnter()
     m_Window->RegisterDrawable(m_LobbyButton);
     
 
-    m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red, sf::Color::White);
+    m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
     m_ReturnButton->SetButtonText("Return", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]()
         {

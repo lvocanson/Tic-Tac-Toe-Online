@@ -17,19 +17,19 @@ HistoryState::~HistoryState()
 
 void HistoryState::OnEnter()
 {
-    m_RArrowButton = new ButtonComponent(sf::Vector2f(50, 50), sf::Vector2f(50, 50), sf::Color::Green, sf::Color::Red);
+    m_RArrowButton = new ButtonComponent(sf::Vector2f(50, 50), sf::Vector2f(50, 50), sf::Color::Green);
     m_RArrowButton->SetButtonText(">", sf::Color::White, 30, TextAlignment::Center);
     m_RArrowButton->SetOnClickCallback([this]() {
         // TODO
         });
 
-    m_LArrowButton = new ButtonComponent(sf::Vector2f(150, 50), sf::Vector2f(50, 50), sf::Color::Green, sf::Color::Red);
+    m_LArrowButton = new ButtonComponent(sf::Vector2f(150, 50), sf::Vector2f(50, 50), sf::Color::Green);
     m_LArrowButton->SetButtonText("<", sf::Color::White, 30, TextAlignment::Center);
     m_LArrowButton->SetOnClickCallback([this]() {
         // TODO
         });
 
-    m_BackToMenu = new ButtonComponent(sf::Vector2f(150, 400), sf::Vector2f(200, 100), sf::Color::Blue, sf::Color::Red);
+    m_BackToMenu = new ButtonComponent(sf::Vector2f(150, 400), sf::Vector2f(200, 100), sf::Color::Blue);
     m_BackToMenu->SetButtonText("Back to Menu", sf::Color::White, 30, TextAlignment::Center);
     m_BackToMenu->SetOnClickCallback([this]() {
         m_StateMachine->SwitchState("MenuState");

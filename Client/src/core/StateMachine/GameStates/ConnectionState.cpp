@@ -18,37 +18,45 @@ ConnectionState::~ConnectionState()
 void ConnectionState::OnEnter()
 {
 	m_IpField = new InsertFieldComponent();
-	m_IpField->SetPosition(sf::Vector2f(100, 100));
+	m_IpField->SetPosition(sf::Vector2f(100, 200));
 	m_IpField->SetLabel("IP Address");
 
 	m_NameField = new InsertFieldComponent();
-	m_NameField->SetPosition(sf::Vector2f(100, 200));
+	m_NameField->SetPosition(sf::Vector2f(100, 300));
 	m_NameField->SetLabel("Username");
 
-	m_BackButton = new ButtonComponent(sf::Vector2f(100, 400), sf::Vector2f(150, 50), sf::Color::Green, sf::Color::Red);
+	m_BackButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(150, 50), sf::Color::Red);
 	m_BackButton->SetButtonText("Quit", sf::Color::White, 30, TextAlignment::Center);
 	m_BackButton->SetOnClickCallback([this]() {
 		m_StateMachine->SwitchState("MenuState");
 	});
 
-	m_ConnectButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(150, 50), sf::Color::Green, sf::Color::Red);
+	m_ConnectButton = new ButtonComponent(sf::Vector2f(100, 400), sf::Vector2f(150, 50), sf::Color::Green);
 	m_ConnectButton->SetButtonText("Connect", sf::Color::White, 30, TextAlignment::Center);
 	m_ConnectButton->SetOnClickCallback([this]()
 	{
+		bool isNameValid = true;
+
 		if (m_NameField->GetText().empty())
 		{
 			DebugLog("Username should not be empty!\n");
-			return;
+			m_NameField->ShowErrorMessage("Username should not be empty!");
+			isNameValid = false;
 		}
 		else if (m_NameField->GetText().size() < 3)
 		{
 		    DebugLog("Username should be more than 2 characters!\n");
-            return;
+			m_NameField->ShowErrorMessage("Username should be more than 2 characters!");
+			isNameValid = false;
+		}
+		else
+		{
+			m_NameField->ClearErrorMessage();
 		}
 
         const std::string ip = m_IpField->GetText();
 
-        if (IsValidIpAddress(ip.c_str()))
+        if (isNameValid && IsValidIpAddress(ip.c_str()))
         {
 			ClientApp::GetInstance().SetPlayerName(m_NameField->GetText());
             ClientApp::GetInstance().Connection(m_IpField->GetText());
@@ -59,10 +67,12 @@ void ConnectionState::OnEnter()
 			ClientApp::GetInstance().Send(j.dump());
 			//Switch state to lobby state later
             m_StateMachine->SwitchState("GameState");
+			m_IpField->ClearErrorMessage();
         }
         else
         {
             DebugLog("Invalid IP address format!\n");
+			m_IpField->ShowErrorMessage("Invalid IP address format!");
         }
     });	
 
