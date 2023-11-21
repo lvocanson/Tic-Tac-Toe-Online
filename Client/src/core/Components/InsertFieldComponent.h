@@ -4,6 +4,10 @@
 #include <sstream>
 #include "src/core/Components/TextComponent.h"
 
+constexpr unsigned int DEFAULT_CHARACTER_LIMIT = 20;
+constexpr float CURSOR_BLINK_TIME = 0.5f;
+
+
 class InsertFieldComponent : public BaseComponent
 {
 public:
@@ -14,17 +18,18 @@ public:
         float outlineThickness, unsigned int characterLimit);
 
     ~InsertFieldComponent() override;
-    void BlinkCursor(float dt);
 
     void Update(float dt) override;
 
     void SetLabel(const std::string& label) { m_Label.SetText(label); }
     void SetPosition(const sf::Vector2f& position) override;
     void SetSize(const sf::Vector2f& size) { m_Rectangle.setSize(size); }
-    void SetFillColor(const sf::Color& color) { m_Rectangle.setFillColor(color); };
-    void SetHoverColor(const sf::Color& color) { m_Rectangle.setOutlineColor(color); };
-    void SetOutlineThickness(float thickness) { m_Rectangle.setOutlineThickness(thickness); };
+    void SetFillColor(const sf::Color& color) { m_Rectangle.setFillColor(color); }
+    void SetHoverColor(const sf::Color& color) { m_Rectangle.setOutlineColor(color); }
+    void SetOutlineThickness(float thickness) { m_Rectangle.setOutlineThickness(thickness); }
     void SetCharacterLimit(unsigned int limit) { if (m_CharacterLimit > 0) m_CharacterLimit = limit; }
+    void ShowErrorMessage(const std::string& message) { m_ErrorText.SetText(message); }
+    void ClearErrorMessage() { m_ErrorText.SetText(""); }
 
     sf::Vector2f GetPosition() const override { return m_Rectangle.getPosition(); }
     sf::Vector2f GetSize() const override { return m_Rectangle.getSize(); }
@@ -40,6 +45,8 @@ private:
     bool IsMouseOver();
     void ReplaceCursor();
     void AppendCharacter(const char& c);
+    void BlinkCursor(float dt);
+
 
 private:
 
@@ -47,10 +54,10 @@ private:
     TextComponent m_Text;
     TextComponent m_Label;
     TextComponent m_Cursor;
+    TextComponent m_ErrorText;
     std::ostringstream m_TextStream;
 
     unsigned int m_CharacterLimit;
     bool m_Focus;
     float m_CursorTimer;
-    const float m_BlinkTime = 0.5f;
 };
