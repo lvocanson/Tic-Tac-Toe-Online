@@ -214,9 +214,10 @@ void GameState::SendPlacedPieceToServer(unsigned int cell)
     std::string playerID = std::to_string(m_Board[cell]);
 
     Json j;
-    j["row"] = row;
-    j["col"] = col;
-    j["playerID"] = playerID;
+    j["Type"] = "Play";
+    j["Row"] = row;
+    j["Col"] = col;
+    j["PlayerID"] = playerID;
 
     ClientApp::GetInstance().Send(j.dump());
 }
@@ -244,8 +245,8 @@ void GameState::OnExit()
 
 void GameState::OnReceiveData(const Json& serializeData)
 {
-    std::string playerID = serializeData["playerID"];
-    int row = serializeData["row"];
-    int col = serializeData["col"];
-    //Use player manager to to set player  
+    std::string playerID = serializeData["PlayerID"];
+    std::string opponent = serializeData["Opponent"];
+    int row = serializeData["Row"];
+    int col = serializeData["Col"];
 }

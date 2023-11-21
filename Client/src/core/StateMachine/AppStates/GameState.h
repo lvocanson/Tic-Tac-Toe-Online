@@ -9,6 +9,8 @@
 #include "src/core/Managers/ScoreManager.h"
 #include "src/core/Managers/UIStateManager.h"
 
+#include "game/Lobby.h"
+
 class sf::Shape;
 
 class GameState : public State
