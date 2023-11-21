@@ -1,11 +1,12 @@
 #include "ClientApp.h"
 #include "Window.h"
-#include "src/core/StateMachine/GameStates/EndState.h"
-#include "src/core/StateMachine/GameStates/GameState.h"
-#include "src/core/StateMachine/GameStates/HistoryState.h"
-#include "src/core/StateMachine/GameStates/MenuState.h"
-#include "src/core/StateMachine/GameStates/SelectState.h"
-#include "src/core/StateMachine/GameStates/ConnectionState.h"
+#include "src/core/StateMachine/AppStates/ConnectionState.h"
+#include "src/core/StateMachine/AppStates/EndState.h"
+#include "src/core/StateMachine/AppStates/GameState.h"
+#include "src/core/StateMachine/AppStates/HistoryState.h"
+#include "src/core/StateMachine/AppStates/MenuState.h"
+#include "src/core/StateMachine/AppStates/SelectState.h"
+
 
 using namespace TicTacToe;
 
@@ -17,6 +18,8 @@ void ClientApp::Init()
     m_Window = new Window();
     m_Window->Create("Tic Tac Toe Online!", 1280, 720);
 
+    m_GameSettings.SetGameMode(GAMEMODE_CLASSIC);
+    
     m_Client = new TcpIpClient();
 
     m_StateMachine = new StateMachine();

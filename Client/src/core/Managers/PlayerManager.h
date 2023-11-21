@@ -17,9 +17,6 @@ public:
     void CreateNewPlayer(const std::string& name, const sf::Color color, const PlayerShapeType shapeType);
     void UnregisterPlayer(Player* player);
 
-    // TODO: rework this
-    bool IsPlayerOneTurn() const { return m_IsPlayerOneTurn; }
-
     const std::vector<Player*>& GetAllPlayers() { return m_RegisteredPlayers; }
     Player* GetPlayer(int index) const { return m_RegisteredPlayers[index]; }
     static Player* GetCurrentPlayer() { return m_CurrentPlayer; }
@@ -33,6 +30,4 @@ private:
     int m_PlayerCount;
     int m_CurrentPlayerIndex;
 
-    // TODO: rework this
-    bool m_IsPlayerOneTurn;
 };

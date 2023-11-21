@@ -10,14 +10,14 @@ StateMachine::~StateMachine()
 	Cleanup();
 }
 
-void StateMachine::InitState(std::string initState)
+void StateMachine::InitState(const std::string& initState)
 {
 	m_CurrentState = m_States[initState];
 }
 
-void StateMachine::AddState(std::string stateName, State* newState)
+void StateMachine::AddState(const std::string& stateName, State* newState)
 {
-	m_States.insert(std::pair<std::string, State*>(stateName, newState));
+	m_States.insert(std::pair(stateName, newState));
 }
 
 void StateMachine::Start()
@@ -48,7 +48,7 @@ void StateMachine::Update(float dt)
 	m_CurrentState->OnUpdate(dt);
 }
 
-void StateMachine::SwitchState(std::string newState)
+void StateMachine::SwitchState(const std::string& newState)
 {
 	State* state = m_States[newState];
 	if (!state)

@@ -1,4 +1,5 @@
 #pragma once
+#include "GameMode.h"
 #include "src/core/StateMachine/StateMachine.h"
 #include "Managers/InputHandler.h"
 #include "src/tcp-ip/TcpIpClient.h"
@@ -38,6 +39,7 @@ public:
     void Shutdown() { m_IsRunning = false; }
 
     void Send(const std::string& data);
+    static GameSettings& GetGameSettings() { return GetInstance().m_GameSettings; }
 
     void Connection(const std::string& ip);
 
@@ -54,6 +56,7 @@ private: // Fields
     Window* m_Window = nullptr;
     StateMachine* m_StateMachine;
 
+    GameSettings m_GameSettings;
     InputHandler m_InputHandler;
 
     TcpIpClient* m_Client;
