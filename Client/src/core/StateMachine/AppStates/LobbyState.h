@@ -27,6 +27,9 @@ private:
 
 
 private:
+
+	int m_CurrentLobbyID;
+
 	Window* m_Window;
 
 	ButtonComponent* m_StartButton;
@@ -36,6 +39,5 @@ private:
 	GameStateUI* m_GameStateUI;
 
 	std::vector<Lobby> m_Lobbies;
-	int m_CurrentLobbyID;
 	std::string m_PlayerName;
 };

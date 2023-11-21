@@ -70,6 +70,10 @@ void LobbyState::OnUpdate(float dt)
             m_StartButton->SetButtonText("START", sf::Color::Green, 30, TextAlignment::Center);
             m_StartButton->SetOnClickCallback([this]()
                 {
+                    Json j;
+                    j["Type"] = "Play";
+                    j["StartedLobbyID"] = m_CurrentLobbyID;
+                    ClientApp::GetInstance().Send(j.dump());
                     m_StateMachine->SwitchState("GameState");
                 });
         }

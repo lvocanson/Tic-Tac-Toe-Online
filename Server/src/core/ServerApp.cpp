@@ -166,6 +166,17 @@ void ServerApp::HandleRecv(ClientPtr sender)
     else if (j["Type"] == "Play")
     {
         // TODO: Check if player is in a lobby, check if it's their turn, check if the move is valid, send the move to the other player
+        if (j.contains("StartedLobbyID"))
+        {
+            for (auto& lb : m_Lobbies)
+            {
+                if (j["StartedLobbyID"] == lb.ID)
+                {
+                    m_StartedGame = lb;
+                }
+            }
+        }
+
     }
     else
     {
@@ -269,3 +280,12 @@ void ServerApp::SerializeLobbiesToJson(ClientPtr sender)
 }
 
 #pragma endregion
+
+void ServerApp::SerializeGameDataToJson(ClientPtr sender)
+{
+    Json gameData;
+    gameData["PlayerX"] = m_StartedGame.PlayerX;
+    gameData["PlayerO"] = m_StartedGame.PlayerO;
+
+    sender->Send(gameData.dump());
+}
