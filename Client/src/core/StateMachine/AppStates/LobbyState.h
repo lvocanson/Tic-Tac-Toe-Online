@@ -4,7 +4,7 @@
 #include "src/core/Components/ButtonComponent.h"
 #include "src/core/Managers/PlayerManager.h"
 #include "src/core/UIState/GameStateUI.h"
-#include "Lobby.h"
+#include "game/Lobby.h"
 
 class LobbyState : public State
 {

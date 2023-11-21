@@ -1,4 +1,5 @@
 #include "core/ClientApp.h"
+#pragma comment(lib, "winmm.lib")
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) && !defined(__CYGWIN__)
 

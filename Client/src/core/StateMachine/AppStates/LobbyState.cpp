@@ -1,6 +1,6 @@
 #include "LobbyState.h"
-#include "../Client/src/core/ClientApp.h"
-#include "../TicTacToe/IDGenerator.h"
+#include "src/core/ClientApp.h"
+#include "game/IDGenerator.h"
 
 LobbyState::LobbyState(StateMachine* stateMachine, Window* window) 
     : State(stateMachine)

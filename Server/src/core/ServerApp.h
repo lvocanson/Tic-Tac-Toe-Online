@@ -1,7 +1,7 @@
 #pragma once
 #include "src/tcp-ip/TcpIpServer.h"
 #include <src/tcp-ip/HtmlServer.h>
-#include "Lobby.h"
+#include "game/Lobby.h"
 
 class ServerApp
 {

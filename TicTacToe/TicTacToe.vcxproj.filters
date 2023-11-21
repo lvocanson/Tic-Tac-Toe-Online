@@ -36,10 +36,10 @@
     <ClInclude Include="game\GameMode.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Lobby.h">
+    <ClInclude Include="tcp-ip\ISerializable.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="ISerializable.h">
+    <ClInclude Include="game\Lobby.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -57,6 +57,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="game\GameMode.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="game\Lobby.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

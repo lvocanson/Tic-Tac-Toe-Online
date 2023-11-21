@@ -27,7 +27,7 @@ void ClientApp::Init()
     {
         auto lock = m_StateMachine->WaitGet();
         lock->AddState("MenuState", new MenuState(&lock.Get(), m_Window));
-        lock->AddState("SelectState", new SelectState(&lock.Get(), m_Window));
+        lock->AddState("LobbyState", new LobbyState(&lock.Get(), m_Window));
         lock->AddState("ConnectionState", new ConnectionState(&lock.Get(), m_Window));
         lock->AddState("GameState", new GameState(&lock.Get(), m_Window));
         lock->AddState("HistoryState", new HistoryState(&lock.Get(), m_Window));

@@ -10,7 +10,7 @@ public:
     ProgressBar(const sf::Vector2f& position, const sf::Vector2f& size, const sf::Color& backgroundColor, const sf::Color& foregroundColor, const sf::Font& font, float maxValue);
     ~ProgressBar() override;
 
-    void Update() override {}
+    void Update(float) override {}
 
     void SetSize(const sf::Vector2f& size);
     void SetPosition(const sf::Vector2f& position) override;

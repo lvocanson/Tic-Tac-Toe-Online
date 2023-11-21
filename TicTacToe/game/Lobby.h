@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "ISerializable.h"
+#include "../tcp-ip/ISerializable.h"
 
 struct Lobby : ISerializable
 {
