@@ -2,11 +2,14 @@
 #include "game/GameMode.h"
 #include "src/core/StateMachine/StateMachine.h"
 #include "Managers/InputHandler.h"
+#include "Managers/TimeManager.h"
 
 class Window;
 class sf::Shape;
 class TcpIpClient;
 class Thread;
+
+constexpr float CONNECTION_TIMEOUT_TIME = 5.0f;
 
 class ClientApp
 {
@@ -41,7 +44,7 @@ public:
     void Send(const std::string& data);
     static GameSettings& GetGameSettings() { return GetInstance().m_GameSettings; }
 
-    void Connection(const std::string& ip);
+    bool TryToConnect(const std::string& ip);
     void SetPlayerName(const std::string& name) { m_PlayerName = name; }
 
     void RunClient(const char*);
@@ -51,7 +54,7 @@ public:
 private: // Methods
 
     /// Update the ClientApp. Called once per frame.
-    void Update(sf::Time delta);
+    void Update(float delta);
 
     /// Perform any cleanup tasks (e.g. delete pointers). Called before Run() returns.
     void Cleanup();
@@ -63,6 +66,7 @@ private: // Fields
     Shared<bool> m_SharedIsRunning = false; // Use this to share between threads
     Shared<bool> m_IsClientConnected = false;
 
+    TimeManager m_TimeManager;
     Window* m_Window = nullptr;
     Shared<StateMachine>* m_StateMachine = nullptr;
     GameSettings m_GameSettings;

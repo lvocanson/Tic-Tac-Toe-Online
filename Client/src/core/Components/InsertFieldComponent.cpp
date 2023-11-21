@@ -6,8 +6,6 @@ InsertFieldComponent::InsertFieldComponent()
     , m_Focus(false)
     , m_CursorTimer(0.0f)
 {
-    SetPosition(sf::Vector2f(0.0f, 0.0f));
-
     m_Rectangle.setSize(sf::Vector2f(300, 26));
     m_Rectangle.setFillColor(sf::Color(171, 171, 171));
     m_Rectangle.setOutlineColor(sf::Color::White);
@@ -24,6 +22,8 @@ InsertFieldComponent::InsertFieldComponent()
     m_ErrorText.SetText("");
     m_ErrorText.SetColor(sf::Color::Red);
     m_ErrorText.SetCharacterSize(14);
+
+    SetPosition(sf::Vector2f(0.0f, 0.0f));
 }
 
 InsertFieldComponent::InsertFieldComponent(const sf::Vector2f& pos, const sf::Vector2f& size,
@@ -33,12 +33,14 @@ InsertFieldComponent::InsertFieldComponent(const sf::Vector2f& pos, const sf::Ve
     , m_Focus(false)
     , m_CursorTimer(0.0f)
 {
-    SetPosition(sf::Vector2f(0.0f, 0.0f));
 
     m_Rectangle.setSize(size);
     m_Rectangle.setFillColor(idleColor);
     m_Rectangle.setOutlineColor(hoverColor);
     m_Rectangle.setOutlineThickness(outlineThickness);
+
+    SetPosition(sf::Vector2f(0.0f, 0.0f));
+
 }
 
 InsertFieldComponent::~InsertFieldComponent()

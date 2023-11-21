@@ -18,6 +18,8 @@ void ClientApp::Init()
     m_IsRunning = true;
     m_SharedIsRunning.WaitGet().Get() = true;
 
+    m_TimeManager.Init();
+
     m_Window = new Window();
     m_Window->Create("Tic Tac Toe Online!", 1280, 720);
 
@@ -42,15 +44,14 @@ void ClientApp::Run()
     if (!m_IsRunning)
         throw std::runtime_error("ClientApp is not initialized!");
 
-    sf::Clock clock;
     while (m_IsRunning)
     {
-        const sf::Time elapsed = clock.restart();
+        m_TimeManager.Tick();
 
         m_Window->PollEvents();
         m_InputHandler.Update();
 
-        Update(elapsed);
+        Update(TimeManager::GetDeltaTime());
         m_Window->Render();
         m_IsRunning &= m_Window->IsOpen();
         auto sharedRunning = m_SharedIsRunning.TryGet();
@@ -65,7 +66,8 @@ void ClientApp::Run()
 
 void ClientApp::RunClient(const char* adress)
 {
-    DebugLog("ip in runClient " + std::to_string(*adress) + "...\n");
+    std::string ip = adress;
+    DebugLog("ip in runClient " + ip + "...\n");
 
     try
     {
@@ -133,14 +135,20 @@ void ClientApp::RunClient(const char* adress)
 
 void ClientApp::Send(const std::string& data)
 {
+    if (!m_IsClientConnected.WaitGet().Get())
+    {
+        DebugLog("Client isn't connected to server! \n");
+        return;
+    }
+
     if (!data.empty())
         m_Client->Send(data);
 }
 
-void ClientApp::Update(sf::Time delta)
+void ClientApp::Update(float delta)
 {
     static float timeSinceLastUpdate = 0.0f;
-    timeSinceLastUpdate += delta.asSeconds();
+    timeSinceLastUpdate += delta;
     auto lock = m_StateMachine->TryGet();
     if (lock.IsValid())
     {
@@ -176,23 +184,36 @@ void ClientApp::Cleanup()
     PlayerShapeRegistry::ClearPlayerShapes();
 }
 
-void ClientApp::Connection(const std::string& ip)
+bool ClientApp::TryToConnect(const std::string& ip)
 {
     if (m_ClientThread != nullptr)
-        return; // TODO: Handle reconnecting
+        return false; // TODO: Handle reconnecting
 
-    DebugLog("Connecting to " + ip + "...\n");
+    DebugLog("Try to connect to " + ip + "...\n");
 
     m_ClientThread = Thread::Create([](LPVOID ip) -> DWORD
     {
-        const char* ipStr = reinterpret_cast<const char*>(ip);
-        char c = ipStr[0];
-        c = ipStr[1];
-        c = ipStr[2];
-        c = ipStr[3];
-        c = ipStr[4];
+        const char* ipStr = static_cast<const char*>(ip);
+
+        std::string ipAdress = ipStr;
+        DebugLog("IP in connect thread " + ipAdress + "...\n");
+
         ClientApp::GetInstance().RunClient(ipStr);
 
         return 0;
     }, ip.c_str(), true);
+
+    float timeoutConnection = 0.0f;
+    while (!m_IsClientConnected.WaitGet().Get())
+    {
+        if (timeoutConnection > CONNECTION_TIMEOUT_TIME)
+        {
+            DebugLog("Failed to connect to server!\n");
+            return false;
+        }
+
+        timeoutConnection += TimeManager::GetDeltaTime();
+    }
+
+    return true;
 }
