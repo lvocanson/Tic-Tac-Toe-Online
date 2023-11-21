@@ -65,6 +65,8 @@ void ClientApp::Run()
 
 void ClientApp::RunClient(const char* adress)
 {
+    DebugLog("ip in runClient " + std::to_string(*adress) + "...\n");
+
     try
     {
         m_Client = new TcpIpClient();
@@ -179,9 +181,18 @@ void ClientApp::Connection(const std::string& ip)
     if (m_ClientThread != nullptr)
         return; // TODO: Handle reconnecting
 
+    DebugLog("Connecting to " + ip + "...\n");
+
     m_ClientThread = Thread::Create([](LPVOID ip) -> DWORD
-        {
-            ClientApp::GetInstance().RunClient((char*)ip);
-            return 0;
-        }, ip.c_str(), true);
+    {
+        const char* ipStr = reinterpret_cast<const char*>(ip);
+        char c = ipStr[0];
+        c = ipStr[1];
+        c = ipStr[2];
+        c = ipStr[3];
+        c = ipStr[4];
+        ClientApp::GetInstance().RunClient(ipStr);
+
+        return 0;
+    }, ip.c_str(), true);
 }

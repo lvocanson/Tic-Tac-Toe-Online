@@ -131,7 +131,6 @@ void InsertFieldComponent::Update(float dt)
 void InsertFieldComponent::SetText(const std::string& text)
 {
     //substring text to fit the character limit
-
     if (text.size() > m_CharacterLimit)
     {
         m_TextContent = text.substr(0, m_CharacterLimit);

@@ -20,8 +20,9 @@ public:
             // Allocation failed
             return nullptr;
         }
+
         // Copy the parameter
-        memcpy(paramAlloc, (const void*)param, sizeof(Param));
+        memcpy(paramAlloc, param, sizeof(Param));
 
         DWORD threadID = 0;
         HANDLE thread = CreateThread(
