@@ -126,6 +126,7 @@
     </ClCompile>
     <ClCompile Include="src\tcp-ip\TcpIpClient.cpp" />
     <ClCompile Include="src\core\Managers\UIStateManager.cpp" />
+    <ClCompile Include="src\core\Managers\TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\Components\ProgressBar.h" />
@@ -157,6 +158,7 @@
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\core\Managers\UIStateManager.h" />
     <ClInclude Include="src\tcp-ip\TcpIpClient.h" />
+    <ClInclude Include="src\core\Managers\TimeManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\bold-font.ttf" />
