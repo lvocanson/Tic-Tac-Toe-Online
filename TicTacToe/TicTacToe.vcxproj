@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameMode.h" />
+    <ClInclude Include="game\GameMode.h" />
     <ClInclude Include="tcp-ip\json.hpp" />
     <ClInclude Include="threading\Shared.h" />
     <ClInclude Include="tcp-ip\TcpIp.h" />
@@ -20,7 +20,7 @@
     <ClInclude Include="threading\Thread.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameMode.cpp" />
+    <ClCompile Include="game\GameMode.cpp" />
     <ClCompile Include="tcp-ip\TcpIp.cpp" />
     <ClCompile Include="game\IDGenerator.cpp" />
     <ClCompile Include="tcp-ip\TcpIpExceptions.cpp" />

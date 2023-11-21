@@ -33,7 +33,7 @@
     <ClInclude Include="threading\Thread.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="GameMode.h">
+    <ClInclude Include="game\GameMode.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,7 +50,7 @@
     <ClCompile Include="tcp-ip\TcpIpExceptions.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="GameMode.cpp">
+    <ClCompile Include="game\GameMode.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

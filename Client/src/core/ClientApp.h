@@ -1,5 +1,5 @@
 #pragma once
-#include "GameMode.h"
+#include "game/GameMode.h"
 #include "src/core/StateMachine/StateMachine.h"
 #include "Managers/InputHandler.h"
 

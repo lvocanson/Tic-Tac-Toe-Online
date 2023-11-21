@@ -151,9 +151,13 @@ void ClientApp::Cleanup()
     }
 
     RELEASE(m_Window);
-    m_ClientThread->Start();
-    m_ClientThread->Wait();
-    RELEASE(m_ClientThread);
+
+    if (m_ClientThread)
+    {
+        m_ClientThread->Start();
+        m_ClientThread->Wait();
+        RELEASE(m_ClientThread);
+    }
 
     FontRegistry::ClearFonts();
     PlayerShapeRegistry::ClearPlayerShapes();
