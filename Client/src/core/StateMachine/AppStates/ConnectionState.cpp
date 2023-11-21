@@ -62,20 +62,18 @@ void ConnectionState::OnEnter()
         if (isNameValid && IsValidIpAddress(ip.c_str()))
         {
 			ClientApp::GetInstance().SetPlayerName(m_NameField->GetText());
-            ClientApp::GetInstance().Connection(m_IpField->GetText());
 
-			while (!ClientApp::GetInstance().IsClientRunning())
-			{
+            if (ClientApp::GetInstance().TryToConnect(ip))
+            {
+				Json j;
+				j["Type"] = "Login";
+				j["UserName"] = m_NameField->GetText();
+				ClientApp::GetInstance().Send(j.dump());
 
-			}
-			
-			Json j;
-			j["Type"] = "Login";
-			j["UserName"] = m_NameField->GetText();
-			ClientApp::GetInstance().Send(j.dump());
-			//Switch state to lobby state later
-            m_StateMachine->SwitchState("GameState");
-			m_IpField->ClearErrorMessage();
+				//Switch state to lobby state later
+				m_StateMachine->SwitchState("GameState");
+				m_IpField->ClearErrorMessage();
+            }
         }
         else
         {
