@@ -4,6 +4,7 @@
 #include "src/core/Components/ButtonComponent.h"
 #include "src/core/Managers/PlayerManager.h"
 #include "src/core/UIState/GameStateUI.h"
+#include "Lobby.h"
 
 class LobbyState : public State
 {
@@ -11,6 +12,7 @@ public:
 	void OnEnter() override;
 	void OnUpdate(float dt) override;
 	void OnExit() override;
+	void OnReceiveData(const Json& serializeData) override;
 
 	LobbyState(StateMachine* stateMachine, Window* window);
 	LobbyState(const LobbyState& other) = delete;
@@ -29,4 +31,6 @@ private:
 	ButtonComponent* m_ReturnButton;
 	ButtonComponent* m_LobbyButton;
 	GameStateUI* m_GameStateUI;
+
+	std::vector<Lobby> m_Lobbies;
 };

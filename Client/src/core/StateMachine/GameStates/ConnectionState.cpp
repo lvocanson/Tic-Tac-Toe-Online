@@ -106,5 +106,5 @@ void ConnectionState::OnExit()
 bool ConnectionState::IsValidIpAddress(const char* ip)
 {
 	const std::regex ipRegex("^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$");
-	return std::regex_match(ip, ipRegex);
+	return std::regex_match(ip, ipRegex) || ip == "localhost";
 }

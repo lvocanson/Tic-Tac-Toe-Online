@@ -235,6 +235,8 @@ void ServerApp::SerializeLobbiesToJson(ClientPtr sender)
 
         lobbyListJson["Lobbies"].push_back(lbJson);
     }
+    //for debug 
+    std::cout << STS_CLR << lobbyListJson["Lobbies"].size() << HASH_CLR(sender) << STS_CLR << std::endl << DEF_CLR;
     sender->Send(lobbyListJson.dump());
 }
 
