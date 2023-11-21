@@ -49,7 +49,7 @@ void GameState::OnEnter()
         m_GameStateUI->InitProgressBar(m_MaxPlayerTurnTime);
     }
 
-    m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red, sf::Color::White);
+    m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
     m_ReturnButton->SetButtonText("Return", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]() {
         m_StateMachine->SwitchState("MenuState");
@@ -62,7 +62,7 @@ void GameState::OnEnter()
 
 void GameState::OnUpdate(float dt)
 {
-    m_ReturnButton->Update();
+    m_ReturnButton->Update(dt);
 
     CheckIfMouseHoverBoard();
 
@@ -213,7 +213,7 @@ void GameState::SendPlacedPieceToServer(unsigned int cell)
     int col = cell % (int)m_Board.GetWidth();
     std::string playerID = std::to_string(m_Board[cell]);
 
-    json j;
+    Json j;
     j["row"] = row;
     j["col"] = col;
     j["playerID"] = playerID;

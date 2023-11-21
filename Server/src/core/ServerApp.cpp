@@ -7,7 +7,7 @@
 #define STS_CLR Color::LightMagenta // Status color
 #define INF_CLR Color::Gray // Information color
 #define DEF_CLR Color::White // Default color
-#define HASH_CLR(c) HshClr(c->Address + std::to_string(c->Port)) << c->Address << ':' << c->Port
+#define HASH_CLR(c) HshClr(c->GetName()) << c->GetName()
 #define WEB_PFX INF_CLR << '[' << STS_CLR << "WEB" << INF_CLR << ']' << DEF_CLR << ' '
 
 void ServerApp::Init()
@@ -105,10 +105,44 @@ void ServerApp::HandleGameServer()
 void ServerApp::HandleRecv(ClientPtr sender)
 {
     std::string data = sender->Receive();
-    std::cout << HASH_CLR(sender) << DEF_CLR << " sent " << data.size() << " bytes of data." << std::endl << DEF_CLR;
+    Json j;
+    try
+    {
+        j = Json::parse(data);
+    }
+    catch (const std::exception& e)
+    {
+        std::cout << ERR_CLR << "Failed to parse JSON from " << HASH_CLR(sender) << ERR_CLR << ": " << e.what() << std::endl << DEF_CLR;
+        return;
+    }
+    if (!j.contains("Type"))
+    {
+        std::cout << ERR_CLR << "Received JSON from " << HASH_CLR(sender) << ERR_CLR << " does not contain a type." << std::endl << DEF_CLR;
+        return;
+    }
 
-    // Echo back
-    sender->Send(data);
+    if (j["Type"] == "Login")
+    {
+        // TODO: Check for username, add {username, sende.GetName()} to m_Players (unordered_map)
+        m_Players.insert(std::make_pair(j["UserName"], sender->GetName()));
+    }
+    else if (j["Type"] == "LobbyList")
+    {
+        CreateLobbies();
+        SerializeLobbiesToJson(sender);
+    }
+    else if (j["Type"] == "JoinLobby")
+    {
+        // TODO: Check for lobby ID, add player to lobby
+    }
+    else if (j["Type"] == "Play")
+    {
+        // TODO: Check if player is in a lobby, check if it's their turn, check if the move is valid, send the move to the other player
+    }
+    else
+    {
+        std::cout << WRN_CLR << "Received JSON from " << HASH_CLR(sender) << WRN_CLR << " contains an unknown type." << std::endl << DEF_CLR;
+    }
 }
 
 void ServerApp::CleanUpGameServer()
@@ -168,3 +202,42 @@ void ServerApp::CleanUpWebServer()
 
 #pragma endregion
 
+size_t ServerApp::FindPlayer(const std::string& name)
+{
+    for (size_t i = 0; i < m_Lobbies.size(); ++i)
+    {
+        if (m_Lobbies[i].IsInLobby(name))
+            return i;
+    }
+    return -1;
+}
+
+#pragma region Lobbying
+
+void ServerApp::CreateLobbies()
+{
+    for (int i = 0; i < 3; i++)
+    {
+        Lobby lb;
+        m_Lobbies.push_back(lb);
+    }
+}
+
+void ServerApp::SerializeLobbiesToJson(ClientPtr sender)
+{
+    Json lobbyListJson;
+    for (int i = 0; i < m_Lobbies.size(); i++)
+    {
+        Json lbJson;
+        lbJson["ID"] = m_Lobbies[i].ID;
+        lbJson["PlayerX"] = m_Lobbies[i].PlayerX.empty() ? "None" : m_Lobbies[i].PlayerX;
+        lbJson["PlayerO"] = m_Lobbies[i].PlayerO.empty() ? "None" : m_Lobbies[i].PlayerO;
+
+        lobbyListJson["Lobbies"].push_back(lbJson);
+    }
+    //for debug 
+    std::cout << STS_CLR << lobbyListJson["Lobbies"].size() << HASH_CLR(sender) << STS_CLR << std::endl << DEF_CLR;
+    sender->Send(lobbyListJson.dump());
+}
+
+#pragma endregion

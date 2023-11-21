@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\GameMode.h" />
+    <ClInclude Include="ISerializable.h" />
     <ClInclude Include="tcp-ip\json.hpp" />
     <ClInclude Include="threading\Shared.h" />
     <ClInclude Include="tcp-ip\TcpIp.h" />

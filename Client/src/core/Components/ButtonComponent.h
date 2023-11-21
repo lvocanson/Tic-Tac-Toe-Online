@@ -8,11 +8,11 @@
 class ButtonComponent : public BaseComponent, public sf::Transformable
 {
 public:
-    ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor, const sf::Color& hoverColor);
+    ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor);
 
     ~ButtonComponent() override;
 
-    void Update() override;
+    void Update(float dt) override;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     void SetPosition(const sf::Vector2f& position) override;
@@ -24,9 +24,11 @@ public:
     void SetButtonText(const std::string& text, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment);
 
 private:
-    sf::RectangleShape shape;
-    sf::Color idleColor;
-    sf::Color hoverColor;
+    sf::RectangleShape m_Shape;
+    sf::Color m_IdleColor;
+    sf::Color m_HoverColor;
+    sf::Color m_ClickedColor;
+
     std::function<void()> onClickCallback;
 
     TextComponent* m_Text;

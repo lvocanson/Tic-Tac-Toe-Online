@@ -42,6 +42,7 @@ public:
     static GameSettings& GetGameSettings() { return GetInstance().m_GameSettings; }
 
     void Connection(const std::string& ip);
+    void SetPlayerName(const std::string& name) { m_PlayerName = name; }
 
     void RunClient(const char*);
 private: // Methods
@@ -65,4 +66,5 @@ private: // Fields
 
     Thread* m_ClientThread = nullptr;
     TcpIpClient* m_Client = nullptr;
+    std::string m_PlayerName;
 };

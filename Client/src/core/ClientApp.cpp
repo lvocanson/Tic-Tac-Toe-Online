@@ -5,7 +5,7 @@
 #include "src/core/StateMachine/AppStates/GameState.h"
 #include "src/core/StateMachine/AppStates/HistoryState.h"
 #include "src/core/StateMachine/AppStates/MenuState.h"
-#include "src/core/StateMachine/AppStates/SelectState.h"
+#include "src/core/StateMachine/AppStates/LobbyState.h"
 #include "src/tcp-ip/TcpIpClient.h"
 #include "threading/Thread.h"
 
@@ -20,7 +20,9 @@ void ClientApp::Init()
 
     m_Window = new Window();
     m_Window->Create("Tic Tac Toe Online!", 1280, 720);
+
     m_GameSettings.SetGameMode(GAMEMODE_CLASSIC);
+    
     m_StateMachine = new Shared<StateMachine>();
     {
         auto lock = m_StateMachine->WaitGet();

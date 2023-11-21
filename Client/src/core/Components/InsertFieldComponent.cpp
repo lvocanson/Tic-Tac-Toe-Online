@@ -1,26 +1,62 @@
 #include "InsertFieldComponent.h"
 #include "src/core/Managers/InputHandler.h"
-#include "src/core/Managers/Resources/FontRegistry.h"
+
+InsertFieldComponent::InsertFieldComponent()
+    : m_CharacterLimit(DEFAULT_CHARACTER_LIMIT)
+    , m_Focus(false)
+    , m_CursorTimer(0.0f)
+{
+    SetPosition(sf::Vector2f(0.0f, 0.0f));
+
+    m_Rectangle.setSize(sf::Vector2f(300, 26));
+    m_Rectangle.setFillColor(sf::Color(171, 171, 171));
+    m_Rectangle.setOutlineColor(sf::Color::White);
+    m_Rectangle.setOutlineThickness(1.0f);
+
+    m_Label.SetText("InsertField");
+    m_Label.SetColor(sf::Color(171, 171, 171));
+    m_Label.SetCharacterSize(16);
+
+    m_Cursor.SetText("|");
+    m_Cursor.SetColor(sf::Color::Black);
+
+    m_ErrorText.SetText("");
+    m_ErrorText.SetColor(sf::Color::Red);
+    m_ErrorText.SetCharacterSize(14);
+}
 
 InsertFieldComponent::InsertFieldComponent(const sf::Vector2f& pos, const sf::Vector2f& size,
     const sf::Color& idleColor, const sf::Color& hoverColor,
-    float outlineThickness)
-    : m_Focus(false)
+    float outlineThickness, unsigned int characterLimit)
+    : m_CharacterLimit(characterLimit)
+    , m_Focus(false)
+    , m_CursorTimer(0.0f)
 {
-    m_Rectangle.setPosition(pos);
+    SetPosition(sf::Vector2f(0.0f, 0.0f));
+
     m_Rectangle.setSize(size);
     m_Rectangle.setFillColor(idleColor);
     m_Rectangle.setOutlineColor(hoverColor);
     m_Rectangle.setOutlineThickness(outlineThickness);
-
-    m_Text.SetPosition(m_Rectangle.getPosition());
 }
 
 InsertFieldComponent::~InsertFieldComponent()
+= default;
+
+void InsertFieldComponent::BlinkCursor(float dt)
 {
+    if (m_CursorTimer >= CURSOR_BLINK_TIME)
+    {
+        m_CursorTimer = 0.0f;
+        m_Cursor.SetVisible(!m_Cursor.IsVisible());
+    }
+    else
+    {
+        m_CursorTimer += dt;
+    }
 }
 
-void InsertFieldComponent::Update()
+void InsertFieldComponent::Update(float dt)
 {
     if (IsMouseOver())
     {
@@ -29,57 +65,66 @@ void InsertFieldComponent::Update()
         if (InputHandler::IsMouseButtonPressed(sf::Mouse::Left))
         {
             m_Focus = true;
+            m_Cursor.SetVisible(true);
         }
     }
     else
     {
         m_Rectangle.setOutlineThickness(0.0f);
+        m_Focus = false;
+        m_Cursor.SetVisible(false);
+        m_CursorTimer = 0.0f;
     }
 
-    if (m_Focus && Window::IsFocused())
+
+    if (!m_Focus) return;
+
+    BlinkCursor(dt);
+
+    if (Window::IsFocused())
     {
-        if (InputHandler::IsKeyPressed(sf::Keyboard::BackSpace) && m_TextStream.str().size() > 0)
+        if (InputHandler::IsKeyPressed(sf::Keyboard::BackSpace) && GetTextSize() > 0)
         {
             auto s = m_TextStream.str();
             s.pop_back();
             m_TextStream.str(s);
             m_Text.SetText(m_TextStream.str());
+            ReplaceCursor();
         }
 
 
-        for (int key = sf::Keyboard::A; key <= sf::Keyboard::Z; ++key)
+        if (GetTextSize() < m_CharacterLimit)
         {
-            if (InputHandler::IsKeyPressed(static_cast<sf::Keyboard::Key>(key)))
+            for (int key = sf::Keyboard::A; key <= sf::Keyboard::Z; ++key)
             {
-                char pressedChar = 'A' + (key - sf::Keyboard::A);
-                m_TextStream << pressedChar;
-                m_Text.SetText(m_TextStream.str());
+                if (InputHandler::IsKeyPressed(static_cast<sf::Keyboard::Key>(key)))
+                {
+                    char pressedChar = 'A' + (key - sf::Keyboard::A);
+                    AppendCharacter(pressedChar);
+                }
             }
-        }
 
-        for (int key = sf::Keyboard::Num0; key <= sf::Keyboard::Num9; ++key)
-        {
-            if (InputHandler::IsKeyPressed(static_cast<sf::Keyboard::Key>(key)))
+            for (int key = sf::Keyboard::Num0; key <= sf::Keyboard::Num9; ++key)
             {
-                char pressedChar = '0' + (key - sf::Keyboard::Num0);
-                m_TextStream << pressedChar;
-                m_Text.SetText(m_TextStream.str());
+                if (InputHandler::IsKeyPressed(static_cast<sf::Keyboard::Key>(key)))
+                {
+                    char pressedChar = '0' + (key - sf::Keyboard::Num0);
+                    AppendCharacter(pressedChar);
+                }
             }
-        }
-        for (int key = sf::Keyboard::Numpad0; key <= sf::Keyboard::Numpad9; ++key)
-        {
-            if (InputHandler::IsKeyPressed(static_cast<sf::Keyboard::Key>(key)))
+            for (int key = sf::Keyboard::Numpad0; key <= sf::Keyboard::Numpad9; ++key)
             {
-                char pressedChar = '0' + (key - sf::Keyboard::Numpad0);
-                m_TextStream << pressedChar;
-                m_Text.SetText(m_TextStream.str());
+                if (InputHandler::IsKeyPressed(static_cast<sf::Keyboard::Key>(key)))
+                {
+                    char pressedChar = '0' + (key - sf::Keyboard::Numpad0);
+                    AppendCharacter(pressedChar);
+                }
             }
-        }
 
-        if (InputHandler::IsKeyPressed(sf::Keyboard::Period))
-        {
-            m_TextStream << '.';
-            m_Text.SetText(m_TextStream.str());
+            if (InputHandler::IsKeyPressed(sf::Keyboard::Period))
+            {
+                AppendCharacter('.');
+            }
         }
 
         if (InputHandler::IsKeyPressed(sf::Keyboard::Enter))
@@ -93,29 +138,46 @@ void InsertFieldComponent::draw(sf::RenderTarget& target, sf::RenderStates state
 {
     target.draw(m_Rectangle, states);
 	target.draw(m_Text, states);
+    target.draw(m_Label, states);
+    target.draw(m_ErrorText, states);
+
+    if (m_Cursor.IsVisible())
+        target.draw(m_Cursor, states);
 }
 
 bool InsertFieldComponent::IsMouseOver()
 {
-    sf::Vector2f mousePos = (sf::Vector2f)InputHandler::GetMousePosition();
-    sf::Vector2f buttonPos = m_Rectangle.getPosition();
-    sf::Vector2f buttonSize = m_Rectangle.getSize();
+    const sf::Vector2f mousePos = (sf::Vector2f)InputHandler::GetMousePosition();
+    const sf::Vector2f buttonPos = m_Rectangle.getPosition();
+    const sf::Vector2f buttonSize = m_Rectangle.getSize();
 
     return mousePos.x >= buttonPos.x && mousePos.x <= buttonPos.x + buttonSize.x &&
         mousePos.y >= buttonPos.y && mousePos.y <= buttonPos.y + buttonSize.y;
+}
+
+void InsertFieldComponent::AppendCharacter(const char& c)
+{
+    m_TextStream << c;
+    m_Text.SetText(m_TextStream.str());
+    ReplaceCursor();
 }
 
 void InsertFieldComponent::SetPosition(const sf::Vector2f& position)
 {
     m_Rectangle.setPosition(position);
 
-    float xPos = position.x + m_Rectangle.getOutlineThickness();
-    float yPos = position.y + m_Rectangle.getOutlineThickness();
+    m_Label.SetPosition(m_Rectangle.getPosition() - sf::Vector2f(0, m_Label.GetSize().y + m_Rectangle.getOutlineThickness() + 5));
+    m_ErrorText.SetPosition(m_Rectangle.getPosition() + sf::Vector2f(0, m_Rectangle.getSize().y + m_Rectangle.getOutlineThickness()));
+
+    const float xPos = position.x + m_Rectangle.getOutlineThickness();
+    const float yPos = position.y + m_Rectangle.getOutlineThickness();
 
     m_Text.SetPosition(sf::Vector2f(xPos, yPos));
+    ReplaceCursor();
 }
 
-void InsertFieldComponent::SetFocus(bool focus)
+void InsertFieldComponent::ReplaceCursor()
 {
-    m_Focus = focus;
+    m_Cursor.SetPosition(m_Text.GetPosition() + sf::Vector2f(m_Text.GetSize().x + 3, m_Text.GetSize().y * 0.3f));
 }
+

@@ -36,6 +36,12 @@
     <ClInclude Include="game\GameMode.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Lobby.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ISerializable.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game\TicTacToe.cpp">
