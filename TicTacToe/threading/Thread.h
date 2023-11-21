@@ -41,7 +41,12 @@ public:
 
         return new Thread(thread, threadID);
     }
-
+    /// <summary>
+    /// Create a new thread.
+    /// </summary>
+    /// <param name="start">The function to start the thread with.</param>
+    /// <param name="startImmediately">If false, the thread will be paused until Start() is called.</param>
+    /// <returns>The created thread, or nullptr if creation failed.</returns>
     static Thread* Create(LPTHREAD_START_ROUTINE start, bool startImmediately)
     {
         DWORD threadID = 0;
@@ -60,6 +65,14 @@ public:
         }
 
         return new Thread(thread, threadID);
+    }
+
+    /// <summary>
+    /// Get the current thread.
+    /// </summary>
+    static Thread* This()
+    {
+        return new Thread(GetCurrentThread(), GetCurrentThreadId());
     }
 
 public:
@@ -102,6 +115,12 @@ public:
     DWORD GetID() const
     {
         return m_ThreadID;
+    }
+
+public:
+    bool operator==(const Thread& other) const
+    {
+        return m_ThreadID == other.m_ThreadID;
     }
 
 private:
