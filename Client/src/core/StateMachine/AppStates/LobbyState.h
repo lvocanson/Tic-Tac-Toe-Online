@@ -29,11 +29,13 @@ private:
 private:
 	Window* m_Window;
 
+	ButtonComponent* m_StartButton;
 	ButtonComponent* m_ReturnButton;
 	std::vector<ButtonComponent*> m_LobbyButtons;
 	std::vector<ButtonComponent*> m_LeaveButtons;
 	GameStateUI* m_GameStateUI;
 
 	std::vector<Lobby> m_Lobbies;
+	int m_CurrentLobbyID;
 	std::string m_PlayerName;
 };

@@ -61,6 +61,20 @@ void LobbyState::OnUpdate(float dt)
         lvButton->Update(dt);
     }
 
+    //Check if current lobby is full
+    for (auto& lb : m_Lobbies)
+    {
+        if (lb.ID == m_CurrentLobbyID && lb.IsLobbyFull())
+        {
+            m_StartButton = new ButtonComponent(sf::Vector2f(300, 110), sf::Vector2f(200, 100), sf::Color::Blue);
+            m_StartButton->SetButtonText("START", sf::Color::Green, 30, TextAlignment::Center);
+            m_StartButton->SetOnClickCallback([this]()
+                {
+                    m_StateMachine->SwitchState("GameState");
+                });
+        }
+    }
+
     m_ReturnButton->Update(dt);
 }
 
@@ -88,6 +102,12 @@ void LobbyState::OnReceiveData(const Json& serializeData)
     {
         m_PlayerName = serializeData["UserName"];
     }
+
+    if (serializeData.contains("CurrentLobbyID"))
+    {
+        m_CurrentLobbyID = serializeData["CurrentLobbyID"];
+    }
+
     for (const auto& lobbyJson : serializeData["Lobbies"])
     {
         int id = lobbyJson["ID"];

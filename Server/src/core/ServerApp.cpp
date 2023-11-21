@@ -145,6 +145,9 @@ void ServerApp::HandleRecv(ClientPtr sender)
                     return;
                 }
                 lb.AddPlayerToLobby(m_Players[sender->GetName()]);
+                Json j;
+                j["CurrentLobbyID"] = lb.ID;
+                sender->Send(j.dump());
             }
         }
         SerializeLobbiesToJson(sender);
