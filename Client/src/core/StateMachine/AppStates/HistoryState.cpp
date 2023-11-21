@@ -7,7 +7,6 @@ HistoryState::HistoryState(StateMachine* stateMachine, Window* m_Window)
 	, m_LArrowButton()
 	, m_BackToMenu()
 {
-	m_StateMachine = stateMachine;
 }
 
 HistoryState::~HistoryState()

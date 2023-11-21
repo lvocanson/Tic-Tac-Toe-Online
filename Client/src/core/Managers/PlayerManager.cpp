@@ -2,7 +2,7 @@
 
 Player* PlayerManager::m_CurrentPlayer = nullptr;
 
-PlayerManager::PlayerManager() : m_PlayerCount(0), m_CurrentPlayerIndex(0), m_IsPlayerOneTurn(true)
+PlayerManager::PlayerManager() : m_PlayerCount(0), m_CurrentPlayerIndex(0)
 {
     m_RegisteredPlayers = std::vector<Player*>();
 }
@@ -40,8 +40,6 @@ void PlayerManager::SwitchPlayerTurn()
     }
 
     m_CurrentPlayer = m_RegisteredPlayers[m_CurrentPlayerIndex];
-
-    m_IsPlayerOneTurn = !m_IsPlayerOneTurn;
 }
 
 void PlayerManager::CreateNewPlayer(const std::string& name, const sf::Color color, const PlayerShapeType shapeType)

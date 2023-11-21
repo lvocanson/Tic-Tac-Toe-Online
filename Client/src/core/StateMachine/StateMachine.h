@@ -11,9 +11,9 @@ public:
 	/// <summary>
 	/// Add the state ref to the dictionnary
 	/// </summary>
-	void AddState(std::string stateName, State* newState);
+	void AddState(const std::string& stateName, State* newState);
 
-	void InitState(std::string initState);
+	void InitState(const std::string& initState);
 
 	void Update(float dt);
 	void Start();
@@ -21,7 +21,7 @@ public:
 	/// <summary>
 	/// Switch the current state to the state with the name newState
 	/// </summary>
-	void SwitchState(std::string newState);
+	void SwitchState(const std::string& newState);
 
 	inline State* GetCurrentState() const { return m_CurrentState; }
 

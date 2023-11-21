@@ -1,10 +1,11 @@
 #include "ClientApp.h"
 #include "Window.h"
-#include "src/core/StateMachine/GameStates/EndState.h"
-#include "src/core/StateMachine/GameStates/GameState.h"
-#include "src/core/StateMachine/GameStates/HistoryState.h"
-#include "src/core/StateMachine/GameStates/MenuState.h"
-#include "src/core/StateMachine/GameStates/SelectState.h"
+#include "src/core/StateMachine/AppStates/ConnectionState.h"
+#include "src/core/StateMachine/AppStates/EndState.h"
+#include "src/core/StateMachine/AppStates/GameState.h"
+#include "src/core/StateMachine/AppStates/HistoryState.h"
+#include "src/core/StateMachine/AppStates/MenuState.h"
+#include "src/core/StateMachine/AppStates/SelectState.h"
 #include "src/tcp-ip/TcpIpClient.h"
 #include "threading/Thread.h"
 
@@ -19,11 +20,13 @@ void ClientApp::Init()
 
     m_Window = new Window();
     m_Window->Create("Tic Tac Toe Online!", 1280, 720);
+    m_GameSettings.SetGameMode(GAMEMODE_CLASSIC);
     m_StateMachine = new Shared<StateMachine>();
     {
         auto lock = m_StateMachine->WaitGet();
         lock->AddState("MenuState", new MenuState(&lock.Get(), m_Window));
         lock->AddState("SelectState", new SelectState(&lock.Get(), m_Window));
+        lock->AddState("ConnectionState", new ConnectionState(&lock.Get(), m_Window));
         lock->AddState("GameState", new GameState(&lock.Get(), m_Window));
         lock->AddState("HistoryState", new HistoryState(&lock.Get(), m_Window));
         lock->AddState("EndState", new EndState(&lock.Get(), m_Window));
@@ -38,14 +41,6 @@ void ClientApp::Run()
         throw std::runtime_error("ClientApp is not initialized!");
 
     sf::Clock clock;
-    Json j;
-
-    m_ClientThread = Thread::Create([](LPVOID i)
-        {
-            ClientApp::GetInstance().RunClient();
-            return (DWORD)0;
-        }, true);
-
     while (m_IsRunning)
     {
         const sf::Time elapsed = clock.restart();
@@ -66,12 +61,12 @@ void ClientApp::Run()
     Cleanup();
 }
 
-void ClientApp::RunClient()
+void ClientApp::RunClient(const char* adress)
 {
     try
     {
         m_Client = new TcpIpClient();
-        m_Client->Connect("localhost", DEFAULT_PORT);
+        m_Client->Connect(adress, DEFAULT_PORT);
         m_IsClientRunning = true;
         DebugLog("Connected to server!\n");
     }
@@ -107,7 +102,7 @@ void ClientApp::RunClient()
             m_IsClientRunning = false;
         }
 
-        if (!m_Client->IsConnected())
+        if (m_Client->IsConnected())
         {
             DebugLog("Disconnected from server!\n");
             m_IsClientRunning = false;
@@ -162,4 +157,16 @@ void ClientApp::Cleanup()
 
     FontRegistry::ClearFonts();
     PlayerShapeRegistry::ClearPlayerShapes();
+}
+
+void ClientApp::Connection(const std::string& ip)
+{
+    if (m_ClientThread != nullptr)
+        return; // TODO: Handle reconnecting
+
+    m_ClientThread = Thread::Create([](LPVOID ip) -> DWORD
+        {
+            ClientApp::GetInstance().RunClient((char*)ip);
+            return 0;
+        }, ip.c_str(), true);
 }

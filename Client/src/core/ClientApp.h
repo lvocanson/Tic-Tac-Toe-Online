@@ -1,4 +1,5 @@
 #pragma once
+#include "GameMode.h"
 #include "src/core/StateMachine/StateMachine.h"
 #include "Managers/InputHandler.h"
 
@@ -38,8 +39,11 @@ public:
     void Shutdown() { m_IsRunning = false; }
 
     void Send(const std::string& data);
+    static GameSettings& GetGameSettings() { return GetInstance().m_GameSettings; }
 
-    void RunClient();
+    void Connection(const std::string& ip);
+
+    void RunClient(const char*);
 private: // Methods
 
     /// Update the ClientApp. Called once per frame.
@@ -56,6 +60,7 @@ private: // Fields
 
     Window* m_Window = nullptr;
     Shared<StateMachine>* m_StateMachine = nullptr;
+    GameSettings m_GameSettings;
     InputHandler m_InputHandler;
 
     Thread* m_ClientThread = nullptr;

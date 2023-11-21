@@ -18,8 +18,10 @@ GraphicBoard::~GraphicBoard()
     }
 }
 
-void GraphicBoard::Init()
+void GraphicBoard::Init(unsigned int totalColumn, unsigned int totalRow)
 {
+    Resize(totalColumn, totalRow);
+
     for (unsigned int i = 0; i < m_Size; i++)
     {
         m_AllPiecesOnBoard.insert(std::pair(i, new GraphicPiece()));

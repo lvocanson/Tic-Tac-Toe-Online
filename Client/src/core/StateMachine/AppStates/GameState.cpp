@@ -4,7 +4,6 @@
 #include "src/core/PlayerPieceShape.h"
 #include "src/core/ClientApp.h"
 
-#include <SFML/System/Time.hpp>
 
 using namespace TicTacToe;
 using json = nlohmann::json;
@@ -13,14 +12,14 @@ using json = nlohmann::json;
 GameState::GameState(StateMachine* stateMachine, Window* m_Window)
     : State(stateMachine)
     , m_Window(m_Window)
-    , m_GameStateUI(nullptr)
     , m_ReturnButton(nullptr)
+    , m_GameStateUI(nullptr)
+    , m_IsTimerOn(false)
 {
-    m_StateMachine = stateMachine;
     m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12), Square);
     m_PlayerManager.CreateNewPlayer("Player Two", sf::Color(255, 194, 0), Circle);
 
-    m_Board.Init();
+    m_Board.Init(ClientApp::GetGameSettings().GetTotalColumn(), ClientApp::GetGameSettings().GetTotalRow());
     m_ScoreManager.Init();
     m_PlayerManager.Init();
 
@@ -37,15 +36,24 @@ GameState::~GameState()
 
 void GameState::OnEnter()
 {
+    m_MaxPlayerTurnTime = ClientApp::GetGameSettings().GetPlayerMoveLimitTime();
+    m_IsTimerOn = ClientApp::GetGameSettings().IsTimerOn();
+    m_PlayerTurnTime = m_MaxPlayerTurnTime;
+
     m_GameStateUI = new GameStateUI(m_Window);
     m_GameStateUI->Init();
     m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
+
+    if (m_IsTimerOn) 
+    {
+        m_GameStateUI->InitProgressBar(m_MaxPlayerTurnTime);
+    }
 
     m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red, sf::Color::White);
     m_ReturnButton->SetButtonText("Return", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]() {
         m_StateMachine->SwitchState("MenuState");
-        });
+    });
 
     m_Window->RegisterDrawable(m_ReturnButton);
     DrawBoard();
@@ -54,10 +62,33 @@ void GameState::OnEnter()
 
 void GameState::OnUpdate(float dt)
 {
-    // TODO : REWORK THIS SHIT FUCKEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEER
     m_ReturnButton->Update();
 
     CheckIfMouseHoverBoard();
+
+    if (m_IsTimerOn)
+    {
+        UpdatePlayerTimer(dt);
+        CheckIfTimerIsUp();
+    }
+}
+
+void GameState::UpdatePlayerTimer(float dt)
+{
+    m_PlayerTurnTime -= dt;
+    m_GameStateUI->UpdateProgressBar(m_PlayerTurnTime);
+}
+
+void GameState::CheckIfTimerIsUp()
+{
+    if (m_PlayerTurnTime <= 0.0f)
+    {
+        m_GameStateUI->UpdateGameStateText("Time's up!");
+
+        PlacePlayerPieceOnBoard(m_Board.GetRandomEmptyCell());
+        WinCheck();
+        SwitchPlayerTurn();
+    }
 }
 
 void GameState::DrawBoard()
@@ -96,28 +127,7 @@ void GameState::CheckIfMouseHoverBoard()
                 m_GameStateUI->UpdateGameStateText("");
 
                 PlacePlayerPieceOnBoard(i);
-
-                const PieceID winnerID = m_Board.IsThereAWinner();
-                if (winnerID != EMPTY_PIECE)
-                {
-                    std::cout << "Player " << winnerID << " won!\n";
-
-                    Player* winner = PlayerManager::GetCurrentPlayer();
-
-                    m_ScoreManager.SaveGame(winner->GetData());
-                    m_ScoreManager.AddScoreToPlayer(winner->GetPlayerID());
-
-                    m_GameStateUI->UpdatePlayerScore(*winner->GetData(), m_ScoreManager.GetPlayerScore(winner->GetPlayerID()));
-                    m_GameStateUI->UpdateGameStateText(winner->GetName() + " won!");
-
-                    ClearBoard();
-                }
-                else if (m_Board.IsFull())
-                {
-                    m_GameStateUI->UpdateGameStateText("It's a draw!");
-                    ClearBoard();
-                }
-
+                WinCheck();
                 SwitchPlayerTurn();
             }
         }
@@ -128,7 +138,6 @@ void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
 {
     const Player* currentPlayer = PlayerManager::GetCurrentPlayer();
 
-    auto pos = sf::Vector2f(m_Board.GetGraphicPiece(cell).GetPosition());
     // Set piece id in board
     m_Board[cell] = currentPlayer->GetPlayerID();
 
@@ -147,9 +156,31 @@ void GameState::InstanciateNewPlayerShape(const Player* currentPlayer, unsigned 
     pos.x += m_Board.GetPieceSize() * 0.5f;
     pos.y += m_Board.GetPieceSize() * 0.5f;
 
-    auto playerPieceShape = new PlayerPieceShape(currentPlayer->GetPlayerID(), pos);
+    const auto playerPieceShape = new PlayerPieceShape(currentPlayer->GetPlayerID(), pos);
     m_GamePieces.push_back(playerPieceShape);
     m_Window->RegisterDrawable(playerPieceShape);
+}
+
+void GameState::WinCheck()
+{
+    const PieceID winnerID = m_Board.IsThereAWinner();
+    if (winnerID != EMPTY_PIECE)
+    {
+        Player* winner = PlayerManager::GetCurrentPlayer();
+
+        m_ScoreManager.SaveGame(winner->GetData());
+        m_ScoreManager.AddScoreToPlayer(winner->GetPlayerID());
+
+        m_GameStateUI->UpdatePlayerScore(*winner->GetData(), m_ScoreManager.GetPlayerScore(winner->GetPlayerID()));
+        m_GameStateUI->UpdateGameStateText(winner->GetName() + " won!");
+
+        ClearBoard();
+    }
+    else if (m_Board.IsFull())
+    {
+        m_GameStateUI->UpdateGameStateText("It's a draw!");
+        ClearBoard();
+    }
 }
 
 void GameState::ClearBoard()
@@ -168,6 +199,12 @@ void GameState::SwitchPlayerTurn()
 {
     m_PlayerManager.SwitchPlayerTurn();
     m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetCurrentPlayer()->GetData());
+
+    if (m_IsTimerOn)
+    {
+        m_PlayerTurnTime = m_MaxPlayerTurnTime;
+        m_GameStateUI->UpdateProgressBar(m_PlayerTurnTime);
+    }
 }
 
 void GameState::SendPlacedPieceToServer(unsigned int cell)

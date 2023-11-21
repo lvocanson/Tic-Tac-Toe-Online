@@ -30,7 +30,7 @@ public:
     GraphicBoard(size_t width, size_t height, unsigned int alignementGoal, float piecePixelSize);
     ~GraphicBoard() override;
 
-    void Init();
+    void Init(unsigned int totalColumn, unsigned int totalRow);
 
     void AddPlayerPieceInBoard(unsigned int cell, const Player* player, GraphicPiece* piece);
     void RemovePlayerPieceInBoard(unsigned int cell);
