@@ -2,6 +2,7 @@
 #include "src/core/StateMachine/StateMachine.h"
 #include "Managers/InputHandler.h"
 #include "src/tcp-ip/TcpIpClient.h"
+#include "src/core/Managers/GameHistoryManager.h"
 
 class Window;
 class sf::Shape;
@@ -39,6 +40,8 @@ public:
 
     void Send(const std::string& data);
 
+    static GameHistoryManager* GetHistoryManager() { return GetInstance().m_GameHistoryManager; }
+
 private: // Methods
     /// Update the ClientApp. Called once per frame.
     void Update(sf::Time delta);
@@ -53,6 +56,7 @@ private: // Fields
     StateMachine *m_StateMachine;
 
     InputHandler m_InputHandler;
+    GameHistoryManager* m_GameHistoryManager;
 
     TcpIpClient* m_Client;
 };

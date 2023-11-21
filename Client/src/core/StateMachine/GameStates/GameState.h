@@ -8,6 +8,7 @@
 #include "src/core/Managers/PlayerManager.h"
 #include "src/core/Managers/ScoreManager.h"
 #include "src/core/Managers/UIStateManager.h"
+#include "src/core/Managers/GameHistoryManager.h"
 
 class sf::Shape;
 

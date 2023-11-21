@@ -13,7 +13,6 @@ GameData::~GameData()
 
 ScoreManager::ScoreManager()
 {
-    m_GameHistory = std::vector<GameData*>();
     m_CurrentGame = std::vector<PlayerMove>();
     m_PlayerScores = std::map<TicTacToe::PieceID, unsigned int>();
 }
@@ -30,14 +29,8 @@ void ScoreManager::Init()
 
 void ScoreManager::Clear()
 {
-    for (auto game : m_GameHistory)
-    {
-        RELEASE(game)
-    }
-
     m_PlayerScores.clear();
     m_CurrentGame.clear();
-    m_GameHistory.clear();
 }
 
 void ScoreManager::CreateScoreForPlayer(PlayerData* playerData, Window* window)
@@ -45,10 +38,10 @@ void ScoreManager::CreateScoreForPlayer(PlayerData* playerData, Window* window)
     m_PlayerScores.insert(std::pair<int, int>(playerData->Id, 0));
 }
 
-void ScoreManager::AddPlayerMove(TicTacToe::PieceID pieceID, unsigned int lastCellPlayed)
+void ScoreManager::AddPlayerMove(PlayerData playerData, unsigned int lastCellPlayed)
 {
     const PlayerMove playerMove = {
-        .PieceID = pieceID,
+        .playerData = playerData,
         .BoardCell = lastCellPlayed
     };
 
@@ -80,13 +73,3 @@ bool ScoreManager::IsScoreExists(TicTacToe::PieceID& pieceID)
     return true;
 }
 
-void ScoreManager::SaveGame(const PlayerData* winner)
-{
-    m_GameHistory.push_back(new GameData(winner, m_CurrentGame));
-    ClearMoves();
-}
-
-void ScoreManager::ClearMoves()
-{
-    m_CurrentGame.clear();
-}

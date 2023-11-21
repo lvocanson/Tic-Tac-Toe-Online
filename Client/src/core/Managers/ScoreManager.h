@@ -10,7 +10,7 @@
 
 struct PlayerMove
 {
-    TicTacToe::PieceID PieceID;
+    PlayerData playerData;
     unsigned int BoardCell;
 };
 
@@ -20,6 +20,8 @@ public:
 
     GameData(const PlayerData* winner, const std::vector<PlayerMove>& allMoves);
     ~GameData();
+
+    const std::vector<PlayerMove>& GetAllMoves() const { return AllMoves; }
 
 private:
 
@@ -39,28 +41,20 @@ public:
 
     void CreateScoreForPlayer(PlayerData* playerData, Window* window);
 
-    void AddPlayerMove(TicTacToe::PieceID pieceID, unsigned int lastCellPlayed);
+    void AddPlayerMove(PlayerData playerData, unsigned int lastCellPlayed);
     void AddScoreToPlayer(TicTacToe::PieceID player);
-    void SaveGame(const PlayerData* winner);
 
     unsigned int GetPlayerScore(TicTacToe::PieceID pieceID);
 
     bool IsScoreExists(TicTacToe::PieceID& pieceID);
 
-private:
-
-    void ClearMoves();
+    const std::vector<PlayerMove>& GetCurrentGame() const { return m_CurrentGame; }
 
 private:
 
     // Player id -> score
     std::map<TicTacToe::PieceID, unsigned int> m_PlayerScores;
 
-    // List of all the local game history
-    std::vector<GameData*> m_GameHistory;
-
-    // List of all the moves of the current game
     std::vector<PlayerMove> m_CurrentGame;
-
 };
 

@@ -20,6 +20,10 @@ void ClientApp::Init()
 
     m_StateMachine = new StateMachine();
 
+    m_GameHistoryManager = new GameHistoryManager();
+
+    m_GameHistoryManager->GetGameHistory();
+
     m_StateMachine->AddState("MenuState", new MenuState(m_StateMachine, m_Window));
     m_StateMachine->AddState("SelectState", new SelectState(m_StateMachine, m_Window));
     m_StateMachine->AddState("GameState", new GameState(m_StateMachine, m_Window));
@@ -119,6 +123,7 @@ void ClientApp::Cleanup()
 
     RELEASE(m_Window);
     RELEASE(m_Client);
+    RELEASE(m_GameHistoryManager)
 
     FontRegistry::ClearFonts();
     PlayerShapeRegistry::ClearPlayerShapes();

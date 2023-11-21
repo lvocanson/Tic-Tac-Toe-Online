@@ -105,7 +105,7 @@ void GameState::CheckIfMouseHoverBoard()
 
                     Player* winner = PlayerManager::GetCurrentPlayer();
 
-                    m_ScoreManager.SaveGame(winner->GetData());
+                    ClientApp::GetHistoryManager()->SaveGame(winner->GetData());
                     m_ScoreManager.AddScoreToPlayer(winner->GetPlayerID());
 
                     m_GameStateUI->UpdatePlayerScore(*winner->GetData(), m_ScoreManager.GetPlayerScore(winner->GetPlayerID()));
@@ -127,7 +127,7 @@ void GameState::CheckIfMouseHoverBoard()
 
 void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
 {
-    const Player* currentPlayer = PlayerManager::GetCurrentPlayer();
+    Player* currentPlayer = PlayerManager::GetCurrentPlayer();
 
     auto pos = sf::Vector2f(m_Board.GetGraphicPiece(cell).GetPosition());
     // Set piece id in board
@@ -135,7 +135,7 @@ void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
 
     InstanciateNewPlayerShape(currentPlayer, cell);
 
-    m_ScoreManager.AddPlayerMove(currentPlayer->GetPlayerID(), cell);
+    m_ScoreManager.AddPlayerMove(*currentPlayer->GetData(), cell);
 
     SendPlacedPieceToServer(cell);
 }
