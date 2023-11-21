@@ -19,6 +19,7 @@ InsertFieldComponent::InsertFieldComponent()
 
     m_Cursor.SetText("|");
     m_Cursor.SetColor(sf::Color::Black);
+    m_Cursor.SetVisible(false);
 
     m_ErrorText.SetText("");
     m_ErrorText.SetColor(sf::Color::Red);
@@ -68,14 +69,14 @@ void InsertFieldComponent::Update(float dt)
             m_Cursor.SetVisible(true);
         }
     }
-    else
+    else if (InputHandler::IsKeyPressed(sf::Keyboard::Enter) || InputHandler::IsMouseButtonPressed(sf::Mouse::Left))
     {
-        m_Rectangle.setOutlineThickness(0.0f);
         m_Focus = false;
+        m_Rectangle.setOutlineThickness(0.0f);
         m_Cursor.SetVisible(false);
         m_CursorTimer = 0.0f;
     }
-
+   
 
     if (!m_Focus) return;
 
@@ -83,12 +84,10 @@ void InsertFieldComponent::Update(float dt)
 
     if (Window::IsFocused())
     {
-        if (InputHandler::IsKeyPressed(sf::Keyboard::BackSpace) && GetTextSize() > 0)
+        if (GetTextSize() > 0 && InputHandler::IsKeyPressed(sf::Keyboard::BackSpace))
         {
-            auto s = m_TextStream.str();
-            s.pop_back();
-            m_TextStream.str(s);
-            m_Text.SetText(m_TextStream.str());
+            m_TextContent.pop_back();
+            m_Text.SetText(m_TextContent);
             ReplaceCursor();
         }
 
@@ -126,12 +125,24 @@ void InsertFieldComponent::Update(float dt)
                 AppendCharacter('.');
             }
         }
-
-        if (InputHandler::IsKeyPressed(sf::Keyboard::Enter))
-        {
-            m_Focus = false;
-        }
     }
+}
+
+void InsertFieldComponent::SetText(const std::string& text)
+{
+    //substring text to fit the character limit
+
+    if (text.size() > m_CharacterLimit)
+    {
+        m_TextContent = text.substr(0, m_CharacterLimit);
+    }
+    else
+    {
+        m_TextContent = text;
+    }
+
+    m_Text.SetText(m_TextContent);
+    ReplaceCursor();
 }
 
 void InsertFieldComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -157,8 +168,8 @@ bool InsertFieldComponent::IsMouseOver()
 
 void InsertFieldComponent::AppendCharacter(const char& c)
 {
-    m_TextStream << c;
-    m_Text.SetText(m_TextStream.str());
+    m_TextContent.push_back(c);
+    m_Text.SetText(m_TextContent);
     ReplaceCursor();
 }
 

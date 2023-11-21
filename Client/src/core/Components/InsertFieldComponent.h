@@ -21,6 +21,7 @@ public:
 
     void Update(float dt) override;
 
+    void SetText(const std::string& text);
     void SetLabel(const std::string& label) { m_Label.SetText(label); }
     void SetPosition(const sf::Vector2f& position) override;
     void SetSize(const sf::Vector2f& size) { m_Rectangle.setSize(size); }
@@ -34,9 +35,9 @@ public:
     sf::Vector2f GetPosition() const override { return m_Rectangle.getPosition(); }
     sf::Vector2f GetSize() const override { return m_Rectangle.getSize(); }
     bool GetFocus() const { return m_Focus; }
-    std::string GetText() const { return m_TextStream.str(); }
+    std::string GetText() const { return m_TextContent; }
     unsigned int GetCharacterLimit() const { return m_CharacterLimit; }
-    size_t GetTextSize() const { return m_TextStream.str().length(); }
+    size_t GetTextSize() const { return m_TextContent.length(); }
 
 private:
 
@@ -55,7 +56,7 @@ private:
     TextComponent m_Label;
     TextComponent m_Cursor;
     TextComponent m_ErrorText;
-    std::ostringstream m_TextStream;
+    std::string m_TextContent;
 
     unsigned int m_CharacterLimit;
     bool m_Focus;
