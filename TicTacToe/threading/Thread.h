@@ -21,8 +21,14 @@ public:
             return nullptr;
         }
 
+        std::string ip = param;
+        DebugLog("IP in thread creation " + ip + "...\n");
+
         // Copy the parameter
-        memcpy(paramAlloc, param, sizeof(Param));
+        memcpy(paramAlloc, (const void*)param, sizeof(Param));
+
+        ip = (const char *)paramAlloc;
+        DebugLog("IP after memcpy " + ip + "...\n");
 
         DWORD threadID = 0;
         HANDLE thread = CreateThread(
