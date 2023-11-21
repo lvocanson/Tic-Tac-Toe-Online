@@ -14,21 +14,21 @@ public:
     template <typename Param>
     static Thread* Create(LPTHREAD_START_ROUTINE start, Param* param, bool startImmediately)
     {
-        Param* paramAlloc = (Param*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(Param));
+        LPVOID paramAlloc = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(Param));
         if (paramAlloc == nullptr)
         {
             // Allocation failed
             return nullptr;
         }
         // Copy the parameter
-        *paramAlloc = *param;
+        memcpy(paramAlloc, (const void*)param, sizeof(Param));
 
         DWORD threadID = 0;
         HANDLE thread = CreateThread(
             nullptr,
             0,
             start,
-            param,
+            paramAlloc,
             startImmediately ? 0 : CREATE_SUSPENDED,
             &threadID);
 

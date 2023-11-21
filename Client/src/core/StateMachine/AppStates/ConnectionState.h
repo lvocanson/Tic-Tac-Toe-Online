@@ -19,8 +19,6 @@ public:
 
 	bool IsValidIpAddress(const char* ip);
 
-	void Send(const std::string& data);
-
 private:
 	Window* m_Window;
 
