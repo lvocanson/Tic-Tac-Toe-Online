@@ -61,12 +61,17 @@ void ConnectionState::OnEnter()
 			ClientApp::GetInstance().SetPlayerName(m_NameField->GetText());
             ClientApp::GetInstance().Connection(m_IpField->GetText());
 
+			while (!ClientApp::GetInstance().IsClientRunning())
+			{
+
+			}
+			
 			Json j;
 			j["Type"] = "Login";
 			j["UserName"] = m_NameField->GetText();
 			ClientApp::GetInstance().Send(j.dump());
 			//Switch state to lobby state later
-            m_StateMachine->SwitchState("GameState");
+            m_StateMachine->SwitchState("LobbyState");
 			m_IpField->ClearErrorMessage();
         }
         else
@@ -106,5 +111,5 @@ void ConnectionState::OnExit()
 bool ConnectionState::IsValidIpAddress(const char* ip)
 {
 	const std::regex ipRegex("^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$");
-	return std::regex_match(ip, ipRegex) || ip == "localhost";
+	return std::regex_match(ip, ipRegex) || std::string("LOCALHOST")._Equal(ip);
 }

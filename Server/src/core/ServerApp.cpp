@@ -123,8 +123,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
     if (j["Type"] == "Login")
     {
-        // TODO: Check for username, add {username, sende.GetName()} to m_Players (unordered_map)
-        m_Players.insert(std::make_pair(j["UserName"], sender->GetName()));
+        m_Players.insert(std::make_pair(sender->GetName(), j["UserName"]));
     }
     else if (j["Type"] == "LobbyList")
     {
@@ -133,7 +132,30 @@ void ServerApp::HandleRecv(ClientPtr sender)
     }
     else if (j["Type"] == "JoinLobby")
     {
-        // TODO: Check for lobby ID, add player to lobby
+        for (auto& lb : m_Lobbies)
+        {
+            if (j["ID"] == lb.ID)
+            {
+                if (!lb.IsLobbyFull())
+                {
+                    std::cout << INF_CLR << "Lobby is full!" << std::endl << DEF_CLR;
+                    return;
+                }
+                lb.AddPlayerToLobby(m_Players[sender->GetName()]);
+            }
+        }
+        SerializeLobbiesToJson(sender);
+    }
+    else if (j["Type"] == "LeaveLobby")
+    {
+        for (auto& lb : m_Lobbies)
+        {
+            if (j["ID"] == lb.ID)
+            {
+                lb.RemovePlayerFromLobby(m_Players[sender->GetName()]);
+            }
+        }
+        SerializeLobbiesToJson(sender);
     }
     else if (j["Type"] == "Play")
     {

@@ -70,12 +70,14 @@ void ClientApp::RunClient(const char* adress)
         m_Client = new TcpIpClient();
         m_Client->Connect(adress, DEFAULT_PORT);
         m_IsClientRunning = true;
+        m_IsClientConnected.WaitGet().Get() = true;
         DebugLog("Connected to server!\n");
     }
     catch (const TcpIp::TcpIpException& e)
     {
         DebugLog("Failed to connect to server: " + std::string(e.what()) + "\n");
         m_IsClientRunning = false;
+        m_IsClientConnected.WaitGet().Get() = false;
     }
 
     std::stringstream ss;
@@ -85,16 +87,22 @@ void ClientApp::RunClient(const char* adress)
         {
             while (m_Client->FetchPendingData(ss))
             {
-                std::string data = ss.str();
-                if (!data.empty() && data[0] == '{' && data[data.size() - 1] == '}')
+                Json j;
+                try
                 {
-                    Json j = Json::parse(data);
-                    m_StateMachine->WaitGet()->OnReceiveData(j);
+                    j = Json::parse(ss);
                 }
-                else
+                catch (const std::exception& e)
                 {
-                    DebugLog("Data is not in json format!");
+                    DebugLog("Failed to parse JSON from server!");
+                    return;
                 }
+                if (!j.contains("Type"))
+                {
+                    DebugLog("Json does not contain a Type!\n");
+                    return;
+                }
+                m_StateMachine->WaitGet()->OnReceiveData(j);
                 ss.str(std::string());
             }
         }
@@ -117,6 +125,7 @@ void ClientApp::RunClient(const char* adress)
 
     m_SharedIsRunning.WaitGet().Get() = false;
     m_Client->Disconnect();
+    m_IsClientConnected.WaitGet().Get() = false;
     RELEASE(m_Client);
 }
 

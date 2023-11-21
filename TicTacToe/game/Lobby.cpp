@@ -8,6 +8,20 @@ Lobby::Lobby()
 {
 }
 
+Lobby::Lobby(const std::string& playerX, const std::string& playerO)
+    : ID(IDGenerator::GenerateLobbyID())
+    , PlayerX(playerX)
+    , PlayerO(playerO)
+{
+}
+
+Lobby::Lobby(int id, const std::string& playerX, const std::string& playerO)
+    : ID(id)
+    , PlayerX(playerX)
+    , PlayerO(playerO)
+{
+}
+
 Json Lobby::Serialize()
 {
     Json j;
@@ -30,4 +44,12 @@ void Lobby::AddPlayerToLobby(const std::string& name)
         PlayerX = name;
     else if (PlayerO.empty())
         PlayerO = name;
+}
+
+void Lobby::RemovePlayerFromLobby(const std::string& name)
+{
+    if (!PlayerX.empty())
+        PlayerX = "None";
+    else if (!PlayerO.empty())
+        PlayerO = "None";
 }

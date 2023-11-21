@@ -65,6 +65,7 @@ void TcpIpClient::Disconnect()
 
     if (m_ReadEvent != WSA_INVALID_EVENT)
         TcpIp::CloseEventObject(m_ReadEvent);
+
 }
 
 bool TcpIpClient::IsConnected() const

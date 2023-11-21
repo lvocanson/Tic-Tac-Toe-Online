@@ -19,18 +19,19 @@ public:
 	LobbyState& operator=(const LobbyState& other) = delete;
 	~LobbyState();
 
-	void JoinLobby();
-	void LeaveLobby();
+	void TryToJoinLobby(int lobbyID);
+	void LeaveLobby(int lobbyID);
 
 private:
-	
+	void CreateLeaveLobbyButton(sf::Vector2f pos, int lobbyID);
 
 private:
 	Window* m_Window;
 
 	ButtonComponent* m_ReturnButton;
-	ButtonComponent* m_LobbyButton;
+	std::vector<ButtonComponent*> m_LobbyButtons;
 	GameStateUI* m_GameStateUI;
 
 	std::vector<Lobby> m_Lobbies;
+
 };

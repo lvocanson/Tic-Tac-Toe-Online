@@ -8,12 +8,20 @@ struct Lobby : ISerializable
     void Deserialize(Json j) override;
 
     Lobby();
+    Lobby(const std::string& playerX, const std::string& playerO);
+    Lobby(const int id, const std::string& playerX, const std::string& playerO);
     ~Lobby() = default;
 
     void AddPlayerToLobby(const std::string& name);
+    void RemovePlayerFromLobby(const std::string& name);
     bool IsInLobby(const std::string& name)
     {
         return PlayerX == name || PlayerO == name;
+    }
+
+    bool IsLobbyFull()
+    {
+        return !PlayerX.empty() && !PlayerO.empty();
     }
 
     int ID;

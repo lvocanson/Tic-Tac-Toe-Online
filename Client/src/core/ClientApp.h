@@ -45,6 +45,9 @@ public:
     void SetPlayerName(const std::string& name) { m_PlayerName = name; }
 
     void RunClient(const char*);
+
+    bool IsClientRunning() { return m_IsClientConnected.WaitGet().Get(); }
+
 private: // Methods
 
     /// Update the ClientApp. Called once per frame.
@@ -58,6 +61,7 @@ private: // Fields
     bool m_IsRunning = false; // Access this only in the main thread
     bool m_IsClientRunning = false; // Access this only in the client thread
     Shared<bool> m_SharedIsRunning = false; // Use this to share between threads
+    Shared<bool> m_IsClientConnected = false;
 
     Window* m_Window = nullptr;
     Shared<StateMachine>* m_StateMachine = nullptr;
