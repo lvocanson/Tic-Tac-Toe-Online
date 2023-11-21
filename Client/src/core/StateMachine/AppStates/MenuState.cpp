@@ -1,4 +1,5 @@
 #include "MenuState.h"
+#include "src/core/ClientApp.h"
 
 MenuState::MenuState(StateMachine* stateMachine, Window* window)
 	: State(stateMachine)
@@ -31,8 +32,8 @@ void MenuState::OnEnter()
     m_QuitButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red, sf::Color::Red);
     m_QuitButton->SetButtonText("Quit", sf::Color::White, 30, TextAlignment::Center);
     m_QuitButton->SetOnClickCallback([this]() {
-        // TODO: Quit the game
-        });
+        ClientApp::GetInstance().Shutdown();
+    });
 
     m_Window->RegisterDrawable(m_PlayButton);
     m_Window->RegisterDrawable(m_HistoryButton);
