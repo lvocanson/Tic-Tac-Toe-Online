@@ -20,10 +20,10 @@ public:
 
 	void SetColor(const sf::Color color) { m_Data.Color = color; }
 
-	sf::Color GetColor() const { return m_Data.Color; }
-	TicTacToe::PieceID GetPlayerID() const { return m_Data.Id; }
-	std::string GetName() const { return m_Data.Name; }
-	PlayerData* GetData() { return &m_Data; }
+	const sf::Color GetColor() const { return m_Data.Color; }
+	const TicTacToe::PieceID GetPlayerID() const { return m_Data.Id; }
+	const std::string GetName() const { return m_Data.Name; }
+	const PlayerData* GetData() { return &m_Data; }
 
 private:
 

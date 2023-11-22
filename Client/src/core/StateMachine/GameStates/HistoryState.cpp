@@ -103,6 +103,7 @@ void HistoryState::DisplayGame()
     {
         m_CurrentGame = ClientApp::GetHistoryManager()->GetGameData(m_CurrentGameIndex);
         m_CurrentMoveIndex = m_CurrentGame->GetMovesSize() - 1;
+
         for (const auto move : *m_CurrentGame->GetMoves())
         {
             m_Board.InstanciateNewPlayerShape(move->playerData.Id, move->BoardCell);

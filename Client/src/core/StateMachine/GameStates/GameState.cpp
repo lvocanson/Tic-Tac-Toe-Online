@@ -22,13 +22,7 @@ GameState::GameState(StateMachine* stateMachine, Window* m_Window)
     m_PlayerManager.CreateNewPlayer("Player Two", sf::Color(255, 194, 0), Circle);
 
     m_Board.Init(m_Window);
-    m_ScoreManager.Init();
     m_PlayerManager.Init();
-
-    for (const auto& player : m_PlayerManager.GetAllPlayers())
-    {
-        m_ScoreManager.CreateScoreForPlayer(player->GetData(), m_Window);
-    }
 }
 
 GameState::~GameState()
@@ -49,6 +43,9 @@ void GameState::OnEnter()
         });
 
     m_Window->RegisterDrawable(m_ReturnButton);
+
+    m_ScoreManager.Init();
+    m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
 
     m_Board.DrawBoard();
 }
@@ -95,6 +92,7 @@ void GameState::CheckIfMouseHoverBoard()
                 else if (m_Board.IsFull())
                 {
                     m_GameStateUI->UpdateGameStateText("It's a draw!");
+                    m_ScoreManager.ResetCurrentGame();
                     ClearBoard();
                 }
 

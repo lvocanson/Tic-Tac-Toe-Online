@@ -23,6 +23,8 @@ public:
     void Init() override;
     void Clear() override;
 
+    void InitPlayerScores(const std::vector<Player*>& allPlayers);
+
     void CreateScoreForPlayer(PlayerData* playerData, Window* window);
 
     void AddPlayerMove(const PlayerData& playerData, unsigned int lastCellPlayed);
@@ -33,6 +35,7 @@ public:
 
     bool IsScoreExists(TicTacToe::PieceID& pieceID);
     void CreateNewGameHistory();
+    void ResetCurrentGame();
 
 private:
 
