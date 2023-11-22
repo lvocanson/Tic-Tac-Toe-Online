@@ -177,7 +177,7 @@ void GameState::SendPlacedPieceToServer(unsigned int cell)
     j["PlayerID"] = playerID;
     //j["Opponent"] = 
 
-	ClientApp::GetInstance().Send(j.dump());
+	ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
 }
 
 bool GameState::IsMouseHoverPiece(unsigned int i)

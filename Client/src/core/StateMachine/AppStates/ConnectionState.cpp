@@ -65,7 +65,7 @@ void ConnectionState::OnEnter()
         if (isNameValid && IsValidIpAddress(ip->c_str()))
         {
 			ClientApp::GetInstance().SetPlayerName(m_NameField->GetText());
-			ClientApp::GetInstance().TryToConnect(ip);
+			ClientConnectionHandler::GetInstance().TryToConnectToServer(ip);
 			m_IsTryingToConnect = true;
         }
         else
@@ -95,11 +95,11 @@ void ConnectionState::OnUpdate(float dt)
 	{
 		static float timeOutTimer;
 
-		Shared<ConnectionStateInfo>& connectionInfo = ClientApp::GetInstance().GetConnectionInfo();
+		Shared<ConnectionStateInfo>& connectionInfo = ClientConnectionHandler::GetInstance().GetConnectionInfo();
 
 		switch (connectionInfo.WaitGet().Get())
 		{
-			case::Connecting:
+			case Connecting:
 			{
 				if (timeOutTimer > CONNECTION_TIMEOUT_TIME)
 				{
@@ -113,19 +113,19 @@ void ConnectionState::OnUpdate(float dt)
 				}
 				break;
 			}
-			case::Failed:
+			case Failed:
 			{
                 m_IpField->ShowErrorMessage("Connection failed!");
                 m_IsTryingToConnect = false;
 				timeOutTimer = 0.0f;
                 break;
             }
-			case::Connected:
+			case Connected:
 			{
 				Json j;
 				j["Type"] = "Login";
 				j["UserName"] = m_NameField->GetText();
-				ClientApp::GetInstance().Send(j.dump());
+				ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
 
 				//Switch state to lobby state later
 				m_StateMachine->SwitchState("LobbyState");

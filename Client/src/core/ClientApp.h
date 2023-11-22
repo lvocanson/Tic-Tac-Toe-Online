@@ -4,21 +4,10 @@
 #include "Managers/InputHandler.h"
 #include "Managers/TimeManager.h"
 #include "Player.h"
-#include "src/tcp-ip/TcpIpClient.h"
 #include "src/core/Managers/GameHistoryManager.h"
 
 class Window;
 class sf::Shape;
-class TcpIpClient;
-class Thread;
-
-enum ConnectionStateInfo
-{
-    Disconnected,
-    Connecting,
-    Failed,
-    Connected
-};
 
 class ClientApp
 {
@@ -50,16 +39,11 @@ public:
     /// </summary>
     void Shutdown() { m_IsRunning = false; }
 
-    void Send(const std::string& data);
     static GameSettings& GetGameSettings() { return GetInstance().m_GameSettings; }
 
-    void TryToConnect(const std::string* ip);
     void SetPlayerName(const std::string& name) { m_PlayerName = name; }
 
-    void RunClient(std::string*);
     Player* GetCurrentPlayer() { return m_Player; }
-
-    Shared<ConnectionStateInfo>& GetConnectionInfo() { return m_IsClientConnected; }
 
     static GameHistoryManager* GetHistoryManager() { return GetInstance().m_GameHistoryManager; }
 
@@ -73,10 +57,7 @@ private: // Methods
 
 private: // Fields
 
-    bool m_IsRunning = false; // Access this only in the main thread
-    bool m_IsClientRunning = false; // Access this only in the client thread
-    Shared<bool> m_SharedIsRunning = false; // Use this to share between threads
-    Shared<ConnectionStateInfo> m_IsClientConnected = ConnectionStateInfo::Disconnected;
+    bool m_IsRunning = false;
     
     TimeManager m_TimeManager;
     Window* m_Window = nullptr;
@@ -86,7 +67,5 @@ private: // Fields
     Player* m_Player;
     GameHistoryManager* m_GameHistoryManager;
 
-    Thread* m_ClientThread = nullptr;
-    TcpIpClient* m_Client = nullptr;
     std::string m_PlayerName;
 };

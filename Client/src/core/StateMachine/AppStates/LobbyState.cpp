@@ -25,7 +25,7 @@ void LobbyState::OnEnter()
 
     Json j;
     j["Type"] = "GetLobbyList";
-    ClientApp::GetInstance().Send(j.dump());
+    ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
 
     //TODO: Define constexpr int MAX_LOBBIES_NUMBER = number;
     m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
@@ -62,7 +62,7 @@ void LobbyState::OnUpdate(float dt)
                 Json j;
                 j["Type"] = "StartGame";
                 j["StartedLobbyID"] = m_CurrentLobbyID;
-                ClientApp::GetInstance().Send(j.dump());
+                ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
                 m_StateMachine->SwitchState("GameState");
                 ((GameState*)m_StateMachine->GetCurrentState())->SetLobbyID(m_CurrentLobbyID);
             });
@@ -91,6 +91,9 @@ void LobbyState::OnExit()
     //    m_Window->UnregisterDrawable(m_StartButton);
     //    RELEASE(m_StartButton);
     //}
+
+    m_LobbyButtons.clear();
+    m_LeaveButtons.clear();
 
     m_Window->UnregisterDrawable(m_ReturnButton);
     RELEASE(m_ReturnButton);
@@ -146,7 +149,7 @@ void LobbyState::TryToJoinLobby(int lobbyID)
     Json j;
     j["Type"] = "JoinLobby";
     j["ID"] = m_Lobbies[lobbyID].ID;
-    ClientApp::GetInstance().Send(j.dump());
+    ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
 }
 
 void LobbyState::LeaveLobby(int lobbyID)
@@ -154,7 +157,7 @@ void LobbyState::LeaveLobby(int lobbyID)
     Json j;
     j["Type"] = "LeaveLobby";
     j["ID"] = m_Lobbies[lobbyID].ID;
-    ClientApp::GetInstance().Send(j.dump());
+    ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
 }
 
 void LobbyState::CreateLeaveLobbyButton(sf::Vector2f pos, int lobbyID)

@@ -13,6 +13,7 @@ using Json = nlohmann::json;
 
 #include <threading/Shared.h>
 #include <game/TicTacToe.h>
+#include "ClientConnectionHandler.h"
 #include "src/core/Managers/InputHandler.h"
 #include "core/CoreDefinitions.h"
 #include <cassert>
