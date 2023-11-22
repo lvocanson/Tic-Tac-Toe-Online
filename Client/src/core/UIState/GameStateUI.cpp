@@ -44,7 +44,7 @@ void GameStateUI::Init()
 
     m_GameStateText = new sf::Text();
     m_GameStateText->setFont(font);
-    m_GameStateText->setString("Waiting other player");
+    m_GameStateText->setString("Waiting for another player...");
     m_GameStateText->setCharacterSize(18);
     m_GameStateText->setFillColor(sf::Color::White);
     m_GameStateText->setStyle(sf::Text::Bold);
