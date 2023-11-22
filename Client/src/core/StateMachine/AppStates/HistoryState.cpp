@@ -3,12 +3,8 @@
 #include "TicTacToe.h"
 #include "src/core/Managers/GameHistoryManager.h"
 
-HistoryState::HistoryState(StateMachine* stateMachine, Window* m_Window)
-	: State(stateMachine)
-	, m_Window(m_Window)
-	, m_RArrowButton()
-	, m_LArrowButton()
-	, m_BackToMenu()
+HistoryState::HistoryState(StateMachine *stateMachine, Window *m_Window)
+    : State(stateMachine), m_Window(m_Window), m_RArrowButton(), m_LArrowButton(), m_BackToMenu()
 {
     m_CurrentGameIndex = 0;
     m_CurrentMoveIndex = 0;
@@ -16,28 +12,25 @@ HistoryState::HistoryState(StateMachine* stateMachine, Window* m_Window)
 
 HistoryState::~HistoryState()
 {
-	NULLPTR(m_Window);
+    NULLPTR(m_Window);
 }
 
 void HistoryState::OnEnter()
 {
     m_RArrowButton = new ButtonComponent(sf::Vector2f(750, 50), sf::Vector2f(50, 50), sf::Color::Green, sf::Color::Red);
     m_RArrowButton->SetButtonText(">", sf::Color::White, 30, TextAlignment::Center);
-    m_RArrowButton->SetOnClickCallback([this]() {
-        PlacePiece();
-    });
+    m_RArrowButton->SetOnClickCallback([this]()
+                                       { PlacePiece(); });
 
     m_LArrowButton = new ButtonComponent(sf::Vector2f(450, 50), sf::Vector2f(50, 50), sf::Color::Green, sf::Color::Red);
     m_LArrowButton->SetButtonText("<", sf::Color::White, 30, TextAlignment::Center);
-    m_LArrowButton->SetOnClickCallback([this]() {
-        RemovePiece();
-    });
+    m_LArrowButton->SetOnClickCallback([this]()
+                                       { RemovePiece(); });
 
     m_BackToMenu = new ButtonComponent(sf::Vector2f(1000, 600), sf::Vector2f(200, 100), sf::Color::Blue, sf::Color::Red);
     m_BackToMenu->SetButtonText("Back to Menu", sf::Color::White, 30, TextAlignment::Center);
-    m_BackToMenu->SetOnClickCallback([this]() {
-        m_StateMachine->SwitchState("MenuState");
-    });
+    m_BackToMenu->SetOnClickCallback([this]()
+                                     { m_StateMachine->SwitchState("MenuState"); });
 
     m_Board.Init(m_Window);
     m_Board.DrawBoard();
@@ -49,17 +42,16 @@ void HistoryState::OnEnter()
     m_Window->RegisterDrawable(m_BackToMenu);
 }
 
-
 void HistoryState::OnUpdate(float dt)
 {
-	m_RArrowButton->Update();
-	m_LArrowButton->Update();
-	m_BackToMenu->Update();
+    m_RArrowButton->Update();
+    m_LArrowButton->Update();
+    m_BackToMenu->Update();
 
     for (const auto historyButton : m_HistoryButtons)
     {
         historyButton->Update();
-	}
+    }
 }
 
 void HistoryState::OnExit()
@@ -81,16 +73,15 @@ void HistoryState::RenderHistory()
             sf::Vector2f(50, 50 + verticalSpacing * i),
             displayPosition,
             sf::Color::White,
-            sf::Color::Green
-        );
+            sf::Color::Green);
 
         historyButton->SetButtonText("Game " + std::to_string(i + 1), sf::Color::Black, 20, TextAlignment::Center);
 
-        historyButton->SetOnClickCallback([this, i]() {
+        historyButton->SetOnClickCallback([this, i]()
+                                          {
             m_CurrentGameIndex = i;
             m_Board.SetEmpty();
-            DisplayGame();
-        });
+            DisplayGame(); });
 
         m_Window->RegisterDrawable(historyButton);
         m_HistoryButtons.push_back(historyButton);

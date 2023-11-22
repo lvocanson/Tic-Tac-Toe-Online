@@ -1,19 +1,37 @@
 #include "TextComponent.h"
 #include "src/core/Managers/Resources/FontRegistry.h"
 
-TextComponent::TextComponent(const std::string& text, BaseComponent& parentComponent, const sf::Color& color, unsigned int size, TextAlignment alignment)
+TextComponent::TextComponent() 
+    : m_Alignment(Center)
+{
+    
+    m_Text.setString("");
+    m_Text.setFont(*FontRegistry::GetFont("bold-font"));
+    m_Text.setFillColor(sf::Color::Black);
+    m_Text.setCharacterSize(20);
+
+    SetPosition(sf::Vector2f(0, 0));
+}
+
+TextComponent::TextComponent(const std::string& text, BaseComponent* parentComponent, const sf::Color& color, unsigned int size, TextAlignment alignment)
     : m_Alignment(alignment)
 {
+    m_ParentComponent = parentComponent;
     m_Text.setString(text);
     m_Text.setFont(*FontRegistry::GetFont("bold-font"));
     m_Text.setFillColor(color);
     m_Text.setCharacterSize(size);
 
-    SetPosition(parentComponent.GetPosition());
+    SetPosition(m_ParentComponent->GetPosition());
 }
 
 void TextComponent::Update()
 {
+}
+
+void TextComponent::SetTextAlignment(TextAlignment alignment)
+{
+    m_Alignment = alignment;
 }
 
 void TextComponent::SetPosition(const sf::Vector2f& position)
@@ -22,10 +40,9 @@ void TextComponent::SetPosition(const sf::Vector2f& position)
     {
         SetPositionCentered(position);
     }
-    else if (m_Alignment == TextAlignment::Right)
+    else if (m_Alignment == TextAlignment::Left)
     {
-        sf::FloatRect bounds = m_Text.getLocalBounds();
-        m_Text.setPosition(position.x - bounds.width, position.y);
+        m_Text.setPosition(position.x, position.y);
     }
     else
     {
@@ -33,14 +50,9 @@ void TextComponent::SetPosition(const sf::Vector2f& position)
     }
 }
 
-void TextComponent::SetTextAlignment(TextAlignment alignment)
-{
-    m_Alignment = alignment;
-}
-
 void TextComponent::SetText(const std::string& text)
 {
-	m_Text.setString(text);
+    m_Text.setString(text);
 }
 
 void TextComponent::SetColor(const sf::Color& color)
@@ -57,7 +69,7 @@ void TextComponent::SetPositionCentered(const sf::Vector2f& position)
 {
     sf::FloatRect bounds = m_Text.getLocalBounds();
     m_Text.setOrigin(bounds.left + bounds.width / 2.0f, bounds.top + bounds.height / 2.0f);
-    m_Text.setPosition(position.x + GetSize().x / 2.0f, position.y + GetSize().y / 2.0f);
+    m_Text.setPosition(position.x + bounds.width / 2.0f, position.y + bounds.height / 2.0f);
 }
 
 void TextComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const

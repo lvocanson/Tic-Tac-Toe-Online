@@ -1,5 +1,4 @@
 #pragma once 
-#include "StateMachine.h"
 
 class StateMachine;
 

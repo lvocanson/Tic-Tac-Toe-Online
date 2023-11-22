@@ -18,16 +18,18 @@ public:
 	void OnEnter() override;
 	void OnUpdate(float dt) override;
 	void OnExit() override;
-	void OnReceiveData(const Json& serializeData) override;
+	void OnReceiveData(const Json &serializeData) override;
 
-	GameState(StateMachine* stateMachine, Window* m_Window);
-	GameState(const GameState& other) = delete;
-	GameState& operator=(const GameState& other) = delete;
+	GameState(StateMachine *stateMachine, Window *m_Window);
+	GameState(const GameState &other) = delete;
+	GameState &operator=(const GameState &other) = delete;
 	~GameState() override;
 
 	void CheckIfMouseHoverBoard();
 	bool IsMouseHoverPiece(unsigned int i);
 	void PlacePlayerPieceOnBoard(unsigned int cell);
+	void InstanciateNewPlayerShape(const Player *currentPlayer, const unsigned int cell);
+	void WinCheck();
 	void SwitchPlayerTurn();
 
 	void SendPlacedPieceToServer(unsigned int cell);
@@ -35,13 +37,17 @@ public:
 	void ClearBoard();
 
 private:
-	Window* m_Window;
-	ButtonComponent* m_ReturnButton;
+	Window *m_Window;
+	ButtonComponent *m_ReturnButton;
 
 	GraphicBoard m_Board;
 
 	PlayerManager m_PlayerManager;
 	ScoreManager m_ScoreManager;
 
-	GameStateUI* m_GameStateUI;
+	float m_PlayerTurnTime;
+	float m_MaxPlayerTurnTime;
+	bool m_IsTimerOn;
+
+	GameStateUI *m_GameStateUI;
 };

@@ -97,12 +97,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\core\Components\ProgressBar.cpp" />
     <ClCompile Include="src\core\Components\ButtonComponent.cpp" />
+    <ClCompile Include="src\core\Components\InsertFieldComponent.cpp" />
     <ClCompile Include="src\core\Components\TextComponent.cpp" />
     <ClCompile Include="src\core\Managers\GameHistoryManager.cpp" />
     <ClCompile Include="src\core\Managers\InputHandler.cpp" />
     <ClCompile Include="src\core\Managers\Resources\PlayerShapeRegistry.cpp" />
-    <ClCompile Include="src\core\StateMachine\GameStates\SelectState.cpp" />
+    <ClCompile Include="src\core\StateMachine\AppStates\SelectState.cpp" />
+    <ClCompile Include="src\core\StateMachine\AppStates\ConnectionState.cpp" />
     <ClCompile Include="src\core\UIState\GameStateUI.cpp" />
     <ClCompile Include="src\core\Managers\Resources\FontRegistry.cpp" />
     <ClCompile Include="src\core\GraphicBoard.cpp" />
@@ -111,10 +114,10 @@
     <ClCompile Include="src\core\PlayerPieceShape.cpp" />
     <ClCompile Include="src\ClientMain.cpp" />
     <ClCompile Include="src\core\ClientApp.cpp" />
-    <ClCompile Include="src\core\StateMachine\GameStates\EndState.cpp" />
-    <ClCompile Include="src\core\StateMachine\GameStates\GameState.cpp" />
-    <ClCompile Include="src\core\StateMachine\GameStates\HistoryState.cpp" />
-    <ClCompile Include="src\core\StateMachine\GameStates\MenuState.cpp" />
+    <ClCompile Include="src\core\StateMachine\AppStates\EndState.cpp" />
+    <ClCompile Include="src\core\StateMachine\AppStates\GameState.cpp" />
+    <ClCompile Include="src\core\StateMachine\AppStates\HistoryState.cpp" />
+    <ClCompile Include="src\core\StateMachine\AppStates\MenuState.cpp" />
     <ClCompile Include="src\core\StateMachine\StateMachine.cpp" />
     <ClCompile Include="src\core\Managers\ScoreManager.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
@@ -126,13 +129,16 @@
     <ClCompile Include="src\core\Managers\UIStateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\Components\ProgressBar.h" />
     <ClInclude Include="src\core\Components\BaseComponent.h" />
     <ClInclude Include="src\core\Components\ButtonComponent.h" />
+    <ClInclude Include="src\core\Components\InsertFieldComponent.h" />
     <ClInclude Include="src\core\Components\TextComponent.h" />
     <ClInclude Include="src\core\Managers\GameHistoryManager.h" />
     <ClInclude Include="src\core\Managers\InputHandler.h" />
     <ClInclude Include="src\core\Managers\Resources\PlayerShapeRegistry.h" />
-    <ClInclude Include="src\core\StateMachine\GameStates\SelectState.h" />
+    <ClInclude Include="src\core\StateMachine\AppStates\ConnectionState.h" />
+    <ClInclude Include="src\core\StateMachine\AppStates\SelectState.h" />
     <ClInclude Include="src\core\UIState\GameStateUI.h" />
     <ClInclude Include="src\core\Managers\Resources\FontRegistry.h" />
     <ClInclude Include="src\core\GraphicBoard.h" />
@@ -142,10 +148,10 @@
     <ClInclude Include="src\core\PlayerPieceShape.h" />
     <ClInclude Include="src\core\ClientApp.h" />
     <ClInclude Include="src\core\CoreDefinitions.h" />
-    <ClInclude Include="src\core\StateMachine\GameStates\EndState.h" />
-    <ClInclude Include="src\core\StateMachine\GameStates\GameState.h" />
-    <ClInclude Include="src\core\StateMachine\GameStates\HistoryState.h" />
-    <ClInclude Include="src\core\StateMachine\GameStates\MenuState.h" />
+    <ClInclude Include="src\core\StateMachine\AppStates\EndState.h" />
+    <ClInclude Include="src\core\StateMachine\AppStates\GameState.h" />
+    <ClInclude Include="src\core\StateMachine\AppStates\HistoryState.h" />
+    <ClInclude Include="src\core\StateMachine\AppStates\MenuState.h" />
     <ClInclude Include="src\core\StateMachine\State.h" />
     <ClInclude Include="src\core\StateMachine\StateMachine.h" />
     <ClInclude Include="src\core\Managers\ScoreManager.h" />

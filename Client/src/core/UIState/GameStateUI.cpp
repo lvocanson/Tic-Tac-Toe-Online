@@ -9,6 +9,7 @@ GameStateUI::GameStateUI(Window* window) : UIStateManager(window)
     m_Title = nullptr;
     m_PlayerTurnText = nullptr;
     m_GameStateText = nullptr;
+    m_ProgressBar = nullptr;
 }
 
 GameStateUI::~GameStateUI()
@@ -21,6 +22,7 @@ void GameStateUI::Init()
     UIStateManager::Init();
 
     const auto& font = *FontRegistry::GetFont("bold-font");
+    const auto playerData = PlayerManager::GetCurrentPlayer()->GetData();
 
     m_Title = new sf::Text();
     m_Title->setFont(font);
@@ -34,10 +36,9 @@ void GameStateUI::Init()
 
     m_PlayerTurnText = new sf::Text();
     m_PlayerTurnText->setFont(font);
-    m_PlayerTurnText->setString(PlayerManager::GetCurrentPlayer()->GetName() + " turn");
+    m_PlayerTurnText->setString(playerData->Name+ " turn");
     m_PlayerTurnText->setCharacterSize(24);
-    // TODO : Change color based on player turn
-    m_PlayerTurnText->setFillColor(sf::Color::White);
+    m_PlayerTurnText->setFillColor(playerData->Color);
     m_PlayerTurnText->setStyle(sf::Text::Bold);
     m_PlayerTurnText->setPosition(m_Window->GetWidth() - m_PlayerTurnText->getGlobalBounds().width - 75, m_Window->GetHeight() * 0.5f - m_PlayerTurnText->getGlobalBounds().height);
 
@@ -47,7 +48,6 @@ void GameStateUI::Init()
     m_GameStateText->setFont(font);
     m_GameStateText->setString("");
     m_GameStateText->setCharacterSize(24);
-    // TODO : Change color based on player turn
     m_GameStateText->setFillColor(sf::Color::White);
     m_GameStateText->setStyle(sf::Text::Bold);
     m_GameStateText->setPosition(m_PlayerTurnText->getPosition().x, 100);
@@ -69,14 +69,31 @@ void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
 
         RegisterText(playerScoreText);
 
-        m_PlayerScoreTexts.insert(std::pair<int, sf::Text*>(player->GetPlayerID(), playerScoreText));
+        m_PlayerScoreTexts.insert(std::pair(player->GetPlayerID(), playerScoreText));
     }
+}
+
+void GameStateUI::InitProgressBar(const float maxValue)
+{
+    m_ProgressBar = new ProgressBar();
+    m_ProgressBar->SetPosition(sf::Vector2f(m_PlayerTurnText->getPosition().x, m_PlayerTurnText->getPosition().y + 60));
+    m_ProgressBar->SetSize(sf::Vector2f(200, 20));
+    m_ProgressBar->SetMaxValue(100);
+    m_ProgressBar->SetForegroundColor(PlayerManager::GetCurrentPlayer()->GetColor());
+
+    m_Window->RegisterDrawable(m_ProgressBar);
+
+    m_ProgressBar->SetMaxValue(maxValue);
+    m_ProgressBar->SetValue(maxValue);
 }
 
 void GameStateUI::UpdatePlayerTurnText(const PlayerData& data)
 {
     m_PlayerTurnText->setString(data.Name + " turn");
     m_PlayerTurnText->setFillColor(data.Color);
+
+    if (m_ProgressBar)
+        m_ProgressBar->SetForegroundColor(data.Color);
 }
 
 void GameStateUI::UpdateGameStateText(const std::string& text)

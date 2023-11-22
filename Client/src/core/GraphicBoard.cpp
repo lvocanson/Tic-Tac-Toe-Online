@@ -15,8 +15,10 @@ GraphicBoard::~GraphicBoard()
     ClearBoardShapes();
 }
 
-void GraphicBoard::Init(Window* window)
+void GraphicBoard::Init(unsigned int totalColumn, unsigned int totalRow, Window *window)
 {
+    Resize(totalColumn, totalRow);
+
     for (unsigned int i = 0; i < m_Size; i++)
     {
         m_AllPiecesOnBoard.insert(std::pair(i, new GraphicPiece()));
@@ -35,12 +37,12 @@ void GraphicBoard::DrawBoard()
     // Draw the board - temp
     for (unsigned int i = 0; i < m_Size; ++i)
     {
-        auto* square = new sf::RectangleShape(sf::Vector2f(pieceSize, pieceSize));
+        auto *square = new sf::RectangleShape(sf::Vector2f(pieceSize, pieceSize));
         square->setFillColor(sf::Color::Color(51, 56, 63));
         square->setOutlineColor(sf::Color::Color(0, 189, 156));
         square->setOutlineThickness(OUTLINE_THICKNESS);
         square->setPosition(center.x - (width * pieceSize * 0.5f) + (i % width) * pieceSize + OUTLINE_THICKNESS * (i % width),
-            center.y - (height * pieceSize * 0.5f) + (i / height) * pieceSize + OUTLINE_THICKNESS * (i / height));
+                            center.y - (height * pieceSize * 0.5f) + (i / height) * pieceSize + OUTLINE_THICKNESS * (i / height));
 
         m_Window->RegisterDrawable(square);
         GetGraphicPiece(i).SetShape(square);
@@ -63,7 +65,7 @@ void GraphicBoard::InstanciateNewPlayerShape(const TicTacToe::PieceID pieceId, u
 
 void GraphicBoard::RemoveLastPlayerShape()
 {
-    sf::Drawable* lastShape = m_PlayerShapes.back();
+    sf::Drawable *lastShape = m_PlayerShapes.back();
 
     m_Window->UnregisterDrawable(lastShape);
     RELEASE(lastShape);
@@ -74,7 +76,7 @@ void GraphicBoard::SetEmpty()
 {
     Board::SetEmpty();
 
-    for (auto& playerShape : m_PlayerShapes)
+    for (auto &playerShape : m_PlayerShapes)
     {
         m_Window->UnregisterDrawable(playerShape);
         RELEASE(playerShape);
@@ -85,7 +87,7 @@ void GraphicBoard::SetEmpty()
 
 void GraphicBoard::ClearBoardShapes()
 {
-    for (auto& piece : m_AllPiecesOnBoard)
+    for (auto &piece : m_AllPiecesOnBoard)
     {
         RELEASE(piece.second)
     }
@@ -95,7 +97,6 @@ void GraphicBoard::ClearBoardShapes()
 
 GraphicPiece::GraphicPiece() : m_Shape(nullptr)
 {
-
 }
 
 GraphicPiece::~GraphicPiece()

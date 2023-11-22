@@ -61,6 +61,8 @@ namespace TicTacToe
         /// </summary>
         PieceID IsThereAWinner() const;
 
+        unsigned int GetRandomEmptyCell() const;
+
         /// <summary>
         /// Resizes the board to the specified width and height.
         /// </summary>
