@@ -7,14 +7,23 @@ void ClientConnectionHandler::Init(Shared<StateMachine>* stateMachine)
     m_StateMachine = stateMachine;
 }
 
-void ClientConnectionHandler::TryToConnectToServer(const std::string* adress)
+void ClientConnectionHandler::Disconnect()
 {
+    m_IsClientConnected.WaitGet().Get() = Disconnected;
+
     if (m_ClientThread != nullptr)
     {
         m_SharedIsRunning.WaitGet().Get() = false;
         m_ClientThread->Wait();
         RELEASE(m_ClientThread);
     }
+}
+
+void ClientConnectionHandler::TryToConnectToServer(const std::string* adress)
+{
+    Disconnect();
+
+    DebugLog("Try to connect to " + *adress + "...\n");
 
     m_IsClientConnected.WaitGet().Get() = Connecting;
 
@@ -23,8 +32,6 @@ void ClientConnectionHandler::TryToConnectToServer(const std::string* adress)
 
 void ClientConnectionHandler::StartThread(const std::string* ipAdress)
 {
-    DebugLog("Try to connect to " + *ipAdress + "...\n");
-
     m_SharedIsRunning.WaitGet().Get() = true;
 
     m_ClientThread = Thread::Create([](LPVOID ip) -> DWORD
@@ -100,7 +107,6 @@ void ClientConnectionHandler::RunClient(const std::string* adress)
 
         m_SharedIsRunning.WaitGet().Get() = false;
         m_Client->Disconnect();
-        m_IsClientConnected.WaitGet().Get() = Disconnected;
         RELEASE(m_Client);
     }
     catch (...)
@@ -136,11 +142,20 @@ void ClientConnectionHandler::SendDataToServer(const std::string& data)
     m_Client->Send(data);
 }
 
+bool ClientConnectionHandler::IsConnected()
+{
+    if (m_Client && m_IsClientConnected.WaitGet().Get() == Connected)
+        return true;
+
+    return false;
+}
+
 void ClientConnectionHandler::CleanUp()
 {
     if (m_ClientThread)
     {
         m_ClientThread->Start();
+        m_SharedIsRunning.WaitGet().Get() = false;
         m_ClientThread->Wait();
         RELEASE(m_ClientThread);
     }

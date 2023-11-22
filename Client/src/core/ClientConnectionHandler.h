@@ -31,10 +31,12 @@ public:
 
     void Init(Shared<StateMachine>* stateMachine);
 
+    void Disconnect();
     void TryToConnectToServer(const std::string* adress);
     void SendDataToServer(const std::string& data);
     
     Shared<ConnectionStateInfo>& GetConnectionInfo() { return m_IsClientConnected; }
+    bool IsConnected();
 
     void CleanUp();
 

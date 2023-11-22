@@ -29,7 +29,7 @@
     <ClCompile Include="src\core\StateMachine\AppStates\LobbyState.cpp" />
     <ClCompile Include="src\core\Managers\TimeManager.cpp" />
     <ClCompile Include="src\core\Managers\GameHistoryManager.cpp" />
-    <ClCompile Include="ClientConnectionHandler.cpp" />
+    <ClCompile Include="src\core\ClientConnectionHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ClientMain.cpp">
@@ -119,7 +119,7 @@
     <ClInclude Include="src\core\StateMachine\AppStates\LobbyState.h" />
     <ClInclude Include="src\core\Managers\TimeManager.h" />
     <ClInclude Include="src\core\Managers\GameHistoryManager.h" />
-    <ClInclude Include="ClientConnectionHandler.h" />
+    <ClInclude Include="src\core\ClientConnectionHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\bold-font.ttf" />

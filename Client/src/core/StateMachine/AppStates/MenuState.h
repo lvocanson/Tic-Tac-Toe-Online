@@ -8,6 +8,7 @@ class MenuState : public State
 {
 public:
     void OnEnter() override;
+    void ShowConnectionButton();
     void OnUpdate(float dt) override;
     void OnExit() override;
 
@@ -22,4 +23,5 @@ private:
     ButtonComponent* m_PlayButton;
     ButtonComponent* m_HistoryButton;
     ButtonComponent* m_QuitButton;
+    ButtonComponent* m_DisconnectButton;
 };

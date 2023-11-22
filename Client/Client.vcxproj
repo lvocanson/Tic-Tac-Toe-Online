@@ -97,7 +97,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ClientConnectionHandler.cpp" />
+    <ClCompile Include="src\core\ClientConnectionHandler.cpp" />
     <ClCompile Include="src\core\Components\ProgressBar.cpp" />
     <ClCompile Include="src\core\Components\ButtonComponent.cpp" />
     <ClCompile Include="src\core\Components\InsertFieldComponent.cpp" />
@@ -131,7 +131,7 @@
     <ClCompile Include="src\core\Managers\TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ClientConnectionHandler.h" />
+    <ClInclude Include="src\core\ClientConnectionHandler.h" />
     <ClInclude Include="src\core\Components\ProgressBar.h" />
     <ClInclude Include="src\core\Components\BaseComponent.h" />
     <ClInclude Include="src\core\Components\ButtonComponent.h" />

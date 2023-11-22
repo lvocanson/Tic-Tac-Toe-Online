@@ -87,6 +87,7 @@ void ClientApp::Cleanup()
     }
 
     RELEASE(m_Window);
+    RELEASE(m_Player);
 
     ClientConnectionHandler::GetInstance().CleanUp();
 
