@@ -12,7 +12,7 @@ using namespace TicTacToe;
 
 void ClientApp::Init()
 {
-    FontRegistry::LoadFont("bold-font");
+    FontRegistry::LoadFont("coolvetica.otf");
 
     m_IsRunning = true;
 

@@ -6,7 +6,7 @@ TextComponent::TextComponent()
 {
     
     m_Text.setString("");
-    m_Text.setFont(*FontRegistry::GetFont("bold-font"));
+    m_Text.setFont(*FontRegistry::GetFont("coolvetica.otf"));
     m_Text.setFillColor(sf::Color::Black);
     m_Text.setCharacterSize(20);
 
@@ -18,7 +18,7 @@ TextComponent::TextComponent(const std::string& text, BaseComponent* parentCompo
 {
     m_ParentComponent = parentComponent;
     m_Text.setString(text);
-    m_Text.setFont(*FontRegistry::GetFont("bold-font"));
+    m_Text.setFont(*FontRegistry::GetFont("coolvetica.otf"));
     m_Text.setFillColor(color);
     m_Text.setCharacterSize(size);
 

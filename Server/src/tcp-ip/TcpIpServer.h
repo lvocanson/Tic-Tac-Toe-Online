@@ -13,7 +13,7 @@ struct Connection
 
     std::string Receive() const;
     void Send(const std::string& data) const;
-    void Kick();
+    void Kick() const;
 
     // Creates the event object and associate it with the socket.
     Connection(SOCKET socket);
@@ -25,7 +25,7 @@ private:
 
     bool IsNew = true;
     mutable bool ReadPending = false;
-    bool ClosePending = false;
+    mutable bool ClosePending = false;
 };
 /// <summary>
 /// A pointer to a connection.

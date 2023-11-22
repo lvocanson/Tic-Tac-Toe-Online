@@ -26,7 +26,7 @@ void Connection::Send(const std::string& data) const
     TcpIp::Send(Socket, data.c_str(), static_cast<u_long>(data.size()));
 }
 
-void Connection::Kick()
+void Connection::Kick() const
 {
     ClosePending = true;
 }

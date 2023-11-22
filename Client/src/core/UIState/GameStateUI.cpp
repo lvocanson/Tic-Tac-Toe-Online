@@ -21,7 +21,7 @@ void GameStateUI::Init()
 {
     UIStateManager::Init();
 
-    const auto& font = *FontRegistry::GetFont("bold-font");
+    const auto& font = *FontRegistry::GetFont("coolvetica.otf");
 
     m_Title = new sf::Text();
     m_Title->setFont(font);
@@ -58,7 +58,7 @@ void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
     for (const auto player : allPlayers)
     {
         auto playerScoreText = new sf::Text();
-        playerScoreText->setFont(*FontRegistry::GetFont("bold-font"));
+        playerScoreText->setFont(*FontRegistry::GetFont("coolvetica.otf"));
         playerScoreText->setString(player->GetName() + " : 0");
         playerScoreText->setCharacterSize(24);
         playerScoreText->setFillColor(sf::Color::White);

@@ -24,13 +24,13 @@ void ServerApp::Init()
     }
 
     auto addr = TcpIp::IpAddress::GetLocalAddress();
-    std::cout << INF_CLR << "=> Servers Local Address: " << SCS_CLR << addr.ToString() << std::endl << DEF_CLR;
-    std::cout << INF_CLR << "=> Servers Phrase Address: " << SCS_CLR << addr.ToPhrase() << std::endl << DEF_CLR;
+    std::cout << INF_CLR << "=> Game Server Phrase: " << SCS_CLR << addr.ToPhrase() << std::endl;
+    std::cout << INF_CLR << "=> Web Server Address: " << SCS_CLR << "http://" << addr.ToString() << ':' << DEFAULT_PORT + 1 << "/" << DEF_CLR << std::endl;
 }
 
 void ServerApp::Run()
 {
-    std::cout << INF_CLR << "Press ESC to shutdown the app." << std::endl << DEF_CLR;
+    std::cout << INF_CLR << "Press ESC to shutdown the app." << std::endl << DEF_CLR << std::endl;
     while (!IsKeyPressed(27)) // 27 = ESC
     {
         HandleGameServer();
@@ -43,7 +43,7 @@ void ServerApp::Run()
 
 void ServerApp::CleanUp()
 {
-    std::cout << INF_CLR << "User requested to shutdown the app." << std::endl << DEF_CLR;
+    std::cout << std::endl << INF_CLR << "User requested to shutdown the app." << std::endl << DEF_CLR;
 
     CleanUpWebServer();
     CleanUpGameServer();
@@ -233,6 +233,16 @@ void ServerApp::CleanUpGameServer()
     std::cout << Color::Cyan << "============== Starting Game Server Clean Up ==============" << std::endl;
     try
     {
+        for (auto& c : m_GameServer->GetConnections())
+        {
+            c.Kick();
+        }
+
+        int count = 0;
+        m_GameServer->CleanClosedConnections([&](ClientPtr c) { ++count; });
+        if (count > 0)
+            std::cout << INF_CLR << "Closed " << count << " connection" << (count > 1 ? "s" : "") << "." << std::endl;
+
         m_GameServer->Close();
         delete m_GameServer;
     }
@@ -382,6 +392,17 @@ void ServerApp::CleanUpWebServer()
     std::cout << WEB_PFX << Color::Cyan << "======== Starting Web Server Clean Up  ==============" << std::endl << DEF_CLR;
     try
     {
+        for (auto& c : m_WebServer->GetHtmlConns())
+        {
+            c.Kick();
+        }
+
+        int count = 0;
+        m_WebServer->CleanClosedHtmlConns([&](WebClientPtr c) { ++count; });
+
+        if (count > 0)
+            std::cout << WEB_PFX << "Closed " << count << " connection" << (count > 1 ? "s" : "") << "." << std::endl;
+
         m_WebServer->Close();
         delete m_WebServer;
     }

@@ -22,7 +22,8 @@ void ConnectionState::OnEnter()
 {
 	m_IpField = new InsertFieldComponent();
 	m_IpField->SetPosition(sf::Vector2f(100, 200));
-	m_IpField->SetLabel("IP Address");
+	m_IpField->SetLabel("Server Phrase");
+	m_IpField->SetText(TcpIp::IpAddress::FromString(sf::IpAddress::getLocalAddress().toString()).ToPhrase());
 
 	m_NameField = new InsertFieldComponent();
 	m_NameField->SetPosition(sf::Vector2f(100, 300));
@@ -57,8 +58,8 @@ void ConnectionState::OnEnter()
 			m_NameField->ShowErrorMessage("Username should be more than 2 characters!");
 			isNameValid = false;
 		}
-		
-        const std::string* ip = new std::string();
+
+        const std::string* ip = new std::string(TcpIp::IpAddress::FromPhrase(m_IpField->GetText()).ToString());
 
 		DebugLog(*ip);
 
@@ -70,8 +71,8 @@ void ConnectionState::OnEnter()
         }
         else
         {
-            DebugLog("Invalid IP address format!\n");
-			m_IpField->ShowErrorMessage("Invalid IP address format!");
+            DebugLog("Invalid phrase!\n");
+			m_IpField->ShowErrorMessage("Invalid phrase!");
         }
 
 		RELEASE(ip);
