@@ -57,10 +57,12 @@ void ConnectionState::OnEnter()
 			m_NameField->ShowErrorMessage("Username should be more than 2 characters!");
 			isNameValid = false;
 		}
+		
+        const std::string* ip = new std::string();
 
-        const std::string* ip = new std::string(m_IpField->GetText());
+		DebugLog(*ip);
 
-        if (isNameValid && IsValidIpAddress(ip->c_str()))
+        if (isNameValid)
         {
 			ClientApp::GetInstance().SetPlayerName(m_NameField->GetText());
 			ClientConnectionHandler::GetInstance().TryToConnectToServer(ip);

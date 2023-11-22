@@ -192,12 +192,22 @@ void GameState::OnReceiveData(const Json& serializeData)
 {
     if (serializeData["Type"] == "SetPlayerShape")
     {
-        m_PlayerManager.CreateNewPlayer(serializeData["PlayerX"], sf::Color(250, 92, 12), Square);
-        m_PlayerManager.CreateNewPlayer(serializeData["PlayerO"], sf::Color(255, 194, 0), Circle);
+		if (rand() % 100 <= 50)
+		{
+			m_PlayerManager.CreateNewPlayer(serializeData["PlayerX"], sf::Color(250, 92, 12), Square);
+			m_PlayerManager.CreateNewPlayer(serializeData["PlayerO"], sf::Color(255, 194, 0), Circle);
+		}
+		else
+		{
+			m_PlayerManager.CreateNewPlayer(serializeData["PlayerO"], sf::Color(255, 194, 0), Circle);
+			m_PlayerManager.CreateNewPlayer(serializeData["PlayerX"], sf::Color(250, 92, 12), Square);
+		}
 
+		m_GameStateUI->Init();
         m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
 
         m_IsPlayersConnected = true;
+
     }
 	else if (serializeData["Type"] == "OpponentMove")
 	{

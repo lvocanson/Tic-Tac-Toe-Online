@@ -15,7 +15,7 @@ PlayerManager::~PlayerManager()
 
 void PlayerManager::Init()
 {
-
+    
 }
 
 void PlayerManager::Clear()
