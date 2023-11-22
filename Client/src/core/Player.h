@@ -23,6 +23,7 @@ public:
 	sf::Color GetColor() const { return m_Data.Color; }
 	TicTacToe::PieceID GetPlayerID() const { return m_Data.Id; }
 	std::string GetName() const { return m_Data.Name; }
+	PlayerShapeType GetShapeType() const { return m_Data.ShapeType; }
 	PlayerData* GetData() { return &m_Data; }
 
 private:

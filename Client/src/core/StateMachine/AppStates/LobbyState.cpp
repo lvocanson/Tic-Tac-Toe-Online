@@ -96,6 +96,12 @@ void LobbyState::OnExit()
         RELEASE(lvButton);
     }
 
+    if (m_StartButton != nullptr)
+    {
+        m_Window->UnregisterDrawable(m_StartButton);
+        RELEASE(m_StartButton);
+    }
+
     m_Window->UnregisterDrawable(m_ReturnButton);
     RELEASE(m_ReturnButton);
 }

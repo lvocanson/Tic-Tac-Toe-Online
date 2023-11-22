@@ -156,7 +156,7 @@ void GameState::InstanciateNewPlayerShape(const Player* currentPlayer, unsigned 
     pos.x += m_Board.GetPieceSize() * 0.5f;
     pos.y += m_Board.GetPieceSize() * 0.5f;
 
-    const auto playerPieceShape = new PlayerPieceShape(currentPlayer->GetPlayerID(), pos);
+    const auto playerPieceShape = new PlayerPieceShape(currentPlayer->GetPlayerID(), currentPlayer->GetShapeType(), pos);
     m_GamePieces.push_back(playerPieceShape);
     m_Window->RegisterDrawable(playerPieceShape);
 }
@@ -218,6 +218,7 @@ void GameState::SendPlacedPieceToServer(unsigned int cell)
     j["Row"] = row;
     j["Col"] = col;
     j["PlayerID"] = playerID;
+    //j["Opponent"] = 
 
     ClientApp::GetInstance().Send(j.dump());
 }
