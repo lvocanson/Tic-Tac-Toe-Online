@@ -19,6 +19,7 @@ void ClientApp::Init()
     m_SharedIsRunning.WaitGet().Get() = true;
 
     m_TimeManager.Init();
+    m_Player = new Player();
 
     m_Window = new Window();
     m_Window->Create("Tic Tac Toe Online!", 1280, 720);

@@ -26,8 +26,10 @@ public:
 	GameState& operator=(const GameState& other) = delete;
 	~GameState() override;
 
+	void SetLobbyID(unsigned int id) { m_LobbyID = id; }
 
 private:
+
 
 	void DrawBoard();
 	void UpdatePlayerTimer(float dt);
@@ -46,9 +48,12 @@ private:
 
 private:
 
+	unsigned int m_LobbyID;
+
 	Window* m_Window;
 	ButtonComponent* m_ReturnButton;
-
+	bool m_IsPlayersConnected = false;
+	bool m_IsGameInit = false;
 	GraphicBoard m_Board;
 
 	PlayerManager m_PlayerManager;

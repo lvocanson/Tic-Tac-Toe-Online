@@ -3,6 +3,7 @@
 #include "src/core/StateMachine/StateMachine.h"
 #include "Managers/InputHandler.h"
 #include "Managers/TimeManager.h"
+#include "Player.h"
 
 class Window;
 class sf::Shape;
@@ -53,6 +54,7 @@ public:
     void SetPlayerName(const std::string& name) { m_PlayerName = name; }
 
     void RunClient(std::string*);
+    Player* GetCurrentPlayer() { return m_Player; }
 
     Shared<ConnectionStateInfo>& GetConnectionInfo() { return m_IsClientConnected; }
 
@@ -76,6 +78,7 @@ private: // Fields
     Shared<StateMachine>* m_StateMachine = nullptr;
     GameSettings m_GameSettings;
     InputHandler m_InputHandler;
+    Player* m_Player;
 
     Thread* m_ClientThread = nullptr;
     TcpIpClient* m_Client = nullptr;

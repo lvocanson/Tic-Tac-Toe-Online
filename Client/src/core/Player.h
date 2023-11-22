@@ -26,6 +26,8 @@ public:
 	PlayerShapeType GetShapeType() const { return m_Data.ShapeType; }
 	PlayerData* GetData() { return &m_Data; }
 
+	void SetName(const std::string& name) { m_Data.Name = name; }
+
 private:
 
 	PlayerData m_Data;

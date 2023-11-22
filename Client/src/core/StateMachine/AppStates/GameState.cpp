@@ -16,17 +16,9 @@ GameState::GameState(StateMachine* stateMachine, Window* m_Window)
     , m_GameStateUI(nullptr)
     , m_IsTimerOn(false)
 {
-    m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12), Square);
-    m_PlayerManager.CreateNewPlayer("Player Two", sf::Color(255, 194, 0), Circle);
-
     m_Board.Init(ClientApp::GetGameSettings().GetTotalColumn(), ClientApp::GetGameSettings().GetTotalRow());
     m_ScoreManager.Init();
     m_PlayerManager.Init();
-
-    for (const auto& player : m_PlayerManager.GetAllPlayers())
-    {
-        m_ScoreManager.CreateScoreForPlayer(player->GetData(), m_Window);
-    }
 }
 
 GameState::~GameState()
@@ -36,13 +28,17 @@ GameState::~GameState()
 
 void GameState::OnEnter()
 {
+    m_IsGameInit = false;
+    m_IsPlayersConnected = false;
+
+    Json j;
+    j["Type"] = "GetPlayerInfo";
+    j["LobbyID"] = m_LobbyID;
+    ClientApp::GetInstance().Send(j.dump());
+
     m_MaxPlayerTurnTime = ClientApp::GetGameSettings().GetPlayerMoveLimitTime();
     m_IsTimerOn = ClientApp::GetGameSettings().IsTimerOn();
     m_PlayerTurnTime = m_MaxPlayerTurnTime;
-
-    m_GameStateUI = new GameStateUI(m_Window);
-    m_GameStateUI->Init();
-    m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
 
     if (m_IsTimerOn) 
     {
@@ -63,6 +59,13 @@ void GameState::OnEnter()
 void GameState::OnUpdate(float dt)
 {
     m_ReturnButton->Update(dt);
+
+    if (m_IsPlayersConnected && !m_IsGameInit)
+    {
+        m_GameStateUI = new GameStateUI(m_Window);
+        m_GameStateUI->Init();
+        m_IsGameInit = true;
+    }
 
     CheckIfMouseHoverBoard();
 
@@ -246,6 +249,21 @@ void GameState::OnExit()
 
 void GameState::OnReceiveData(const Json& serializeData)
 {
+    if (serializeData["SetPlayerShape"])
+    {
+        m_PlayerManager.CreateNewPlayer(serializeData["PlayerX"], sf::Color(250, 92, 12), Square);
+        m_PlayerManager.CreateNewPlayer(serializeData["PlayerO"], sf::Color(255, 194, 0), Circle);
+
+        for (const auto& player : m_PlayerManager.GetAllPlayers())
+        {
+            m_ScoreManager.CreateScoreForPlayer(player->GetData(), m_Window);
+        }
+
+        m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
+
+        m_IsPlayersConnected = true;
+    }
+
     std::string playerID = serializeData["PlayerID"];
     std::string opponent = serializeData["Opponent"];
     int row = serializeData["Row"];

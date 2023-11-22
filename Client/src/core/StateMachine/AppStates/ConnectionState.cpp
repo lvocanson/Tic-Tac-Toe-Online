@@ -117,7 +117,7 @@ void ConnectionState::OnUpdate(float dt)
 				ClientApp::GetInstance().Send(j.dump());
 
 				//Switch state to lobby state later
-				m_StateMachine->SwitchState("GameState");
+				m_StateMachine->SwitchState("LobbyState");
 				m_IpField->ClearErrorMessage();
 				m_IsTryingToConnect = false;
 				break;

@@ -50,6 +50,19 @@ void ServerApp::CleanUp()
     std::cout << INF_CLR << "User requested to shutdown the app." << std::endl << DEF_CLR;
     CleanUpWebServer();
     CleanUpGameServer();
+
+    for (auto lb : m_Lobbies)
+    {
+        lb = Lobby();
+    }
+
+    for (auto game : m_StartedGames)
+    {
+        game.second = nullptr;
+    }
+
+    m_Lobbies.clear();
+    m_StartedGames.clear();
 }
 
 #pragma region Game Server
@@ -105,77 +118,89 @@ void ServerApp::HandleGameServer()
 void ServerApp::HandleRecv(ClientPtr sender)
 {
     std::string data = sender->Receive();
-    Json j;
+    Json receivedData;
     try
     {
-        j = Json::parse(data);
+        receivedData = Json::parse(data);
     }
     catch (const std::exception& e)
     {
         std::cout << ERR_CLR << "Failed to parse JSON from " << HASH_CLR(sender) << ERR_CLR << ": " << e.what() << std::endl << DEF_CLR;
         return;
     }
-    if (!j.contains("Type"))
+    if (!receivedData.contains("Type"))
     {
         std::cout << ERR_CLR << "Received JSON from " << HASH_CLR(sender) << ERR_CLR << " does not contain a type." << std::endl << DEF_CLR;
         return;
     }
 
-    if (j["Type"] == "Login")
+    if (receivedData["Type"] == "Login")
     {
-        m_Players.insert(std::make_pair(sender->GetName(), j["UserName"]));
+        m_Players.insert(std::make_pair(sender->GetName(), receivedData["UserName"]));
     }
-    else if (j["Type"] == "LobbyList")
+    else if (receivedData["Type"] == "LobbyList")
     {
         CreateLobbies();
         SerializeLobbiesToJson(sender);
-        Json j; 
-        j["UserName"] = m_Players[sender->GetName()];
-        sender->Send(j.dump());
     }
-    else if (j["Type"] == "JoinLobby")
+    else if (receivedData["Type"] == "JoinLobby")
     {
         for (auto& lb : m_Lobbies)
         {
-            if (j["ID"] == lb.ID)
+            if (receivedData["ID"] == lb.ID)
             {
-                if (!lb.IsLobbyFull())
+                if (lb.IsLobbyFull())
                 {
                     std::cout << INF_CLR << "Lobby is full!" << std::endl << DEF_CLR;
                     return;
                 }
                 lb.AddPlayerToLobby(m_Players[sender->GetName()]);
                 Json j;
+                j["Type"];
                 j["CurrentLobbyID"] = lb.ID;
+                std::cout << STS_CLR << lb.PlayerO << lb.PlayerX << HASH_CLR(sender) << STS_CLR;
                 sender->Send(j.dump());
             }
         }
         SerializeLobbiesToJson(sender);
     }
-    else if (j["Type"] == "LeaveLobby")
+    else if (receivedData["Type"] == "LeaveLobby")
     {
         for (auto& lb : m_Lobbies)
         {
-            if (j["ID"] == lb.ID)
+            if (receivedData["ID"] == lb.ID)
             {
                 lb.RemovePlayerFromLobby(m_Players[sender->GetName()]);
             }
         }
         SerializeLobbiesToJson(sender);
     }
-    else if (j["Type"] == "Play")
+    else if (receivedData["Type"] == "StartGame")
     {
         // TODO: Check if player is in a lobby, check if it's their turn, check if the move is valid, send the move to the other player
-        if (j.contains("StartedLobbyID"))
+        if (receivedData.contains("StartedLobbyID"))
         {
             for (auto& lb : m_Lobbies)
             {
-                if (j["StartedLobbyID"] == lb.ID)
+                if (receivedData["StartedLobbyID"] == lb.ID)
                 {
-                    m_StartedGame = lb;
+                    m_StartedGames.insert({lb.ID, &lb});
                 }
             }
         }
+    }
+    else if (receivedData["Type"] == "GetPlayerInfo")
+    {
+        Json j;
+        j["Type"] = "GetPlayerInfo";
+        j["SetPlayerShape"];
+        j["PlayerX"] = m_StartedGames[receivedData["LobbyID"]]->PlayerX;
+        j["PlayerO"] = m_StartedGames[receivedData["LobbyID"]]->PlayerO;
+        sender->Send(j.dump());
+
+    }
+    else if (receivedData["Type"] == "Play")
+    {
 
     }
     else
@@ -257,20 +282,20 @@ void ServerApp::CreateLobbies()
 {
     for (int i = 0; i < 3; i++)
     {
-        Lobby lb;
-        m_Lobbies.push_back(lb);
+        m_Lobbies.emplace_back(Lobby());
     }
 }
 
 void ServerApp::SerializeLobbiesToJson(ClientPtr sender)
 {
     Json lobbyListJson;
+    lobbyListJson["Type"] = "Lobby";
     for (int i = 0; i < m_Lobbies.size(); i++)
     {
         Json lbJson;
         lbJson["ID"] = m_Lobbies[i].ID;
-        lbJson["PlayerX"] = m_Lobbies[i].PlayerX.empty() ? "None" : m_Lobbies[i].PlayerX;
-        lbJson["PlayerO"] = m_Lobbies[i].PlayerO.empty() ? "None" : m_Lobbies[i].PlayerO;
+        lbJson["PlayerX"] = m_Lobbies[i].PlayerX.empty() ? "" : m_Lobbies[i].PlayerX;
+        lbJson["PlayerO"] = m_Lobbies[i].PlayerO.empty() ? "" : m_Lobbies[i].PlayerO;
 
         lobbyListJson["Lobbies"].push_back(lbJson);
     }
@@ -284,8 +309,7 @@ void ServerApp::SerializeLobbiesToJson(ClientPtr sender)
 void ServerApp::SerializeGameDataToJson(ClientPtr sender)
 {
     Json gameData;
-    gameData["PlayerX"] = m_StartedGame.PlayerX;
-    gameData["PlayerO"] = m_StartedGame.PlayerO;
+
 
     sender->Send(gameData.dump());
 }
