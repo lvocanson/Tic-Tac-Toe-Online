@@ -20,6 +20,7 @@ void ServerApp::Init()
     else
     {
         std::cout << SCS_CLR << "Game server is listening on port " << DEFAULT_PORT << "..." << std::endl << DEF_CLR;
+        CreateLobbies();
     }
 
     if (!InitWebServer())
@@ -138,9 +139,8 @@ void ServerApp::HandleRecv(ClientPtr sender)
     {
         m_Players.insert(std::make_pair(sender->GetName(), receivedData["UserName"]));
     }
-    else if (receivedData["Type"] == "LobbyList")
+    else if (receivedData["Type"] == "GetLobbyList")
     {
-        CreateLobbies();
         SerializeLobbiesToJson(sender);
     }
     else if (receivedData["Type"] == "JoinLobby")
@@ -158,7 +158,6 @@ void ServerApp::HandleRecv(ClientPtr sender)
                 Json j;
                 j["Type"];
                 j["CurrentLobbyID"] = lb.ID;
-                std::cout << STS_CLR << lb.PlayerO << lb.PlayerX << HASH_CLR(sender) << STS_CLR;
                 sender->Send(j.dump());
             }
         }
@@ -299,8 +298,6 @@ void ServerApp::SerializeLobbiesToJson(ClientPtr sender)
 
         lobbyListJson["Lobbies"].push_back(lbJson);
     }
-    //for debug 
-    std::cout << STS_CLR << lobbyListJson["Lobbies"].size() << HASH_CLR(sender) << STS_CLR << std::endl << DEF_CLR;
     sender->Send(lobbyListJson.dump());
 }
 

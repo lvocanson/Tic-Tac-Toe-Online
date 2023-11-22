@@ -22,24 +22,10 @@ LobbyState::~LobbyState()
 void LobbyState::OnEnter()
 {
     Json j;
-    j["Type"] = "LobbyList";
+    j["Type"] = "GetLobbyList";
     ClientApp::GetInstance().Send(j.dump());
 
     //TODO: Define constexpr int MAX_LOBBIES_NUMBER = number;
-    for (int i = 0; i < 3; i++)
-    {
-        ButtonComponent* m_LobbyButton = new ButtonComponent(sf::Vector2f(100, (i*110)), sf::Vector2f(200, 100), sf::Color::Blue);
-        m_LobbyButton->SetButtonText("Lobby " + std::to_string(i), sf::Color::White, 30, TextAlignment::Center);
-        m_LobbyButton->SetOnClickCallback([=]()
-        {
-            TryToJoinLobby(i);
-        });
-        //CreateLeaveLobbyButton(sf::Vector2f(300, (i * 110)), i);
-        m_LobbyButtons.push_back(m_LobbyButton);
-        m_Window->RegisterDrawable(m_LobbyButton);
-    }
-  
-    
     m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
     m_ReturnButton->SetButtonText("Return To Menu", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]()
@@ -116,12 +102,25 @@ void LobbyState::OnReceiveData(const Json& serializeData)
     }
     if (serializeData.contains("Lobbies"))
     {
+        int i = 0;
         for (const auto& lobbyJson : serializeData["Lobbies"])
         {
             int id = lobbyJson["ID"];
             std::string playerX = lobbyJson["PlayerX"];
             std::string playerO = lobbyJson["PlayerO"];
             m_Lobbies.emplace_back(id, playerX, playerO);
+
+            ButtonComponent* m_LobbyButton = new ButtonComponent(sf::Vector2f(100, (i * 110)), sf::Vector2f(200, 100), sf::Color::Blue);
+            m_LobbyButton->SetButtonText("Lobby " + std::to_string(i), sf::Color::White, 30, TextAlignment::Center);
+            m_LobbyButton->SetOnClickCallback([=]()
+                {
+                    TryToJoinLobby(i);
+                });
+            //CreateLeaveLobbyButton(sf::Vector2f(300, (i * 110)), i);
+            m_LobbyButtons.push_back(m_LobbyButton);
+            m_Window->RegisterDrawable(m_LobbyButton);
+
+            i++;
         }
     }
 }

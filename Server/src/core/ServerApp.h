@@ -32,8 +32,8 @@ private: // Web Server
     HtmlServer* m_WebServer = nullptr;
 
 private: // Lobbies
-    size_t FindPlayer(const std::string& name);
     void CreateLobbies();
+    size_t FindPlayer(const std::string& name);
     void SerializeLobbiesToJson(ClientPtr sender);
 
     // HashMap <Address (connection name), Username>
