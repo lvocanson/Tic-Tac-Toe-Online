@@ -157,8 +157,11 @@ void ServerApp::HandleRecv(ClientPtr sender)
                 if (lb.IsLobbyFull())
                 {
                     Json j;
-                    j["Type"] = "OnUpdateLobby";
-                    sender->Send(j.dump());
+                    j["Type"] = "LobbyIsFull";
+                    for (auto& player : m_Players)
+                    {
+                        m_GameServer->GetClientByName(player.first)->Send(j.dump());
+                    }
                     return;
                 }
             }
@@ -175,7 +178,16 @@ void ServerApp::HandleRecv(ClientPtr sender)
             }
         }
         SerializeLobbiesToJson(sender);
-    }////////// Game State //////////
+    }
+    else if (receivedData["Type"] == "WaitInLobby")
+    {
+
+    }
+    else if (receivedData["Type"] == "LobbyIsFull")
+    {
+
+    }
+    ////////// Game State //////////
     else if (receivedData["Type"] == "StartGame")
     {
         if (receivedData.contains("StartedLobbyID"))

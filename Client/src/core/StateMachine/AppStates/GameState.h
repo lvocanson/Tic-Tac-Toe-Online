@@ -46,7 +46,7 @@ private:
 	unsigned int m_LobbyID;
 
 	Window* m_Window;
-	ButtonComponent* m_ReturnButton;
+	ButtonComponent* m_ReturnButton = nullptr;
 	bool m_IsPlayersConnected = false;
 	bool m_IsGameInit = false;
 	GraphicBoard m_Board;
@@ -58,6 +58,7 @@ private:
 	float m_MaxPlayerTurnTime;
 	int m_PlayerMove;
 	bool m_IsTimerOn;
+	bool m_IsStart = false;
 
 	GameStateUI* m_GameStateUI;
 };

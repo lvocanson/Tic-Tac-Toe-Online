@@ -44,21 +44,6 @@ void LobbyState::OnUpdate(float dt)
         lbButton->Update(dt);
     }
 
-    if (m_CanStart)
-    {
-        m_StartButton = new ButtonComponent(sf::Vector2f(700, 500), sf::Vector2f(200, 100), sf::Color::Blue);
-        m_StartButton->SetButtonText("START", sf::Color::Green, 30, TextAlignment::Center);
-        m_StartButton->SetOnClickCallback([this]()
-            {
-                Json j;
-                j["Type"] = "StartGame";
-                j["StartedLobbyID"] = m_CurrentLobbyID;
-                ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
-                m_StateMachine->SwitchState("GameState");
-                ((GameState*)m_StateMachine->GetCurrentState())->SetLobbyID(m_CurrentLobbyID);
-            });
-    }
-
     if (m_LeaveButtons)
     {
         m_LeaveButtons->Update(dt);
@@ -84,12 +69,6 @@ void LobbyState::OnExit()
     {
         m_Window->UnregisterDrawable(m_LeaveButtons);
         RELEASE(m_LeaveButtons);
-    }
-
-    if (m_StartButton != nullptr)
-    {
-        m_Window->UnregisterDrawable(m_StartButton);
-        RELEASE(m_StartButton);
     }
 
     m_LobbyButtons.clear();
@@ -137,20 +116,12 @@ void LobbyState::OnReceiveData(const Json& serializeData)
     }
     else if (serializeData["Type"] == "IsInLobby")
     {
-        m_CurrentLobbyID = serializeData["CurrentLobbyID"];
-        m_IsInLobby = true;
-        m_LeaveButtons = new ButtonComponent(sf::Vector2f(500, 500), sf::Vector2f(200, 100), sf::Color::Red);
-        m_LeaveButtons->SetButtonText("Leave", sf::Color::White, 30, TextAlignment::Center);
-        m_LeaveButtons->SetOnClickCallback([this]() 
-            {
-                LeaveLobby();
-            });
-
-        m_Window->RegisterDrawable(m_LeaveButtons);
-    }
-    else if (serializeData["Type"] == "OnUpdateLobby")
-    {
-        m_CanStart = true;
+        Json j;
+        j["Type"] = "WaitInLobby";
+        j["StartedLobbyID"] = m_CurrentLobbyID;
+        ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
+        m_StateMachine->SwitchState("GameState");
+        ((GameState*)m_StateMachine->GetCurrentState())->SetLobbyID(m_CurrentLobbyID);
     }
 }
 

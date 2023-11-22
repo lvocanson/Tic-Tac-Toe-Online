@@ -22,53 +22,33 @@ GameState::~GameState()
 
 void GameState::OnEnter()
 {
-	Json j;
-	j["Type"] = "GetPlayerInfo";
-	ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
 
-	m_MaxPlayerTurnTime = ClientApp::GetGameSettings().GetPlayerMoveLimitTime();
-	m_IsTimerOn = ClientApp::GetGameSettings().IsTimerOn();
-	m_PlayerTurnTime = m_MaxPlayerTurnTime;
-
-	m_GameStateUI = new GameStateUI(m_Window);
-	m_GameStateUI->Init();
-	m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
-
-	if (m_IsTimerOn)
-	{
-		m_GameStateUI->InitProgressBar(m_MaxPlayerTurnTime);
-	}
-
-	m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
-	m_ReturnButton->SetButtonText("Return", sf::Color::White, 30, TextAlignment::Center);
-	m_ReturnButton->SetOnClickCallback([this]()
-		{ m_StateMachine->SwitchState("MenuState"); });
-
-	m_Window->RegisterDrawable(m_ReturnButton);
-
-	m_ScoreManager.Init();
-	m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
-
-	m_Board.DrawBoard();
 }
 
 void GameState::OnUpdate(float dt)
 {
-    m_ReturnButton->Update(dt);
-
-    if (m_IsPlayersConnected && !m_IsGameInit)
-    {
-        m_GameStateUI = new GameStateUI(m_Window);
-        m_GameStateUI->Init();
-        m_IsGameInit = true;
-    }
-
-	CheckIfMouseHoverBoard();
-
-	if (m_IsTimerOn)
+	if (m_IsStart)
 	{
-		UpdatePlayerTimer(dt);
-		CheckIfTimerIsUp();
+		if (m_ReturnButton)
+		{
+			m_ReturnButton->Update(dt);
+		}
+
+
+		if (m_IsPlayersConnected && !m_IsGameInit)
+		{
+			m_GameStateUI = new GameStateUI(m_Window);
+			m_GameStateUI->Init();
+			m_IsGameInit = true;
+		}
+
+		CheckIfMouseHoverBoard();
+
+		if (m_IsTimerOn)
+		{
+			UpdatePlayerTimer(dt);
+			CheckIfTimerIsUp();
+		}
 	}
 }
 
@@ -204,14 +184,47 @@ void GameState::OnReceiveData(const Json& serializeData)
         m_PlayerManager.CreateNewPlayer(serializeData["PlayerX"], sf::Color(250, 92, 12), Square);
         m_PlayerManager.CreateNewPlayer(serializeData["PlayerO"], sf::Color(255, 194, 0), Circle);
 
-        m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
-
         m_IsPlayersConnected = true;
     }
 	else if (serializeData["Type"] == "OpponentMove")
 	{
 		PlacePlayerPieceOnBoard(m_PlayerMove);
 		m_PlayerManager.SwitchPlayerTurn();
+	}
+	else if (serializeData["Type"] == "LobbyIsFull")
+	{
+		Json j;
+		j["Type"] = "GetPlayerInfo";
+		ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
+		m_IsStart = true;
+	}
+
+	if (m_IsStart)
+	{
+		m_MaxPlayerTurnTime = ClientApp::GetGameSettings().GetPlayerMoveLimitTime();
+		m_IsTimerOn = ClientApp::GetGameSettings().IsTimerOn();
+		m_PlayerTurnTime = m_MaxPlayerTurnTime;
+
+		m_GameStateUI = new GameStateUI(m_Window);
+		m_GameStateUI->Init();
+		m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
+
+		if (m_IsTimerOn)
+		{
+			m_GameStateUI->InitProgressBar(m_MaxPlayerTurnTime);
+		}
+
+		m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
+		m_ReturnButton->SetButtonText("Return", sf::Color::White, 30, TextAlignment::Center);
+		m_ReturnButton->SetOnClickCallback([this]()
+			{ m_StateMachine->SwitchState("MenuState"); });
+
+		m_Window->RegisterDrawable(m_ReturnButton);
+
+		m_ScoreManager.Init();
+		m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
+
+		m_Board.DrawBoard();
 	}
 
 }
