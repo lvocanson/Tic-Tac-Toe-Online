@@ -14,8 +14,7 @@ GameState::GameState(StateMachine *stateMachine, Window *m_Window)
     m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12), Square);
     m_PlayerManager.CreateNewPlayer("Player Two", sf::Color(255, 194, 0), Circle);
 
-    m_Board.Init(ClientApp::GetGameSettings().GetTotalColumn(), ClientApp::GetGameSettings().GetTotalRow());
-    m_ScoreManager.Init();
+    m_Board.Init(ClientApp::GetGameSettings().GetTotalColumn(), ClientApp::GetGameSettings().GetTotalRow(), m_Window);
     m_PlayerManager.Init();
 }
 
@@ -116,19 +115,6 @@ void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
     m_ScoreManager.AddPlayerMove(*currentPlayer->GetData(), cell);
 
     SendPlacedPieceToServer(cell);
-}
-
-void GameState::InstanciateNewPlayerShape(const Player *currentPlayer, unsigned int cell)
-{
-    auto pos = sf::Vector2f(m_Board.GetGraphicPiece(cell).GetPosition());
-
-    // Center the piece
-    pos.x += m_Board.GetPieceSize() * 0.5f;
-    pos.y += m_Board.GetPieceSize() * 0.5f;
-
-    const auto playerPieceShape = new PlayerPieceShape(currentPlayer->GetPlayerID(), pos);
-    m_GamePieces.push_back(playerPieceShape);
-    m_Window->RegisterDrawable(playerPieceShape);
 }
 
 void GameState::WinCheck()

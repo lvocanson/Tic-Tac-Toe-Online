@@ -28,9 +28,11 @@ public:
 	void CheckIfMouseHoverBoard();
 	bool IsMouseHoverPiece(unsigned int i);
 	void PlacePlayerPieceOnBoard(unsigned int cell);
-	void InstanciateNewPlayerShape(const Player *currentPlayer, const unsigned int cell);
 	void WinCheck();
 	void SwitchPlayerTurn();
+
+	void UpdatePlayerTimer(float dt);
+	void CheckIfTimerIsUp();
 
 	void SendPlacedPieceToServer(unsigned int cell);
 

@@ -3,6 +3,7 @@
 ScoreManager::ScoreManager()
 {
     m_PlayerScores = std::map<TicTacToe::PieceID, unsigned int>();
+    m_CurrentGame = nullptr;
 }
 
 ScoreManager::~ScoreManager()

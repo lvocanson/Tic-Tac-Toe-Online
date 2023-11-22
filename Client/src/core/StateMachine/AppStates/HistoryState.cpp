@@ -32,7 +32,7 @@ void HistoryState::OnEnter()
     m_BackToMenu->SetOnClickCallback([this]()
                                      { m_StateMachine->SwitchState("MenuState"); });
 
-    m_Board.Init(m_Window);
+    m_Board.Init(3, 3, m_Window);
     m_Board.DrawBoard();
 
     RenderHistory();
