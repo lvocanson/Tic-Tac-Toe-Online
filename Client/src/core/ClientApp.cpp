@@ -54,7 +54,7 @@ void ClientApp::Run()
 
         Update(elapsed);
         m_Window->Render();
-        m_IsRunning = m_Window->IsOpen();
+        m_IsRunning &= m_Window->IsOpen();
 
 
         if (m_Client->IsConnected())
