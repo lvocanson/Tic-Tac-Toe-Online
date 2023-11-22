@@ -24,13 +24,13 @@ public:
     GameHistoryManager();
     ~GameHistoryManager() override;
 
-    void Init() override;
+    void Init() override {};
     void Clear() override;
 
     void SaveGame(const PlayerData* winner, const std::vector<const PlayerMove*>* playerMoves);
 
     size_t GetGameHistorySize() const { return m_GameHistory.size(); }
-    GameData* GetGameData(unsigned int gameID);
+    GameData* GetGameData(unsigned int gameID) const;
     std::vector<GameData*>& GetAllGameData() { return m_GameHistory; }
 
 private:

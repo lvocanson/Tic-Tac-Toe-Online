@@ -75,7 +75,7 @@ void ClientConnectionHandler::RunClient(const std::string* adress)
                     }
                     catch (const std::exception& e)
                     {
-                        DebugLog("Failed to parse JSON from server!");
+                        DebugLog("Failed to parse JSON from server: " + std::string(e.what()) + "\n");
                         return;
                     }
                     if (!j.contains("Type"))
@@ -111,8 +111,7 @@ void ClientConnectionHandler::RunClient(const std::string* adress)
     }
     catch (...)
     {
-        DebugLog("Global catch failed \n");
-        DebugLog("The thread is shutting down \n");
+        DebugLog("Run client failed.\nThe thread is shutting down.\n");
 
         m_SharedIsRunning.WaitGet().Get() = false;
         m_IsClientConnected.WaitGet().Get() = Disconnected;
@@ -133,7 +132,7 @@ void ClientConnectionHandler::SendDataToServer(const std::string& data)
         return;
     }
 
-    if (!m_Client || !m_IsClientConnected.WaitGet().Get() == Connected)
+    if (!m_Client || m_IsClientConnected.WaitGet().Get() != Connected)
     {
         DebugLog("Client isn't connected to server !");
         return;

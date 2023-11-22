@@ -5,7 +5,7 @@
 class StateMachine
 {
 public:
-    StateMachine();
+    StateMachine() = default;
     ~StateMachine();
 
     /// <summary>
@@ -16,8 +16,8 @@ public:
     void InitState(const std::string& initState);
 
     void Update(float dt);
-    void Start();
-    void OnReceiveData(const Json& serializeData);
+    void Start() const;
+    void OnReceiveData(const Json& serializeData) const;
     /// <summary>
     /// Switch the current state to the state with the name newState
     /// </summary>

@@ -15,17 +15,18 @@ struct Lobby : ISerializable
     std::string& GetOpponentName(const std::string&);
     void AddPlayerToLobby(const std::string& name);
     void RemovePlayerFromLobby(const std::string& name);
-    bool IsInLobby(const std::string& name)
+
+    bool IsInLobby(const std::string& name) const
     {
         return PlayerX == name || PlayerO == name;
     }
 
-    bool IsLobbyFull()
+    bool IsLobbyFull() const
     {
         return !PlayerX.empty() && !PlayerO.empty();
     }
 
-    bool IsLobbyEmpty()
+    bool IsLobbyEmpty() const
     {
         return PlayerX.empty() && PlayerO.empty();
     }

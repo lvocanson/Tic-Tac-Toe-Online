@@ -16,7 +16,7 @@ void InputHandler::Update()
             m_PreviousKeyState[i] = m_CurrentKeyState[i];
 
             // And save the mouse's state in the current frame
-            m_CurrentKeyState[i] = sf::Mouse::isButtonPressed((sf::Mouse::Button)(i - m_KeyCount - 1));
+            m_CurrentKeyState[i] = sf::Mouse::isButtonPressed(static_cast<sf::Mouse::Button>(i - m_KeyCount - 1));
         }
         else
         {
@@ -24,7 +24,7 @@ void InputHandler::Update()
             m_PreviousKeyState[i] = m_CurrentKeyState[i];
 
             // And save the keyboard's state in the current frame
-            m_CurrentKeyState[i] = sf::Keyboard::isKeyPressed((sf::Keyboard::Key)i);
+            m_CurrentKeyState[i] = sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(i));
         }
     }
 }

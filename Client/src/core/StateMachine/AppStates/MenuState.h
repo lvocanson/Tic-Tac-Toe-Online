@@ -14,13 +14,13 @@ public:
     MenuState(StateMachine* stateMachine, Window* window);
     MenuState(const MenuState& other) = delete;
     MenuState& operator=(const MenuState& other) = delete;
-    ~MenuState();
+    ~MenuState() override;
 
 private:
-    Window* m_Window;
+    Window* m_Window = nullptr;
 
-    ButtonComponent* m_PlayButton;
-    ButtonComponent* m_HistoryButton;
-    ButtonComponent* m_QuitButton;
-    ButtonComponent* m_DisconnectButton;
+    ButtonComponent* m_PlayButton = nullptr;
+    ButtonComponent* m_HistoryButton = nullptr;
+    ButtonComponent* m_QuitButton = nullptr;
+    ButtonComponent* m_DisconnectButton = nullptr;
 };

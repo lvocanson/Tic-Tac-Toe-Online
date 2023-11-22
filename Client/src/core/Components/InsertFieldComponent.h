@@ -27,7 +27,7 @@ public:
     void SetFillColor(const sf::Color& color) { m_Rectangle.setFillColor(color); }
     void SetHoverColor(const sf::Color& color) { m_Rectangle.setOutlineColor(color); }
     void SetOutlineThickness(float thickness) { m_Rectangle.setOutlineThickness(thickness); }
-    void SetCharacterLimit(unsigned int limit) { if (m_CharacterLimit > 0) m_CharacterLimit = limit; }
+    void SetCharacterLimit(unsigned int limit) { if (limit > 0) m_CharacterLimit = limit; }
     void ShowErrorMessage(const std::string& message) { m_ErrorText.SetText(message); }
     void ClearErrorMessage() { m_ErrorText.SetText(""); }
 

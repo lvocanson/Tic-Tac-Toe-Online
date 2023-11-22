@@ -2,7 +2,6 @@
 #include "src/core/StateMachine/StateMachine.h"
 #include "src/core/Window.h"
 #include "src/core/Components/ButtonComponent.h"
-#include "src/core/Managers/PlayerManager.h"
 #include "src/core/UIState/GameStateUI.h"
 #include "game/Lobby.h"
 
@@ -17,10 +16,9 @@ public:
     LobbyState(StateMachine* stateMachine, Window* window);
     LobbyState(const LobbyState& other) = delete;
     LobbyState& operator=(const LobbyState& other) = delete;
-    ~LobbyState();
+    ~LobbyState() override;
 
     void TryToJoinLobby(int lobbyID);
-    void LeaveLobby();
 
 private:
 
@@ -29,12 +27,11 @@ private:
     bool m_IsInLobby = false;
 
 
-    Window* m_Window;
-    GameStateUI* m_GameStateUI;
-    ButtonComponent* m_ReturnButton;
+    Window* m_Window = nullptr;
+    GameStateUI* m_GameStateUI = nullptr;
+    ButtonComponent* m_ReturnButton = nullptr;
     ButtonComponent* m_LeaveButtons = nullptr;
 
     std::vector<ButtonComponent*> m_LobbyButtons;
     std::vector<Lobby> m_Lobbies;
-    std::string m_PlayerName;
 };

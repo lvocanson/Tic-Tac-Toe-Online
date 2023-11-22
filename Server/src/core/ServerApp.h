@@ -33,15 +33,14 @@ private: // Web Server
 
 private: // Lobbies
     void CreateLobbies();
-    size_t FindPlayer(const std::string& name);
-    void SerializeLobbiesToJson(ClientPtr sender);
+    size_t FindPlayer(const std::string& name) const;
+    void SerializeLobbiesToJson(ClientPtr sender) const;
 
     // HashMap <Address (connection name), Username>
     std::unordered_map<std::string, std::string> m_Players;
     std::vector<Lobby*> m_Lobbies;
 
 private: //Game
-    void SerializeGameDataToJson(ClientPtr sender);
 
     std::unordered_map<unsigned int, Lobby*> m_StartedGames;
 };

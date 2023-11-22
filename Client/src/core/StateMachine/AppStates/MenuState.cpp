@@ -4,10 +4,6 @@
 MenuState::MenuState(StateMachine* stateMachine, Window* window)
     : State(stateMachine)
     , m_Window(window)
-    , m_PlayButton()
-    , m_HistoryButton()
-    , m_QuitButton()
-    , m_DisconnectButton()
 {
 }
 

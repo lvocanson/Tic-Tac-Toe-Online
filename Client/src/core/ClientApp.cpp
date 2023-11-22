@@ -6,7 +6,6 @@
 #include "src/core/StateMachine/AppStates/HistoryState.h"
 #include "src/core/StateMachine/AppStates/MenuState.h"
 #include "src/core/StateMachine/AppStates/LobbyState.h"
-#include "src/tcp-ip/TcpIpClient.h"
 
 using namespace TicTacToe;
 
@@ -17,7 +16,9 @@ void ClientApp::Init()
     m_IsRunning = true;
 
     m_TimeManager.Init();
+
     m_Player = new Player();
+    m_GameHistoryManager = new GameHistoryManager();
 
     m_Window = new Window();
     m_Window->Create("Tic Tac Toe Online!", 1280, 720);
@@ -79,15 +80,16 @@ void ClientApp::Update(float delta)
 
 void ClientApp::Cleanup()
 {
-    RELEASE(m_StateMachine);
+    RELEASE(m_StateMachine)
 
     for (auto& drawable : m_Window->GetDrawables())
     {
-        RELEASE(drawable);
+        RELEASE(drawable)
     }
 
-    RELEASE(m_Window);
-    RELEASE(m_Player);
+    RELEASE(m_Window)
+    RELEASE(m_Player)
+    RELEASE(m_GameHistoryManager)
 
     ClientConnectionHandler::GetInstance().CleanUp();
 

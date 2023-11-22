@@ -1,6 +1,7 @@
 #include "InsertFieldComponent.h"
 #include "src/core/Managers/InputHandler.h"
 
+
 InsertFieldComponent::InsertFieldComponent()
     : m_CharacterLimit(DEFAULT_CHARACTER_LIMIT)
     , m_Focus(false)
@@ -90,41 +91,42 @@ void InsertFieldComponent::Update(float dt)
 
         if (GetTextSize() < m_CharacterLimit)
         {
-            for (int key = sf::Keyboard::A; key <= sf::Keyboard::Z; ++key)
+            // Handle all the letters of the alphabet
+            for (sf::Keyboard::Key key = sf::Keyboard::A; key <= sf::Keyboard::Z; key = static_cast<sf::Keyboard::Key>(static_cast<int>(key) + 1)) 
             {
-                if (InputHandler::IsKeyPressed(static_cast<sf::Keyboard::Key>(key)))
+                if (InputHandler::IsKeyPressed(key)) 
                 {
-                    if (InputHandler::IsKeyHeld(sf::Keyboard::LShift) || InputHandler::IsKeyHeld(sf::Keyboard::RShift))
-                    {
-                        AppendCharacter('A' + (key - sf::Keyboard::A));
-                    }
-                    else
-                    {
-                        AppendCharacter('a' + (key - sf::Keyboard::A));
-                    }
+                    const char baseChar = InputHandler::IsKeyHeld(sf::Keyboard::LShift) || InputHandler::IsKeyHeld(sf::Keyboard::RShift) ? 'A' : 'a';
+                    AppendCharacter(static_cast<const char>(baseChar + (key - sf::Keyboard::A)));
                 }
             }
 
-            for (int key = sf::Keyboard::Num0; key <= sf::Keyboard::Num9; ++key)
+            // Handle all the numbers
+            for (sf::Keyboard::Key key = sf::Keyboard::Num0; key <= sf::Keyboard::Num9; key = static_cast<sf::Keyboard::Key>(static_cast<int>(key) + 1)) 
             {
-                if (InputHandler::IsKeyPressed(static_cast<sf::Keyboard::Key>(key)))
+                if (InputHandler::IsKeyPressed(key)) 
                 {
-                    char pressedChar = '0' + (key - sf::Keyboard::Num0);
-                    AppendCharacter(pressedChar);
-                }
-            }
-            for (int key = sf::Keyboard::Numpad0; key <= sf::Keyboard::Numpad9; ++key)
-            {
-                if (InputHandler::IsKeyPressed(static_cast<sf::Keyboard::Key>(key)))
-                {
-                    char pressedChar = '0' + (key - sf::Keyboard::Numpad0);
-                    AppendCharacter(pressedChar);
+                    AppendCharacter(static_cast<const char>('0' + (key - sf::Keyboard::Num0)));
                 }
             }
 
-            if (InputHandler::IsKeyPressed(sf::Keyboard::Period))
+            // Handle all the numpad numbers
+            for (sf::Keyboard::Key key = sf::Keyboard::Numpad0; key <= sf::Keyboard::Numpad9; key = static_cast<sf::Keyboard::Key>(static_cast<int>(key) + 1)) 
+            {
+                if (InputHandler::IsKeyPressed(key)) 
+                {
+                    AppendCharacter(static_cast<const char>('0' + (key - sf::Keyboard::Numpad0)));
+                }
+            }
+
+            // Handle the dot
+            if (InputHandler::IsKeyPressed(sf::Keyboard::Period)) 
             {
                 AppendCharacter('.');
+            }
+            else if (InputHandler::IsKeyPressed(sf::Keyboard::Delete))
+            {
+                SetText("");
             }
         }
     }

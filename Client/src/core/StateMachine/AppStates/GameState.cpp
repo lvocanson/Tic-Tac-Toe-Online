@@ -8,7 +8,8 @@ using namespace TicTacToe;
 using json = nlohmann::json;
 
 GameState::GameState(StateMachine* stateMachine, Window* m_Window)
-    : State(stateMachine), m_Window(m_Window), m_ReturnButton(nullptr), m_GameStateUI(nullptr), m_IsTimerOn(false), m_LobbyID(0)
+    : State(stateMachine)
+    , m_Window(m_Window)
 {
     m_GameStateUI = new GameStateUI(m_Window);
 
@@ -93,20 +94,19 @@ void GameState::CheckIfTimerIsUp()
 
 void GameState::CheckIfMouseHoverBoard()
 {
-    for (unsigned int i = 0; i < m_Board.GetTotalSize(); i++)
+    for (unsigned int cell = 0; cell < m_Board.GetTotalSize(); cell++)
     {
-        if (m_Board[i] != EMPTY_PIECE)
+        if (m_Board[cell] != EMPTY_PIECE)
             continue;
 
-        if (IsMouseHoverPiece(i))
+        if (IsMouseHoverPiece(cell))
         {
             if (InputHandler::IsMouseButtonPressed(sf::Mouse::Left))
             {
                 m_GameStateUI->UpdateGameStateText("");
 
-                PlacePlayerPieceOnBoard(i);
-                m_PlayerMove = i;
-                SendPlacedPieceToServer();
+                PlacePlayerPieceOnBoard(cell);
+                SendPlacedPieceToServer(cell);
                 WinCheck();
                 SwitchPlayerTurn();
             }
@@ -170,12 +170,12 @@ void GameState::SwitchPlayerTurn()
     }
 }
 
-void GameState::SendPlacedPieceToServer()
+void GameState::SendPlacedPieceToServer(unsigned int cell)
 {
     Json j;
     j["Type"] = "OpponentMove";
     j["PlayerName"] = ClientApp::GetInstance().GetCurrentPlayer()->GetName();
-    j["PlayerMove"] = m_PlayerMove;
+    j["PlayerMove"] = cell;
     j["ID"] = m_LobbyID;
     ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
 }

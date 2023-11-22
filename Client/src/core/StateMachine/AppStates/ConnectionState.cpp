@@ -127,6 +127,8 @@ void ConnectionState::OnUpdate(float dt)
             timeOutTimer = 0.0f;
             break;
         }
+        default: 
+            break;
         }
     }
 }
@@ -146,6 +148,6 @@ void ConnectionState::OnExit()
 
 bool ConnectionState::IsValidIpAddress(const char* ip)
 {
-    const std::regex ipRegex("^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$");
+    const std::regex ipRegex(R"(^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$)");
     return std::regex_match(ip, ipRegex) || std::string("LOCALHOST")._Equal(ip);
 }

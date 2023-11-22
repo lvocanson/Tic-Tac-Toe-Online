@@ -41,7 +41,7 @@ public:
 
     static GameSettings& GetGameSettings() { return GetInstance().m_GameSettings; }
 
-    Player* GetCurrentPlayer() { return m_Player; }
+    Player* GetCurrentPlayer() const { return m_Player; }
 
     static GameHistoryManager* GetHistoryManager() { return GetInstance().m_GameHistoryManager; }
 

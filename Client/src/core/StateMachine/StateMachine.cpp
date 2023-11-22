@@ -1,9 +1,5 @@
 #include "StateMachine.h"
 
-StateMachine::StateMachine()
-    : m_States()
-{
-}
 
 StateMachine::~StateMachine()
 {
@@ -32,7 +28,7 @@ const State* StateMachine::GetState(const std::string& stateName)
     return state;
 }
 
-void StateMachine::Start()
+void StateMachine::Start() const
 {
     if (!m_CurrentState)
     {
@@ -43,7 +39,7 @@ void StateMachine::Start()
     m_CurrentState->OnEnter();
 }
 
-void StateMachine::OnReceiveData(const Json& data)
+void StateMachine::OnReceiveData(const Json& data) const
 {
     m_CurrentState->OnReceiveData(data);
 }

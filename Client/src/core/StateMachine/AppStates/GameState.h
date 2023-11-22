@@ -2,15 +2,11 @@
 #include "src/core/StateMachine/StateMachine.h"
 #include "src/core/Components/ButtonComponent.h"
 #include "src/core/GraphicBoard.h"
-#include "src/core/Player.h"
 #include "src/core/UIState/GameStateUI.h"
 
 #include "src/core/Managers/PlayerManager.h"
 #include "src/core/Managers/ScoreManager.h"
-#include "src/core/Managers/UIStateManager.h"
-#include "src/core/Managers/GameHistoryManager.h"
 
-#include "game/Lobby.h"
 
 class sf::Shape;
 
@@ -41,7 +37,7 @@ public:
     void UpdatePlayerTimer(float dt);
     void CheckIfTimerIsUp();
 
-    void SendPlacedPieceToServer();
+    void SendPlacedPieceToServer(unsigned int cell);
 
     void ClearBoard();
 
@@ -51,18 +47,17 @@ private:
 
     Window* m_Window;
     ButtonComponent* m_ReturnButton = nullptr;
-    bool m_IsPlayersConnected = false;
-    bool m_IsGameInit = false;
     GraphicBoard m_Board;
 
     PlayerManager m_PlayerManager;
     ScoreManager m_ScoreManager;
 
-    float m_PlayerTurnTime;
-    float m_MaxPlayerTurnTime;
-    int m_PlayerMove;
+    float m_PlayerTurnTime = 0.0f;
+    float m_MaxPlayerTurnTime = 0.0f;
 
-    bool m_IsTimerOn;
+    bool m_IsPlayersConnected = false;
+    bool m_IsGameInit = false;
+    bool m_IsTimerOn = false;
     bool m_IsPlayerTurn = false;
     bool m_IsGameStart = false;
 

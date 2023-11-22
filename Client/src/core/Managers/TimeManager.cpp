@@ -3,15 +3,6 @@
 TimeManager::TimeManager() = default;
 TimeManager::~TimeManager() = default;
 
-void TimeManager::Init()
-{
-    m_TotalTime = 0.0f;
-}
-
-void TimeManager::Clear()
-{
-
-}
 
 void TimeManager::Tick()
 {

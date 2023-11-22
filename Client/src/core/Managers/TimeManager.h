@@ -9,8 +9,8 @@ public:
     TimeManager();
     ~TimeManager() override;
 
-    void Init() override;
-    void Clear() override;
+    void Init() override {};
+    void Clear() override {};
 
     void Tick();
 
@@ -20,7 +20,7 @@ public:
 private:
 
     inline static sf::Clock m_Clock;
-    inline static float m_TotalTime;
-    inline static float m_DeltaTime;
+    inline static float m_TotalTime = 0.0f;
+    inline static float m_DeltaTime = 0.0f;
 
 };
