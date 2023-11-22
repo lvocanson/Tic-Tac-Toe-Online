@@ -23,11 +23,11 @@ private:
 
 	bool m_IsTryingToConnect = false;
 
-	Window* m_Window;
+	Window* m_Window = nullptr;
 
-	ButtonComponent* m_BackButton;
-	ButtonComponent* m_ConnectButton;
+	ButtonComponent* m_BackButton = nullptr;
+	ButtonComponent* m_ConnectButton = nullptr;
 
-	InsertFieldComponent* m_IpField;
-	InsertFieldComponent* m_NameField;
+	InsertFieldComponent* m_IpField = nullptr;
+	InsertFieldComponent* m_NameField = nullptr;
 };

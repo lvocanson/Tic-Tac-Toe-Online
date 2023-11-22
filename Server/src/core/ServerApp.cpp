@@ -24,13 +24,13 @@ void ServerApp::Init()
     }
 
     auto addr = TcpIp::IpAddress::GetLocalAddress();
-    std::cout << INF_CLR << "=> Servers Local Address: " << SCS_CLR << addr.ToString() << std::endl << DEF_CLR;
-    std::cout << INF_CLR << "=> Servers Phrase Address: " << SCS_CLR << addr.ToPhrase() << std::endl << DEF_CLR;
+    std::cout << INF_CLR << "=> Game Server Phrase: " << SCS_CLR << addr.ToPhrase() << std::endl;
+    std::cout << INF_CLR << "=> Web Server Address: " << SCS_CLR << "http://" << addr.ToString() << ':' << DEFAULT_PORT + 1 << "/" << DEF_CLR << std::endl;
 }
 
 void ServerApp::Run()
 {
-    std::cout << INF_CLR << "Press ESC to shutdown the app." << std::endl << DEF_CLR;
+    std::cout << INF_CLR << "Press ESC to shutdown the app." << std::endl << DEF_CLR << std::endl;
     while (!IsKeyPressed(27)) // 27 = ESC
     {
         HandleGameServer();
@@ -43,7 +43,7 @@ void ServerApp::Run()
 
 void ServerApp::CleanUp()
 {
-    std::cout << INF_CLR << "User requested to shutdown the app." << std::endl << DEF_CLR;
+    std::cout << std::endl << INF_CLR << "User requested to shutdown the app." << std::endl << DEF_CLR;
 
     CleanUpWebServer();
     CleanUpGameServer();

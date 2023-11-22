@@ -247,6 +247,13 @@ namespace TcpIp
         return std::to_string(a) + "." + std::to_string(b) + "." + std::to_string(c) + "." + std::to_string(d);
     }
 
+    IpAddress IpAddress::FromString(const std::string& str)
+    {
+        unsigned int a, b, c, d;
+        sscanf_s(str.c_str(), "%u.%u.%u.%u", &a, &b, &c, &d);
+        return {static_cast<unsigned char>(a), static_cast<unsigned char>(b), static_cast<unsigned char>(c), static_cast<unsigned char>(d)};
+    }
+
     constexpr char Base64Alphabet[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-";
 
     std::string IpAddress::ToPhrase() const
