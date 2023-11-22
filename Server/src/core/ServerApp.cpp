@@ -172,7 +172,10 @@ void ServerApp::HandleRecv(ClientPtr sender)
                 m_Players.erase(sender->GetName());
 
                 if (m_StartedGames.contains(lb->ID) && lb->IsLobbyEmpty())
+                {
+                    m_StartedGames[lb->ID] = nullptr;
                     m_StartedGames.erase(lb->ID);
+                }
             }
         }
     }
@@ -242,6 +245,17 @@ void ServerApp::CleanUpGameServer()
         m_GameServer->CleanClosedConnections([&](ClientPtr c) { ++count; });
         if (count > 0)
             std::cout << INF_CLR << "Closed " << count << " connection" << (count > 1 ? "s" : "") << "." << std::endl;
+
+        for (auto lb : m_Lobbies)
+        {
+            std::cout << INF_CLR << "Closing lobby " << lb->ID << std::endl;
+            RELEASE(lb);
+        }
+
+        for (auto game : m_StartedGames)
+        {
+            NULLPTR(game.second);
+        }
 
         m_GameServer->Close();
         delete m_GameServer;

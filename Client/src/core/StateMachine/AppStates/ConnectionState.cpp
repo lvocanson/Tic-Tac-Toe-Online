@@ -3,6 +3,7 @@
 #include "src/core/ClientApp.h"
 
 #include <regex>
+#include <SFML/Network/IpAddress.hpp>
 
 constexpr float CONNECTION_TIMEOUT_TIME = 5.0f;
 

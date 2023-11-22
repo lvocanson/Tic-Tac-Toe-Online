@@ -26,6 +26,7 @@ void ScoreManager::Clear()
 	{
 		RELEASE(move)
 	}
+
 	RELEASE(m_CurrentGame)
 }
 

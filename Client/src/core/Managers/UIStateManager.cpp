@@ -35,5 +35,4 @@ void UIStateManager::RegisterText(sf::Text* text)
 void UIStateManager::UnregisterText(sf::Text* text)
 {
     m_Window->UnregisterDrawable(text);
-    RELEASE(text);
 }

@@ -13,7 +13,6 @@ GameState::GameState(StateMachine* stateMachine, Window* m_Window)
 	m_GameStateUI = new GameStateUI(m_Window);
 
     m_Board.Init(ClientApp::GetGameSettings().GetTotalColumn(), ClientApp::GetGameSettings().GetTotalRow(), m_Window);
-    m_ScoreManager.Init();
     m_PlayerManager.Init();
 }
 
@@ -27,8 +26,8 @@ void GameState::OnEnter()
 {
 	IsServerLobbyFull();
 
-	m_GameStateUI->Init();
 	m_ScoreManager.Init();
+	m_GameStateUI->Init();
 
 	m_MaxPlayerTurnTime = ClientApp::GetGameSettings().GetPlayerMoveLimitTime();
 	m_IsTimerOn = ClientApp::GetGameSettings().IsTimerOn();
