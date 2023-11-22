@@ -91,6 +91,6 @@ void ClientApp::Cleanup()
 
     ClientConnectionHandler::GetInstance().CleanUp();
 
-    FontRegistry::ClearFonts();
+        FontRegistry::ClearFonts();
     PlayerShapeRegistry::ClearPlayerShapes();
 }
