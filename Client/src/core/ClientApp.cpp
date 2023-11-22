@@ -78,8 +78,8 @@ void ClientApp::RunClient(std::string* adress)
         catch (const TcpIp::TcpIpException& e)
         {
             DebugLog("Failed to connect to server: " + std::string(e.what()) + "\n");
+            m_IsClientConnected.WaitGet().Get() = Failed;
             m_IsClientRunning = false;
-            m_IsClientConnected.WaitGet().Get() = Disconnected;
         }
 
         std::stringstream ss;
@@ -146,7 +146,7 @@ void ClientApp::RunClient(std::string* adress)
 
 void ClientApp::Send(const std::string& data)
 {
-    if (!m_IsClientConnected.WaitGet().Get())
+    if (!m_Client || !m_IsClientConnected.WaitGet().Get() == Connected)
     {
         DebugLog("Client isn't connected to server! \n");
         return;
@@ -198,7 +198,9 @@ void ClientApp::Cleanup()
 void ClientApp::TryToConnect(const std::string* ip)
 {
     if (m_ClientThread != nullptr)
+    {
         return;
+    }
 
     DebugLog("Try to connect to " + *ip + "...\n");
 

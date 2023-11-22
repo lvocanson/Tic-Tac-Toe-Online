@@ -42,6 +42,9 @@ void ConnectionState::OnEnter()
 	{
 		if (m_IsTryingToConnect) return;
 
+		m_IpField->ClearErrorMessage();
+		m_NameField->ClearErrorMessage();
+
 		bool isNameValid = true;
 
 		if (m_NameField->GetText().empty())
@@ -55,10 +58,6 @@ void ConnectionState::OnEnter()
 		    DebugLog("Username should be more than 2 characters!\n");
 			m_NameField->ShowErrorMessage("Username should be more than 2 characters!");
 			isNameValid = false;
-		}
-		else
-		{
-			m_NameField->ClearErrorMessage();
 		}
 
         const std::string* ip = new std::string(m_IpField->GetText());
@@ -91,9 +90,10 @@ void ConnectionState::OnUpdate(float dt)
 	m_BackButton->Update(dt);
 	m_ConnectButton->Update(dt);
 
+
 	if (m_IsTryingToConnect)
 	{
-		static float timeOutTimer = 0.0f;
+		static float timeOutTimer;
 
 		Shared<ConnectionStateInfo>& connectionInfo = ClientApp::GetInstance().GetConnectionInfo();
 
@@ -105,10 +105,21 @@ void ConnectionState::OnUpdate(float dt)
 				{
 					m_IpField->ShowErrorMessage("Connection timed out!");
 					m_IsTryingToConnect = false;
+					timeOutTimer = 0.0f;
+				}
+				else 
+				{
 					timeOutTimer += dt;
 				}
 				break;
 			}
+			case::Failed:
+			{
+                m_IpField->ShowErrorMessage("Connection failed!");
+                m_IsTryingToConnect = false;
+				timeOutTimer = 0.0f;
+                break;
+            }
 			case::Connected:
 			{
 				Json j;
@@ -120,6 +131,7 @@ void ConnectionState::OnUpdate(float dt)
 				m_StateMachine->SwitchState("LobbyState");
 				m_IpField->ClearErrorMessage();
 				m_IsTryingToConnect = false;
+				timeOutTimer = 0.0f;
 				break;
 			}
 		}

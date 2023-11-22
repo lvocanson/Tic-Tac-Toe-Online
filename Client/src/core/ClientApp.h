@@ -16,6 +16,7 @@ enum ConnectionStateInfo
 {
     Disconnected,
     Connecting,
+    Failed,
     Connected
 };
 
