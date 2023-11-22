@@ -1,66 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Resources">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Headers">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Source">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
+    <ClCompile Include="game\GameMode.cpp" />
+    <ClCompile Include="game\IDGenerator.cpp" />
+    <ClCompile Include="game\Lobby.cpp" />
+    <ClCompile Include="game\TicTacToe.cpp" />
+    <ClCompile Include="tcp-ip\TcpIp.cpp" />
+    <ClCompile Include="tcp-ip\TcpIpExceptions.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="game\TicTacToe.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="tcp-ip\TcpIp.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="game\IDGenerator.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="tcp-ip\json.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="threading\Shared.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="threading\Thread.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="game\GameMode.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="tcp-ip\ISerializable.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="game\Lobby.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="game\TicTacToe.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="tcp-ip\TcpIp.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="game\IDGenerator.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="tcp-ip\TcpIpExceptions.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="game\GameMode.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="game\Lobby.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
+    <ClInclude Include="game\GameMode.h" />
+    <ClInclude Include="game\IDGenerator.h" />
+    <ClInclude Include="game\Lobby.h" />
+    <ClInclude Include="game\TicTacToe.h" />
+    <ClInclude Include="tcp-ip\ISerializable.h" />
+    <ClInclude Include="tcp-ip\json.hpp" />
+    <ClInclude Include="tcp-ip\TcpIp.h" />
+    <ClInclude Include="threading\Shared.h" />
+    <ClInclude Include="threading\Thread.h" />
   </ItemGroup>
 </Project>
