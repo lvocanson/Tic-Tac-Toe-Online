@@ -8,7 +8,6 @@
 #include "src/core/Managers/PlayerManager.h"
 #include "src/core/PlayerPieceShape.h"
 
-
 class HistoryState : public State
 {
 public:

@@ -1,7 +1,6 @@
 #include "Player.h"
 #include <game/IDGenerator.h>
 
-
 Player::Player()
 {
     const TicTacToe::PieceID id = IDGenerator::GenerateID();

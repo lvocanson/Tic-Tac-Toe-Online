@@ -1,6 +1,5 @@
 #include "GameHistoryManager.h"
 
-
 GameData::GameData(const PlayerData* winner, const std::vector<const PlayerMove*>* allMoves)
 {
     Winner = winner;

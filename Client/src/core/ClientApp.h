@@ -56,12 +56,11 @@ private: // Methods
 private: // Fields
 
     bool m_IsRunning = false;
-    
+
     TimeManager m_TimeManager;
     Window* m_Window = nullptr;
     Shared<StateMachine>* m_StateMachine = nullptr;
     GameSettings m_GameSettings;
-    InputHandler m_InputHandler;
-    Player* m_Player;
-    GameHistoryManager* m_GameHistoryManager;
+    Player* m_Player = nullptr;
+    GameHistoryManager* m_GameHistoryManager = nullptr;
 };

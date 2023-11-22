@@ -23,7 +23,7 @@ private:
 
 public:
 
-    static ClientConnectionHandler& GetInstance() 
+    static ClientConnectionHandler& GetInstance()
     {
         static ClientConnectionHandler instance;
         return instance;
@@ -34,7 +34,7 @@ public:
     void Disconnect();
     void TryToConnectToServer(const std::string* adress);
     void SendDataToServer(const std::string& data);
-    
+
     Shared<ConnectionStateInfo>& GetConnectionInfo() { return m_IsClientConnected; }
     bool IsConnected();
 
@@ -47,13 +47,12 @@ private:
 
 private:
 
-
     Thread* m_ClientThread = nullptr;
     TcpIpClient* m_Client = nullptr;
     Shared<ConnectionStateInfo> m_IsClientConnected = ConnectionStateInfo::Disconnected;
 
     Shared<StateMachine>* m_StateMachine = nullptr;
-   
+
     bool m_IsClientRunning = false;
     Shared<bool> m_SharedIsRunning = false;
 };

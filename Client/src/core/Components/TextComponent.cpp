@@ -1,10 +1,10 @@
 #include "TextComponent.h"
 #include "src/core/Managers/Resources/FontRegistry.h"
 
-TextComponent::TextComponent() 
+TextComponent::TextComponent()
     : m_Alignment(Center)
 {
-    
+
     m_Text.setString("");
     m_Text.setFont(*FontRegistry::GetFont("coolvetica.otf"));
     m_Text.setFillColor(sf::Color::Black);

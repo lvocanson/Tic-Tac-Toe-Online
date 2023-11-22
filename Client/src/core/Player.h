@@ -31,5 +31,4 @@ public:
 private:
 
     PlayerData m_Data;
-
 };

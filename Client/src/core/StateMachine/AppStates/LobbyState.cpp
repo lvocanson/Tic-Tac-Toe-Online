@@ -3,7 +3,7 @@
 #include "game/IDGenerator.h"
 #include "GameState.h"
 
-LobbyState::LobbyState(StateMachine* stateMachine, Window* window) 
+LobbyState::LobbyState(StateMachine* stateMachine, Window* window)
     : State(stateMachine)
     , m_Window(window)
     , m_ReturnButton(nullptr)
@@ -97,16 +97,16 @@ void LobbyState::OnReceiveData(const Json& serializeData)
                 ButtonComponent* m_LobbyButton = new ButtonComponent(sf::Vector2f(100, (i * 110)), sf::Vector2f(200, 100), sf::Color::Blue);
                 m_LobbyButton->SetButtonText("Lobby " + std::to_string(id), sf::Color::White, 30, TextAlignment::Center);
                 m_LobbyButton->SetOnClickCallback([=]()
-                {
-                    if(!m_IsInLobby)
-                        TryToJoinLobby(i);
-                });
+                    {
+                        if (!m_IsInLobby)
+                            TryToJoinLobby(i);
+                    });
 
                 m_Lobbies.emplace_back(id, "", "");
                 m_LobbyButtons.push_back(m_LobbyButton);
                 m_Window->RegisterDrawable(m_LobbyButton);
             }
-            else 
+            else
             {
                 std::string playerX = lobbyJson["PlayerX"];
                 std::string playerO = lobbyJson["PlayerO"];

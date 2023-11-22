@@ -35,11 +35,11 @@ void ClientConnectionHandler::StartThread(const std::string* ipAdress)
     m_SharedIsRunning.WaitGet().Get() = true;
 
     m_ClientThread = Thread::Create([](LPVOID ip) -> DWORD
-    {
-        ClientConnectionHandler::GetInstance().RunClient(static_cast<std::string*>(ip));
+        {
+            ClientConnectionHandler::GetInstance().RunClient(static_cast<std::string*>(ip));
 
-        return 0;
-    }, ipAdress, true);
+            return 0;
+        }, ipAdress, true);
 }
 
 void ClientConnectionHandler::RunClient(const std::string* adress)

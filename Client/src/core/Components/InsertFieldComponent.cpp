@@ -33,18 +33,13 @@ InsertFieldComponent::InsertFieldComponent(const sf::Vector2f& pos, const sf::Ve
     , m_Focus(false)
     , m_CursorTimer(0.0f)
 {
-
     m_Rectangle.setSize(size);
     m_Rectangle.setFillColor(idleColor);
     m_Rectangle.setOutlineColor(hoverColor);
     m_Rectangle.setOutlineThickness(outlineThickness);
 
     SetPosition(sf::Vector2f(0.0f, 0.0f));
-
 }
-
-InsertFieldComponent::~InsertFieldComponent()
-= default;
 
 void InsertFieldComponent::BlinkCursor(float dt)
 {
@@ -78,7 +73,7 @@ void InsertFieldComponent::Update(float dt)
         m_Cursor.SetVisible(false);
         m_CursorTimer = 0.0f;
     }
-   
+
 
     if (!m_Focus) return;
 
@@ -92,7 +87,6 @@ void InsertFieldComponent::Update(float dt)
             m_Text.SetText(m_TextContent);
             ReplaceCursor();
         }
-
 
         if (GetTextSize() < m_CharacterLimit)
         {
@@ -198,4 +192,3 @@ void InsertFieldComponent::ReplaceCursor()
 {
     m_Cursor.SetPosition(m_Text.GetPosition() + sf::Vector2f(m_Text.GetSize().x + 3, m_Text.GetSize().y * 0.3f));
 }
-

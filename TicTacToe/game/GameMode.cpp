@@ -7,5 +7,4 @@ GameSettings::GameSettings()
 
 GameSettings::~GameSettings()
 {
-
 }

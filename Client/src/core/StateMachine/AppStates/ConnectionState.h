@@ -10,7 +10,7 @@ public:
     void OnEnter() override;
     void OnUpdate(float dt) override;
     void OnExit() override;
-    
+
 
     ConnectionState(StateMachine* stateMachine, Window* window);
     ConnectionState(const ConnectionState& other) = delete;

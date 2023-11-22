@@ -6,7 +6,6 @@
 #include "src/core/Player.h"
 #include "IManager.h"
 
-
 struct PlayerMove
 {
     PlayerData playerData;
@@ -39,7 +38,5 @@ private:
 
     // Player id -> score
     std::map<TicTacToe::PieceID, unsigned int> m_PlayerScores;
-
     std::vector<const PlayerMove*>* m_CurrentGame;
 };
-

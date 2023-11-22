@@ -13,4 +13,3 @@ void PlayerPieceShape::draw(sf::RenderTarget& target, sf::RenderStates states) c
     states.transform.translate(m_Position);
     target.draw(*PlayerShapeRegistry::GetPlayerShape(m_ShapeType), states);
 }
-

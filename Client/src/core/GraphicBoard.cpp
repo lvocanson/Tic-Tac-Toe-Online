@@ -1,8 +1,6 @@
 #include "src/pch.h"
 #include "src/core/Player.h"
-
 #include "GraphicBoard.h"
-
 #include "PlayerPieceShape.h"
 
 GraphicBoard::GraphicBoard(size_t width, size_t height, unsigned int winnablePieces, float piecePixelSize) : Board(width, height, winnablePieces), m_PiecePixelSize(piecePixelSize)

@@ -17,7 +17,7 @@ public:
     sf::Vector2f GetPosition() const override;
     sf::Vector2f GetSize() const override;
 
-    void SetBackgroundColor(const sf::Color& fillColor) { m_Background.setFillColor(fillColor);}
+    void SetBackgroundColor(const sf::Color& fillColor) { m_Background.setFillColor(fillColor); }
     void SetBackgroundOutlineColor(const sf::Color& outlineColor) { m_Background.setOutlineColor(outlineColor); }
     void SetBackgroundOutlineThickness(float thickness) { m_Background.setOutlineThickness(thickness); }
 
@@ -38,4 +38,3 @@ private:
     float m_MaxValue;
     float m_CurrentValue;
 };
-

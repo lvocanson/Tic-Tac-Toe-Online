@@ -12,7 +12,7 @@ public:
     /// Add the state ref to the dictionnary
     /// </summary>
     void AddState(const std::string& stateName, State* newState);
-    const State* GetState (const std::string& stateName);
+    const State* GetState(const std::string& stateName);
     void InitState(const std::string& initState);
 
     void Update(float dt);

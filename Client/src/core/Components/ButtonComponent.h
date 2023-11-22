@@ -1,4 +1,3 @@
-// ButtonComponent.h
 #pragma once
 #include "BaseComponent.h"
 #include "TextComponent.h"

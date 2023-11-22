@@ -23,7 +23,7 @@ void ClientApp::Init()
     m_Window->Create("Tic Tac Toe Online!", 1280, 720);
 
     m_GameSettings.SetGameMode(GAMEMODE_CLASSIC);
-    
+
     m_StateMachine = new Shared<StateMachine>();
     {
         auto lock = m_StateMachine->WaitGet();
@@ -50,7 +50,7 @@ void ClientApp::Run()
         m_TimeManager.Tick();
 
         m_Window->PollEvents();
-        m_InputHandler.Update();
+        InputHandler::Update();
 
         Update(TimeManager::GetDeltaTime());
         m_Window->Render();
@@ -91,6 +91,6 @@ void ClientApp::Cleanup()
 
     ClientConnectionHandler::GetInstance().CleanUp();
 
-        FontRegistry::ClearFonts();
+    FontRegistry::ClearFonts();
     PlayerShapeRegistry::ClearPlayerShapes();
 }

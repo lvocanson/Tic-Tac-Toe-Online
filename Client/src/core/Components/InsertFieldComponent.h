@@ -7,7 +7,6 @@
 constexpr unsigned int DEFAULT_CHARACTER_LIMIT = 20;
 constexpr float CURSOR_BLINK_TIME = 0.5f;
 
-
 class InsertFieldComponent : public BaseComponent
 {
 public:
@@ -17,7 +16,7 @@ public:
         const sf::Color& idleColor, const sf::Color& hoverColor,
         float outlineThickness, unsigned int characterLimit);
 
-    ~InsertFieldComponent() override;
+    ~InsertFieldComponent() override = default;
 
     void Update(float dt) override;
 
@@ -47,7 +46,6 @@ private:
     void ReplaceCursor();
     void AppendCharacter(const char& c);
     void BlinkCursor(float dt);
-
 
 private:
 

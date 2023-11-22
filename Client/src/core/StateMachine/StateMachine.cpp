@@ -34,7 +34,7 @@ const State* StateMachine::GetState(const std::string& stateName)
 
 void StateMachine::Start()
 {
-    if (!m_CurrentState) 
+    if (!m_CurrentState)
     {
         std::cout << "State machine isn't init" << std::endl;
         return;

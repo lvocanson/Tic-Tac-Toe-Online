@@ -3,7 +3,6 @@
 
 std::unordered_map<std::string, sf::Font*> FontRegistry::m_Fonts;
 
-
 sf::Font* FontRegistry::GetFont(const std::string& fontName)
 {
     if (!m_Fonts.contains(fontName))

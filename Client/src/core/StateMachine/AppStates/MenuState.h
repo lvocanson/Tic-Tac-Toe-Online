@@ -3,7 +3,6 @@
 #include "src/core/Window.h"
 #include "src/core/Components/ButtonComponent.h"
 
-
 class MenuState : public State
 {
 public:

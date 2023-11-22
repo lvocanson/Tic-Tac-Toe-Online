@@ -4,7 +4,6 @@ enum PlayerShapeType
 {
     Square,
     Circle,
-    //Cross
 };
 
 class PlayerShapeRegistry

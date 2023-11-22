@@ -2,7 +2,6 @@
 #include "PlayerShapeRegistry.h"
 #include <SFML/Graphics.hpp>
 
-
 sf::Drawable* PlayerShapeRegistry::GetPlayerShape(PlayerShapeType shapeType)
 {
     return m_PlayerShapes[shapeType];
@@ -10,7 +9,7 @@ sf::Drawable* PlayerShapeRegistry::GetPlayerShape(PlayerShapeType shapeType)
 
 void PlayerShapeRegistry::ClearPlayerShapes()
 {
-   for (auto& shape : m_PlayerShapes)
+    for (auto& shape : m_PlayerShapes)
     {
         delete shape.second;
     }
@@ -34,7 +33,7 @@ void PlayerShapeRegistry::CreatePlayerShape(PlayerShapeType shapeType, TicTacToe
 
         break;
     }
-     
+
     case Circle:
         auto shape = new sf::CircleShape;
         shape->setRadius(DEFAULT_PIECE_SIZE * 0.25f);

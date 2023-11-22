@@ -23,19 +23,20 @@ void MenuState::OnEnter()
         m_PlayButton = new ButtonComponent(sf::Vector2f(100, 100), sf::Vector2f(200, 100), sf::Color::Blue);
         m_PlayButton->SetButtonText("Play", sf::Color::White, 30, TextAlignment::Center);
         m_PlayButton->SetOnClickCallback([this]()
-        {
-            m_StateMachine->SwitchState("LobbyState");
-        });
+            {
+                m_StateMachine->SwitchState("LobbyState");
+            });
         m_Window->RegisterDrawable(m_PlayButton);
 
         m_DisconnectButton = new ButtonComponent(sf::Vector2f(300, 500), sf::Vector2f(200, 100), sf::Color::Red);
         m_DisconnectButton->SetButtonText("Disconnect", sf::Color::White, 30, TextAlignment::Center);
-        m_DisconnectButton->SetOnClickCallback([this]() {
-            ClientConnectionHandler::GetInstance().Disconnect();
-            m_Window->UnregisterDrawable(m_PlayButton);
-            RELEASE(m_PlayButton);
-            ShowConnectionButton();
-        });
+        m_DisconnectButton->SetOnClickCallback([this]()
+            {
+                ClientConnectionHandler::GetInstance().Disconnect();
+                m_Window->UnregisterDrawable(m_PlayButton);
+                RELEASE(m_PlayButton);
+                ShowConnectionButton();
+            });
 
         m_Window->RegisterDrawable(m_DisconnectButton);
     }
@@ -46,15 +47,17 @@ void MenuState::OnEnter()
 
     m_HistoryButton = new ButtonComponent(sf::Vector2f(100, 300), sf::Vector2f(200, 100), sf::Color::Green);
     m_HistoryButton->SetButtonText("History", sf::Color::White, 30, TextAlignment::Center);
-    m_HistoryButton->SetOnClickCallback([this]() {
-        m_StateMachine->SwitchState("HistoryState");
+    m_HistoryButton->SetOnClickCallback([this]()
+        {
+            m_StateMachine->SwitchState("HistoryState");
         });
 
     m_QuitButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
     m_QuitButton->SetButtonText("Quit", sf::Color::White, 30, TextAlignment::Center);
-    m_QuitButton->SetOnClickCallback([this]() {
-        ClientApp::GetInstance().Shutdown();
-    });
+    m_QuitButton->SetOnClickCallback([this]()
+        {
+            ClientApp::GetInstance().Shutdown();
+        });
 
     m_Window->RegisterDrawable(m_HistoryButton);
     m_Window->RegisterDrawable(m_QuitButton);
@@ -65,9 +68,9 @@ void MenuState::ShowConnectionButton()
     m_PlayButton = new ButtonComponent(sf::Vector2f(100, 100), sf::Vector2f(200, 100), sf::Color::Blue);
     m_PlayButton->SetButtonText("Connection", sf::Color::White, 30, TextAlignment::Center);
     m_PlayButton->SetOnClickCallback([this]()
-    {
-        m_StateMachine->SwitchState("ConnectionState");
-    });
+        {
+            m_StateMachine->SwitchState("ConnectionState");
+        });
     m_Window->RegisterDrawable(m_PlayButton);
 }
 

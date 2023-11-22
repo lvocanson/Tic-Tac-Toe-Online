@@ -49,7 +49,7 @@ void TcpIpClient::Connect(const char* ip, int port)
         throw TcpIp::TcpIpException::Create(SOCKET_ConnectFailed, iResult);
     }
 
-     m_ReadEvent = TcpIp::CreateEventObject(m_ConnectSocket, FD_READ | FD_CLOSE);
+    m_ReadEvent = TcpIp::CreateEventObject(m_ConnectSocket, FD_READ | FD_CLOSE);
 }
 
 void TcpIpClient::Disconnect()

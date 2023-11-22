@@ -32,7 +32,7 @@ private:
     Window* m_Window;
     GameStateUI* m_GameStateUI;
     ButtonComponent* m_ReturnButton;
-    ButtonComponent* m_LeaveButtons = nullptr;    
+    ButtonComponent* m_LeaveButtons = nullptr;
 
     std::vector<ButtonComponent*> m_LobbyButtons;
     std::vector<Lobby> m_Lobbies;

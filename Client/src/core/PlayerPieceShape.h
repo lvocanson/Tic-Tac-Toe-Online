@@ -21,5 +21,4 @@ protected:
     PlayerShapeType m_ShapeType;
     TicTacToe::PieceID m_ID;
     sf::Vector2f m_Position;
-
 };

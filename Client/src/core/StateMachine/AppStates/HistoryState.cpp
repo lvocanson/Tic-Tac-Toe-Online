@@ -20,17 +20,23 @@ void HistoryState::OnEnter()
     m_RArrowButton = new ButtonComponent(sf::Vector2f(750, 50), sf::Vector2f(50, 50), sf::Color::Green);
     m_RArrowButton->SetButtonText(">", sf::Color::White, 30, TextAlignment::Center);
     m_RArrowButton->SetOnClickCallback([this]()
-        { PlacePiece(); });
+        {
+            PlacePiece();
+        });
 
     m_LArrowButton = new ButtonComponent(sf::Vector2f(450, 50), sf::Vector2f(50, 50), sf::Color::Green);
     m_LArrowButton->SetButtonText("<", sf::Color::White, 30, TextAlignment::Center);
     m_LArrowButton->SetOnClickCallback([this]()
-        { RemovePiece(); });
+        {
+            RemovePiece();
+        });
 
     m_BackToMenu = new ButtonComponent(sf::Vector2f(1000, 600), sf::Vector2f(200, 100), sf::Color::Blue);
     m_BackToMenu->SetButtonText("Back to Menu", sf::Color::White, 30, TextAlignment::Center);
     m_BackToMenu->SetOnClickCallback([this]()
-        { m_StateMachine->SwitchState("MenuState"); });
+        {
+            m_StateMachine->SwitchState("MenuState");
+        });
 
     m_Board.Init(3, 3, m_Window);
     m_Board.DrawBoard();

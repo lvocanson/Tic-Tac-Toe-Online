@@ -32,48 +32,49 @@ void ConnectionState::OnEnter()
 
     m_BackButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(150, 50), sf::Color::Red);
     m_BackButton->SetButtonText("Quit", sf::Color::White, 30, TextAlignment::Center);
-    m_BackButton->SetOnClickCallback([this]() {
-        m_StateMachine->SwitchState("MenuState");
-    });
+    m_BackButton->SetOnClickCallback([this]()
+        {
+            m_StateMachine->SwitchState("MenuState");
+        });
 
     m_ConnectButton = new ButtonComponent(sf::Vector2f(100, 400), sf::Vector2f(150, 50), sf::Color::Green);
     m_ConnectButton->SetButtonText("Connect", sf::Color::White, 30, TextAlignment::Center);
     m_ConnectButton->SetOnClickCallback([this]()
-    {
-        if (m_IsTryingToConnect) return;
-
-        m_IpField->ClearErrorMessage();
-        m_NameField->ClearErrorMessage();
-
-        bool isNameValid = false;
-        if (m_NameField->GetText().empty())
         {
-            DebugLog("Username should not be empty!\n");
-            m_NameField->ShowErrorMessage("Username should not be empty!");
-        }
-        else if (m_NameField->GetText().size() < 3)
-        {
-            DebugLog("Username should be more than 2 characters!\n");
-            m_NameField->ShowErrorMessage("Username should be more than 2 characters!");
-        }
-        else isNameValid = true;
+            if (m_IsTryingToConnect) return;
 
-        const std::string ip = std::string(TcpIp::IpAddress::FromPhrase(m_IpField->GetText()).ToString());
+            m_IpField->ClearErrorMessage();
+            m_NameField->ClearErrorMessage();
 
-        DebugLog(ip);
+            bool isNameValid = false;
+            if (m_NameField->GetText().empty())
+            {
+                DebugLog("Username should not be empty!\n");
+                m_NameField->ShowErrorMessage("Username should not be empty!");
+            }
+            else if (m_NameField->GetText().size() < 3)
+            {
+                DebugLog("Username should be more than 2 characters!\n");
+                m_NameField->ShowErrorMessage("Username should be more than 2 characters!");
+            }
+            else isNameValid = true;
 
-        if (isNameValid)
-        {
-            ClientApp::GetInstance().GetCurrentPlayer()->SetName(m_NameField->GetText());
-            ClientConnectionHandler::GetInstance().TryToConnectToServer(&ip);
-            m_IsTryingToConnect = true;
-        }
-        else
-        {
-            DebugLog("Invalid phrase!\n");
-            m_IpField->ShowErrorMessage("Invalid phrase!");
-        }
-    });    
+            const std::string ip = std::string(TcpIp::IpAddress::FromPhrase(m_IpField->GetText()).ToString());
+
+            DebugLog(ip);
+
+            if (isNameValid)
+            {
+                ClientApp::GetInstance().GetCurrentPlayer()->SetName(m_NameField->GetText());
+                ClientConnectionHandler::GetInstance().TryToConnectToServer(&ip);
+                m_IsTryingToConnect = true;
+            }
+            else
+            {
+                DebugLog("Invalid phrase!\n");
+                m_IpField->ShowErrorMessage("Invalid phrase!");
+            }
+        });
 
     m_Window->RegisterDrawable(m_IpField);
     m_Window->RegisterDrawable(m_NameField);
@@ -97,35 +98,35 @@ void ConnectionState::OnUpdate(float dt)
 
         switch (connectionInfo.WaitGet().Get())
         {
-            case Connecting:
+        case Connecting:
+        {
+            if (timeOutTimer > CONNECTION_TIMEOUT_TIME)
             {
-                if (timeOutTimer > CONNECTION_TIMEOUT_TIME)
-                {
-                    m_IpField->ShowErrorMessage("Connection timed out!");
-                    m_IsTryingToConnect = false;
-                    timeOutTimer = 0.0f;
-                }
-                else 
-                {
-                    timeOutTimer += dt;
-                }
-                break;
-            }
-            case Failed:
-            {
-                m_IpField->ShowErrorMessage("Connection failed!");
+                m_IpField->ShowErrorMessage("Connection timed out!");
                 m_IsTryingToConnect = false;
                 timeOutTimer = 0.0f;
-                break;
             }
-            case Connected:
+            else
             {
-                m_StateMachine->SwitchState("LobbyState");
-                m_IpField->ClearErrorMessage();
-                m_IsTryingToConnect = false;
-                timeOutTimer = 0.0f;
-                break;
+                timeOutTimer += dt;
             }
+            break;
+        }
+        case Failed:
+        {
+            m_IpField->ShowErrorMessage("Connection failed!");
+            m_IsTryingToConnect = false;
+            timeOutTimer = 0.0f;
+            break;
+        }
+        case Connected:
+        {
+            m_StateMachine->SwitchState("LobbyState");
+            m_IpField->ClearErrorMessage();
+            m_IsTryingToConnect = false;
+            timeOutTimer = 0.0f;
+            break;
+        }
         }
     }
 }
