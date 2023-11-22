@@ -246,4 +246,43 @@ namespace TcpIp
     {
         return std::to_string(a) + "." + std::to_string(b) + "." + std::to_string(c) + "." + std::to_string(d);
     }
+
+    constexpr char Base64Alphabet[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-";
+
+    std::string IpAddress::ToPhrase() const
+    {
+        unsigned int num = (a << 24) + (b << 16) + (c << 8) + d;
+        std::string result;
+        while (num > 0)
+        {
+            result = Base64Alphabet[num % 64] + result;
+            num /= 64;
+        }
+        return result;
+    }
+
+    IpAddress IpAddress::FromPhrase(const std::string& phrase)
+    {
+        unsigned int num = 0;
+        for (char c : phrase)
+        {
+            num *= 64;
+            for (int i = 0; i < 64; ++i)
+            {
+                if (Base64Alphabet[i] == c)
+                {
+                    num += i;
+                    break;
+                }
+            }
+        }
+
+        return
+        {
+            static_cast<unsigned char>((num >> 24) & 0xFF),
+            static_cast<unsigned char>((num >> 16) & 0xFF),
+            static_cast<unsigned char>((num >> 8) & 0xFF),
+            static_cast<unsigned char>(num & 0xFF)
+        };
+    }
 }

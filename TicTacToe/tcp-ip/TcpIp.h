@@ -112,5 +112,8 @@ namespace TcpIp
         unsigned char a, b, c, d;
         static IpAddress GetLocalAddress();
         std::string ToString() const;
+
+        std::string ToPhrase() const;
+        static IpAddress FromPhrase(const std::string& phrase);
     };
 }
