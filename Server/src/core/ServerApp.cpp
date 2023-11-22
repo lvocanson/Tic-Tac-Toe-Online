@@ -128,7 +128,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
     if (receivedData["Type"] == "Login")
     {
         m_Players.insert(std::make_pair(sender->GetName(), receivedData["UserName"]));
-    }
+    }////////// Lobby State //////////
     else if (receivedData["Type"] == "GetLobbyList")
     {
         SerializeLobbiesToJson(sender);
@@ -139,17 +139,28 @@ void ServerApp::HandleRecv(ClientPtr sender)
         {
             if (receivedData["ID"] == lb.ID)
             {
+                if (lb.IsInLobby(m_Players[sender->GetName()]))
+                {
+                    return;
+                }
                 if (lb.IsLobbyFull())
                 {
-                    std::cout << INF_CLR << "Lobby is full!" << std::endl << DEF_CLR;
                     return;
                 }
 
                 lb.AddPlayerToLobby(m_Players[sender->GetName()]);
                 Json j;
-                j["Type"];
+                j["Type"] = "IsInLobby";
                 j["CurrentLobbyID"] = lb.ID;
                 sender->Send(j.dump());
+
+                if (lb.IsLobbyFull())
+                {
+                    Json j;
+                    j["Type"] = "OnUpdateLobby";
+                    sender->Send(j.dump());
+                    return;
+                }
             }
         }
         SerializeLobbiesToJson(sender);
@@ -164,10 +175,9 @@ void ServerApp::HandleRecv(ClientPtr sender)
             }
         }
         SerializeLobbiesToJson(sender);
-    }
+    }////////// Game State //////////
     else if (receivedData["Type"] == "StartGame")
     {
-        // TODO: Check if player is in a lobby, check if it's their turn, check if the move is valid, send the move to the other player
         if (receivedData.contains("StartedLobbyID"))
         {
             for (auto& lb : m_Lobbies)
@@ -182,16 +192,18 @@ void ServerApp::HandleRecv(ClientPtr sender)
     else if (receivedData["Type"] == "GetPlayerInfo")
     {
         Json j;
-        j["Type"] = "GetPlayerInfo";
-        j["SetPlayerShape"];
+        j["Type"] = "SetPlayerShape";
         j["PlayerX"] = m_StartedGames[receivedData["LobbyID"]]->PlayerX;
         j["PlayerO"] = m_StartedGames[receivedData["LobbyID"]]->PlayerO;
         sender->Send(j.dump());
-
     }
-    else if (receivedData["Type"] == "Play")
+    else if (receivedData["Type"] == "OpponentMove")
     {
+        Json j;
+        j["Type"] = "OpponentMove";
+        j["PlayerMove"] = receivedData["PlayerMove"];
 
+        sender->Send(j.dump());
     }
     else
     {

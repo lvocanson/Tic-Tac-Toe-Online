@@ -71,7 +71,7 @@ void ClientConnectionHandler::RunClient(const std::string* adress)
                     Json j;
                     try
                     {
-                        j = Json::parse(ss);
+                        j = Json::parse(ss.str());
                     }
                     catch (const std::exception& e)
                     {

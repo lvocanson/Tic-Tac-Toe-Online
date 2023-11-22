@@ -22,6 +22,10 @@ GameState::~GameState()
 
 void GameState::OnEnter()
 {
+	Json j;
+	j["Type"] = "GetPlayerInfo";
+	ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
+
 	m_MaxPlayerTurnTime = ClientApp::GetGameSettings().GetPlayerMoveLimitTime();
 	m_IsTimerOn = ClientApp::GetGameSettings().IsTimerOn();
 	m_PlayerTurnTime = m_MaxPlayerTurnTime;
@@ -100,6 +104,8 @@ void GameState::CheckIfMouseHoverBoard()
 				m_GameStateUI->UpdateGameStateText("");
 
 				PlacePlayerPieceOnBoard(i);
+				m_PlayerMove = i;
+				SendPlacedPieceToServer();
 				WinCheck();
 				SwitchPlayerTurn();
 			}
@@ -117,8 +123,6 @@ void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
 	m_Board.InstanciateNewPlayerShape(currentPlayer->GetPlayerID(), currentPlayer->GetShapeType(), cell);
 
 	m_ScoreManager.AddPlayerMove(*currentPlayer->GetData(), cell);
-
-	SendPlacedPieceToServer(cell);
 }
 
 void GameState::WinCheck()
@@ -164,19 +168,11 @@ void GameState::SwitchPlayerTurn()
 	}
 }
 
-void GameState::SendPlacedPieceToServer(unsigned int cell)
+void GameState::SendPlacedPieceToServer()
 {
-	int row = cell / (int)m_Board.GetWidth();
-	int col = cell % (int)m_Board.GetWidth();
-	std::string playerID = std::to_string(m_Board[cell]);
-
-    Json j;
-    j["Type"] = "Play";
-    j["Row"] = row;
-    j["Col"] = col;
-    j["PlayerID"] = playerID;
-    //j["Opponent"] = 
-
+	Json j;
+	j["Type"] = "OpponentMove";
+	j["PlayerMove"] = m_PlayerMove;
 	ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
 }
 
@@ -203,7 +199,7 @@ void GameState::OnExit()
 
 void GameState::OnReceiveData(const Json& serializeData)
 {
-    if (serializeData["SetPlayerShape"])
+    if (serializeData["Type"] == "SetPlayerShape")
     {
         m_PlayerManager.CreateNewPlayer(serializeData["PlayerX"], sf::Color(250, 92, 12), Square);
         m_PlayerManager.CreateNewPlayer(serializeData["PlayerO"], sf::Color(255, 194, 0), Circle);
@@ -212,9 +208,10 @@ void GameState::OnReceiveData(const Json& serializeData)
 
         m_IsPlayersConnected = true;
     }
+	else if (serializeData["Type"] == "OpponentMove")
+	{
+		PlacePlayerPieceOnBoard(m_PlayerMove);
+		m_PlayerManager.SwitchPlayerTurn();
+	}
 
-    std::string playerID = serializeData["PlayerID"];
-    std::string opponent = serializeData["Opponent"];
-    int row = serializeData["Row"];
-    int col = serializeData["Col"];
 }

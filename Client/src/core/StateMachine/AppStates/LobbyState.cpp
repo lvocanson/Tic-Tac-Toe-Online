@@ -27,7 +27,6 @@ void LobbyState::OnEnter()
     j["Type"] = "GetLobbyList";
     ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
 
-    //TODO: Define constexpr int MAX_LOBBIES_NUMBER = number;
     m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
     m_ReturnButton->SetButtonText("Return To Menu", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]()
@@ -45,19 +44,11 @@ void LobbyState::OnUpdate(float dt)
         lbButton->Update(dt);
     }
 
-    for (const auto& lvButton : m_LeaveButtons)
+    if (m_CanStart)
     {
-        lvButton->Update(dt);
-    }
-
-    //Check if current lobby is full
-    for (auto& lb : m_Lobbies)
-    {
-        if (lb.ID == m_CurrentLobbyID && lb.IsLobbyFull())
-        {
-            m_StartButton = new ButtonComponent(sf::Vector2f(300, 110), sf::Vector2f(200, 100), sf::Color::Blue);
-            m_StartButton->SetButtonText("START", sf::Color::Green, 30, TextAlignment::Center);
-            m_StartButton->SetOnClickCallback([this]()
+        m_StartButton = new ButtonComponent(sf::Vector2f(700, 500), sf::Vector2f(200, 100), sf::Color::Blue);
+        m_StartButton->SetButtonText("START", sf::Color::Green, 30, TextAlignment::Center);
+        m_StartButton->SetOnClickCallback([this]()
             {
                 Json j;
                 j["Type"] = "StartGame";
@@ -66,7 +57,16 @@ void LobbyState::OnUpdate(float dt)
                 m_StateMachine->SwitchState("GameState");
                 ((GameState*)m_StateMachine->GetCurrentState())->SetLobbyID(m_CurrentLobbyID);
             });
-        }
+    }
+
+    if (m_LeaveButtons)
+    {
+        m_LeaveButtons->Update(dt);
+    }
+    if (!m_IsInLobby)
+    {
+        m_Window->UnregisterDrawable(m_LeaveButtons);
+        RELEASE(m_LeaveButtons);
     }
 
     m_ReturnButton->Update(dt);
@@ -80,20 +80,19 @@ void LobbyState::OnExit()
         RELEASE(lbButton);
     }
 
-    for (auto& lvButton : m_LeaveButtons)
+    if (m_LeaveButtons != nullptr)
     {
-        m_Window->UnregisterDrawable(lvButton);
-        RELEASE(lvButton);
+        m_Window->UnregisterDrawable(m_LeaveButtons);
+        RELEASE(m_LeaveButtons);
     }
 
-    //if (m_StartButton != nullptr)
-    //{
-    //    m_Window->UnregisterDrawable(m_StartButton);
-    //    RELEASE(m_StartButton);
-    //}
+    if (m_StartButton != nullptr)
+    {
+        m_Window->UnregisterDrawable(m_StartButton);
+        RELEASE(m_StartButton);
+    }
 
     m_LobbyButtons.clear();
-    m_LeaveButtons.clear();
 
     m_Window->UnregisterDrawable(m_ReturnButton);
     RELEASE(m_ReturnButton);
@@ -101,11 +100,7 @@ void LobbyState::OnExit()
 
 void LobbyState::OnReceiveData(const Json& serializeData)
 {
-    if (serializeData.contains("CurrentLobbyID"))
-    {
-        m_CurrentLobbyID = serializeData["CurrentLobbyID"];
-    }
-    else if (serializeData.contains("Lobbies"))
+    if (serializeData["Type"] == "Lobby")
     {
         int i = 0;
         for (const auto& lobbyJson : serializeData["Lobbies"])
@@ -118,9 +113,9 @@ void LobbyState::OnReceiveData(const Json& serializeData)
                 m_LobbyButton->SetButtonText("Lobby " + std::to_string(i), sf::Color::White, 30, TextAlignment::Center);
                 m_LobbyButton->SetOnClickCallback([=]()
                 {
-                    TryToJoinLobby(i);
+                    if(!m_IsInLobby)
+                        TryToJoinLobby(i);
                 });
-                //CreateLeaveLobbyButton(sf::Vector2f(300, (i * 110)), i);
 
                 m_Lobbies.emplace_back(id, "", "");
                 m_LobbyButtons.push_back(m_LobbyButton);
@@ -136,11 +131,26 @@ void LobbyState::OnReceiveData(const Json& serializeData)
                 m_Lobbies[i].PlayerO = playerO;
                 m_Lobbies[i].PlayerX = playerX;
             }
-
             i++;
         }
-
         m_IsLobbyInit = true;
+    }
+    else if (serializeData["Type"] == "IsInLobby")
+    {
+        m_CurrentLobbyID = serializeData["CurrentLobbyID"];
+        m_IsInLobby = true;
+        m_LeaveButtons = new ButtonComponent(sf::Vector2f(500, 500), sf::Vector2f(200, 100), sf::Color::Red);
+        m_LeaveButtons->SetButtonText("Leave", sf::Color::White, 30, TextAlignment::Center);
+        m_LeaveButtons->SetOnClickCallback([this]() 
+            {
+                LeaveLobby();
+            });
+
+        m_Window->RegisterDrawable(m_LeaveButtons);
+    }
+    else if (serializeData["Type"] == "OnUpdateLobby")
+    {
+        m_CanStart = true;
     }
 }
 
@@ -152,25 +162,13 @@ void LobbyState::TryToJoinLobby(int lobbyID)
     ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
 }
 
-void LobbyState::LeaveLobby(int lobbyID)
+void LobbyState::LeaveLobby()
 {
+    m_IsInLobby = false;
     Json j;
     j["Type"] = "LeaveLobby";
-    j["ID"] = m_Lobbies[lobbyID].ID;
+    j["ID"] = m_CurrentLobbyID;
     ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
 }
 
-void LobbyState::CreateLeaveLobbyButton(sf::Vector2f pos, int lobbyID)
-{
-    ButtonComponent* leavebutton = new ButtonComponent(pos, sf::Vector2f(200, 100), sf::Color::Red);
-    leavebutton->SetButtonText("Leave Lobby", sf::Color::White, 30, TextAlignment::Center);
-    leavebutton->SetOnClickCallback([=]()
-        {
-            if (m_Lobbies[lobbyID].IsInLobby(m_PlayerName))
-            {
-                LeaveLobby(lobbyID);
-            }
-        });
-    m_LeaveButtons.push_back(leavebutton);
-    m_Window->RegisterDrawable(leavebutton);
-}
+

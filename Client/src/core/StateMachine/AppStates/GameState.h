@@ -37,7 +37,7 @@ public:
 	void UpdatePlayerTimer(float dt);
 	void CheckIfTimerIsUp();
 
-	void SendPlacedPieceToServer(unsigned int cell);
+	void SendPlacedPieceToServer();
 
 	void ClearBoard();
 
@@ -56,6 +56,7 @@ private:
 
 	float m_PlayerTurnTime;
 	float m_MaxPlayerTurnTime;
+	int m_PlayerMove;
 	bool m_IsTimerOn;
 
 	GameStateUI* m_GameStateUI;
