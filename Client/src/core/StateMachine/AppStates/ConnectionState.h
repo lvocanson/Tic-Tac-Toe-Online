@@ -7,23 +7,23 @@
 class ConnectionState : public State
 {
 public:
-	void OnEnter() override;
-	void OnUpdate(float dt) override;
-	void OnExit() override;
-	
+    void OnEnter() override;
+    void OnUpdate(float dt) override;
+    void OnExit() override;
+    
 
-	ConnectionState(StateMachine* stateMachine, Window* window);
-	ConnectionState(const ConnectionState& other) = delete;
-	ConnectionState& operator=(const ConnectionState& other) = delete;
-	~ConnectionState();
+    ConnectionState(StateMachine* stateMachine, Window* window);
+    ConnectionState(const ConnectionState& other) = delete;
+    ConnectionState& operator=(const ConnectionState& other) = delete;
+    ~ConnectionState();
 
-	bool IsValidIpAddress(const char* ip);
+    bool IsValidIpAddress(const char* ip);
 
-	void Send(const std::string& data);
+    void Send(const std::string& data);
 
 private:
-	Window* m_Window;
+    Window* m_Window;
 
-	ButtonComponent* m_BackButton;
-	InsertFieldComponent* m_IpField;
+    ButtonComponent* m_BackButton;
+    InsertFieldComponent* m_IpField;
 };

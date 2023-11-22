@@ -12,37 +12,37 @@
 class HistoryState : public State
 {
 public:
-	void OnEnter() override;
-	void OnUpdate(float dt) override;
-	void OnExit() override;
+    void OnEnter() override;
+    void OnUpdate(float dt) override;
+    void OnExit() override;
 
-	HistoryState(StateMachine* stateMachine, Window* m_Window);
-	HistoryState(const HistoryState& other) = delete;
-	HistoryState& operator=(const HistoryState& other) = delete;
-	~HistoryState();
+    HistoryState(StateMachine* stateMachine, Window* m_Window);
+    HistoryState(const HistoryState& other) = delete;
+    HistoryState& operator=(const HistoryState& other) = delete;
+    ~HistoryState();
 
-	void RenderHistory();
+    void RenderHistory();
 
-	void DisplayGame();
+    void DisplayGame();
 
-	void PlacePiece();
-	void RemovePiece();
+    void PlacePiece();
+    void RemovePiece();
 
 private:
-	Window* m_Window;
+    Window* m_Window;
 
-	ButtonComponent* m_RArrowButton;
-	ButtonComponent* m_LArrowButton;
-	ButtonComponent* m_BackToMenu;
+    ButtonComponent* m_RArrowButton;
+    ButtonComponent* m_LArrowButton;
+    ButtonComponent* m_BackToMenu;
 
-	GraphicBoard m_Board;
+    GraphicBoard m_Board;
 
-	GameHistoryManager m_GameHistoryManager;
-	PlayerManager m_PlayerManager;
+    GameHistoryManager m_GameHistoryManager;
+    PlayerManager m_PlayerManager;
 
-	std::vector<ButtonComponent*> m_HistoryButtons;
+    std::vector<ButtonComponent*> m_HistoryButtons;
 
-	GameData* m_CurrentGame;
-	unsigned int m_CurrentGameIndex;
-	unsigned int m_CurrentMoveIndex;
+    GameData* m_CurrentGame;
+    unsigned int m_CurrentGameIndex;
+    unsigned int m_CurrentMoveIndex;
 };

@@ -10,7 +10,7 @@ PlayerManager::PlayerManager() : m_PlayerCount(0), m_CurrentPlayerIndex(0)
 
 PlayerManager::~PlayerManager()
 {
-   Clear();
+    Clear();
 }
 
 void PlayerManager::Init()

@@ -19,7 +19,7 @@ void ClientApp::Init()
     m_Window->Create("Tic Tac Toe Online!", 1280, 720);
 
     m_GameSettings.SetGameMode(GAMEMODE_CLASSIC);
-    
+
     m_Client = new TcpIpClient();
 
     m_StateMachine = new StateMachine();
@@ -114,7 +114,7 @@ void ClientApp::Cleanup()
     RELEASE(m_Client);
     RELEASE(m_GameHistoryManager)
 
-    FontRegistry::ClearFonts();
+        FontRegistry::ClearFonts();
     PlayerShapeRegistry::ClearPlayerShapes();
 }
 

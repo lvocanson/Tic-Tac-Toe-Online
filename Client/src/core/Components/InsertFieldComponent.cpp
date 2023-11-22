@@ -92,7 +92,7 @@ void InsertFieldComponent::Update()
 void InsertFieldComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(m_Rectangle, states);
-	target.draw(m_Text, states);
+    target.draw(m_Text, states);
 }
 
 bool InsertFieldComponent::IsMouseOver()
