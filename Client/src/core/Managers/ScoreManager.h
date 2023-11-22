@@ -7,24 +7,10 @@
 #include "IManager.h"
 
 
-
 struct PlayerMove
 {
-    TicTacToe::PieceID PieceID;
+    PlayerData playerData;
     unsigned int BoardCell;
-};
-
-class GameData
-{
-public:
-
-    GameData(const PlayerData* winner, const std::vector<PlayerMove>& allMoves);
-    ~GameData();
-
-private:
-
-    const PlayerData* Winner;
-    std::vector<PlayerMove> AllMoves;
 };
 
 class ScoreManager : public IManager
@@ -37,30 +23,25 @@ public:
     void Init() override;
     void Clear() override;
 
+    void InitPlayerScores(const std::vector<Player*>& allPlayers);
+
     void CreateScoreForPlayer(PlayerData* playerData, Window* window);
 
-    void AddPlayerMove(TicTacToe::PieceID pieceID, unsigned int lastCellPlayed);
+    void AddPlayerMove(const PlayerData& playerData, unsigned int lastCellPlayed);
     void AddScoreToPlayer(TicTacToe::PieceID player);
-    void SaveGame(const PlayerData* winner);
 
     unsigned int GetPlayerScore(TicTacToe::PieceID pieceID);
+    const std::vector<const PlayerMove*>* GetCurrentGame() const { return m_CurrentGame; }
 
     bool IsScoreExists(TicTacToe::PieceID& pieceID);
-
-private:
-
-    void ClearMoves();
+    void CreateNewGameHistory();
+    void ResetCurrentGame();
 
 private:
 
     // Player id -> score
     std::map<TicTacToe::PieceID, unsigned int> m_PlayerScores;
 
-    // List of all the local game history
-    std::vector<GameData*> m_GameHistory;
-
-    // List of all the moves of the current game
-    std::vector<PlayerMove> m_CurrentGame;
-
+    std::vector<const PlayerMove*>* m_CurrentGame;
 };
 

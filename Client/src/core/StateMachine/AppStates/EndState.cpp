@@ -8,7 +8,7 @@ EndState::EndState(StateMachine* stateMachine, Window* m_Window)
 
 EndState::~EndState()
 {
-	Cleanup();
+    Cleanup();
 }
 
 void EndState::OnEnter()

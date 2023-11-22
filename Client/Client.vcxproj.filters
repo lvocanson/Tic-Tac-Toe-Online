@@ -96,6 +96,9 @@
     <ClCompile Include="src\core\StateMachine\GameStates\SelectState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\Managers\GameHistoryManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
     <ClCompile Include="src\core\Components\InsertFieldComponent.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -186,6 +189,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\core\StateMachine\AppStates\ConnectionState.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Managers\GameHistoryManager.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

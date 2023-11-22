@@ -2,17 +2,17 @@
 #include "src/core/ClientApp.h"
 
 MenuState::MenuState(StateMachine* stateMachine, Window* window)
-	: State(stateMachine)
-	, m_Window(window)
-	, m_PlayButton()
-	, m_HistoryButton()
-	, m_QuitButton()
+    : State(stateMachine)
+    , m_Window(window)
+    , m_PlayButton()
+    , m_HistoryButton()
+    , m_QuitButton()
 {
 }
 
 MenuState::~MenuState()
 {
-	NULLPTR(m_Window);
+    NULLPTR(m_Window);
 }
 
 void MenuState::OnEnter()
@@ -43,19 +43,19 @@ void MenuState::OnEnter()
 
 void MenuState::OnUpdate(float dt)
 {
-	m_PlayButton->Update();
-	m_HistoryButton->Update();
-	m_QuitButton->Update();
+    m_PlayButton->Update();
+    m_HistoryButton->Update();
+    m_QuitButton->Update();
 }
 
 void MenuState::OnExit()
 {
-	m_Window->UnregisterDrawable(m_PlayButton);
+    m_Window->UnregisterDrawable(m_PlayButton);
 
-	m_Window->UnregisterDrawable(m_HistoryButton);
-	m_Window->UnregisterDrawable(m_QuitButton);
+    m_Window->UnregisterDrawable(m_HistoryButton);
+    m_Window->UnregisterDrawable(m_QuitButton);
 
-	RELEASE(m_PlayButton);
-	RELEASE(m_HistoryButton);
-	RELEASE(m_QuitButton);
+    RELEASE(m_PlayButton);
+    RELEASE(m_HistoryButton);
+    RELEASE(m_QuitButton);
 }
