@@ -27,6 +27,9 @@
     <ClCompile Include="src\core\ServerApp.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\tcp-ip\HtmlServer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h">

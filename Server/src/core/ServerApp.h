@@ -23,7 +23,7 @@ private:
 
     bool InitWebServer();
     void HandleWebServer();
-    void HandleWebConnection();
+    void HandleWebConnection(WebClientPtr sender);
     void CleanUpWebServer();
 
     TcpIpServer* m_GameServer = nullptr;

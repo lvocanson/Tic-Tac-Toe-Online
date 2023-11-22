@@ -33,6 +33,15 @@ namespace TcpIp
     void CloseSocket(SOCKET& socket);
 
     /// <summary>
+    /// Receives a HTTP request from a socket. (Same as normal Receive, but not checking the header)
+    /// </summary>
+    void ReceiveHtmlRequest(const SOCKET& socket, std::stringstream& ss, const unsigned int bufferSize);
+    /// <summary>
+    /// Sends a HTTP header & response to a socket. (Same as normal Send, but with HTTP header)
+    /// </summary>
+    void SendHtmlResponse(const SOCKET& socket, const char* data, u_long size);
+
+    /// <summary>
     /// Creates an event that listen to the specified network events on the specified socket.
     /// </summary>
     WSAEVENT CreateEventObject(const SOCKET& socket, const long networkEvents);
