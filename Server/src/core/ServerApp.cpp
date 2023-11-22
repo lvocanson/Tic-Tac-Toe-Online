@@ -229,6 +229,16 @@ void ServerApp::CleanUpGameServer()
     std::cout << Color::Cyan << "============== Starting Game Server Clean Up ==============" << std::endl;
     try
     {
+        for (auto& c : m_GameServer->GetConnections())
+        {
+            c.Kick();
+        }
+
+        int count = 0;
+        m_GameServer->CleanClosedConnections([&](ClientPtr c) { ++count; });
+        if (count > 0)
+            std::cout << INF_CLR << "Closed " << count << " connection" << (count > 1 ? "s" : "") << "." << std::endl;
+
         m_GameServer->Close();
         delete m_GameServer;
     }
@@ -378,6 +388,17 @@ void ServerApp::CleanUpWebServer()
     std::cout << WEB_PFX << Color::Cyan << "======== Starting Web Server Clean Up  ==============" << std::endl << DEF_CLR;
     try
     {
+        for (auto& c : m_WebServer->GetHtmlConns())
+        {
+            c.Kick();
+        }
+
+        int count = 0;
+        m_WebServer->CleanClosedHtmlConns([&](WebClientPtr c) { ++count; });
+
+        if (count > 0)
+            std::cout << WEB_PFX << "Closed " << count << " connection" << (count > 1 ? "s" : "") << "." << std::endl;
+
         m_WebServer->Close();
         delete m_WebServer;
     }

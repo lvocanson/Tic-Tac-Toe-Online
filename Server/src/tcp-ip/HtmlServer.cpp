@@ -6,7 +6,7 @@ std::string HtmlConn::GetName() const
     return Address + ":" + std::to_string(Port);
 }
 
-std::string HtmlConn::Receive()
+std::string HtmlConn::Receive() const
 {
     if (!ReadPending)
         throw TcpIp::TcpIpException::Create(SOCKET_NoDataAvailable);
@@ -17,12 +17,12 @@ std::string HtmlConn::Receive()
     return ss.str();
 }
 
-void HtmlConn::Send(const std::string& data)
+void HtmlConn::Send(const std::string& data) const
 {
     TcpIp::SendHtmlResponse(Socket, data.c_str(), static_cast<u_long>(data.size()));
 }
 
-void HtmlConn::Kick()
+void HtmlConn::Kick() const
 {
     ClosePending = true;
 }
