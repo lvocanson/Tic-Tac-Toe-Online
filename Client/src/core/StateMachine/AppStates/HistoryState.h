@@ -5,8 +5,6 @@
 #include "src/core/Components/ButtonComponent.h"
 
 #include "src/core/Managers/GameHistoryManager.h"
-#include "src/core/Managers/PlayerManager.h"
-#include "src/core/PlayerPieceShape.h"
 
 class HistoryState : public State
 {
@@ -18,9 +16,9 @@ public:
     HistoryState(StateMachine* stateMachine, Window* m_Window);
     HistoryState(const HistoryState& other) = delete;
     HistoryState& operator=(const HistoryState& other) = delete;
-    ~HistoryState();
+    ~HistoryState() override;
 
-    void RenderHistory();
+private:
 
     void DisplayGame();
 
@@ -28,20 +26,19 @@ public:
     void RemovePiece();
 
 private:
-    Window* m_Window;
 
-    ButtonComponent* m_RArrowButton;
-    ButtonComponent* m_LArrowButton;
-    ButtonComponent* m_BackToMenu;
+    Window* m_Window = nullptr;
+
+    ButtonComponent* m_NextMoveButton = nullptr;
+    ButtonComponent* m_PreviousMoveButton = nullptr;
+    ButtonComponent* m_NextGameButton = nullptr;
+    ButtonComponent* m_PreviousGameButton = nullptr;
+    ButtonComponent* m_BackToMenu = nullptr;
 
     GraphicBoard m_Board;
 
-    GameHistoryManager m_GameHistoryManager;
-    PlayerManager m_PlayerManager;
+    GameData* m_CurrentGame = nullptr;
 
-    std::vector<ButtonComponent*> m_HistoryButtons;
-
-    GameData* m_CurrentGame;
-    unsigned int m_CurrentGameIndex;
-    unsigned int m_CurrentMoveIndex;
+    unsigned int m_CurrentGameIndex = 0;
+    unsigned int m_CurrentMoveIndex = 0;
 };
