@@ -129,7 +129,8 @@ void ServerApp::HandleRecv(ClientPtr sender)
     if (receivedData["Type"] == "Login")
     {
         m_Players.insert({sender->GetName(), receivedData["UserName"]});
-    }////////// Lobby State //////////
+    }
+    ////////// Lobby State //////////
     else if (receivedData["Type"] == "GetLobbyList")
     {
         SerializeLobbiesToJson(sender);
