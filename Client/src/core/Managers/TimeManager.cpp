@@ -6,7 +6,6 @@ TimeManager::~TimeManager() = default;
 void TimeManager::Init()
 {
     m_TotalTime = 0.0f;
-    m_Clock.restart();
 }
 
 void TimeManager::Clear()

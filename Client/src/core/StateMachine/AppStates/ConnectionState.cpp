@@ -57,9 +57,9 @@ void ConnectionState::OnEnter()
 			m_NameField->ClearErrorMessage();
 		}
 
-        const std::string ip = m_IpField->GetText();
+        const std::string* ip = new std::string(m_IpField->GetText());
 
-        if (isNameValid && IsValidIpAddress(ip.c_str()))
+        if (isNameValid && IsValidIpAddress(ip->c_str()))
         {
 			ClientApp::GetInstance().SetPlayerName(m_NameField->GetText());
 

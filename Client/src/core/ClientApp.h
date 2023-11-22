@@ -9,7 +9,7 @@ class sf::Shape;
 class TcpIpClient;
 class Thread;
 
-constexpr float CONNECTION_TIMEOUT_TIME = 5.0f;
+constexpr float CONNECTION_TIMEOUT_TIME = 10.0f;
 
 class ClientApp
 {
@@ -44,10 +44,10 @@ public:
     void Send(const std::string& data);
     static GameSettings& GetGameSettings() { return GetInstance().m_GameSettings; }
 
-    bool TryToConnect(const std::string& ip);
+    bool TryToConnect(const std::string* ip);
     void SetPlayerName(const std::string& name) { m_PlayerName = name; }
 
-    void RunClient(const char*);
+    void RunClient(std::string*);
 
     bool IsClientRunning() { return m_IsClientConnected.WaitGet().Get(); }
 

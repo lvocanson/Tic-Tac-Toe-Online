@@ -64,15 +64,14 @@ void ClientApp::Run()
     Cleanup();
 }
 
-void ClientApp::RunClient(const char* adress)
+void ClientApp::RunClient(std::string* adress)
 {
-    std::string ip = adress;
-    DebugLog("ip in runClient " + ip + "...\n");
+    DebugLog("ip in runClient " + *adress + "...\n");
 
     try
     {
         m_Client = new TcpIpClient();
-        m_Client->Connect(adress, DEFAULT_PORT);
+        m_Client->Connect(adress->c_str(), DEFAULT_PORT);
         m_IsClientRunning = true;
         m_IsClientConnected.WaitGet().Get() = true;
         DebugLog("Connected to server!\n");
@@ -116,7 +115,7 @@ void ClientApp::RunClient(const char* adress)
             m_IsClientRunning = false;
         }
 
-        if (m_Client->IsConnected())
+        if (!m_Client->IsConnected())
         {
             DebugLog("Disconnected from server!\n");
             m_IsClientRunning = false;
@@ -184,36 +183,37 @@ void ClientApp::Cleanup()
     PlayerShapeRegistry::ClearPlayerShapes();
 }
 
-bool ClientApp::TryToConnect(const std::string& ip)
+bool ClientApp::TryToConnect(const std::string* ip)
 {
     if (m_ClientThread != nullptr)
         return false; // TODO: Handle reconnecting
 
-    DebugLog("Try to connect to " + ip + "...\n");
+    DebugLog("Try to connect to " + *ip + "...\n");
 
     m_ClientThread = Thread::Create([](LPVOID ip) -> DWORD
     {
-        const char* ipStr = static_cast<const char*>(ip);
+        std::string* ipStr = static_cast<std::string*>(ip);
 
-        std::string ipAdress = ipStr;
-        DebugLog("IP in connect thread " + ipAdress + "...\n");
+        DebugLog("IP in connect thread " + *ipStr + "...\n");
 
         ClientApp::GetInstance().RunClient(ipStr);
 
         return 0;
-    }, ip.c_str(), true);
+    }, ip, true);
 
+    return true;
+    /*
     float timeoutConnection = 0.0f;
     while (!m_IsClientConnected.WaitGet().Get())
     {
+        timeoutConnection += TimeManager::GetDeltaTime();
+
         if (timeoutConnection > CONNECTION_TIMEOUT_TIME)
         {
             DebugLog("Failed to connect to server!\n");
             return false;
         }
-
-        timeoutConnection += TimeManager::GetDeltaTime();
     }
 
-    return true;
+    return true;*/
 }
