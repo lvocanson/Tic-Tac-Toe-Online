@@ -20,24 +20,22 @@ public:
 	~LobbyState();
 
 	void TryToJoinLobby(int lobbyID);
-	void LeaveLobby(int lobbyID);
-
-private:
-	void CreateLeaveLobbyButton(sf::Vector2f pos, int lobbyID);
-
+	void LeaveLobby();
 
 private:
 
 	int m_CurrentLobbyID;
+	bool m_IsLobbyInit = false;
+	bool m_IsInLobby = false;
+	bool m_CanStart = false;
 
 	Window* m_Window;
-	bool m_IsLobbyInit = false;
-	ButtonComponent* m_StartButton;
-	ButtonComponent* m_ReturnButton;
-	std::vector<ButtonComponent*> m_LobbyButtons;
-	std::vector<ButtonComponent*> m_LeaveButtons;
 	GameStateUI* m_GameStateUI;
+	ButtonComponent* m_StartButton = nullptr;
+	ButtonComponent* m_ReturnButton;
+	ButtonComponent* m_LeaveButtons = nullptr;	
 
+	std::vector<ButtonComponent*> m_LobbyButtons;
 	std::vector<Lobby> m_Lobbies;
 	std::string m_PlayerName;
 };
