@@ -22,7 +22,7 @@ private:
 
 };
 
-class GraphicBoard : public TicTacToe::Board
+class GraphicBoard final : public TicTacToe::Board
 {
 public:
 
@@ -30,18 +30,25 @@ public:
     GraphicBoard(size_t width, size_t height, unsigned int alignementGoal, float piecePixelSize);
     ~GraphicBoard() override;
 
-    void Init();
+    void Init(Window* window);
+    void DrawBoard();
 
-    void AddPlayerPieceInBoard(unsigned int cell, const Player* player, GraphicPiece* piece);
-    void RemovePlayerPieceInBoard(unsigned int cell);
+    void InstanciateNewPlayerShape(const TicTacToe::PieceID pieceId, const unsigned int cell);
+    void RemoveLastPlayerShape();
 
     GraphicPiece& GetGraphicPiece(unsigned int cell) { return *m_AllPiecesOnBoard[cell]; }
     float GetPieceSize() const { return m_PiecePixelSize; }
 
+    void SetEmpty() override;
+    void ClearBoardShapes();
+
 private:
 
     float m_PiecePixelSize = DEFAULT_PIECE_SIZE;
-    std::map<unsigned int, GraphicPiece*> m_AllPiecesOnBoard;
 
+    std::map<unsigned int, GraphicPiece*> m_AllPiecesOnBoard;
+    std::vector<sf::Drawable*> m_PlayerShapes;
+
+    Window* m_Window;
 };
 

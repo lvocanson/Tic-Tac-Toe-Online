@@ -23,14 +23,11 @@ public:
 	GameState(StateMachine* stateMachine, Window* m_Window);
 	GameState(const GameState& other) = delete;
 	GameState& operator=(const GameState& other) = delete;
-	~GameState();
-
-	void DrawBoard();
+	~GameState() override;
 
 	void CheckIfMouseHoverBoard();
 	bool IsMouseHoverPiece(unsigned int i);
 	void PlacePlayerPieceOnBoard(unsigned int cell);
-	void InstanciateNewPlayerShape(const Player* currentPlayer, const unsigned int cell);
 	void SwitchPlayerTurn();
 
 	void SendPlacedPieceToServer(unsigned int cell);
@@ -45,8 +42,6 @@ private:
 
 	PlayerManager m_PlayerManager;
 	ScoreManager m_ScoreManager;
-
-	std::vector<sf::Drawable*> m_GamePieces;
 
 	GameStateUI* m_GameStateUI;
 };

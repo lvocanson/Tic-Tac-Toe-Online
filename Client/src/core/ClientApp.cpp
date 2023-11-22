@@ -22,8 +22,6 @@ void ClientApp::Init()
 
     m_GameHistoryManager = new GameHistoryManager();
 
-    m_GameHistoryManager->GetGameHistory();
-
     m_StateMachine->AddState("MenuState", new MenuState(m_StateMachine, m_Window));
     m_StateMachine->AddState("SelectState", new SelectState(m_StateMachine, m_Window));
     m_StateMachine->AddState("GameState", new GameState(m_StateMachine, m_Window));

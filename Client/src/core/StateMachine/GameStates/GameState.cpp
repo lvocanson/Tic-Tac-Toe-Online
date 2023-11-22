@@ -21,7 +21,7 @@ GameState::GameState(StateMachine* stateMachine, Window* m_Window)
     m_PlayerManager.CreateNewPlayer("Player One", sf::Color(250, 92, 12), Square);
     m_PlayerManager.CreateNewPlayer("Player Two", sf::Color(255, 194, 0), Circle);
 
-    m_Board.Init();
+    m_Board.Init(m_Window);
     m_ScoreManager.Init();
     m_PlayerManager.Init();
 
@@ -49,7 +49,8 @@ void GameState::OnEnter()
         });
 
     m_Window->RegisterDrawable(m_ReturnButton);
-    DrawBoard();
+
+    m_Board.DrawBoard();
 }
 
 
@@ -59,29 +60,6 @@ void GameState::OnUpdate(float dt)
     m_ReturnButton->Update();
 
     CheckIfMouseHoverBoard();
-}
-
-void GameState::DrawBoard()
-{
-    const float pieceSize = m_Board.GetPieceSize();
-    const size_t width = m_Board.GetWidth();
-    const size_t height = m_Board.GetHeight();
-    const sf::Vector2f center = m_Window->GetCenter();
-
-    // Draw the board - temp
-    for (unsigned int i = 0; i < m_Board.GetTotalSize(); ++i)
-    {
-        auto* square = new sf::RectangleShape(sf::Vector2f(pieceSize, pieceSize));
-        square->setFillColor(sf::Color::Color(51, 56, 63));
-        square->setOutlineColor(sf::Color::Color(0, 189, 156));
-        square->setOutlineThickness(OUTLINE_THICKNESS);
-        square->setPosition(center.x - (width * pieceSize * 0.5f) + (i % width) * pieceSize + OUTLINE_THICKNESS * (i % width),
-            center.y - (height * pieceSize * 0.5f) + (i / height) * pieceSize + OUTLINE_THICKNESS * (i / height));
-
-        m_Window->RegisterDrawable(square);
-        m_Board.GetGraphicPiece(i).SetShape(square);
-        m_Board.GetGraphicPiece(i).SetPosition(square->getPosition());
-    }
 }
 
 void GameState::CheckIfMouseHoverBoard()
@@ -105,8 +83,9 @@ void GameState::CheckIfMouseHoverBoard()
 
                     Player* winner = PlayerManager::GetCurrentPlayer();
 
-                    ClientApp::GetHistoryManager()->SaveGame(winner->GetData());
+                    ClientApp::GetHistoryManager()->SaveGame(winner->GetData(), m_ScoreManager.GetCurrentGame());
                     m_ScoreManager.AddScoreToPlayer(winner->GetPlayerID());
+                    m_ScoreManager.CreateNewGameHistory();
 
                     m_GameStateUI->UpdatePlayerScore(*winner->GetData(), m_ScoreManager.GetPlayerScore(winner->GetPlayerID()));
                     m_GameStateUI->UpdateGameStateText(winner->GetName() + " won!");
@@ -129,39 +108,18 @@ void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
 {
     Player* currentPlayer = PlayerManager::GetCurrentPlayer();
 
-    auto pos = sf::Vector2f(m_Board.GetGraphicPiece(cell).GetPosition());
     // Set piece id in board
     m_Board[cell] = currentPlayer->GetPlayerID();
 
-    InstanciateNewPlayerShape(currentPlayer, cell);
+    m_Board.InstanciateNewPlayerShape(currentPlayer->GetPlayerID(), cell);
 
     m_ScoreManager.AddPlayerMove(*currentPlayer->GetData(), cell);
 
     SendPlacedPieceToServer(cell);
 }
 
-void GameState::InstanciateNewPlayerShape(const Player* currentPlayer, unsigned int cell)
-{
-    auto pos = sf::Vector2f(m_Board.GetGraphicPiece(cell).GetPosition());
-
-    // Center the piece
-    pos.x += m_Board.GetPieceSize() * 0.5f;
-    pos.y += m_Board.GetPieceSize() * 0.5f;
-
-    auto playerPieceShape = new PlayerPieceShape(currentPlayer->GetPlayerID(), pos);
-    m_GamePieces.push_back(playerPieceShape);
-    m_Window->RegisterDrawable(playerPieceShape);
-}
-
 void GameState::ClearBoard()
 {
-    for (auto& piece : m_GamePieces)
-    {
-        m_Window->UnregisterDrawable(piece);
-        RELEASE(piece);
-    }
-
-    m_GamePieces.clear();
     m_Board.SetEmpty();
 }
 
@@ -202,6 +160,7 @@ void GameState::OnExit()
 {
     ClearBoard();
     RELEASE(m_GameStateUI);
+    m_ScoreManager.Clear();
 
     m_Window->ClearAllDrawables();
 }

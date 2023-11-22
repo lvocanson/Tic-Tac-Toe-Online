@@ -7,26 +7,10 @@
 #include "IManager.h"
 
 
-
 struct PlayerMove
 {
     PlayerData playerData;
     unsigned int BoardCell;
-};
-
-class GameData
-{
-public:
-
-    GameData(const PlayerData* winner, const std::vector<PlayerMove>& allMoves);
-    ~GameData();
-
-    const std::vector<PlayerMove>& GetAllMoves() const { return AllMoves; }
-
-private:
-
-    const PlayerData* Winner;
-    std::vector<PlayerMove> AllMoves;
 };
 
 class ScoreManager : public IManager
@@ -41,20 +25,20 @@ public:
 
     void CreateScoreForPlayer(PlayerData* playerData, Window* window);
 
-    void AddPlayerMove(PlayerData playerData, unsigned int lastCellPlayed);
+    void AddPlayerMove(const PlayerData& playerData, unsigned int lastCellPlayed);
     void AddScoreToPlayer(TicTacToe::PieceID player);
 
     unsigned int GetPlayerScore(TicTacToe::PieceID pieceID);
+    const std::vector<const PlayerMove*>* GetCurrentGame() const { return m_CurrentGame; }
 
     bool IsScoreExists(TicTacToe::PieceID& pieceID);
-
-    const std::vector<PlayerMove>& GetCurrentGame() const { return m_CurrentGame; }
+    void CreateNewGameHistory();
 
 private:
 
     // Player id -> score
     std::map<TicTacToe::PieceID, unsigned int> m_PlayerScores;
 
-    std::vector<PlayerMove> m_CurrentGame;
+    std::vector<const PlayerMove*>* m_CurrentGame;
 };
 

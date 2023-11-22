@@ -28,8 +28,6 @@ public:
 	void PlacePiece();
 	void RemovePiece();
 
-	void ClearBoard();
-
 private:
 	Window* m_Window;
 
@@ -39,12 +37,12 @@ private:
 
 	GraphicBoard m_Board;
 
-	PlayerPieceShape m_PlayerPieceShape;
 	GameHistoryManager m_GameHistoryManager;
 	PlayerManager m_PlayerManager;
 
 	std::vector<ButtonComponent*> m_HistoryButtons;
 
-
-	size_t m_CurrentGameIndex;
+	GameData* m_CurrentGame;
+	unsigned int m_CurrentGameIndex;
+	unsigned int m_CurrentMoveIndex;
 };
