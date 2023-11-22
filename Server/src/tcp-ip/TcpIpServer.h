@@ -21,9 +21,7 @@ private:
     friend class TcpIpServer;
 
     SOCKET Socket;
-#ifndef NO_EVENTS
     WSAEVENT Event;
-#endif // !NO_EVENTS
 
     bool IsNew = true;
     mutable bool ReadPending = false;
@@ -55,13 +53,6 @@ public:
     /// Stop listening and close all connections.
     /// </summary>
     void Close();
-
-#ifdef NO_EVENTS
-    /// <summary>
-    /// Custom WNDPROC for the server.
-    /// </summary>
-    LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-#endif // NO_EVENTS
 
     /// <summary>
     /// Accept new connections and check all clients for pending data and close requests.
@@ -97,9 +88,7 @@ private:
 
     WSADATA m_WsaData;
     SOCKET m_ListenSocket;
-#ifndef NO_EVENTS
     WSAEVENT m_AcceptEvent;
-#endif // !NO_EVENTS
 
     std::vector<Connection> m_Connections;
 };

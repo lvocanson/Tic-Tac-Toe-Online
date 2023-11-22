@@ -7,17 +7,17 @@
 class ConnectionState : public State
 {
 public:
-	void OnEnter() override;
-	void OnUpdate(float dt) override;
-	void OnExit() override;
-	
+    void OnEnter() override;
+    void OnUpdate(float dt) override;
+    void OnExit() override;
+    
 
-	ConnectionState(StateMachine* stateMachine, Window* window);
-	ConnectionState(const ConnectionState& other) = delete;
-	ConnectionState& operator=(const ConnectionState& other) = delete;
-	~ConnectionState();
+    ConnectionState(StateMachine* stateMachine, Window* window);
+    ConnectionState(const ConnectionState& other) = delete;
+    ConnectionState& operator=(const ConnectionState& other) = delete;
+    ~ConnectionState();
 
-	bool IsValidIpAddress(const char* ip);
+    bool IsValidIpAddress(const char* ip);
 
 private:
 

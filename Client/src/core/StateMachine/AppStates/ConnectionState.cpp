@@ -8,15 +8,15 @@
 constexpr float CONNECTION_TIMEOUT_TIME = 5.0f;
 
 ConnectionState::ConnectionState(StateMachine* stateMachine, Window* window)
-	: State(stateMachine)
-	, m_Window(window)
+    : State(stateMachine)
+    , m_Window(window)
 {
-	m_StateMachine = stateMachine;
+    m_StateMachine = stateMachine;
 }
 
 ConnectionState::~ConnectionState()
 {
-	NULLPTR(m_Window);
+    NULLPTR(m_Window);
 }
 
 void ConnectionState::OnEnter()

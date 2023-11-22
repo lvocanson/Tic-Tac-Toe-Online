@@ -162,6 +162,31 @@ namespace TcpIp
         socket = INVALID_SOCKET;
     }
 
+    void ReceiveHtmlRequest(const SOCKET& socket, std::stringstream& ss, const unsigned int bufferSize)
+    {
+        int iResult;
+        char* buffer = new char[bufferSize];
+        do
+        {
+            iResult = recv(socket, buffer, bufferSize, 0);
+
+            if (iResult == SOCKET_ERROR)
+            {
+                delete[] buffer;
+                throw TcpIpException::Create(RECEIVE_DataFailed, TCP_IP_WSA_ERROR);
+            }
+
+            // Write buffer to stream
+            ss.write(buffer, iResult);
+        } while (iResult == bufferSize);
+        delete[] buffer;
+    }
+
+    void SendHtmlResponse(const SOCKET& socket, const char* data, u_long size)
+    {
+        send(socket, data, static_cast<int>(size), 0);
+    }
+
     WSAEVENT CreateEventObject(const SOCKET& socket, const long networkEvents)
     {
         WSAEVENT eventObj = WSACreateEvent();

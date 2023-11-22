@@ -5,10 +5,9 @@
     This file is pre-compiled and included in all source files.
 */
 
-#ifdef NO_EVENTS
+// For HtmlServer, who uses old window events
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #pragma comment(lib, "User32.lib")
-#endif // NO_EVENTS
 
 #include <iostream>
 #include <tcp-ip/TcpIp.h>

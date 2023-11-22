@@ -191,7 +191,7 @@ void ClientApp::Cleanup()
         RELEASE(m_ClientThread);
     }
 
-    FontRegistry::ClearFonts();
+        FontRegistry::ClearFonts();
     PlayerShapeRegistry::ClearPlayerShapes();
 }
 

@@ -101,6 +101,7 @@
     <ClCompile Include="src\core\Components\ButtonComponent.cpp" />
     <ClCompile Include="src\core\Components\InsertFieldComponent.cpp" />
     <ClCompile Include="src\core\Components\TextComponent.cpp" />
+    <ClCompile Include="src\core\Managers\GameHistoryManager.cpp" />
     <ClCompile Include="src\core\Managers\InputHandler.cpp" />
     <ClCompile Include="src\core\Managers\Resources\PlayerShapeRegistry.cpp" />
     <ClCompile Include="src\core\StateMachine\AppStates\ConnectionState.cpp" />
@@ -134,6 +135,7 @@
     <ClInclude Include="src\core\Components\ButtonComponent.h" />
     <ClInclude Include="src\core\Components\InsertFieldComponent.h" />
     <ClInclude Include="src\core\Components\TextComponent.h" />
+    <ClInclude Include="src\core\Managers\GameHistoryManager.h" />
     <ClInclude Include="src\core\Managers\InputHandler.h" />
     <ClInclude Include="src\core\Managers\Resources\PlayerShapeRegistry.h" />
     <ClInclude Include="src\core\StateMachine\AppStates\ConnectionState.h" />

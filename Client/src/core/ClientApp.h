@@ -4,6 +4,8 @@
 #include "Managers/InputHandler.h"
 #include "Managers/TimeManager.h"
 #include "Player.h"
+#include "src/tcp-ip/TcpIpClient.h"
+#include "src/core/Managers/GameHistoryManager.h"
 
 class Window;
 class sf::Shape;
@@ -58,6 +60,8 @@ public:
 
     Shared<ConnectionStateInfo>& GetConnectionInfo() { return m_IsClientConnected; }
 
+    static GameHistoryManager* GetHistoryManager() { return GetInstance().m_GameHistoryManager; }
+
 private: // Methods
 
     /// Update the ClientApp. Called once per frame.
@@ -79,6 +83,7 @@ private: // Fields
     GameSettings m_GameSettings;
     InputHandler m_InputHandler;
     Player* m_Player;
+    GameHistoryManager* m_GameHistoryManager;
 
     Thread* m_ClientThread = nullptr;
     TcpIpClient* m_Client = nullptr;

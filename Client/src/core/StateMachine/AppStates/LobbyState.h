@@ -31,7 +31,7 @@ private:
 	int m_CurrentLobbyID;
 
 	Window* m_Window;
-
+	bool m_IsLobbyInit = false;
 	ButtonComponent* m_StartButton;
 	ButtonComponent* m_ReturnButton;
 	std::vector<ButtonComponent*> m_LobbyButtons;

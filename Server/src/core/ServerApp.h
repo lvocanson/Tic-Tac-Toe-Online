@@ -26,7 +26,7 @@ private: // Game Server
 private: // Web Server
     bool InitWebServer();
     void HandleWebServer();
-    void HandleWebConnection();
+    void HandleWebConnection(WebClientPtr sender);
     void CleanUpWebServer();
 
     HtmlServer* m_WebServer = nullptr;

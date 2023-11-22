@@ -1,17 +1,18 @@
 #include "MenuState.h"
-#include "./src/core/ClientApp.h"
+#include "src/core/ClientApp.h"
+
 MenuState::MenuState(StateMachine* stateMachine, Window* window)
-	: State(stateMachine)
-	, m_Window(window)
-	, m_PlayButton()
-	, m_HistoryButton()
-	, m_QuitButton()
+    : State(stateMachine)
+    , m_Window(window)
+    , m_PlayButton()
+    , m_HistoryButton()
+    , m_QuitButton()
 {
 }
 
 MenuState::~MenuState()
 {
-	NULLPTR(m_Window);
+    NULLPTR(m_Window);
 }
 
 void MenuState::OnEnter()
@@ -31,8 +32,8 @@ void MenuState::OnEnter()
     m_QuitButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
     m_QuitButton->SetButtonText("Quit", sf::Color::White, 30, TextAlignment::Center);
     m_QuitButton->SetOnClickCallback([this]() {
-        // TODO: Quit the game
-        });
+        ClientApp::GetInstance().Shutdown();
+    });
 
     m_Window->RegisterDrawable(m_PlayButton);
     m_Window->RegisterDrawable(m_HistoryButton);
@@ -49,12 +50,12 @@ void MenuState::OnUpdate(float dt)
 
 void MenuState::OnExit()
 {
-	m_Window->UnregisterDrawable(m_PlayButton);
+    m_Window->UnregisterDrawable(m_PlayButton);
 
-	m_Window->UnregisterDrawable(m_HistoryButton);
-	m_Window->UnregisterDrawable(m_QuitButton);
+    m_Window->UnregisterDrawable(m_HistoryButton);
+    m_Window->UnregisterDrawable(m_QuitButton);
 
-	RELEASE(m_PlayButton);
-	RELEASE(m_HistoryButton);
-	RELEASE(m_QuitButton);
+    RELEASE(m_PlayButton);
+    RELEASE(m_HistoryButton);
+    RELEASE(m_QuitButton);
 }

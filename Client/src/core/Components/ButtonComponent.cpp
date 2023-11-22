@@ -53,8 +53,8 @@ bool ButtonComponent::IsMouseOver()
 	sf::Vector2f buttonPos = m_Shape.getPosition();
 	sf::Vector2f buttonSize = m_Shape.getSize();
 
-	return mousePos.x >= buttonPos.x && mousePos.x <= buttonPos.x + buttonSize.x &&
-		mousePos.y >= buttonPos.y && mousePos.y <= buttonPos.y + buttonSize.y;
+    return mousePos.x >= buttonPos.x && mousePos.x <= buttonPos.x + buttonSize.x &&
+        mousePos.y >= buttonPos.y && mousePos.y <= buttonPos.y + buttonSize.y;
 }
 
 void ButtonComponent::SetPosition(const sf::Vector2f& position)

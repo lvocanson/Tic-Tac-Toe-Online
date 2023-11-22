@@ -21,6 +21,8 @@ LobbyState::~LobbyState()
 
 void LobbyState::OnEnter()
 {
+    m_IsLobbyInit = false;
+
     Json j;
     j["Type"] = "GetLobbyList";
     ClientApp::GetInstance().Send(j.dump());
@@ -100,28 +102,42 @@ void LobbyState::OnReceiveData(const Json& serializeData)
     {
         m_CurrentLobbyID = serializeData["CurrentLobbyID"];
     }
-    if (serializeData.contains("Lobbies"))
+    else if (serializeData.contains("Lobbies"))
     {
         int i = 0;
         for (const auto& lobbyJson : serializeData["Lobbies"])
         {
             int id = lobbyJson["ID"];
-            std::string playerX = lobbyJson["PlayerX"];
-            std::string playerO = lobbyJson["PlayerO"];
-            m_Lobbies.emplace_back(id, playerX, playerO);
 
-            ButtonComponent* m_LobbyButton = new ButtonComponent(sf::Vector2f(100, (i * 110)), sf::Vector2f(200, 100), sf::Color::Blue);
-            m_LobbyButton->SetButtonText("Lobby " + std::to_string(i), sf::Color::White, 30, TextAlignment::Center);
-            m_LobbyButton->SetOnClickCallback([=]()
+            if (!m_IsLobbyInit)
+            {
+                ButtonComponent* m_LobbyButton = new ButtonComponent(sf::Vector2f(100, (i * 110)), sf::Vector2f(200, 100), sf::Color::Blue);
+                m_LobbyButton->SetButtonText("Lobby " + std::to_string(i), sf::Color::White, 30, TextAlignment::Center);
+                m_LobbyButton->SetOnClickCallback([=]()
                 {
                     TryToJoinLobby(i);
                 });
-            //CreateLeaveLobbyButton(sf::Vector2f(300, (i * 110)), i);
-            m_LobbyButtons.push_back(m_LobbyButton);
-            m_Window->RegisterDrawable(m_LobbyButton);
+                //CreateLeaveLobbyButton(sf::Vector2f(300, (i * 110)), i);
+
+                m_Lobbies.emplace_back(id, "", "");
+                m_LobbyButtons.push_back(m_LobbyButton);
+                m_Window->RegisterDrawable(m_LobbyButton);
+            }
+            else 
+            {
+               
+                std::string playerX = lobbyJson["PlayerX"];
+                std::string playerO = lobbyJson["PlayerO"];
+
+                m_Lobbies[i].ID = id;
+                m_Lobbies[i].PlayerO = playerO;
+                m_Lobbies[i].PlayerX = playerX;
+            }
 
             i++;
         }
+
+        m_IsLobbyInit = true;
     }
 }
 

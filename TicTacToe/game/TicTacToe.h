@@ -71,7 +71,7 @@ namespace TicTacToe
         /// <summary>
         /// Sets all the pieces on the board to empty pieces.
         /// </summary>
-        void SetEmpty();
+        virtual void SetEmpty();
 
     protected:
 

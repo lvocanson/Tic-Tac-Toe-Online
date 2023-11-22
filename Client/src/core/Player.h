@@ -6,19 +6,19 @@ struct PlayerData
 {
     std::string Name;
     TicTacToe::PieceID Id;
-	sf::Color Color;
-	PlayerShapeType ShapeType;
+    sf::Color Color;
+    PlayerShapeType ShapeType;
 };
 
 class Player
 {
 public:
 
-	Player();
-	Player(const std::string& name, const sf::Color color, const PlayerShapeType);
-	~Player();
+    Player();
+    Player(const std::string& name, const sf::Color color, const PlayerShapeType);
+    ~Player();
 
-	void SetColor(const sf::Color color) { m_Data.Color = color; }
+    void SetColor(const sf::Color color) { m_Data.Color = color; }
 
 	sf::Color GetColor() const { return m_Data.Color; }
 	TicTacToe::PieceID GetPlayerID() const { return m_Data.Id; }
@@ -30,6 +30,6 @@ public:
 
 private:
 
-	PlayerData m_Data;
+    PlayerData m_Data;
 
 };
