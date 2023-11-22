@@ -206,6 +206,9 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
         {
             std::cout << "Sending root page." << std::endl;
             sender->Send("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
+
+                // TODO: Send the actual page, lobbies with href to /watch/lobbyid
+
                 "<html><body><h1>Hello " + sender->Address + ":" + std::to_string(sender->Port) + "</h1></body></html>");
         }
         else if (page == "/favicon.ico")
@@ -214,6 +217,26 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
             std::cout << "Sending 404." << std::endl;
             sender->Send("HTTP/1.1 404 Not Found\r\n\r\n");
         }
+
+        // TODO: page.starts_with("/watch/") -> send the watch page for the lobby
+
+        /*
+            The client should get something like this: (maybe with a link to the root page)
+
+            Lobby ID: 123456
+            Player X: "Player 1"
+            Player O: "Player 2"
+            Turn: X
+
+
+             X | O | X
+            -----------
+             X | X | O
+            -----------
+             O | X | O
+
+        */
+
         else
         {
             std::cout << "Redirecting to root page." << std::endl;
