@@ -20,6 +20,9 @@ public:
 	bool IsValidIpAddress(const char* ip);
 
 private:
+
+	bool m_IsTryingToConnect = false;
+
 	Window* m_Window;
 
 	ButtonComponent* m_BackButton;

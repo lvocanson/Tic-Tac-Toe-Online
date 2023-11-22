@@ -54,10 +54,6 @@ void ClientApp::Run()
         Update(TimeManager::GetDeltaTime());
         m_Window->Render();
         m_IsRunning &= m_Window->IsOpen();
-        auto sharedRunning = m_SharedIsRunning.TryGet();
-        if (sharedRunning.IsValid())
-            m_IsRunning &= sharedRunning.Get();
-
     }
 
     m_SharedIsRunning.WaitGet().Get() = false;
@@ -66,70 +62,85 @@ void ClientApp::Run()
 
 void ClientApp::RunClient(std::string* adress)
 {
-    DebugLog("ip in runClient " + *adress + "...\n");
-
     try
     {
-        m_Client = new TcpIpClient();
-        m_Client->Connect(adress->c_str(), DEFAULT_PORT);
-        m_IsClientRunning = true;
-        m_IsClientConnected.WaitGet().Get() = true;
-        DebugLog("Connected to server!\n");
-    }
-    catch (const TcpIp::TcpIpException& e)
-    {
-        DebugLog("Failed to connect to server: " + std::string(e.what()) + "\n");
-        m_IsClientRunning = false;
-        m_IsClientConnected.WaitGet().Get() = false;
-    }
+        m_IsClientConnected.WaitGet().Get() = Connecting;
 
-    std::stringstream ss;
-    while (m_IsClientRunning)
-    {
         try
         {
-            while (m_Client->FetchPendingData(ss))
-            {
-                Json j;
-                try
-                {
-                    j = Json::parse(ss);
-                }
-                catch (const std::exception& e)
-                {
-                    DebugLog("Failed to parse JSON from server!");
-                    return;
-                }
-                if (!j.contains("Type"))
-                {
-                    DebugLog("Json does not contain a Type!\n");
-                    return;
-                }
-                m_StateMachine->WaitGet()->OnReceiveData(j);
-                ss.str(std::string());
-            }
+            m_Client = new TcpIpClient();
+            m_Client->Connect(adress->c_str(), DEFAULT_PORT);
+            m_IsClientRunning = true;
+            m_IsClientConnected.WaitGet().Get() = Connected;
+            DebugLog("Connected to server!\n");
         }
         catch (const TcpIp::TcpIpException& e)
         {
-            DebugLog("Failed to fetch data from server: " + std::string(e.what()) + "\n");
+            DebugLog("Failed to connect to server: " + std::string(e.what()) + "\n");
             m_IsClientRunning = false;
+            m_IsClientConnected.WaitGet().Get() = Disconnected;
         }
 
-        if (!m_Client->IsConnected())
+        std::stringstream ss;
+        while (m_IsClientRunning)
         {
-            DebugLog("Disconnected from server!\n");
-            m_IsClientRunning = false;
+            try
+            {
+                while (m_Client->FetchPendingData(ss))
+                {
+                    Json j;
+                    try
+                    {
+                        j = Json::parse(ss);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        DebugLog("Failed to parse JSON from server!");
+                        return;
+                    }
+                    if (!j.contains("Type"))
+                    {
+                        DebugLog("Json does not contain a Type!\n");
+                        return;
+                    }
+                    m_StateMachine->WaitGet()->OnReceiveData(j);
+                    ss.str(std::string());
+                }
+            }
+            catch (const TcpIp::TcpIpException& e)
+            {
+                DebugLog("Failed to fetch data from server: " + std::string(e.what()) + "\n");
+                m_IsClientRunning = false;
+            }
+
+            if (!m_Client->IsConnected())
+            {
+                DebugLog("Disconnected from server!\n");
+                m_IsClientRunning = false;
+                m_IsClientConnected.WaitGet().Get() = Disconnected;
+            }
+
+            auto sharedRunning = m_SharedIsRunning.TryGet();
+            if (sharedRunning.IsValid())
+                m_IsClientRunning &= sharedRunning.Get();
         }
 
-        auto sharedRunning = m_SharedIsRunning.TryGet();
-        if (sharedRunning.IsValid())
-            m_IsClientRunning &= sharedRunning.Get();
+        m_SharedIsRunning.WaitGet().Get() = false;
+        m_Client->Disconnect();
+        RELEASE(m_Client);
     }
+    catch(...)
+    {
+        DebugLog("Global catch failed \n");
+        DebugLog("The thread is shutting down \n");
 
-    m_SharedIsRunning.WaitGet().Get() = false;
-    m_Client->Disconnect();
-    m_IsClientConnected.WaitGet().Get() = false;
-    RELEASE(m_Client);
+        m_SharedIsRunning.WaitGet().Get() = false;
+
+        if (m_Client)
+            m_Client->Disconnect();
+
+        RELEASE(m_Client);
+    }
 }
 
 void ClientApp::Send(const std::string& data)
@@ -183,37 +194,17 @@ void ClientApp::Cleanup()
     PlayerShapeRegistry::ClearPlayerShapes();
 }
 
-bool ClientApp::TryToConnect(const std::string* ip)
+void ClientApp::TryToConnect(const std::string* ip)
 {
     if (m_ClientThread != nullptr)
-        return false; // TODO: Handle reconnecting
+        return;
 
     DebugLog("Try to connect to " + *ip + "...\n");
 
     m_ClientThread = Thread::Create([](LPVOID ip) -> DWORD
     {
-        std::string* ipStr = static_cast<std::string*>(ip);
-
-        DebugLog("IP in connect thread " + *ipStr + "...\n");
-
-        ClientApp::GetInstance().RunClient(ipStr);
+        ClientApp::GetInstance().RunClient(static_cast<std::string*>(ip));
 
         return 0;
     }, ip, true);
-
-    return true;
-    /*
-    float timeoutConnection = 0.0f;
-    while (!m_IsClientConnected.WaitGet().Get())
-    {
-        timeoutConnection += TimeManager::GetDeltaTime();
-
-        if (timeoutConnection > CONNECTION_TIMEOUT_TIME)
-        {
-            DebugLog("Failed to connect to server!\n");
-            return false;
-        }
-    }
-
-    return true;*/
 }

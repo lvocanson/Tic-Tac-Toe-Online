@@ -5,6 +5,8 @@
 #include <regex>
 #include "SFML/Network/IpAddress.hpp"
 
+constexpr float CONNECTION_TIMEOUT_TIME = 5.0f;
+
 ConnectionState::ConnectionState(StateMachine* stateMachine, Window* window)
 	: State(stateMachine)
 	, m_Window(window)
@@ -38,6 +40,8 @@ void ConnectionState::OnEnter()
 	m_ConnectButton->SetButtonText("Connect", sf::Color::White, 30, TextAlignment::Center);
 	m_ConnectButton->SetOnClickCallback([this]()
 	{
+		if (m_IsTryingToConnect) return;
+
 		bool isNameValid = true;
 
 		if (m_NameField->GetText().empty())
@@ -62,24 +66,16 @@ void ConnectionState::OnEnter()
         if (isNameValid && IsValidIpAddress(ip->c_str()))
         {
 			ClientApp::GetInstance().SetPlayerName(m_NameField->GetText());
-
-            if (ClientApp::GetInstance().TryToConnect(ip))
-            {
-				Json j;
-				j["Type"] = "Login";
-				j["UserName"] = m_NameField->GetText();
-				ClientApp::GetInstance().Send(j.dump());
-
-				//Switch state to lobby state later
-				m_StateMachine->SwitchState("GameState");
-				m_IpField->ClearErrorMessage();
-            }
+			ClientApp::GetInstance().TryToConnect(ip);
+			m_IsTryingToConnect = true;
         }
         else
         {
             DebugLog("Invalid IP address format!\n");
 			m_IpField->ShowErrorMessage("Invalid IP address format!");
         }
+
+		RELEASE(ip);
     });	
 
 	m_Window->RegisterDrawable(m_IpField);
@@ -94,6 +90,40 @@ void ConnectionState::OnUpdate(float dt)
 	m_NameField->Update(dt);
 	m_BackButton->Update(dt);
 	m_ConnectButton->Update(dt);
+
+	if (m_IsTryingToConnect)
+	{
+		static float timeOutTimer = 0.0f;
+
+		Shared<ConnectionStateInfo>& connectionInfo = ClientApp::GetInstance().GetConnectionInfo();
+
+		switch (connectionInfo.WaitGet().Get())
+		{
+			case::Connecting:
+			{
+				if (timeOutTimer > CONNECTION_TIMEOUT_TIME)
+				{
+					m_IpField->ShowErrorMessage("Connection timed out!");
+					m_IsTryingToConnect = false;
+					timeOutTimer += dt;
+				}
+				break;
+			}
+			case::Connected:
+			{
+				Json j;
+				j["Type"] = "Login";
+				j["UserName"] = m_NameField->GetText();
+				ClientApp::GetInstance().Send(j.dump());
+
+				//Switch state to lobby state later
+				m_StateMachine->SwitchState("GameState");
+				m_IpField->ClearErrorMessage();
+				m_IsTryingToConnect = false;
+				break;
+			}
+		}
+	}
 }
 
 void ConnectionState::OnExit()
