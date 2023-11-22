@@ -20,7 +20,7 @@ void FontRegistry::LoadFont(const std::string& fontName)
 
     try
     {
-        if (!font->loadFromFile("resources/fonts/" + fontName + ".ttf"))
+        if (!font->loadFromFile("resources/fonts/" + fontName))
         {
             throw std::runtime_error("Failed to load font: " + fontName);
         }

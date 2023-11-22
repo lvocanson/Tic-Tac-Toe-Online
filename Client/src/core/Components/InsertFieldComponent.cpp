@@ -100,7 +100,7 @@ void InsertFieldComponent::Update(float dt)
             {
                 if (InputHandler::IsKeyPressed(static_cast<sf::Keyboard::Key>(key)))
                 {
-                    if (InputHandler::IsKeyPressed(sf::Keyboard::LShift) || InputHandler::IsKeyPressed(sf::Keyboard::RShift))
+                    if (InputHandler::IsKeyHeld(sf::Keyboard::LShift) || InputHandler::IsKeyHeld(sf::Keyboard::RShift))
                     {
                         AppendCharacter('A' + (key - sf::Keyboard::A));
                     }
