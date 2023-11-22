@@ -105,7 +105,7 @@ void ServerApp::HandleGameServer()
 void ServerApp::HandleRecv(ClientPtr sender)
 {
     std::string data = sender->Receive();
-    std::cout << HASH_CLR(sender) << DEF_CLR << " sent " << data.size() << " bytes of data." << std::endl << DEF_CLR;
+    std::cout << HASH_CLR(sender) << DEF_CLR << " sent " << data.size() << " bytes of data." << std::endl;
 
     // Echo back
     sender->Send(data);
@@ -132,9 +132,8 @@ bool ServerApp::InitWebServer()
 {
     try
     {
-        throw TcpIp::TcpIpException::Create(TcpIp::ErrorCode::WSA_StartupFailed);
         m_WebServer = new HtmlServer();
-        //m_WebServer->Open(DEFAULT_PORT + 1);
+        m_WebServer->Open(DEFAULT_PORT + 1);
         return true;
     }
     catch (const TcpIp::TcpIpException& e)
@@ -148,7 +147,24 @@ void ServerApp::HandleWebServer()
 {
     try
     {
+        m_WebServer->CheckNetwork();
 
+        WebClientPtr newClient;
+        while ((newClient = m_WebServer->FindNewClient()) != nullptr)
+        {
+            std::cout << WEB_PFX << STS_CLR << "New connection from " << HASH_CLR(newClient) << STS_CLR << " has been established." << std::endl << DEF_CLR;
+        }
+
+        WebClientPtr sender;
+        while ((sender = m_WebServer->FindClientWithPendingData()) != nullptr)
+        {
+            HandleWebConnection(sender);
+        }
+
+        m_WebServer->CleanClosedHtmlConns([](WebClientPtr c)
+            {
+                std::cout << WEB_PFX << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR;
+            });
     }
     catch (const TcpIp::TcpIpException& e)
     {
@@ -156,14 +172,74 @@ void ServerApp::HandleWebServer()
     }
 }
 
-void ServerApp::HandleWebConnection()
+void ServerApp::HandleWebConnection(WebClientPtr sender)
 {
-    // std::cout << WEB_PFX << HASH_CLR(sender) << DEF_CLR << " has been handled." << std::endl;
-}
+    constexpr int maxWouldBlockErrors = 10;
+    int wbe = 0;
+    std::string data;
+    while (true)
+    {
+        try
+        {
+            data = sender->Receive();
+            break;
+        }
+        catch (const TcpIp::TcpIpException& e)
+        {
+            if (e.Context == WSAEWOULDBLOCK && wbe < maxWouldBlockErrors)
+            {
+                ++wbe; // "Try again" error, ignore
+                continue;
+            }
 
+            std::cout << WEB_PFX << ERR_CLR << "Error while receiving data from " << HASH_CLR(sender) << DEF_CLR << ": " << e.what() << std::endl;
+            return;
+        }
+    }
+
+    if (data.starts_with("GET "))
+    {
+        std::string page = data.substr(4, data.find(' ', 4) - 4);
+        std::cout << WEB_PFX << HASH_CLR(sender) << DEF_CLR << " sent a GET request for " << page << ". ";
+
+        if (page == "/")
+        {
+            std::cout << "Sending root page." << std::endl;
+            sender->Send("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
+                "<html><body><h1>Hello " + sender->Address + ":" + std::to_string(sender->Port) + "</h1></body></html>");
+        }
+        else if (page == "/favicon.ico")
+        {
+            // We don't have a favicon, so just send a 404
+            std::cout << "Sending 404." << std::endl;
+            sender->Send("HTTP/1.1 404 Not Found\r\n\r\n");
+        }
+        else
+        {
+            std::cout << "Redirecting to root page." << std::endl;
+            sender->Send("HTTP/1.1 301 Moved Permanently\r\nLocation: /\r\n\r\n");
+        }
+    }
+    else
+    {
+        std::cout << WEB_PFX << HASH_CLR(sender) << DEF_CLR << " sent an unknown request." << std::endl;
+    }
+
+    // Close the connection
+    sender->Kick();
+}
 
 void ServerApp::CleanUpWebServer()
 {
+    try
+    {
+        m_WebServer->Close();
+        delete m_WebServer;
+    }
+    catch (const TcpIp::TcpIpException& e)
+    {
+        std::cout << WEB_PFX << ERR_CLR << "Web server clean up failed: " << e.what() << std::endl << DEF_CLR;
+    }
 }
 
 #pragma endregion
