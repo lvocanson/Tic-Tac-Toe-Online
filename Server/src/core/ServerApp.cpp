@@ -24,7 +24,8 @@ void ServerApp::Init()
     }
 
     auto addr = TcpIp::IpAddress::GetLocalAddress();
-    std::cout << INF_CLR << "==> Servers Local Address: " << SCS_CLR << addr.ToString() << std::endl << DEF_CLR;
+    std::cout << INF_CLR << "=> Servers Local Address: " << SCS_CLR << addr.ToString() << std::endl << DEF_CLR;
+    std::cout << INF_CLR << "=> Servers Phrase Address: " << SCS_CLR << addr.ToPhrase() << std::endl << DEF_CLR;
 }
 
 void ServerApp::Run()
