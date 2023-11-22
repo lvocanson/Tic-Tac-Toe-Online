@@ -22,6 +22,10 @@ public:
 	void OnExit() override;
 	void OnReceiveData(const Json& serializeData) override;
 
+	void IsServerLobbyFull();
+
+	void StartGame();
+
 	GameState(StateMachine* stateMachine, Window* m_Window);
 	GameState(const GameState& other) = delete;
 	GameState& operator=(const GameState& other) = delete;
@@ -46,7 +50,7 @@ private:
 	unsigned int m_LobbyID;
 
 	Window* m_Window;
-	ButtonComponent* m_ReturnButton;
+	ButtonComponent* m_ReturnButton = nullptr;
 	bool m_IsPlayersConnected = false;
 	bool m_IsGameInit = false;
 	GraphicBoard m_Board;
@@ -57,7 +61,10 @@ private:
 	float m_PlayerTurnTime;
 	float m_MaxPlayerTurnTime;
 	int m_PlayerMove;
+
 	bool m_IsTimerOn;
+	bool m_IsPlayerTurn = false;
+	bool m_IsGameStart = false;
 
 	GameStateUI* m_GameStateUI;
 };

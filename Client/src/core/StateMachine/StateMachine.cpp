@@ -20,6 +20,18 @@ void StateMachine::AddState(const std::string& stateName, State* newState)
     m_States.insert(std::pair(stateName, newState));
 }
 
+const State* StateMachine::GetState(const std::string& stateName)
+{
+    const State* state = m_States[stateName];
+    if (!state)
+    {
+        std::cout << "State not found" << std::endl;
+        return nullptr;
+    }
+
+    return state;
+}
+
 void StateMachine::Start()
 {
     if (!m_CurrentState) 

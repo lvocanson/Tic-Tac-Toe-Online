@@ -64,7 +64,7 @@ void ConnectionState::OnEnter()
 
         if (isNameValid)
         {
-			ClientApp::GetInstance().SetPlayerName(m_NameField->GetText());
+			ClientApp::GetInstance().GetCurrentPlayer()->SetName(m_NameField->GetText());
 			ClientConnectionHandler::GetInstance().TryToConnectToServer(ip);
 			m_IsTryingToConnect = true;
         }
@@ -122,12 +122,6 @@ void ConnectionState::OnUpdate(float dt)
             }
 			case Connected:
 			{
-				Json j;
-				j["Type"] = "Login";
-				j["UserName"] = m_NameField->GetText();
-				ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
-
-				//Switch state to lobby state later
 				m_StateMachine->SwitchState("LobbyState");
 				m_IpField->ClearErrorMessage();
 				m_IsTryingToConnect = false;

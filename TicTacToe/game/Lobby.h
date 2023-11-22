@@ -12,6 +12,7 @@ struct Lobby : ISerializable
     Lobby(const int id, const std::string& playerX, const std::string& playerO);
     ~Lobby() = default;
 
+    std::string& GetOpponentName(const std::string&);
     void AddPlayerToLobby(const std::string& name);
     void RemovePlayerFromLobby(const std::string& name);
     bool IsInLobby(const std::string& name)
@@ -22,6 +23,11 @@ struct Lobby : ISerializable
     bool IsLobbyFull()
     {
         return !PlayerX.empty() && !PlayerO.empty();
+    }
+
+    bool IsLobbyEmpty()
+    {
+        return PlayerX.empty() && PlayerO.empty();
     }
 
     int ID;

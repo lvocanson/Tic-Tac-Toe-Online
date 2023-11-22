@@ -27,11 +27,10 @@ private:
 	int m_CurrentLobbyID;
 	bool m_IsLobbyInit = false;
 	bool m_IsInLobby = false;
-	bool m_CanStart = false;
+
 
 	Window* m_Window;
 	GameStateUI* m_GameStateUI;
-	ButtonComponent* m_StartButton = nullptr;
 	ButtonComponent* m_ReturnButton;
 	ButtonComponent* m_LeaveButtons = nullptr;	
 

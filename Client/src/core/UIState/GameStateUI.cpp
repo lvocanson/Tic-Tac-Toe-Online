@@ -22,7 +22,6 @@ void GameStateUI::Init()
     UIStateManager::Init();
 
     const auto& font = *FontRegistry::GetFont("bold-font");
-    const auto playerData = PlayerManager::GetCurrentPlayer()->GetData();
 
     m_Title = new sf::Text();
     m_Title->setFont(font);
@@ -36,9 +35,8 @@ void GameStateUI::Init()
 
     m_PlayerTurnText = new sf::Text();
     m_PlayerTurnText->setFont(font);
-    m_PlayerTurnText->setString(playerData->Name+ " turn");
+    m_PlayerTurnText->setString("");
     m_PlayerTurnText->setCharacterSize(24);
-    m_PlayerTurnText->setFillColor(playerData->Color);
     m_PlayerTurnText->setStyle(sf::Text::Bold);
     m_PlayerTurnText->setPosition(m_Window->GetWidth() - m_PlayerTurnText->getGlobalBounds().width - 75, m_Window->GetHeight() * 0.5f - m_PlayerTurnText->getGlobalBounds().height);
 
@@ -46,8 +44,8 @@ void GameStateUI::Init()
 
     m_GameStateText = new sf::Text();
     m_GameStateText->setFont(font);
-    m_GameStateText->setString("");
-    m_GameStateText->setCharacterSize(24);
+    m_GameStateText->setString("Waiting other player");
+    m_GameStateText->setCharacterSize(18);
     m_GameStateText->setFillColor(sf::Color::White);
     m_GameStateText->setStyle(sf::Text::Bold);
     m_GameStateText->setPosition(m_PlayerTurnText->getPosition().x, 100);

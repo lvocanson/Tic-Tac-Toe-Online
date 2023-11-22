@@ -8,7 +8,7 @@ using namespace TicTacToe;
 using json = nlohmann::json;
 
 GameState::GameState(StateMachine* stateMachine, Window* m_Window)
-	: State(stateMachine), m_Window(m_Window), m_ReturnButton(nullptr), m_GameStateUI(nullptr), m_IsTimerOn(false)
+	: State(stateMachine), m_Window(m_Window), m_ReturnButton(nullptr), m_GameStateUI(nullptr), m_IsTimerOn(false), m_LobbyID(0)
 {
 	m_GameStateUI = new GameStateUI(m_Window);
 
@@ -20,13 +20,15 @@ GameState::GameState(StateMachine* stateMachine, Window* m_Window)
 GameState::~GameState()
 {
 	NULLPTR(m_Window);
+	RELEASE(m_GameStateUI);
 }
 
 void GameState::OnEnter()
 {
-	Json j;
-	j["Type"] = "GetPlayerInfo";
-	ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
+	IsServerLobbyFull();
+
+	m_GameStateUI->Init();
+	m_ScoreManager.Init();
 
 	m_MaxPlayerTurnTime = ClientApp::GetGameSettings().GetPlayerMoveLimitTime();
 	m_IsTimerOn = ClientApp::GetGameSettings().IsTimerOn();
@@ -40,26 +42,35 @@ void GameState::OnEnter()
 	m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
 	m_ReturnButton->SetButtonText("Return", sf::Color::White, 30, TextAlignment::Center);
 	m_ReturnButton->SetOnClickCallback([this]()
-		{ m_StateMachine->SwitchState("MenuState"); });
+	{ 
+		Json j;
+		j["Type"] = "LeaveLobby";
+		j["ID"] = m_LobbyID;
+		ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
+		m_StateMachine->SwitchState("MenuState"); 
+	});
 
 	m_Window->RegisterDrawable(m_ReturnButton);
-
-	m_ScoreManager.Init();
-	m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
 
 	m_Board.DrawBoard();
 }
 
 void GameState::OnUpdate(float dt)
 {
-    m_ReturnButton->Update(dt);
-
-	CheckIfMouseHoverBoard();
-
-	if (m_IsTimerOn)
+	if (m_ReturnButton)
 	{
-		UpdatePlayerTimer(dt);
-		CheckIfTimerIsUp();
+		m_ReturnButton->Update(dt);
+	}
+
+	if (m_IsPlayerTurn && m_IsGameStart)
+	{
+		CheckIfMouseHoverBoard();
+
+		if (m_IsTimerOn)
+		{
+			UpdatePlayerTimer(dt);
+			CheckIfTimerIsUp();
+		}
 	}
 }
 
@@ -149,6 +160,7 @@ void GameState::ClearBoard()
 
 void GameState::SwitchPlayerTurn()
 {
+	m_IsPlayerTurn = !m_IsPlayerTurn;
 	m_PlayerManager.SwitchPlayerTurn();
 	m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetCurrentPlayer()->GetData());
 
@@ -163,7 +175,9 @@ void GameState::SendPlacedPieceToServer()
 {
 	Json j;
 	j["Type"] = "OpponentMove";
+	j["PlayerName"] = ClientApp::GetInstance().GetCurrentPlayer()->GetName();
 	j["PlayerMove"] = m_PlayerMove;
+	j["ID"] = m_LobbyID;
 	ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
 }
 
@@ -182,7 +196,6 @@ bool GameState::IsMouseHoverPiece(unsigned int i)
 void GameState::OnExit()
 {
 	ClearBoard();
-	RELEASE(m_GameStateUI);
 	m_ScoreManager.Clear();
 
 	m_Window->ClearAllDrawables();
@@ -190,29 +203,33 @@ void GameState::OnExit()
 
 void GameState::OnReceiveData(const Json& serializeData)
 {
-    if (serializeData["Type"] == "SetPlayerShape")
-    {
-		if (rand() % 100 <= 50)
-		{
-			m_PlayerManager.CreateNewPlayer(serializeData["PlayerX"], sf::Color(250, 92, 12), Square);
-			m_PlayerManager.CreateNewPlayer(serializeData["PlayerO"], sf::Color(255, 194, 0), Circle);
-		}
-		else
-		{
-			m_PlayerManager.CreateNewPlayer(serializeData["PlayerO"], sf::Color(255, 194, 0), Circle);
-			m_PlayerManager.CreateNewPlayer(serializeData["PlayerX"], sf::Color(250, 92, 12), Square);
-		}
-
-		m_GameStateUI->Init();
-        m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
-
-        m_IsPlayersConnected = true;
-
-    }
-	else if (serializeData["Type"] == "OpponentMove")
+	if (serializeData["Type"] == "OpponentMove")
 	{
-		PlacePlayerPieceOnBoard(m_PlayerMove);
-		m_PlayerManager.SwitchPlayerTurn();
+		PlacePlayerPieceOnBoard(serializeData["PlayerMove"]);
+		SwitchPlayerTurn();
 	}
+	else if (serializeData["Type"] == "SetPlayerShape")
+	{
+		m_PlayerManager.CreateNewPlayer(serializeData["PlayerX"], sf::Color(250, 92, 12), Square);
+		m_PlayerManager.CreateNewPlayer(serializeData["PlayerO"], sf::Color(255, 194, 0), Circle);
 
+		m_IsPlayerTurn = serializeData["Starter"] == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
+
+		StartGame();
+	}
+}
+
+void GameState::IsServerLobbyFull()
+{
+	Json j;
+	j["Type"] = "IsLobbyFull";
+	j["ID"] = m_LobbyID;
+	ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
+}
+
+void GameState::StartGame()
+{
+	m_IsGameStart = true;
+	m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
+	m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
 }

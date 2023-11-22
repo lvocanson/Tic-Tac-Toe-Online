@@ -38,6 +38,14 @@ void Lobby::Deserialize(Json j)
     PlayerX = j["PlayerX"];
 }
 
+std::string& Lobby::GetOpponentName(const std::string& senderName)
+{
+    if (PlayerO == senderName)
+        return PlayerX;
+    else if (PlayerX == senderName)
+        return PlayerO;
+}
+
 void Lobby::AddPlayerToLobby(const std::string& name)
 {
     if (PlayerX.empty())
@@ -48,8 +56,8 @@ void Lobby::AddPlayerToLobby(const std::string& name)
 
 void Lobby::RemovePlayerFromLobby(const std::string& name)
 {
-    if (!PlayerX.empty())
-        PlayerX = "None";
-    else if (!PlayerO.empty())
-        PlayerO = "None";
+    if (PlayerX == name)
+        PlayerX = "";
+    else if (PlayerO == name)
+        PlayerO = "";
 }

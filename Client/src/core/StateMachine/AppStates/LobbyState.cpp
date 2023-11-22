@@ -24,6 +24,13 @@ void LobbyState::OnEnter()
     m_IsLobbyInit = false;
 
     Json j;
+    j["Type"] = "Login";
+    j["UserName"] = ClientApp::GetInstance().GetCurrentPlayer()->GetName();
+    ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
+
+    DebugLog(ClientApp::GetInstance().GetCurrentPlayer()->GetName() + "\n");
+
+    j = Json();
     j["Type"] = "GetLobbyList";
     ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
 
@@ -42,21 +49,6 @@ void LobbyState::OnUpdate(float dt)
     for (const auto& lbButton : m_LobbyButtons)
     {
         lbButton->Update(dt);
-    }
-
-    if (m_CanStart)
-    {
-        m_StartButton = new ButtonComponent(sf::Vector2f(700, 500), sf::Vector2f(200, 100), sf::Color::Blue);
-        m_StartButton->SetButtonText("START", sf::Color::Green, 30, TextAlignment::Center);
-        m_StartButton->SetOnClickCallback([this]()
-            {
-                Json j;
-                j["Type"] = "StartGame";
-                j["StartedLobbyID"] = m_CurrentLobbyID;
-                ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
-                m_StateMachine->SwitchState("GameState");
-                ((GameState*)m_StateMachine->GetCurrentState())->SetLobbyID(m_CurrentLobbyID);
-            });
     }
 
     if (m_LeaveButtons)
@@ -86,12 +78,6 @@ void LobbyState::OnExit()
         RELEASE(m_LeaveButtons);
     }
 
-    if (m_StartButton != nullptr)
-    {
-        m_Window->UnregisterDrawable(m_StartButton);
-        RELEASE(m_StartButton);
-    }
-
     m_LobbyButtons.clear();
 
     m_Window->UnregisterDrawable(m_ReturnButton);
@@ -110,7 +96,7 @@ void LobbyState::OnReceiveData(const Json& serializeData)
             if (!m_IsLobbyInit)
             {
                 ButtonComponent* m_LobbyButton = new ButtonComponent(sf::Vector2f(100, (i * 110)), sf::Vector2f(200, 100), sf::Color::Blue);
-                m_LobbyButton->SetButtonText("Lobby " + std::to_string(i), sf::Color::White, 30, TextAlignment::Center);
+                m_LobbyButton->SetButtonText("Lobby " + std::to_string(id), sf::Color::White, 30, TextAlignment::Center);
                 m_LobbyButton->SetOnClickCallback([=]()
                 {
                     if(!m_IsInLobby)
@@ -137,20 +123,13 @@ void LobbyState::OnReceiveData(const Json& serializeData)
     }
     else if (serializeData["Type"] == "IsInLobby")
     {
-        m_CurrentLobbyID = serializeData["CurrentLobbyID"];
-        m_IsInLobby = true;
-        m_LeaveButtons = new ButtonComponent(sf::Vector2f(500, 500), sf::Vector2f(200, 100), sf::Color::Red);
-        m_LeaveButtons->SetButtonText("Leave", sf::Color::White, 30, TextAlignment::Center);
-        m_LeaveButtons->SetOnClickCallback([this]() 
-            {
-                LeaveLobby();
-            });
+        Json j;
+        j["Type"] = "WaitInLobby";
+        j["StartedLobbyID"] = m_CurrentLobbyID;
+        ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
 
-        m_Window->RegisterDrawable(m_LeaveButtons);
-    }
-    else if (serializeData["Type"] == "OnUpdateLobby")
-    {
-        m_CanStart = true;
+        ((GameState*)m_StateMachine->GetState("GameState"))->SetLobbyID(m_CurrentLobbyID);
+        m_StateMachine->SwitchState("GameState");
     }
 }
 
@@ -160,15 +139,7 @@ void LobbyState::TryToJoinLobby(int lobbyID)
     j["Type"] = "JoinLobby";
     j["ID"] = m_Lobbies[lobbyID].ID;
     ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
-}
-
-void LobbyState::LeaveLobby()
-{
-    m_IsInLobby = false;
-    Json j;
-    j["Type"] = "LeaveLobby";
-    j["ID"] = m_CurrentLobbyID;
-    ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
+    m_CurrentLobbyID = m_Lobbies[lobbyID].ID;
 }
 
 

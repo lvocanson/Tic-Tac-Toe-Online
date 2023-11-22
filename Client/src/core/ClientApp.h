@@ -41,8 +41,6 @@ public:
 
     static GameSettings& GetGameSettings() { return GetInstance().m_GameSettings; }
 
-    void SetPlayerName(const std::string& name) { m_PlayerName = name; }
-
     Player* GetCurrentPlayer() { return m_Player; }
 
     static GameHistoryManager* GetHistoryManager() { return GetInstance().m_GameHistoryManager; }
@@ -66,6 +64,4 @@ private: // Fields
     InputHandler m_InputHandler;
     Player* m_Player;
     GameHistoryManager* m_GameHistoryManager;
-
-    std::string m_PlayerName;
 };

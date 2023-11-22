@@ -38,7 +38,7 @@ private: // Lobbies
 
     // HashMap <Address (connection name), Username>
     std::unordered_map<std::string, std::string> m_Players;
-    std::vector<Lobby> m_Lobbies;
+    std::vector<Lobby*> m_Lobbies;
 
 private: //Game
     void SerializeGameDataToJson(ClientPtr sender);
