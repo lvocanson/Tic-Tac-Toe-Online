@@ -6,9 +6,6 @@
 LobbyState::LobbyState(StateMachine* stateMachine, Window* window)
     : State(stateMachine)
     , m_Window(window)
-    , m_ReturnButton(nullptr)
-    , m_GameStateUI(nullptr)
-    , m_Lobbies()
 {
     m_StateMachine = stateMachine;
 }
@@ -26,8 +23,6 @@ void LobbyState::OnEnter()
     j["Type"] = "Login";
     j["UserName"] = ClientApp::GetInstance().GetCurrentPlayer()->GetName();
     ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
-
-    DebugLog(ClientApp::GetInstance().GetCurrentPlayer()->GetName() + "\n");
 
     j = Json();
     j["Type"] = "GetLobbyList";
@@ -94,13 +89,12 @@ void LobbyState::OnReceiveData(const Json& serializeData)
 
             if (!m_IsLobbyInit)
             {
-                ButtonComponent* m_LobbyButton = new ButtonComponent(sf::Vector2f(100, (i * 110)), sf::Vector2f(200, 100), sf::Color::Blue);
+                auto* m_LobbyButton = new ButtonComponent(sf::Vector2f(100, i * static_cast<float>(110)), sf::Vector2f(200, 100), sf::Color::Blue);
                 m_LobbyButton->SetButtonText("Lobby " + std::to_string(id), sf::Color::White, 30, TextAlignment::Center);
                 m_LobbyButton->SetOnClickCallback([=]()
-                    {
-                        if (!m_IsInLobby)
-                            TryToJoinLobby(i);
-                    });
+                {
+                    TryToJoinLobby(i);
+                });
 
                 m_Lobbies.emplace_back(id, "", "");
                 m_LobbyButtons.push_back(m_LobbyButton);
@@ -108,8 +102,8 @@ void LobbyState::OnReceiveData(const Json& serializeData)
             }
             else
             {
-                std::string playerX = lobbyJson["PlayerX"];
-                std::string playerO = lobbyJson["PlayerO"];
+                const std::string playerX = lobbyJson["PlayerX"];
+                const std::string playerO = lobbyJson["PlayerO"];
 
                 m_Lobbies[i].ID = id;
                 m_Lobbies[i].PlayerO = playerO;
