@@ -21,13 +21,13 @@ public:
 
 private:
 
-	bool m_IsTryingToConnect = false;
+    bool m_IsTryingToConnect = false;
 
-	Window* m_Window = nullptr;
+    Window* m_Window = nullptr;
 
-	ButtonComponent* m_BackButton = nullptr;
-	ButtonComponent* m_ConnectButton = nullptr;
+    ButtonComponent* m_BackButton = nullptr;
+    ButtonComponent* m_ConnectButton = nullptr;
 
-	InsertFieldComponent* m_IpField = nullptr;
-	InsertFieldComponent* m_NameField = nullptr;
+    InsertFieldComponent* m_IpField = nullptr;
+    InsertFieldComponent* m_NameField = nullptr;
 };

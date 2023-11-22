@@ -18,7 +18,6 @@ LobbyState::~LobbyState()
     NULLPTR(m_Window);
 }
 
-
 void LobbyState::OnEnter()
 {
     m_IsLobbyInit = false;
@@ -109,7 +108,6 @@ void LobbyState::OnReceiveData(const Json& serializeData)
             }
             else 
             {
-               
                 std::string playerX = lobbyJson["PlayerX"];
                 std::string playerO = lobbyJson["PlayerO"];
 
@@ -141,5 +139,3 @@ void LobbyState::TryToJoinLobby(int lobbyID)
     ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
     m_CurrentLobbyID = m_Lobbies[lobbyID].ID;
 }
-
-

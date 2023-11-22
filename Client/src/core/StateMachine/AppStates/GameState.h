@@ -17,54 +17,54 @@ class sf::Shape;
 class GameState : public State
 {
 public:
-	void OnEnter() override;
-	void OnUpdate(float dt) override;
-	void OnExit() override;
-	void OnReceiveData(const Json& serializeData) override;
+    void OnEnter() override;
+    void OnUpdate(float dt) override;
+    void OnExit() override;
+    void OnReceiveData(const Json& serializeData) override;
 
-	void IsServerLobbyFull();
+    void IsServerLobbyFull();
 
-	void StartGame();
+    void StartGame();
 
-	GameState(StateMachine* stateMachine, Window* m_Window);
-	GameState(const GameState& other) = delete;
-	GameState& operator=(const GameState& other) = delete;
-	~GameState() override;
+    GameState(StateMachine* stateMachine, Window* m_Window);
+    GameState(const GameState& other) = delete;
+    GameState& operator=(const GameState& other) = delete;
+    ~GameState() override;
 
-	void SetLobbyID(unsigned int id) { m_LobbyID = id; }
-	void CheckIfMouseHoverBoard();
-	bool IsMouseHoverPiece(unsigned int i);
-	void PlacePlayerPieceOnBoard(unsigned int cell);
-	void WinCheck();
-	void SwitchPlayerTurn();
+    void SetLobbyID(unsigned int id) { m_LobbyID = id; }
+    void CheckIfMouseHoverBoard();
+    bool IsMouseHoverPiece(unsigned int i);
+    void PlacePlayerPieceOnBoard(unsigned int cell);
+    void WinCheck();
+    void SwitchPlayerTurn();
 
-	void UpdatePlayerTimer(float dt);
-	void CheckIfTimerIsUp();
+    void UpdatePlayerTimer(float dt);
+    void CheckIfTimerIsUp();
 
-	void SendPlacedPieceToServer();
+    void SendPlacedPieceToServer();
 
-	void ClearBoard();
+    void ClearBoard();
 
 private:
 
-	unsigned int m_LobbyID;
+    unsigned int m_LobbyID;
 
-	Window* m_Window;
-	ButtonComponent* m_ReturnButton = nullptr;
-	bool m_IsPlayersConnected = false;
-	bool m_IsGameInit = false;
-	GraphicBoard m_Board;
+    Window* m_Window;
+    ButtonComponent* m_ReturnButton = nullptr;
+    bool m_IsPlayersConnected = false;
+    bool m_IsGameInit = false;
+    GraphicBoard m_Board;
 
-	PlayerManager m_PlayerManager;
-	ScoreManager m_ScoreManager;
+    PlayerManager m_PlayerManager;
+    ScoreManager m_ScoreManager;
 
-	float m_PlayerTurnTime;
-	float m_MaxPlayerTurnTime;
-	int m_PlayerMove;
+    float m_PlayerTurnTime;
+    float m_MaxPlayerTurnTime;
+    int m_PlayerMove;
 
-	bool m_IsTimerOn;
-	bool m_IsPlayerTurn = false;
-	bool m_IsGameStart = false;
+    bool m_IsTimerOn;
+    bool m_IsPlayerTurn = false;
+    bool m_IsGameStart = false;
 
-	GameStateUI* m_GameStateUI;
+    GameStateUI* m_GameStateUI;
 };

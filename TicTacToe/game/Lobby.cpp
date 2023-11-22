@@ -44,6 +44,8 @@ std::string& Lobby::GetOpponentName(const std::string& senderName)
         return PlayerX;
     else if (PlayerX == senderName)
         return PlayerO;
+
+    throw std::exception("Player not found");
 }
 
 void Lobby::AddPlayerToLobby(const std::string& name)

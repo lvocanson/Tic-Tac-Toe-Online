@@ -1,8 +1,6 @@
 #pragma once
 #include "TicTacToe.h"
 #include <cstdlib>
-#include <ctime>
-
 
 class IDGenerator
 {
@@ -23,4 +21,3 @@ public:
         return id;
     }
 };
-

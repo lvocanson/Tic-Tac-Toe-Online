@@ -128,7 +128,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
     if (receivedData["Type"] == "Login")
     {
-        m_Players.insert({ sender->GetName(), receivedData["UserName"] });
+        m_Players.insert({sender->GetName(), receivedData["UserName"]});
     }////////// Lobby State //////////
     else if (receivedData["Type"] == "GetLobbyList")
     {
@@ -152,8 +152,8 @@ void ServerApp::HandleRecv(ClientPtr sender)
                 lb->AddPlayerToLobby(m_Players[sender->GetName()]);
 
                 if (!m_StartedGames.contains(lb->ID))
-                    m_StartedGames.insert({ lb->ID, lb });
-                
+                    m_StartedGames.insert({lb->ID, lb});
+
                 Json j;
                 j["Type"] = "IsInLobby";
                 j["CurrentLobbyID"] = lb->ID;
@@ -194,7 +194,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
                     j["PlayerX"] = lobby->PlayerX;
                     j["PlayerO"] = lobby->PlayerO;
                     j["Starter"] = rand() % 100 <= 50 ? lobby->PlayerO : lobby->PlayerX;
-                        
+
                     int i = 0;
                     for (auto [adressIP, player] : m_Players)
                     {
@@ -216,7 +216,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
         Lobby* lb = m_StartedGames[receivedData["ID"]];
         std::string& opponentName = lb->GetOpponentName(receivedData["PlayerName"]);
 
-        for (auto[adressIP, player] : m_Players)
+        for (auto [adressIP, player] : m_Players)
         {
             if (player == opponentName)
             {
@@ -246,16 +246,21 @@ void ServerApp::CleanUpGameServer()
         if (count > 0)
             std::cout << INF_CLR << "Closed " << count << " connection" << (count > 1 ? "s" : "") << "." << std::endl;
 
+        for (auto& [id, lobby] : m_StartedGames)
+        {
+            NULLPTR(lobby);
+        }
+        if (m_StartedGames.size() > 0)
+            std::cout << INF_CLR << "Ended " << m_StartedGames.size() << " started game" << (m_StartedGames.size() > 1 ? "s" : "") << "." << std::endl;
+        m_StartedGames.clear();
+
         for (auto lb : m_Lobbies)
         {
-            std::cout << INF_CLR << "Closing lobby " << lb->ID << std::endl;
             RELEASE(lb);
         }
-
-        for (auto game : m_StartedGames)
-        {
-            NULLPTR(game.second);
-        }
+        if (m_Lobbies.size() > 0)
+            std::cout << INF_CLR << "Deleted " << m_Lobbies.size() << " lobb" << (m_Lobbies.size() > 1 ? "ies" : "y") << "." << std::endl;
+        m_Lobbies.clear();
 
         m_GameServer->Close();
         delete m_GameServer;

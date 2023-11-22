@@ -57,4 +57,3 @@ private:
     bool m_IsClientRunning = false;
     Shared<bool> m_SharedIsRunning = false;
 };
-

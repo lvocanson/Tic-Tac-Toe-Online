@@ -1,10 +1,6 @@
 #include "TcpIpServer.h"
 using enum TcpIp::ErrorCode;
 
-#ifdef NO_EVENTS
-#define WM_SOCKET (WM_USER + 1)
-#endif // NO_EVENTS
-
 std::string Connection::GetName() const
 {
     return Address + ":" + std::to_string(Port);

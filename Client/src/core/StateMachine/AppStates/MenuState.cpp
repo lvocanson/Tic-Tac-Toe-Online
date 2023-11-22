@@ -74,9 +74,9 @@ void MenuState::ShowConnectionButton()
 
 void MenuState::OnUpdate(float dt)
 {
-	m_PlayButton->Update(dt);
-	m_HistoryButton->Update(dt);
-	m_QuitButton->Update(dt);
+    m_PlayButton->Update(dt);
+    m_HistoryButton->Update(dt);
+    m_QuitButton->Update(dt);
 
     if (m_DisconnectButton)
         m_DisconnectButton->Update(dt);

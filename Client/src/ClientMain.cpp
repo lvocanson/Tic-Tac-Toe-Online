@@ -1,5 +1,4 @@
 #include "core/ClientApp.h"
-#pragma comment(lib, "winmm.lib")
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) && !defined(__CYGWIN__)
 
@@ -10,7 +9,10 @@ int wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
     // Enable run-time memory check for debug builds.
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-    srand(timeGetTime());
+
+    // Seed random number generator
+    srand((unsigned int)time(NULL));
+
     ClientApp& app = ClientApp::GetInstance();
     app.Init();
     app.Run();
