@@ -10,6 +10,8 @@ using json = nlohmann::json;
 GameState::GameState(StateMachine* stateMachine, Window* m_Window)
 	: State(stateMachine), m_Window(m_Window), m_ReturnButton(nullptr), m_GameStateUI(nullptr), m_IsTimerOn(false)
 {
+	m_GameStateUI = new GameStateUI(m_Window);
+
     m_Board.Init(ClientApp::GetGameSettings().GetTotalColumn(), ClientApp::GetGameSettings().GetTotalRow(), m_Window);
     m_ScoreManager.Init();
     m_PlayerManager.Init();
@@ -25,10 +27,6 @@ void GameState::OnEnter()
 	m_MaxPlayerTurnTime = ClientApp::GetGameSettings().GetPlayerMoveLimitTime();
 	m_IsTimerOn = ClientApp::GetGameSettings().IsTimerOn();
 	m_PlayerTurnTime = m_MaxPlayerTurnTime;
-
-	m_GameStateUI = new GameStateUI(m_Window);
-	m_GameStateUI->Init();
-	m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
 
 	if (m_IsTimerOn)
 	{
@@ -51,13 +49,6 @@ void GameState::OnEnter()
 void GameState::OnUpdate(float dt)
 {
     m_ReturnButton->Update(dt);
-
-    if (m_IsPlayersConnected && !m_IsGameInit)
-    {
-        m_GameStateUI = new GameStateUI(m_Window);
-        m_GameStateUI->Init();
-        m_IsGameInit = true;
-    }
 
 	CheckIfMouseHoverBoard();
 
