@@ -210,4 +210,40 @@ namespace TcpIp
             throw TcpIpException::Create(ErrorCode::EVENT_CloseFailed, TCP_IP_WSA_ERROR);
         event = WSA_INVALID_EVENT;
     }
+
+    IpAddress IpAddress::GetLocalAddress()
+    {
+        char hostName[256];
+        if (gethostname(hostName, 256) != 0)
+            return {0, 0, 0, 0};
+
+        addrinfo hints;
+        memset(&hints, 0, sizeof(hints));
+        hints.ai_family = AF_INET; // IPv4
+        hints.ai_socktype = SOCK_STREAM;
+
+        addrinfo* result;
+        int status = getaddrinfo(hostName, nullptr, &hints, &result);
+        if (status != 0)
+        {
+            freeaddrinfo(result);
+            return {0, 0, 0, 0};
+        }
+
+        sockaddr_in* addr = reinterpret_cast<sockaddr_in*>(result->ai_addr);
+        IpAddress localAddress = {
+            static_cast<unsigned char>(addr->sin_addr.s_addr & 0xFF),
+            static_cast<unsigned char>((addr->sin_addr.s_addr >> 8) & 0xFF),
+            static_cast<unsigned char>((addr->sin_addr.s_addr >> 16) & 0xFF),
+            static_cast<unsigned char>((addr->sin_addr.s_addr >> 24) & 0xFF)
+        };
+
+        freeaddrinfo(result);
+        return localAddress;
+    }
+
+    std::string IpAddress::ToString() const
+    {
+        return std::to_string(a) + "." + std::to_string(b) + "." + std::to_string(c) + "." + std::to_string(d);
+    }
 }

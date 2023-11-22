@@ -106,4 +106,11 @@ namespace TcpIp
         const ErrorCode Code;
         const int Context;
     };
+
+    struct IpAddress
+    {
+        unsigned char a, b, c, d;
+        static IpAddress GetLocalAddress();
+        std::string ToString() const;
+    };
 }

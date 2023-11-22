@@ -117,8 +117,8 @@ void HtmlServer::Open(unsigned int port)
 
     if (hWnd == nullptr)
         throw TcpIp::TcpIpException::Create(EVENT_CreateFailed, GetLastError());
-    SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
+    SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
     iResult = WSAAsyncSelect(m_ListenSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_READ | FD_CLOSE);
     if (iResult != 0)
         throw TcpIp::TcpIpException::Create(EVENT_SelectFailed, TCP_IP_WSA_ERROR);

@@ -8,29 +8,23 @@
 #define INF_CLR Color::Gray // Information color
 #define DEF_CLR Color::White // Default color
 #define HASH_CLR(c) HshClr(c->GetName()) << c->GetName()
-#define WEB_PFX INF_CLR << '[' << STS_CLR << "WEB" << INF_CLR << ']' << DEF_CLR << ' '
+#define WEB_PFX INF_CLR << '[' << STS_CLR << "WEB" << INF_CLR << "] " // Web server prefix
 
 void ServerApp::Init()
 {
     if (!InitGameServer())
     {
-        std::cout << ERR_CLR << "Aborting app initialization." << std::endl << DEF_CLR;
+        std::cout << ERR_CLR << "Aborting app initialization." << std::endl;
         return;
-    }
-    else
-    {
-        std::cout << SCS_CLR << "Game server is listening on port " << DEFAULT_PORT << "..." << std::endl << DEF_CLR;
-        CreateLobbies();
     }
 
     if (!InitWebServer())
     {
-        std::cout << WEB_PFX << WRN_CLR << "Web server is unable to start, web interface will be disabled for this session." << std::endl << DEF_CLR;
+        std::cout << WEB_PFX << WRN_CLR << "Web server is unable to start, web interface will be disabled for this session." << std::endl;
     }
-    else
-    {
-        std::cout << WEB_PFX << SCS_CLR << "Web server is listening on port " << DEFAULT_PORT + 1 << "..." << std::endl << DEF_CLR;
-    }
+
+    auto addr = TcpIp::IpAddress::GetLocalAddress();
+    std::cout << INF_CLR << "==> Servers Local Address: " << SCS_CLR << addr.ToString() << std::endl << DEF_CLR;
 }
 
 void ServerApp::Run()
@@ -49,38 +43,34 @@ void ServerApp::Run()
 void ServerApp::CleanUp()
 {
     std::cout << INF_CLR << "User requested to shutdown the app." << std::endl << DEF_CLR;
+
     CleanUpWebServer();
     CleanUpGameServer();
-
-    for (auto lb : m_Lobbies)
-    {
-        lb = Lobby();
-    }
-
-    for (auto game : m_StartedGames)
-    {
-        game.second = nullptr;
-    }
-
-    m_Lobbies.clear();
-    m_StartedGames.clear();
 }
 
 #pragma region Game Server
 
 bool ServerApp::InitGameServer()
 {
+    std::cout << Color::Cyan << "=========== Starting Game Server Initialization ===========" << std::endl << INF_CLR;
     try
     {
         m_GameServer = new TcpIpServer();
         m_GameServer->Open(DEFAULT_PORT);
-        return true;
+        std::cout << "Game server is listening on port " << DEFAULT_PORT << "..." << std::endl;
     }
     catch (const TcpIp::TcpIpException& e)
     {
         std::cout << ERR_CLR << "The game server is unable to start: " << e.what() << std::endl << DEF_CLR;
         return false;
     }
+
+    std::cout << "Creating lobbies..." << std::endl;
+    CreateLobbies();
+    std::cout << "Lobbies created." << std::endl;
+
+    std::cout << Color::Cyan << "=========== Game Server Initialization Complete ===========" << std::endl << DEF_CLR;
+    return true;
 }
 
 void ServerApp::HandleGameServer()
@@ -211,6 +201,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
 void ServerApp::CleanUpGameServer()
 {
+    std::cout << Color::Cyan << "============== Starting Game Server Clean Up ==============" << std::endl;
     try
     {
         m_GameServer->Close();
@@ -220,6 +211,7 @@ void ServerApp::CleanUpGameServer()
     {
         std::cout << ERR_CLR << "Game server clean up failed: " << e.what() << std::endl << DEF_CLR;
     }
+    std::cout << Color::Cyan << "============== Game Server Clean Up Complete ==============" << std::endl << DEF_CLR;
 }
 
 #pragma endregion
@@ -228,17 +220,21 @@ void ServerApp::CleanUpGameServer()
 
 bool ServerApp::InitWebServer()
 {
+    std::cout << WEB_PFX << Color::Cyan << "===== Starting Web Server Initialization  ===========" << std::endl << DEF_CLR;
     try
     {
         m_WebServer = new HtmlServer();
         m_WebServer->Open(DEFAULT_PORT + 1);
-        return true;
+        std::cout << WEB_PFX << "Web server is listening on port " << DEFAULT_PORT + 1 << "..." << std::endl;
     }
     catch (const TcpIp::TcpIpException& e)
     {
-        std::cout << WEB_PFX << WRN_CLR << "The web server is unable to start: " << e.what() << std::endl << DEF_CLR;
+        std::cout << WEB_PFX << WRN_CLR << "Web server is unable to start: " << e.what() << std::endl << DEF_CLR;
+        RELEASE(m_WebServer);
         return false;
     }
+    std::cout << WEB_PFX << Color::Cyan << "===== Web Server Initialization Complete  ===========" << std::endl << DEF_CLR;
+    return true;
 }
 
 void ServerApp::HandleWebServer()
@@ -352,6 +348,9 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
 
 void ServerApp::CleanUpWebServer()
 {
+    if (!m_WebServer) return;
+
+    std::cout << WEB_PFX << Color::Cyan << "======== Starting Web Server Clean Up  ==============" << std::endl << DEF_CLR;
     try
     {
         m_WebServer->Close();
@@ -361,9 +360,12 @@ void ServerApp::CleanUpWebServer()
     {
         std::cout << WEB_PFX << ERR_CLR << "Web server clean up failed: " << e.what() << std::endl << DEF_CLR;
     }
+    std::cout << WEB_PFX << Color::Cyan << "======== Web Server Clean Up Complete  ==============" << std::endl << DEF_CLR;
 }
 
 #pragma endregion
+
+#pragma region Lobbying
 
 size_t ServerApp::FindPlayer(const std::string& name)
 {
@@ -374,8 +376,6 @@ size_t ServerApp::FindPlayer(const std::string& name)
     }
     return -1;
 }
-
-#pragma region Lobbying
 
 void ServerApp::CreateLobbies()
 {
