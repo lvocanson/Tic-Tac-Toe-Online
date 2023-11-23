@@ -1,8 +1,5 @@
 #include "ServerApp.h"
 #include "ConsoleHelper.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
 
 #define ERR_CLR Color::Red // Error color
 #define WRN_CLR Color::Yellow // Warning color
@@ -387,9 +384,15 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
                 "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
 
                 "<html>"
+                    "<head>"
+                        "<meta http-equiv='refresh' content = '5'>"
+                    "</head>"
+
                     "<body>"
-                        "<h1>Hello </h1>"
-                        "<br />" + lobbyButtons +
+                        "<h1>Cliquez sur un lobby pour voir la partie en cours </h1>"
+                        "<br />" 
+                            + lobbyButtons + 
+                        "<br />"
                     "</body>"
                 "</html>"
             );
@@ -400,7 +403,7 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
             std::cout << "Sending 404." << std::endl;
             sender->Send("HTTP/1.1 404 Not Found\r\n\r\n");
         }
-        else if (page.find("/watch/") == 0) 
+        else if (page.starts_with("/watch"))
         {
             unsigned int requestedLobbyId = std::stoi(page.substr(7));
 
@@ -409,25 +412,29 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
             {
                 Lobby* lobby = it->second;
 
-                std::string watchPage = "<html>"
-                    "<body>"
-                    "<h1>Lobby ID: " + std::to_string(lobby->ID) + "</h1>"
-                    "<p>Player X: \"" + lobby->PlayerO + "\"</p>"
-                    "<p>Player O: \"" + lobby->PlayerX + "\"</p>"
+                std::string watchPage = 
+                    "<html>"
+                        "<head>"
+                            "<meta http-equiv='refresh' content = '5'>"
+                        "</head>"
 
-                    // TODO Finish this
-                    /*                  
-                    "<p>Turn: " + lobby->GetPlayerTurn() + "</p>"
-                    "<pre>"
-                    " " + lobby->GetBoardState(0, 0) + " | " + lobby->GetBoardState(0, 1) + " | " + lobby->GetBoardState(0, 2) + "\n"
-                    " -----------\n"
-                    " " + lobby->GetBoardState(1, 0) + " | " + lobby->GetBoardState(1, 1) + " | " + lobby->GetBoardState(1, 2) + "\n"
-                    " -----------\n"
-                    " " + lobby->GetBoardState(2, 0) + " | " + lobby->GetBoardState(2, 1) + " | " + lobby->GetBoardState(2, 2) + "\n"
-                    "</pre>"
-                    */
+                        "<body>"
+                            "<h1>Lobby ID: " + std::to_string(lobby->ID) + "</h1>"
+                            "<p>Player X: \"" + lobby->PlayerX + "\"</p>"
+                            "<p>Player O: \"" + lobby->PlayerO + "\"</p>"
+                        // TODO Finish this
+                        /*                  
+                        "<p>Turn: " + lobby->GetPlayerTurn() + "</p>"
+                        "<pre>"
+                        " " + lobby->GetBoardState(0, 0) + " | " + lobby->GetBoardState(0, 1) + " | " + lobby->GetBoardState(0, 2) + "\n"
+                        " -----------\n"
+                        " " + lobby->GetBoardState(1, 0) + " | " + lobby->GetBoardState(1, 1) + " | " + lobby->GetBoardState(1, 2) + "\n"
+                        " -----------\n"
+                        " " + lobby->GetBoardState(2, 0) + " | " + lobby->GetBoardState(2, 1) + " | " + lobby->GetBoardState(2, 2) + "\n"
+                        "</pre>"
+                        */
 
-                    "</body>"
+                        "</body>"
                     "</html>";
 
                 sender->Send(
