@@ -182,7 +182,10 @@ void GameState::OnReceiveData(const Json& serializeData)
 
         m_IsPlayerTurn = message.StartPlayer == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
 
-        StartGame();
+        m_IsGameStarted = true;
+        m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
+        // m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
+
         break;
     }
     case AcceptMakeMove:
@@ -230,9 +233,3 @@ void GameState::OnReceiveData(const Json& serializeData)
     }
 }
 
-void GameState::StartGame()
-{
-    m_IsGameStarted = true;
-    m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
-   // m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
-}

@@ -19,7 +19,7 @@ public:
     ScoreManager();
     ~ScoreManager() override;
 
-    void Init() override;
+    void Init() override {};
     void Clear() override;
 
     void InitPlayerScores(const std::vector<Player*>& allPlayers);

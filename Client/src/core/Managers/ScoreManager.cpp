@@ -3,17 +3,12 @@
 ScoreManager::ScoreManager()
 {
     m_PlayerScores = std::map<TicTacToe::Piece, unsigned int>();
-    m_CurrentGame = nullptr;
+    m_CurrentGame = new std::vector<const PlayerMove*>();
 }
 
 ScoreManager::~ScoreManager()
 {
     Clear();
-}
-
-void ScoreManager::Init()
-{
-    m_CurrentGame = new std::vector<const PlayerMove*>();
 }
 
 void ScoreManager::Clear()
