@@ -30,7 +30,7 @@ public:
     void DrawBoard();
     void Init(unsigned int totalColumn, unsigned int totalRow, Window* window);
 
-    void InstanciateNewPlayerShape(const TicTacToe::PieceID pieceId, const PlayerShapeType shapeType, const unsigned int cell);
+    void InstanciateNewPlayerShape(const TicTacToe::Piece piece, const unsigned int cell);
     void RemoveLastPlayerShape();
 
     GraphicPiece& GetGraphicPiece(unsigned int cell) { return *m_AllPiecesOnBoard[cell]; }

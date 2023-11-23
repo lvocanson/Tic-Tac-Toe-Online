@@ -83,14 +83,14 @@ void LobbyState::OnReceiveData(const Json& serializeData)
 {
     // if (serializeData["Type"] == "Lobby")
     // {
-    //     LoginMessage message;
+    //     GetLobbyListMessage message;
     //     message.Deserialize(serializeData);
-    // 
+
     //     int i = 0;
     //     for (const auto& lobbyJson : message.AllLobbiesData)
     //     {
     //         int id = lobbyJson.ID;
-    // 
+
     //         if (!m_IsLobbyInit)
     //         {
     //             auto* m_LobbyButton = new ButtonComponent(sf::Vector2f(100, i * static_cast<float>(110)), sf::Vector2f(200, 100), sf::Color::Blue);
@@ -99,16 +99,16 @@ void LobbyState::OnReceiveData(const Json& serializeData)
     //             {
     //                 TryToJoinLobby(i);
     //             });
-    // 
+
     //             m_Lobbies.emplace_back(id, "", "");
     //             m_LobbyButtons.push_back(m_LobbyButton);
     //             m_Window->RegisterDrawable(m_LobbyButton);
     //         }
     //         else
     //         {
-    //             m_Lobbies[i].Data.ID = id;
-    //             m_Lobbies[i].Data.PlayerO = lobbyJson.PlayerO;
-    //             m_Lobbies[i].Data.PlayerX = lobbyJson.PlayerX;
+    //             m_Lobbies[i].ID = id;
+    //             m_Lobbies[i].PlayerO = lobbyJson.PlayerO;
+    //             m_Lobbies[i].PlayerX = lobbyJson.PlayerX;
     //         }
     //         i++;
     //     }
@@ -118,7 +118,7 @@ void LobbyState::OnReceiveData(const Json& serializeData)
     // {
     //     JoinedLobbyMessage message;
     //     message.Deserialize(serializeData);
-    // 
+
     //     ((GameState*)m_StateMachine->GetState("GameState"))->SetLobbyID(message.ID);
     //     m_StateMachine->SwitchState("GameState");
     // }
@@ -126,8 +126,8 @@ void LobbyState::OnReceiveData(const Json& serializeData)
 
 void LobbyState::TryToJoinLobby(int lobbyID)
 {
-    // TryToJoinLobbyMessage message(m_Lobbies[lobbyID].Data.ID);
-    // 
+    // TryToJoinLobbyMessage message(m_Lobbies[lobbyID].ID);
+
     // ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
-    // m_CurrentLobbyID = m_Lobbies[lobbyID].Data.ID;
+    // m_CurrentLobbyID = m_Lobbies[lobbyID].ID;
 }

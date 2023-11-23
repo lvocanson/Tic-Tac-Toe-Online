@@ -229,7 +229,61 @@ void ServerApp::HandleRecv(ClientPtr sender)
     {
         Message<MakeMove> msg(parsedData);
 
-        // TODO: Chek move validity, send rejection to sender if invalid, send accept to sender and opponent if valid, check for game over
+        // Lobby *lb = m_StartedGames[playerMoveMessage.LobbyID];
+
+        // // Check if move is valid
+        // if (!lb->Board.IsCellEmpty(playerMoveMessage.Cell))
+        // {
+        //     std::cout << WRN_CLR << "Player " << HASH_STRING_CLR(playerMoveMessage.PlayerName) << WRN_CLR << " tried to make an invalid move in lobby: " << INF_CLR << receivedData["ID"] << std::endl
+        //               << DEF_CLR;
+        //     return;
+        // }
+
+        // // Set piece on board
+        // lb->Board[playerMoveMessage.Cell] = playerMoveMessage.Piece;
+
+        // TicTacToe::Piece winner = lb->Board.IsThereAWinner();
+        // if (winner != TicTacToe::Piece::Empty)
+        // {
+        //     // Create Won Response
+        // }
+
+        // // Create response message
+        // PlayerMoveResponse playerMoveResponse(playerMoveMessage.Cell, playerMoveMessage.Piece);
+        // const std::string message = playerMoveResponse.Serialize().dump();
+
+        // int i = 0;
+        // for (auto [adressIP, player] : m_Players)
+        // {
+        //     if (!lb->IsInLobby(player))
+        //         continue;
+
+        //     m_GameServer->GetClientByName(adressIP)->Send(message);
+
+        //     std::cout << STS_CLR << "Player " << HASH_STRING_CLR(player) << STS_CLR << " has made a move in lobby: " << INF_CLR << playerMoveMessage.LobbyID << std::endl
+        //               << DEF_CLR;
+        //     i++;
+
+        //     if (i == 2)
+        //         break;
+        // std::string opponentName = lobby->GetOpponentName(gameFinishedMessage.WinnerName);
+
+        // lobby->Board.SetEmpty();
+
+        // // Check server side if board is won or not
+        // for (auto [adressIP, player] : m_Players)
+        // {
+        //     if (player != opponentName)
+        //         continue;
+
+        //     m_GameServer->GetClientByName(adressIP)->Send(receivedData.dump());
+
+        //     std::cout << STS_CLR << "Player " << HASH_STRING_CLR(gameFinishedMessage.WinnerName) << STS_CLR << " has won the game in lobby: " << INF_CLR << receivedData["ID"] << std::endl
+        //               << DEF_CLR;
+
+        //     break;
+        // }
+            // TODO: Chek move validity, send rejection to sender if invalid, send accept to sender and opponent if valid, check for game over
     }
     default:
         std::cout << WRN_CLR << "Received JSON from " << HASH_CLR(sender) << WRN_CLR << " contains an unknown type." << std::endl << DEF_CLR;

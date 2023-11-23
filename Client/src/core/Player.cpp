@@ -3,22 +3,19 @@
 
 Player::Player()
 {
-    const TicTacToe::PieceID id = IDGenerator::GenerateID();
-
     m_Data = {
-        .Name = "Player " + std::to_string(id),
-        .Id = id,
-        .Color = sf::Color::Black,
+        .Name = "DefaultName",
+        .Piece = TicTacToe::Piece::Empty,
+        .Color = sf::Color::White,
     };
 }
 
-Player::Player(const std::string& name, const sf::Color color, const PlayerShapeType shapeType)
+Player::Player(const std::string& name, const sf::Color color, const TicTacToe::Piece piece)
 {
     m_Data = {
         .Name = name,
-        .Id = IDGenerator::GenerateID(),
+        .Piece = piece,
         .Color = color,
-        .ShapeType = shapeType
     };
 }
 
