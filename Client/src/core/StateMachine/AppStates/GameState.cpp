@@ -43,7 +43,7 @@ void GameState::OnEnter()
     }
 
     m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
-    m_ReturnButton->SetButtonText("Leave party", sf::Color::White, 30, TextAlignment::Center);
+    m_ReturnButton->SetButtonText("Leave game", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]()
     { 
         Json j;
@@ -165,7 +165,7 @@ void GameState::SwitchPlayerTurn()
 {
     m_IsPlayerTurn = !m_IsPlayerTurn;
     m_PlayerManager.SwitchPlayerTurn();
-    m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetCurrentPlayer()->GetData());
+    m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetOpponentPlayer()->GetData());
 
     if (m_IsTimerOn)
     {
@@ -223,7 +223,7 @@ void GameState::OnReceiveData(const Json& serializeData)
 
         m_IsPlayerTurn = message.StartingPlayer == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
         
-        m_GameStateUI->UpdateGameStateText(message.StartingPlayer + " turn!");
+        m_GameStateUI->UpdateGameStateText("It's " + message.StartingPlayer + " to start the game!");
 
         StartGame();
     }
