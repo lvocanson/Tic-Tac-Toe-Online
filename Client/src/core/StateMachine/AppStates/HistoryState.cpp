@@ -101,7 +101,7 @@ void HistoryState::DisplayGame()
     if (m_CurrentGameIndex < ClientApp::GetHistoryManager()->GetGameHistorySize())
     {
         m_CurrentGame = ClientApp::GetHistoryManager()->GetGameData(m_CurrentGameIndex);
-        m_CurrentMoveIndex = m_CurrentGame->GetMovesSize() - 1;
+        m_CurrentMoveIndex = static_cast<unsigned int>(m_CurrentGame->GetMovesSize()) - 1;
 
         for (const auto move : *m_CurrentGame->GetMoves())
         {
