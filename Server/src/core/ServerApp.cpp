@@ -580,7 +580,7 @@ std::string ServerApp::PieceToString(TicTacToe::Piece piece)
     switch (piece)
     {
     case TicTacToe::Piece::Empty:
-        return " - ";
+        return " ";
     case TicTacToe::Piece::X:
         return " X ";
     case TicTacToe::Piece::O:
