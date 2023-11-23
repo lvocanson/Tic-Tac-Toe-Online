@@ -120,7 +120,7 @@ void HistoryState::OnExit()
 void HistoryState::DisplaySelectedGame()
 {
     m_CurrentGame = ClientApp::GetHistoryManager()->GetGameData(m_CurrentGameIndex);
-    m_CurrentMoveIndex = m_CurrentGame->GetMovesSize() - 1;
+    m_CurrentMoveIndex = static_cast<unsigned int>(m_CurrentGame->GetMovesSize() - 1);
 
     for (const auto move : *m_CurrentGame->GetMoves())
     {
