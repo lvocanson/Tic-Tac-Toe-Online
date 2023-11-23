@@ -542,16 +542,22 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
             }
             else
             {
-                Lobby *lobby = it->second;
+                Lobby* lobby = it->second;
                 std::cout << "Sending watch page for lobby " << requestedLobbyId << "." << std::endl;
-                sender->Send(HTML_200 HTML_PAGE(HTML_REFRESH 
-                                                "<title>Lobby " + std::to_string(lobby->Data.ID) + "</title>",
-                                                "<h3>You are watching lobby " + std::to_string(lobby->Data.ID) + "</h3>"
-                                                "<a href='/'>Back to lobby list</a>"
-                                                 "<h2>`" + lobby->Data.PlayerX + "` VS `" + lobby->Data.PlayerO + "`</h2>"
-                                                "<pre>"
-                                                "</pre>"
-                                                ));
+
+                sender->Send(HTML_200 HTML_PAGE(HTML_REFRESH
+                    "<title>Lobby " + std::to_string(lobby->Data.ID) + "</title>",
+                    "<h3>You are watching lobby " + std::to_string(lobby->Data.ID) + "</h3>"
+                    "<a href='/'>Back to lobby list</a>"
+                    "<h2>`" + lobby->Data.PlayerX + "` VS `" + lobby->Data.PlayerO + "`</h2>"
+                    "<pre>"
+                    + PieceToString(lobby->Board(0, 0)) + " | " + PieceToString(lobby->Board(0, 1)) + " | " + PieceToString(lobby->Board(0, 2)) + "\n"
+                    + "----------------\n"
+                    + PieceToString(lobby->Board(1, 0)) + " | " + PieceToString(lobby->Board(1, 1)) + " | " + PieceToString(lobby->Board(1, 2)) + "\n"
+                    + "----------------\n"
+                    + PieceToString(lobby->Board(2, 0)) + " | " + PieceToString(lobby->Board(2, 1)) + " | " + PieceToString(lobby->Board(2, 2)) + "\n"
+                    "</pre>"
+                ));
             }
         }
         else
@@ -567,6 +573,21 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
 
     // Close the connection
     sender->Kick();
+}
+
+std::string ServerApp::PieceToString(TicTacToe::Piece piece)
+{
+    switch (piece)
+    {
+    case TicTacToe::Piece::Empty:
+        return " - ";
+    case TicTacToe::Piece::X:
+        return " X ";
+    case TicTacToe::Piece::O:
+        return " O ";
+    default:
+        return " ? ";
+    }
 }
 
 void ServerApp::CleanUpWebServer()

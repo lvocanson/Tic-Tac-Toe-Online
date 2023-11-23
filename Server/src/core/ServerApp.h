@@ -28,6 +28,7 @@ private: // Web Server
     bool InitWebServer();
     void HandleWebServer();
     void HandleWebConnection(WebClientPtr sender);
+    std::string PieceToString(TicTacToe::Piece piece);
     void CleanUpWebServer();
 
     HtmlServer* m_WebServer = nullptr;
