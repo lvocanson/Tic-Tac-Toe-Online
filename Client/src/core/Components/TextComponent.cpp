@@ -7,7 +7,7 @@ TextComponent::TextComponent()
 
     m_Text.setString("");
     m_Text.setFont(*FontRegistry::GetFont("coolvetica.otf"));
-    m_Text.setFillColor(sf::Color::Black);
+    m_Text.setFillColor(sf::Color::White);
     m_Text.setCharacterSize(20);
 
     SetPosition(sf::Vector2f(0, 0));

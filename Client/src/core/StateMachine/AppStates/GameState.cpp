@@ -1,8 +1,8 @@
 #include "GameState.h"
-
 #include "src/core/Window.h"
-#include "src/core/PlayerPieceShape.h"
 #include "src/core/ClientApp.h"
+#include "tcp-ip/ClientMessages.h"
+#include "tcp-ip/ServerMessages.h"
 
 using namespace TicTacToe;
 using json = nlohmann::json;
@@ -25,10 +25,14 @@ GameState::~GameState()
 
 void GameState::OnEnter()
 {
-    IsServerLobbyFull();
+    Message<MsgType::OnEnterLobby> message;
+    message.LobbyId = m_LobbyID;
+    ClientConnectionHandler::GetInstance().SendDataToServer(message);
 
     m_ScoreManager.Init();
     m_GameStateUI->Init();
+    m_GameStateUI->SetLobbyIDText(m_LobbyID);
+    m_GameStateUI->SetUserName(ClientApp::GetInstance().GetCurrentPlayer()->GetName());
 
     m_MaxPlayerTurnTime = ClientApp::GetGameSettings().GetPlayerMoveLimitTime();
     m_IsTimerOn = ClientApp::GetGameSettings().IsTimerOn();
@@ -40,13 +44,14 @@ void GameState::OnEnter()
     }
 
     m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
-    m_ReturnButton->SetButtonText("Return", sf::Color::White, 30, TextAlignment::Center);
+    m_ReturnButton->SetButtonText("Leave game", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]()
     { 
-        Json j;
-        j["Type"] = "LeaveLobby";
-        j["ID"] = m_LobbyID;
-        ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
+        Message<MsgType::LeaveLobby> message;
+        message.LobbyId = m_LobbyID;
+        message.PlayerName = ClientApp::GetInstance().GetCurrentPlayer()->GetName();
+        ClientConnectionHandler::GetInstance().SendDataToServer(message);
+
         m_StateMachine->SwitchState("MenuState"); 
     });
 
@@ -62,7 +67,7 @@ void GameState::OnUpdate(float dt)
         m_ReturnButton->Update(dt);
     }
 
-    if (m_IsPlayerTurn && m_IsGameStart)
+    if (m_IsPlayerTurn && m_IsGameStarted)
     {
         CheckIfMouseHoverBoard();
 
@@ -86,9 +91,7 @@ void GameState::CheckIfTimerIsUp()
     {
         m_GameStateUI->UpdateGameStateText("Time's up!");
 
-        PlacePlayerPieceOnBoard(m_Board.GetRandomEmptyCell());
-        WinCheck();
-        SwitchPlayerTurn();
+        //PlacePlayerPieceOnBoard(m_Board.GetRandomEmptyCell());
     }
 }
 
@@ -96,60 +99,25 @@ void GameState::CheckIfMouseHoverBoard()
 {
     for (unsigned int cell = 0; cell < m_Board.GetTotalSize(); cell++)
     {
-        if (m_Board[cell] != EMPTY_PIECE)
+        if (m_Board[cell] != Piece::Empty)
             continue;
 
         if (IsMouseHoverPiece(cell))
         {
             if (InputHandler::IsMouseButtonPressed(sf::Mouse::Left))
             {
-                m_GameStateUI->UpdateGameStateText("");
+                m_GameStateUI->UpdateGameStateText("Waiting server");
 
-                PlacePlayerPieceOnBoard(cell);
                 SendPlacedPieceToServer(cell);
-                WinCheck();
-                SwitchPlayerTurn();
             }
         }
     }
 }
 
-void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
+void GameState::PlacePlayerPieceOnBoard(unsigned int cell, TicTacToe::Piece piece)
 {
-    Player* currentPlayer = PlayerManager::GetCurrentPlayer();
-
-    // Set piece id in board
-    m_Board[cell] = currentPlayer->GetPlayerID();
-
-    m_Board.InstanciateNewPlayerShape(currentPlayer->GetPlayerID(), currentPlayer->GetShapeType(), cell);
-
-    m_ScoreManager.AddPlayerMove(*currentPlayer->GetData(), cell);
-}
-
-void GameState::WinCheck()
-{
-    const PieceID winnerID = m_Board.IsThereAWinner();
-    if (winnerID != EMPTY_PIECE)
-    {
-        std::cout << "Player " << winnerID << " won!\n";
-
-        Player* winner = PlayerManager::GetCurrentPlayer();
-
-        ClientApp::GetHistoryManager()->SaveGame(winner->GetData(), m_ScoreManager.GetCurrentGame());
-        m_ScoreManager.AddScoreToPlayer(winner->GetPlayerID());
-        m_ScoreManager.CreateNewGameHistory();
-
-        m_GameStateUI->UpdatePlayerScore(*winner->GetData(), m_ScoreManager.GetPlayerScore(winner->GetPlayerID()));
-        m_GameStateUI->UpdateGameStateText(winner->GetName() + " won!");
-
-        ClearBoard();
-    }
-    else if (m_Board.IsFull())
-    {
-        m_GameStateUI->UpdateGameStateText("It's a draw!");
-        m_ScoreManager.ResetCurrentGame();
-        ClearBoard();
-    }
+    m_Board.InstanciateNewPlayerShape(piece, cell);
+    //m_ScoreManager.AddPlayerMove(PlayerManager::GetPlayer(), cell);
 }
 
 void GameState::ClearBoard()
@@ -172,12 +140,12 @@ void GameState::SwitchPlayerTurn()
 
 void GameState::SendPlacedPieceToServer(unsigned int cell)
 {
-    Json j;
-    j["Type"] = "OpponentMove";
-    j["PlayerName"] = ClientApp::GetInstance().GetCurrentPlayer()->GetName();
-    j["PlayerMove"] = cell;
-    j["ID"] = m_LobbyID;
-    ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
+    Message<MsgType::MakeMove> message;
+    message.Cell = cell;
+    message.LobbyId = m_LobbyID;
+    message.Piece = PlayerManager::GetCurrentPlayer()->GetPiece();
+
+    ClientConnectionHandler::GetInstance().SendDataToServer(message);
 }
 
 bool GameState::IsMouseHoverPiece(unsigned int i)
@@ -202,33 +170,69 @@ void GameState::OnExit()
 
 void GameState::OnReceiveData(const Json& serializeData)
 {
-    if (serializeData["Type"] == "OpponentMove")
+    auto type = Message<>::GetType(serializeData);
+
+    using enum MsgType;
+    switch (type)
     {
-        PlacePlayerPieceOnBoard(serializeData["PlayerMove"]);
+    case GameStarted:
+    {
+        Message<GameStarted> message(serializeData);
+
+        m_PlayerManager.CreateNewPlayer(message.PlayerX, sf::Color(250, 92, 12), Piece::X);
+        m_PlayerManager.CreateNewPlayer(message.PlayerO, sf::Color(255, 194, 0), Piece::O);
+
+        m_IsPlayerTurn = message.StartPlayer == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
+
+        m_GameStateUI->UpdateGameStateText("It's " + message.StartPlayer + " to start the game!");
+        m_IsGameStarted = true;
+        m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
+        // m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
+
+        break;
+    }
+    case AcceptMakeMove:
+    {
+        Message<AcceptMakeMove> message(serializeData);
+
+        PlacePlayerPieceOnBoard(message.Cell, message.Piece);
         SwitchPlayerTurn();
+        break;
+
     }
-    else if (serializeData["Type"] == "SetPlayerShape")
+    case DeclineMakeMove:
     {
-        m_PlayerManager.CreateNewPlayer(serializeData["PlayerX"], sf::Color(250, 92, 12), Square);
-        m_PlayerManager.CreateNewPlayer(serializeData["PlayerO"], sf::Color(255, 194, 0), Circle);
+        DebugLog("Declined move");
+        break;
+    }
+    case GameOver:
+    {
+        Message<GameOver> message(serializeData);
 
-        m_IsPlayerTurn = serializeData["Starter"] == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
+        //ClientApp::GetHistoryManager()->SaveGame(winner->GetData(), m_ScoreManager.GetCurrentGame());
 
-        StartGame();
+        //m_ScoreManager.CreateNewGameHistory();
+
+        if (message.IsDraw)
+        {
+            m_GameStateUI->UpdateGameStateText("Draw!");
+        }
+        else 
+        {
+            m_ScoreManager.AddScoreToPlayer(message.Piece);
+
+            m_GameStateUI->UpdatePlayerScore(message.Piece, message.Winner, m_ScoreManager.GetPlayerScore(message.Piece));
+            m_GameStateUI->UpdateGameStateText(message.Winner + " won!");
+
+        }
+
+        ClearBoard();
+
+        break;
+
+    }
+    default:
+       break;
     }
 }
 
-void GameState::IsServerLobbyFull()
-{
-    Json j;
-    j["Type"] = "IsLobbyFull";
-    j["ID"] = m_LobbyID;
-    ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
-}
-
-void GameState::StartGame()
-{
-    m_IsGameStart = true;
-    m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
-    m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
-}

@@ -19,12 +19,15 @@
     <ClCompile Include="tcp-ip\TcpIpExceptions.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="tcp-ip\ClientMessages.h" />
+    <ClInclude Include="tcp-ip\Message.h" />
     <ClInclude Include="game\GameMode.h" />
     <ClInclude Include="game\IDGenerator.h" />
     <ClInclude Include="game\Lobby.h" />
     <ClInclude Include="game\TicTacToe.h" />
     <ClInclude Include="tcp-ip\ISerializable.h" />
     <ClInclude Include="tcp-ip\json.hpp" />
+    <ClInclude Include="tcp-ip\ServerMessages.h" />
     <ClInclude Include="tcp-ip\TcpIp.h" />
     <ClInclude Include="threading\Shared.h" />
     <ClInclude Include="threading\Thread.h" />

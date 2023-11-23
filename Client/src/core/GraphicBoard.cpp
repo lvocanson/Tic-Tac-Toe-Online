@@ -48,15 +48,17 @@ void GraphicBoard::DrawBoard()
     }
 }
 
-void GraphicBoard::InstanciateNewPlayerShape(const TicTacToe::PieceID pieceId, const PlayerShapeType shapeType, unsigned int cell)
+void GraphicBoard::InstanciateNewPlayerShape(const TicTacToe::Piece piece, unsigned int cell)
 {
+    m_Board[cell] = piece;
+
     auto pos = sf::Vector2f(GetGraphicPiece(cell).GetPosition());
 
     // Center the piece
     pos.x += GetPieceSize() * 0.5f;
     pos.y += GetPieceSize() * 0.5f;
 
-    const auto playerPieceShape = new PlayerPieceShape(pieceId, shapeType, pos);
+    const auto playerPieceShape = new PlayerPieceShape(piece, pos);
     m_PlayerShapes.push_back(playerPieceShape);
     m_Window->RegisterDrawable(playerPieceShape);
 }

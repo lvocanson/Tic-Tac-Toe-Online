@@ -7,14 +7,16 @@ InsertFieldComponent::InsertFieldComponent()
     , m_Focus(false)
     , m_CursorTimer(0.0f)
 {
-    m_Rectangle.setSize(sf::Vector2f(300, 26));
+    m_Rectangle.setSize(sf::Vector2f(300, 30));
     m_Rectangle.setFillColor(sf::Color(171, 171, 171));
     m_Rectangle.setOutlineColor(sf::Color::White);
     m_Rectangle.setOutlineThickness(1.0f);
 
+    m_Text.SetColor(sf::Color::Black);
+
     m_Label.SetText("InsertField");
     m_Label.SetColor(sf::Color(171, 171, 171));
-    m_Label.SetCharacterSize(16);
+    m_Label.SetCharacterSize(25);
 
     m_Cursor.SetText("|");
     m_Cursor.SetColor(sf::Color::Black);
@@ -22,7 +24,7 @@ InsertFieldComponent::InsertFieldComponent()
 
     m_ErrorText.SetText("");
     m_ErrorText.SetColor(sf::Color::Red);
-    m_ErrorText.SetCharacterSize(14);
+    m_ErrorText.SetCharacterSize(25);
 
     SetPosition(sf::Vector2f(0.0f, 0.0f));
 }

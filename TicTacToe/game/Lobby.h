@@ -1,12 +1,22 @@
 #pragma once
 #include <string>
 #include "../tcp-ip/ISerializable.h"
+#include "TicTacToe.h"
 
-struct Lobby : ISerializable
+struct LobbyData : ISerializable
 {
-    Json Serialize() override;
-    void Deserialize(Json j) override;
+    LobbyData() = default;
+    LobbyData(const Json& j);
+    LobbyData(const int id, const std::string& playerX, const std::string& playerO);
 
+    Json Serialize() override;
+
+    int ID = -1;
+    std::string PlayerX, PlayerO;
+};
+
+struct Lobby
+{
     Lobby();
     Lobby(const std::string& playerX, const std::string& playerO);
     Lobby(const int id, const std::string& playerX, const std::string& playerO);
@@ -16,21 +26,13 @@ struct Lobby : ISerializable
     void AddPlayerToLobby(const std::string& name);
     void RemovePlayerFromLobby(const std::string& name);
 
-    bool IsInLobby(const std::string& name) const
-    {
-        return PlayerX == name || PlayerO == name;
-    }
+    unsigned int GetPlayerCount() const { return PlayerCount;}
 
-    bool IsLobbyFull() const
-    {
-        return !PlayerX.empty() && !PlayerO.empty();
-    }
+    bool IsInLobby(const std::string& name) const { return Data.PlayerX == name || Data.PlayerO == name; }
+    bool IsLobbyFull() const {  return !Data.PlayerX.empty() && !Data.PlayerO.empty(); }
+    bool IsLobbyEmpty() const { return Data.PlayerX.empty() && Data.PlayerO.empty(); }
 
-    bool IsLobbyEmpty() const
-    {
-        return PlayerX.empty() && PlayerO.empty();
-    }
-
-    int ID;
-    std::string PlayerX, PlayerO;
+    unsigned int PlayerCount = 0;
+    LobbyData Data;
+    TicTacToe::Board Board;
 };

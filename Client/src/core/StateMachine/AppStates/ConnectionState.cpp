@@ -1,6 +1,7 @@
 #include "ConnectionState.h"
 #include "src/core/Managers/Resources/FontRegistry.h"
 #include "src/core/ClientApp.h"
+#include "tcp-ip/ClientMessages.h"
 
 #include <regex>
 #include <SFML/Network/IpAddress.hpp>
@@ -22,23 +23,25 @@ ConnectionState::~ConnectionState()
 void ConnectionState::OnEnter()
 {
     m_IpField = new InsertFieldComponent();
-    m_IpField->SetPosition(sf::Vector2f(100, 200));
+    m_IpField->SetPosition(sf::Vector2f(m_Window->GetWidth() * 0.5 - 190, 100));
     m_IpField->SetLabel("Server Phrase");
     m_IpField->SetText(TcpIp::IpAddress::FromString(sf::IpAddress::getLocalAddress().toString()).ToPhrase());
 
     m_NameField = new InsertFieldComponent();
-    m_NameField->SetPosition(sf::Vector2f(100, 300));
+    m_NameField->SetPosition(sf::Vector2f(m_Window->GetWidth() * 0.5 - 190, 200));
     m_NameField->SetLabel("Username");
 
-    m_BackButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(150, 50), sf::Color::Red);
-    m_BackButton->SetButtonText("Quit", sf::Color::White, 30, TextAlignment::Center);
+    sf::Color OrangeRed(231, 62, 1);
+    m_BackButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5 - 150, 500), sf::Vector2f(200, 100), OrangeRed);
+    m_BackButton->SetButtonText("Quit", sf::Color::White, 50, TextAlignment::Center);
     m_BackButton->SetOnClickCallback([this]()
         {
             m_StateMachine->SwitchState("MenuState");
         });
 
-    m_ConnectButton = new ButtonComponent(sf::Vector2f(100, 400), sf::Vector2f(150, 50), sf::Color::Green);
-    m_ConnectButton->SetButtonText("Connect", sf::Color::White, 30, TextAlignment::Center);
+    sf::Color Emerald(1, 215, 88);
+    m_ConnectButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5 - 150, 300), sf::Vector2f(200, 100), Emerald);
+    m_ConnectButton->SetButtonText("Connect", sf::Color::White, 50, TextAlignment::Center);
     m_ConnectButton->SetOnClickCallback([this]()
         {
             if (m_IsTryingToConnect) return;
@@ -59,13 +62,14 @@ void ConnectionState::OnEnter()
             }
             else isNameValid = true;
 
+            m_Name = m_NameField->GetText();
+
             const std::string ip = std::string(TcpIp::IpAddress::FromPhrase(m_IpField->GetText()).ToString());
 
             DebugLog(ip);
 
             if (isNameValid)
             {
-                ClientApp::GetInstance().GetCurrentPlayer()->SetName(m_NameField->GetText());
                 ClientConnectionHandler::GetInstance().TryToConnectToServer(&ip);
                 m_IsTryingToConnect = true;
             }
@@ -121,9 +125,16 @@ void ConnectionState::OnUpdate(float dt)
         }
         case Connected:
         {
+            ClientApp::GetInstance().GetCurrentPlayer()->SetName(m_NameField->GetText());
+
             m_StateMachine->SwitchState("LobbyState");
             m_IpField->ClearErrorMessage();
             m_IsTryingToConnect = false;
+
+            Message<MsgType::Login> message;
+            message.Username = m_Name;
+            ClientConnectionHandler::GetInstance().SendDataToServer(message);
+
             timeOutTimer = 0.0f;
             break;
         }

@@ -18,7 +18,7 @@ public:
     void OnExit() override;
     void OnReceiveData(const Json& serializeData) override;
 
-    void IsServerLobbyFull();
+    void OnEnterLobby();
 
     void StartGame();
 
@@ -30,8 +30,9 @@ public:
     void SetLobbyID(unsigned int id) { m_LobbyID = id; }
     void CheckIfMouseHoverBoard();
     bool IsMouseHoverPiece(unsigned int i);
-    void PlacePlayerPieceOnBoard(unsigned int cell);
-    void WinCheck();
+    void PlacePlayerPieceOnBoard(unsigned int cell, TicTacToe::Piece piece);
+    void SendGameFinishedToServer(const std::string& string);
+    void SetWinner(const std::string& name, const TicTacToe::Piece piece);
     void SwitchPlayerTurn();
 
     void UpdatePlayerTimer(float dt);
@@ -55,11 +56,9 @@ private:
     float m_PlayerTurnTime = 0.0f;
     float m_MaxPlayerTurnTime = 0.0f;
 
-    bool m_IsPlayersConnected = false;
-    bool m_IsGameInit = false;
     bool m_IsTimerOn = false;
+    bool m_IsGameStarted = false;
     bool m_IsPlayerTurn = false;
-    bool m_IsGameStart = false;
 
     GameStateUI* m_GameStateUI;
 };

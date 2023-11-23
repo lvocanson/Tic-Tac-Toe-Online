@@ -14,7 +14,7 @@ public:
 
     void SwitchPlayerTurn();
 
-    void CreateNewPlayer(const std::string& name, const sf::Color color, const PlayerShapeType shapeType);
+    void CreateNewPlayer(const std::string&, const sf::Color, const TicTacToe::Piece);
     void UnregisterPlayer(Player* player);
 
     const std::vector<Player*>& GetAllPlayers() { return m_RegisteredPlayers; }
@@ -29,5 +29,4 @@ private:
 
     int m_PlayerCount;
     int m_CurrentPlayerIndex;
-
 };

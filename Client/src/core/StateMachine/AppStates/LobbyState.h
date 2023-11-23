@@ -18,13 +18,14 @@ public:
     LobbyState& operator=(const LobbyState& other) = delete;
     ~LobbyState() override;
 
-    void TryToJoinLobby(int lobbyID);
+    void JoinLobbyRequest(int lobbyID);
 
 private:
 
     int m_CurrentLobbyID;
     bool m_IsLobbyInit = false;
     bool m_IsInLobby = false;
+    bool m_IsTryingToJoinLobby = false;
 
 
     Window* m_Window = nullptr;
@@ -33,5 +34,5 @@ private:
     ButtonComponent* m_LeaveButtons = nullptr;
 
     std::vector<ButtonComponent*> m_LobbyButtons;
-    std::vector<Lobby> m_Lobbies;
+    std::vector<LobbyData> m_Lobbies;
 };

@@ -18,5 +18,8 @@
     <ClInclude Include="tcp-ip\TcpIp.h" />
     <ClInclude Include="threading\Shared.h" />
     <ClInclude Include="threading\Thread.h" />
+    <ClInclude Include="tcp-ip\Message.h" />
+    <ClInclude Include="tcp-ip\ClientMessages.h" />
+    <ClInclude Include="tcp-ip\ServerMessages.h" />
   </ItemGroup>
 </Project>

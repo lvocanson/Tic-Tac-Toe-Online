@@ -18,6 +18,7 @@ public:
 private: // Game Server
     bool InitGameServer();
     void HandleGameServer();
+    void UnregisterPlayerFromServer(const std::string& player);
     void HandleRecv(ClientPtr sender);
     void CleanUpGameServer();
 
@@ -33,8 +34,7 @@ private: // Web Server
 
 private: // Lobbies
     void CreateLobbies();
-    size_t FindPlayer(const std::string& name) const;
-    void SerializeLobbiesToJson(ClientPtr sender) const;
+    bool IsPlayerInLobby(const std::string& name) const;
 
     // HashMap <Address (connection name), Username>
     std::unordered_map<std::string, std::string> m_Players;

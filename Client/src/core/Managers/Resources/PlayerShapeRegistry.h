@@ -10,14 +10,14 @@ class PlayerShapeRegistry
 {
 public:
 
-    static sf::Drawable* GetPlayerShape(PlayerShapeType);
+    static sf::Drawable* GetPlayerShape(TicTacToe::Piece piece);
     static void ClearPlayerShapes();
 
 private:
 
     friend class PlayerManager;
-    static void CreatePlayerShape(PlayerShapeType, TicTacToe::PieceID, sf::Color);
+    static void CreatePlayerShape(TicTacToe::Piece, sf::Color);
 
-    inline static std::unordered_map<PlayerShapeType, sf::Drawable*> m_PlayerShapes = {};
+    inline static std::unordered_map<TicTacToe::Piece, sf::Drawable*> m_PlayerShapes = {};
 
 };
