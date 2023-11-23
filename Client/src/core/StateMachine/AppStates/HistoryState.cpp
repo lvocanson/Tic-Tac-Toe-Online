@@ -124,7 +124,7 @@ void HistoryState::DisplaySelectedGame()
 
     for (const auto move : *m_CurrentGame->GetMoves())
     {
-        m_Board.InstanciateNewPlayerShape(move->playerData.Id, move->playerData.ShapeType, move->BoardCell);
+        m_Board.InstanciateNewPlayerShape(move->playerData.Piece, move->BoardCell);
     }
 
 }
@@ -167,7 +167,7 @@ void HistoryState::PlacePiece()
     {
         m_CurrentMoveIndex++;
         const auto move = m_CurrentGame->GetMove(m_CurrentMoveIndex);
-        m_Board.InstanciateNewPlayerShape(move->playerData.Id, move->playerData.ShapeType, move->BoardCell);
+        m_Board.InstanciateNewPlayerShape(move->playerData.Piece, move->BoardCell);
         m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex) + " / " + std::to_string(m_CurrentGame->GetMovesSize()));
     }
     else

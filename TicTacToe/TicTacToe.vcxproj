@@ -11,41 +11,26 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="tcp-ip\Messages\GameFinishedMessage.cpp" />
     <ClCompile Include="game\GameMode.cpp" />
     <ClCompile Include="game\IDGenerator.cpp" />
     <ClCompile Include="game\Lobby.cpp" />
     <ClCompile Include="game\TicTacToe.cpp" />
-    <ClCompile Include="tcp-ip\Notifications\IsLobbyFullNotification.cpp" />
-    <ClCompile Include="tcp-ip\Messages\GetLobbyListMessage.cpp" />
-    <ClCompile Include="tcp-ip\Messages\JoinedLobbyMessage.cpp" />
-    <ClCompile Include="tcp-ip\Messages\LobbyFullMessage.cpp" />
-    <ClCompile Include="tcp-ip\Messages\PlayerMoveMessage.cpp" />
-    <ClCompile Include="tcp-ip\Messages\RegisterPlayerMessage.cpp" />
-    <ClCompile Include="tcp-ip\Notifications\GetLobbyListNotification.cpp" />
     <ClCompile Include="tcp-ip\TcpIp.cpp" />
     <ClCompile Include="tcp-ip\TcpIpExceptions.cpp" />
-    <ClCompile Include="tcp-ip\Messages\TryToJoinLobbyMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tcp-ip\Messages\GameFinishedMessage.h" />
+    <ClInclude Include="tcp-ip\ClientMessages.h" />
+    <ClInclude Include="tcp-ip\Message.h" />
     <ClInclude Include="game\GameMode.h" />
     <ClInclude Include="game\IDGenerator.h" />
     <ClInclude Include="game\Lobby.h" />
     <ClInclude Include="game\TicTacToe.h" />
-    <ClInclude Include="tcp-ip\Notifications\IsLobbyFullNotification.h" />
-    <ClInclude Include="tcp-ip\Messages\GetLobbyListMessage.h" />
-    <ClInclude Include="tcp-ip\Messages\JoinedLobbyMessage.h" />
-    <ClInclude Include="tcp-ip\Messages\LobbyFullMessage.h" />
-    <ClInclude Include="tcp-ip\Messages\PlayerMoveMessage.h" />
-    <ClInclude Include="tcp-ip\Messages\RegisterPlayerMessage.h" />
-    <ClInclude Include="tcp-ip\Notifications\GetLobbyListNotification.h" />
     <ClInclude Include="tcp-ip\ISerializable.h" />
     <ClInclude Include="tcp-ip\json.hpp" />
+    <ClInclude Include="tcp-ip\ServerMessages.h" />
     <ClInclude Include="tcp-ip\TcpIp.h" />
     <ClInclude Include="threading\Shared.h" />
     <ClInclude Include="threading\Thread.h" />
-    <ClInclude Include="tcp-ip\Messages\TryToJoinLobbyMessage.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

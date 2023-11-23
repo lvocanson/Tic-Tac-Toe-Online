@@ -1,10 +1,10 @@
 #include "ConnectionState.h"
 #include "src/core/Managers/Resources/FontRegistry.h"
 #include "src/core/ClientApp.h"
+#include "tcp-ip/ClientMessages.h"
 
 #include <regex>
 #include <SFML/Network/IpAddress.hpp>
-#include <tcp-ip/Messages/RegisterPlayerMessage.h>
 
 constexpr float CONNECTION_TIMEOUT_TIME = 5.0f;
 
@@ -60,13 +60,14 @@ void ConnectionState::OnEnter()
             }
             else isNameValid = true;
 
+            m_Name = m_NameField->GetText();
+
             const std::string ip = std::string(TcpIp::IpAddress::FromPhrase(m_IpField->GetText()).ToString());
 
             DebugLog(ip);
 
             if (isNameValid)
             {
-                ClientApp::GetInstance().GetCurrentPlayer()->SetName(m_NameField->GetText());
                 ClientConnectionHandler::GetInstance().TryToConnectToServer(&ip);
                 m_IsTryingToConnect = true;
             }
@@ -122,12 +123,16 @@ void ConnectionState::OnUpdate(float dt)
         }
         case Connected:
         {
-            RegisterPlayerMessage message(ClientApp::GetInstance().GetCurrentPlayer()->GetName());
-            ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
+            ClientApp::GetInstance().GetCurrentPlayer()->SetName(m_NameField->GetText());
 
             m_StateMachine->SwitchState("LobbyState");
             m_IpField->ClearErrorMessage();
             m_IsTryingToConnect = false;
+
+            Message<MsgType::Login> message;
+            message.Username = m_Name;
+            ClientConnectionHandler::GetInstance().SendDataToServer(message);
+
             timeOutTimer = 0.0f;
             break;
         }

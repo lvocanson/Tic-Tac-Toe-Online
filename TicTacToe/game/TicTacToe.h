@@ -1,18 +1,20 @@
 #pragma once
 
-
 // Row, columns, alignment goal
 #define DEFAULT_BOARD_ARGS 3, 3, 3
 
 
 namespace TicTacToe
 {
-
     /// <summary>
     /// Represents a piece on the board.
     /// </summary>
-    typedef unsigned int PieceID;
-    constexpr const PieceID EMPTY_PIECE = 0;
+    enum class Piece : unsigned int
+    {
+        Empty = 0,
+        X = 1,
+        O = 2
+    };
 
     /// <summary>
     /// Represents a board of Tic-Tac-Toe.
@@ -37,19 +39,19 @@ namespace TicTacToe
         /// <summary>
         /// Returns a reference to the piece at the specified row and column.
         /// </summary>
-        PieceID& operator()(size_t row, size_t col) { return m_Board[row * m_Width + col]; }
+        Piece& operator()(size_t row, size_t col) { return m_Board[row * m_Width + col]; }
         /// <summary>
         /// Returns a const reference to the piece at the specified row and column.
         /// </summary>
-        const PieceID& operator()(size_t row, size_t col) const { return m_Board[row * m_Width + col]; }
+        const Piece& operator()(size_t row, size_t col) const { return m_Board[row * m_Width + col]; }
         /// <summary>
         /// Returns a reference to the piece at the specified index.
         /// </summary>
-        PieceID& operator[](size_t index) { return m_Board[index]; }
+        Piece& operator[](size_t index) { return m_Board[index]; }
         /// <summary>
         /// Returns a const reference to the piece at the specified index.
         /// </summary>
-        const PieceID& operator[](size_t index) const { return m_Board[index]; }
+        const Piece& operator[](size_t index) const { return m_Board[index]; }
 
         /// <summary>
         /// Returns true if the board does not contain any empty pieces.
@@ -59,9 +61,11 @@ namespace TicTacToe
         /// <summary>
         /// Returns the winning piece, or the empty piece if there is no winner.
         /// </summary>
-        PieceID IsThereAWinner() const;
+        Piece IsThereAWinner() const;
 
         unsigned int GetRandomEmptyCell() const;
+
+        bool IsCellEmpty(unsigned int cell) { return m_Board[cell] == Piece::Empty; }
 
         /// <summary>
         /// Resizes the board to the specified width and height.
@@ -77,6 +81,6 @@ namespace TicTacToe
 
         size_t m_Width = 3, m_Height = 3, m_Size = 9;
         unsigned int m_AlignementGoal = 3;
-        PieceID* m_Board;
+        Piece* m_Board;
     };
 }
