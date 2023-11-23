@@ -59,7 +59,7 @@ void Window::PollEvents()
 void Window::Render()
 {
     m_Window->clear(m_ClearColor);
-    for (auto drawable : m_Drawables)
+    for (const auto drawable : m_Drawables)
     {
         m_Window->draw(*drawable);
     }

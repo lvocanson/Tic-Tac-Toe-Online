@@ -95,8 +95,7 @@ struct Message<MsgType::AcceptMakeMove> : ISerializable
 {
     Message() = default;
     Message(const Json& j)
-        : LobbyId(j["ID"].get<unsigned int>())
-        , Cell(j["Cell"].get<unsigned int>())
+        : Cell(j["Cell"].get<unsigned int>())
         , Piece(j["Piece"].get<TicTacToe::Piece>())
     {
     }
@@ -106,7 +105,6 @@ struct Message<MsgType::AcceptMakeMove> : ISerializable
     {
         Json j;
         j["Type"] = MsgType::AcceptMakeMove;
-        j["ID"] = LobbyId;
         j["Cell"] = Cell;
         j["Piece"] = Piece;
         return j;

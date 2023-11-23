@@ -10,8 +10,6 @@ ButtonComponent::ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size
     m_Shape.setPosition(pos);
     m_Shape.setSize(size);
     m_Shape.setFillColor(idleColor);
-
-    m_Text = nullptr;
 }
 
 ButtonComponent::~ButtonComponent()

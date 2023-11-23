@@ -202,12 +202,18 @@ void ServerApp::HandleRecv(ClientPtr sender)
     }
     case FetchGameHistoryList:
     {
+        if (m_SavedGames.empty())
+        {
+            break;
+        }
+
         Message<GameHistoryList> toSend;
         toSend.GameHistory.reserve(m_SavedGames.size());
-        for (auto& game : m_SavedGames)
+        for (const auto game : m_SavedGames)
         {
             toSend.GameHistory.push_back(game);
         }
+
         sender->Send(toSend.Serialize().dump());
         std::cout << INF_CLR << "Game History list sent to " << HASH_CLR(sender) << std::endl << DEF_CLR;
 
@@ -317,7 +323,6 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
         // Send response message to both players
         Message<AcceptMakeMove> acceptMsg;
-        acceptMsg.LobbyId = msg.LobbyId;
         acceptMsg.Cell = msg.Cell;
         acceptMsg.Piece = msg.Piece;
         for (auto& [adressIP, player] : m_Players)

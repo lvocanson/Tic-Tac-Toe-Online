@@ -12,6 +12,11 @@ ScoreManager::~ScoreManager()
 
 void ScoreManager::Clear()
 {
+    for (auto& playerScore : m_PlayerScores)
+    {
+        playerScore.second = 0;
+    }
+
     m_PlayerScores.clear();
 }
 

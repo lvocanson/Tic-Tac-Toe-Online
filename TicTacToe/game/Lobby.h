@@ -26,7 +26,7 @@ struct Lobby
     std::string& GetOpponentName(const std::string&);
     void AddPlayerToLobby(const std::string& name);
     void RemovePlayerFromLobby(const std::string& name);
-    void AddPlayerMove(const std::string, const TicTacToe::Piece, const unsigned int Cell);
+    void AddPlayerMove(const std::string&, const TicTacToe::Piece, const unsigned int Cell);
     void ResetGame();
     
     bool IsInLobby(const std::string& name) const { return Data.PlayerX == name || Data.PlayerO == name; }

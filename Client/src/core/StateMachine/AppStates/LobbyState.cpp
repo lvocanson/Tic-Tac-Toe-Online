@@ -52,22 +52,8 @@ void LobbyState::OnUpdate(float dt)
 
 void LobbyState::OnExit()
 {
-    for (auto& lbButton : m_LobbyButtons)
-    {
-        m_Window->UnregisterDrawable(lbButton);
-        RELEASE(lbButton);
-    }
-
-    if (m_LeaveButtons != nullptr)
-    {
-        m_Window->UnregisterDrawable(m_LeaveButtons);
-        RELEASE(m_LeaveButtons);
-    }
-
+    m_Window->ClearAllDrawables();
     m_LobbyButtons.clear();
-
-    m_Window->UnregisterDrawable(m_ReturnButton);
-    RELEASE(m_ReturnButton);
 }
 
 void LobbyState::OnReceiveData(const Json& serializeData)

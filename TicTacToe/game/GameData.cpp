@@ -12,14 +12,14 @@ GameData::GameData(const Json& j)
 {
     for (auto& move : j["AllMoves"])
     {
-        AllMoves.push_back(PlayerMove(j));
+        AllMoves.emplace_back(PlayerMove(move));
     }
 }
 
 Json GameData::Serialize()
 {
     Json j;
-    j["AllMoves"] = Json::array();
+
     for (auto& move : AllMoves)
     {
         j["AllMoves"].push_back(move.Serialize());

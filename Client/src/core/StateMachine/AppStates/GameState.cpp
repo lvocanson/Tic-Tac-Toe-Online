@@ -11,8 +11,6 @@ GameState::GameState(StateMachine* stateMachine, Window* m_Window)
     : State(stateMachine)
     , m_Window(m_Window)
 {
-    m_GameStateUI = new GameStateUI(m_Window);
-
     m_Board.Init(ClientApp::GetGameSettings().GetTotalColumn(), ClientApp::GetGameSettings().GetTotalRow(), m_Window);
     m_PlayerManager.Init();
 }
@@ -25,6 +23,8 @@ GameState::~GameState()
 
 void GameState::OnEnter()
 {
+    m_GameStateUI = new GameStateUI(m_Window);
+
     Message<MsgType::OnEnterLobby> message;
     message.LobbyId = m_LobbyID;
     ClientConnectionHandler::GetInstance().SendDataToServer(message);
@@ -67,7 +67,7 @@ void GameState::OnUpdate(float dt)
         m_ReturnButton->Update(dt);
     }
 
-    if (m_IsPlayerTurn && m_IsGameStarted)
+    if (!m_WaitingServerResponse && m_IsPlayerTurn && m_IsGameStarted)
     {
         CheckIfMouseHoverBoard();
 
@@ -85,13 +85,12 @@ void GameState::UpdatePlayerTimer(float dt)
     m_GameStateUI->UpdateProgressBar(m_PlayerTurnTime);
 }
 
-void GameState::CheckIfTimerIsUp()
+void GameState::CheckIfTimerIsUp() const
 {
     if (m_PlayerTurnTime <= 0.0f)
     {
         m_GameStateUI->UpdateGameStateText("Time's up!");
-
-        //PlacePlayerPieceOnBoard(m_Board.GetRandomEmptyCell());
+        SendPlacedPieceToServer(m_Board.GetRandomEmptyCell());
     }
 }
 
@@ -114,12 +113,6 @@ void GameState::CheckIfMouseHoverBoard()
     }
 }
 
-void GameState::PlacePlayerPieceOnBoard(unsigned int cell, TicTacToe::Piece piece)
-{
-    m_Board.InstanciateNewPlayerShape(piece, cell);
-    //m_ScoreManager.AddPlayerMove(PlayerManager::GetPlayer(), cell);
-}
-
 void GameState::ClearBoard()
 {
     m_Board.SetEmpty();
@@ -138,7 +131,7 @@ void GameState::SwitchPlayerTurn()
     }
 }
 
-void GameState::SendPlacedPieceToServer(unsigned int cell)
+void GameState::SendPlacedPieceToServer(unsigned int cell) const
 {
     Message<MsgType::MakeMove> message;
     message.Cell = cell;
@@ -162,22 +155,24 @@ bool GameState::IsMouseHoverPiece(unsigned int i)
 
 void GameState::OnExit()
 {
+    RELEASE(m_GameStateUI)
+
     ClearBoard();
     m_ScoreManager.Clear();
-
+    
     m_Window->ClearAllDrawables();
 }
 
 void GameState::OnReceiveData(const Json& serializeData)
 {
-    auto type = Message<>::GetType(serializeData);
+    const auto type = Message<>::GetType(serializeData);
 
     using enum MsgType;
     switch (type)
     {
     case GameStarted:
     {
-        Message<GameStarted> message(serializeData);
+        const Message<GameStarted> message(serializeData);
 
         m_PlayerManager.CreateNewPlayer(message.PlayerX, sf::Color(250, 92, 12), Piece::X);
         m_PlayerManager.CreateNewPlayer(message.PlayerO, sf::Color(255, 194, 0), Piece::O);
@@ -186,28 +181,34 @@ void GameState::OnReceiveData(const Json& serializeData)
 
         m_GameStateUI->UpdateGameStateText("It's " + message.StartPlayer + " to start the game!");
         m_IsGameStarted = true;
+        m_WaitingServerResponse = false;
         m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
-        // m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
+        m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
 
         break;
     }
     case AcceptMakeMove:
     {
-        Message<AcceptMakeMove> message(serializeData);
+        const Message<AcceptMakeMove> message(serializeData);
 
-        PlacePlayerPieceOnBoard(message.Cell, message.Piece);
+        m_Board.InstanciateNewPlayerShape(message.Piece, message.Cell);
         SwitchPlayerTurn();
-        break;
 
+        m_WaitingServerResponse = false;
+
+        break;
     }
     case DeclineMakeMove:
     {
         DebugLog("Declined move");
+        m_WaitingServerResponse = false;
         break;
     }
     case GameOver:
     {
-        Message<GameOver> message(serializeData);
+        const Message<GameOver> message(serializeData);
+
+        m_WaitingServerResponse = false;
 
         if (message.IsDraw)
         {
@@ -219,7 +220,6 @@ void GameState::OnReceiveData(const Json& serializeData)
 
             m_GameStateUI->UpdatePlayerScore(message.Piece, message.Winner, m_ScoreManager.GetPlayerScore(message.Piece));
             m_GameStateUI->UpdateGameStateText(message.Winner + " won!");
-
         }
 
         ClearBoard();

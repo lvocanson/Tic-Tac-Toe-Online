@@ -78,6 +78,8 @@ void GraphicBoard::SetEmpty()
 
     for (auto& playerShape : m_PlayerShapes)
     {
+        if (playerShape == nullptr) continue;
+
         m_Window->UnregisterDrawable(playerShape);
         RELEASE(playerShape);
     }

@@ -134,6 +134,10 @@ void HistoryState::OnReceiveData(const Json& serializeData)
             m_Games.push_back(game);
         }
 
+        if (!m_Games.empty())
+        {
+            DisplaySelectedGame();
+        }
         break;
     }
     default:
@@ -147,6 +151,9 @@ void HistoryState::DisplaySelectedGame()
 
     m_CurrentGame = m_Games[m_CurrentGameIndex];
     m_CurrentMoveIndex = m_CurrentGame.GetMovesSize() - 1;
+
+    m_GameNumberText->SetText(std::to_string(m_CurrentGameIndex + 1) + " / " + std::to_string(m_Games.size()));
+    m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex + 1) + " / " + std::to_string(m_CurrentGame.GetMovesSize()));
 
     for (const auto& move : m_CurrentGame.GetMoves())
     {
@@ -162,7 +169,6 @@ void HistoryState::NextGame()
         m_CurrentGameIndex++;
         m_Board.SetEmpty();
         DisplaySelectedGame();
-        m_GameNumberText->SetText(std::to_string(m_CurrentGameIndex) + " / " + std::to_string(m_Games.size()));
     }
     else
     {
@@ -177,7 +183,6 @@ void HistoryState::PreviousGame()
         m_CurrentGameIndex--;
         m_Board.SetEmpty();
         DisplaySelectedGame();
-        m_GameNumberText->SetText(std::to_string(m_CurrentGameIndex) + " / " + std::to_string(m_Games.size()));
     }
     else
     {
@@ -194,7 +199,7 @@ void HistoryState::PlacePiece()
         m_CurrentMoveIndex++;
         const auto& move = m_CurrentGame.GetMove(m_CurrentMoveIndex);
         m_Board.InstanciateNewPlayerShape(move.PlayerPiece, move.BoardCell);
-        m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex) + " / " + std::to_string(m_CurrentGame.GetMovesSize()));
+        m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex + 1) + " / " + std::to_string(m_CurrentGame.GetMovesSize()));
     }
     else
     {
@@ -210,7 +215,7 @@ void HistoryState::RemovePiece()
     {
         m_CurrentMoveIndex--;
         m_Board.RemoveLastPlayerShape();
-        m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex) + " / " + std::to_string(m_CurrentGame.GetMovesSize()));
+        m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex + 1) + " / " + std::to_string(m_CurrentGame.GetMovesSize()));
     }
     else
     {

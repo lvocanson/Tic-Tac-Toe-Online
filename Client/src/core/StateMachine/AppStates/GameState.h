@@ -30,15 +30,12 @@ public:
     void SetLobbyID(unsigned int id) { m_LobbyID = id; }
     void CheckIfMouseHoverBoard();
     bool IsMouseHoverPiece(unsigned int i);
-    void PlacePlayerPieceOnBoard(unsigned int cell, TicTacToe::Piece piece);
-    void SendGameFinishedToServer(const std::string& string);
-    void SetWinner(const std::string& name, const TicTacToe::Piece piece);
     void SwitchPlayerTurn();
 
     void UpdatePlayerTimer(float dt);
-    void CheckIfTimerIsUp();
+    void CheckIfTimerIsUp() const;
 
-    void SendPlacedPieceToServer(unsigned int cell);
+    void SendPlacedPieceToServer(unsigned int cell) const;
 
     void ClearBoard();
 
@@ -56,6 +53,7 @@ private:
     float m_PlayerTurnTime = 0.0f;
     float m_MaxPlayerTurnTime = 0.0f;
 
+    bool m_WaitingServerResponse = true;
     bool m_IsTimerOn = false;
     bool m_IsGameStarted = false;
     bool m_IsPlayerTurn = false;

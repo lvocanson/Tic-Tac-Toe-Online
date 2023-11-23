@@ -88,15 +88,15 @@ void MenuState::OnUpdate(float dt)
 
 void MenuState::OnExit()
 {
-    m_Window->UnregisterDrawable(m_ConnectButton);
-    m_Window->UnregisterDrawable(m_HistoryButton);
-    m_Window->UnregisterDrawable(m_QuitButton);
-
     if (m_DisconnectButton)
+    {
         m_Window->UnregisterDrawable(m_DisconnectButton);
+        RELEASE(m_DisconnectButton);
+    }
 
-    RELEASE(m_ConnectButton);
-    RELEASE(m_HistoryButton);
-    RELEASE(m_QuitButton);
-    RELEASE(m_DisconnectButton);
+    m_Window->ClearAllDrawables();
+
+    NULLPTR(m_ConnectButton);
+    NULLPTR(m_HistoryButton);
+    NULLPTR(m_QuitButton);
 }

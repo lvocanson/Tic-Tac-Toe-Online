@@ -28,7 +28,7 @@ private:
 
     std::function<void()> onClickCallback;
 
-    TextComponent* m_Text;
+    TextComponent* m_Text = nullptr;;
 
     bool IsMouseOver();
 };

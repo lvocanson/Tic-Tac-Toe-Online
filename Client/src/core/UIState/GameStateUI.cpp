@@ -131,6 +131,8 @@ void GameStateUI::SetUserName(const std::string username)
 
 void GameStateUI::Clear()
 {
+    m_Window->ClearAllDrawables();
+
     for (auto& text : m_PlayerScoreTexts)
     {
         NULLPTR(text.second);

@@ -65,9 +65,9 @@ void Lobby::RemovePlayerFromLobby(const std::string& name)
     }
 }
 
-void Lobby::AddPlayerMove(const std::string playerName, const TicTacToe::Piece piece, const unsigned int cell)
+void Lobby::AddPlayerMove(const std::string& playerName, const TicTacToe::Piece piece, const unsigned int cell)
 {
-    CurrentGame.emplace_back((playerName, piece, cell));
+    CurrentGame.emplace_back(playerName, piece, cell);
 }
 
 void Lobby::ResetGame()
