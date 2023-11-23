@@ -20,6 +20,7 @@ public:
 
 private:
 
+    void OnReceiveData(const Json& data) override;
     void DisplaySelectedGame();
 
     void NextGame();

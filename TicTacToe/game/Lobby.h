@@ -2,6 +2,7 @@
 #include <string>
 #include "../tcp-ip/ISerializable.h"
 #include "TicTacToe.h"
+#include "GameData.h"
 
 struct LobbyData : ISerializable
 {
@@ -25,9 +26,9 @@ struct Lobby
     std::string& GetOpponentName(const std::string&);
     void AddPlayerToLobby(const std::string& name);
     void RemovePlayerFromLobby(const std::string& name);
-
-    unsigned int GetPlayerCount() const { return PlayerCount;}
-
+    void AddPlayerMove(const std::string, const TicTacToe::Piece, const unsigned int Cell);
+    void ResetGame();
+    
     bool IsInLobby(const std::string& name) const { return Data.PlayerX == name || Data.PlayerO == name; }
     bool IsLobbyFull() const {  return !Data.PlayerX.empty() && !Data.PlayerO.empty(); }
     bool IsLobbyEmpty() const { return Data.PlayerX.empty() && Data.PlayerO.empty(); }
@@ -35,4 +36,5 @@ struct Lobby
     unsigned int PlayerCount = 0;
     LobbyData Data;
     TicTacToe::Board Board;
+    std::vector<PlayerMove> CurrentGame;
 };

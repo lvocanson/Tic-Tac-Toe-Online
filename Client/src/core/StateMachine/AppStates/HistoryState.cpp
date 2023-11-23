@@ -1,6 +1,7 @@
 #include "HistoryState.h"
 #include "src/core/ClientApp.h"
 #include "src/core/Managers/GameHistoryManager.h"
+#include "tcp-ip/ClientMessages.h"
 
 const sf::Vector2f NEXT_BUTTON_OFFSET = sf::Vector2f(250, 0);
 
@@ -18,7 +19,8 @@ HistoryState::~HistoryState()
 
 void HistoryState::OnEnter()
 {
-    m_Games = ClientApp::GetHistoryManager()->GetAllGameData();
+    Message<MsgType::FetchGameHistoryList> message;
+    ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
 
     m_CurrentGameIndex = 0;
     m_CurrentMoveIndex = 0;
@@ -117,14 +119,19 @@ void HistoryState::OnExit()
     m_Window->ClearAllDrawables();
 }
 
+void HistoryState::OnReceiveData(const Json& data)
+{
+    Message<MsgType::GameHistoryList> message(data);
+}
+
 void HistoryState::DisplaySelectedGame()
 {
     m_CurrentGame = ClientApp::GetHistoryManager()->GetGameData(m_CurrentGameIndex);
     m_CurrentMoveIndex = m_CurrentGame->GetMovesSize() - 1;
 
-    for (const auto move : *m_CurrentGame->GetMoves())
+    for (const auto& move : m_CurrentGame->GetMoves())
     {
-        m_Board.InstanciateNewPlayerShape(move->PlayerPiece, move->BoardCell);
+        m_Board.InstanciateNewPlayerShape(move.PlayerPiece, move.BoardCell);
     }
 
 }
@@ -166,8 +173,8 @@ void HistoryState::PlacePiece()
     if (m_CurrentMoveIndex + 1 < m_CurrentGame->GetMovesSize())
     {
         m_CurrentMoveIndex++;
-        const auto move = m_CurrentGame->GetMove(m_CurrentMoveIndex);
-        m_Board.InstanciateNewPlayerShape(move->PlayerPiece, move->BoardCell);
+        const auto& move = m_CurrentGame->GetMove(m_CurrentMoveIndex);
+        m_Board.InstanciateNewPlayerShape(move.PlayerPiece, move.BoardCell);
         m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex) + " / " + std::to_string(m_CurrentGame->GetMovesSize()));
     }
     else

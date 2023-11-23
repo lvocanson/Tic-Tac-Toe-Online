@@ -35,6 +35,37 @@ struct Message<MsgType::LobbyList> : ISerializable
 };
 
 template <>
+struct Message<MsgType::GameHistoryList> : ISerializable
+{
+    Message() = default;
+    Message(const Json& j)
+    {
+        GameHistory.reserve(j["GameHistory"].size());
+
+        for (auto& game : j["GameHistory"])
+        {
+            GameHistory.push_back(GameData(game));
+        }
+    }
+    ~Message() = default;
+
+    Json Serialize() override
+    {
+        Json j;
+        j["Type"] = MsgType::GameHistoryList;
+
+        for (auto& game : GameHistory)
+        {
+            j["GameHistory"].push_back(game.Serialize());
+        }
+
+        return j;
+    }
+
+    std::vector<GameData> GameHistory;
+};
+
+template <>
 struct Message<MsgType::GameStarted> : ISerializable
 {
     Message() = default;

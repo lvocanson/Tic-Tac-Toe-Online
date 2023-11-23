@@ -206,10 +206,6 @@ void GameState::OnReceiveData(const Json& serializeData)
     {
         Message<GameOver> message(serializeData);
 
-        //ClientApp::GetHistoryManager()->SaveGame(winner->GetData(), m_ScoreManager.GetCurrentGame());
-
-        m_ScoreManager.CreateNewGameHistory();
-
         if (message.IsDraw)
         {
             m_GameStateUI->UpdateGameStateText("Draw!");

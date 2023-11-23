@@ -1,6 +1,7 @@
 #pragma once
 #include "Message.h"
 #include "../game/TicTacToe.h"
+#include "../game/GameData.h"
 
 template <>
 struct Message<MsgType::Login> : ISerializable

@@ -200,6 +200,19 @@ void ServerApp::HandleRecv(ClientPtr sender)
         std::cout << INF_CLR << "Lobby list sent to " << HASH_CLR(sender) << std::endl << DEF_CLR;
         break;
     }
+    case FetchGameHistoryList:
+    {
+        Message<GameHistoryList> toSend;
+        toSend.GameHistory.reserve(m_SavedGames.size());
+        for (auto& game : m_SavedGames)
+        {
+            toSend.GameHistory.push_back(game);
+        }
+        sender->Send(toSend.Serialize().dump());
+        std::cout << INF_CLR << "Game History list sent to " << HASH_CLR(sender) << std::endl << DEF_CLR;
+
+        break;
+    }
     case TryToJoinLobby:
     {
         Message<TryToJoinLobby> msg(parsedData);
@@ -298,7 +311,9 @@ void ServerApp::HandleRecv(ClientPtr sender)
             sender->Send(Message<DeclineMakeMove>().Serialize().dump());
             break;
         }
+
         lb->Board[msg.Cell] = msg.Piece;
+        lb->AddPlayerMove(playerName, msg.Piece, msg.Cell);
 
         // Send response message to both players
         Message<AcceptMakeMove> acceptMsg;
@@ -329,7 +344,8 @@ void ServerApp::HandleRecv(ClientPtr sender)
                 }
             }
 
-            lb->Board.SetEmpty();
+            m_SavedGames.emplace_back(GameData(lb->CurrentGame));
+            lb->ResetGame();
 
             std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(playerName) << INF_CLR << " won the game." << std::endl << DEF_CLR;
         }
@@ -345,7 +361,8 @@ void ServerApp::HandleRecv(ClientPtr sender)
                     m_GameServer->GetClientByName(adressIP)->Send(overMsg.Serialize().dump());
                 }
             }
-            lb->Board.SetEmpty();
+
+            lb->ResetGame();
 
             std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] The game ended in a draw." << std::endl << DEF_CLR;
         }

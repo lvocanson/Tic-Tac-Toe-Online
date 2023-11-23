@@ -2,29 +2,37 @@
 #include <vector>
 #include <string>
 #include "TicTacToe.h"
+#include "../tcp-ip/ISerializable.h"
 
-struct PlayerMove
+struct PlayerMove : ISerializable
 {
+    PlayerMove(const std::string& playerName, const TicTacToe::Piece piece, const unsigned int cell) : PlayerName(playerName), PlayerPiece(piece), BoardCell(cell) {}
+    PlayerMove(const Json& j) : PlayerName(j["PlayerName"]), PlayerPiece(j["PlayerPiece"]), BoardCell(j["BoardCell"]) {}
+
+    Json Serialize() override;
+
     std::string PlayerName;
     TicTacToe::Piece PlayerPiece;
     unsigned int BoardCell;
 };
 
-struct GameData
+struct GameData : ISerializable
 {
 public:
 
-    GameData(const std::vector<const PlayerMove*>* allMoves);
-    ~GameData();
+    GameData(const std::vector<PlayerMove>& allMoves);
+    GameData(const Json& j);
 
-    std::string GetWinnerName() const { return AllMoves->back()->PlayerName; }
-    TicTacToe::Piece GetWinnerPiece() const { return AllMoves->back()->PlayerPiece; }
+    std::string GetWinnerName() const { return AllMoves.back().PlayerName; }
+    TicTacToe::Piece GetWinnerPiece() const { return AllMoves.back().PlayerPiece; }
 
-    const std::vector<const PlayerMove*>* GetMoves() const { return AllMoves; }
-    const PlayerMove* GetMove(unsigned int moveIndex) const { return AllMoves->at(moveIndex); }
-    size_t GetMovesSize() const { return AllMoves->size(); }
+    const std::vector<PlayerMove>& GetMoves() { return AllMoves; }
+    const PlayerMove& GetMove(unsigned int moveIndex) const { return AllMoves.at(moveIndex); }
+    size_t GetMovesSize() const { return AllMoves.size(); }
+
+    Json Serialize() override;
 
 private:
 
-    const std::vector<const PlayerMove*>* AllMoves;
+    std::vector<PlayerMove> AllMoves;
 };
