@@ -30,9 +30,9 @@ public:
     void SetLobbyID(unsigned int id) { m_LobbyID = id; }
     void CheckIfMouseHoverBoard();
     bool IsMouseHoverPiece(unsigned int i);
-    void PlacePlayerPieceOnBoard(unsigned int cell);
+    void PlacePlayerPieceOnBoard(unsigned int cell, TicTacToe::Piece piece);
     void SendGameFinishedToServer(const std::string& string);
-    void WinCheck();
+    void SetWinner(const std::string& name, const TicTacToe::Piece piece);
     void SwitchPlayerTurn();
 
     void UpdatePlayerTimer(float dt);

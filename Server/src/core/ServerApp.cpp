@@ -7,6 +7,7 @@
 #include "tcp-ip/Messages/LobbyFullMessage.h"
 #include "tcp-ip/Messages/PlayerMoveMessage.h"
 #include "tcp-ip/Messages/TryToJoinLobbyMessage.h"
+#include <PlayerMoveResponse.h>
 
 #define ERR_CLR Color::Red // Error color
 #define WRN_CLR Color::Yellow // Warning color
@@ -280,17 +281,38 @@ void ServerApp::HandleRecv(ClientPtr sender)
         playerMoveMessage.Deserialize(receivedData);
 
         Lobby* lb = m_StartedGames[playerMoveMessage.LobbyID];
-        const std::string& opponentName = lb->GetOpponentName(playerMoveMessage.PlayerName);
 
+        // Check if move is valid
+        if (!lb->Board.IsCellEmpty(playerMoveMessage.Cell))
+        {
+            std::cout << WRN_CLR << "Player " << HASH_STRING_CLR(playerMoveMessage.PlayerName) << WRN_CLR << " tried to make an invalid move in lobby: " << INF_CLR << receivedData["ID"] << std::endl << DEF_CLR;
+            return;
+        }
+
+        // Set piece on board
+        lb->Board[playerMoveMessage.Cell] = playerMoveMessage.Piece;
+
+        TicTacToe::Piece winner = lb->Board.IsThereAWinner();
+        if (winner != TicTacToe::Piece::Empty)
+        {
+            // Create Won Response
+        }
+
+        // Create response message
+        PlayerMoveResponse playerMoveResponse(playerMoveMessage.Cell, playerMoveMessage.Piece);
+        const std::string message = playerMoveResponse.Serialize().dump();
+
+        int i = 0;
         for (auto [adressIP, player] : m_Players)
         {
-            if (player != opponentName) continue;
+            if (!lb->IsInLobby(player)) continue;
 
-            m_GameServer->GetClientByName(adressIP)->Send(receivedData.dump());
+            m_GameServer->GetClientByName(adressIP)->Send(message);
 
-            std::cout << STS_CLR << "Player " << HASH_STRING_CLR(opponentName) << STS_CLR << " has made a move in lobby: " << INF_CLR << receivedData["ID"] << std::endl << DEF_CLR;
+            std::cout << STS_CLR << "Player " << HASH_STRING_CLR(player) << STS_CLR << " has made a move in lobby: " << INF_CLR << playerMoveMessage.LobbyID << std::endl << DEF_CLR;
+            i++;
 
-            return;
+            if (i == 2) break;
         }
     }
     else if (receivedData["Type"] == "GameFinished")
@@ -302,11 +324,14 @@ void ServerApp::HandleRecv(ClientPtr sender)
         {
             if (lobby->Data.ID != gameFinishedMessage.LobbyID) continue;
 
-            lobby->GetOpponentName(gameFinishedMessage.WinnerName);
+            std::string opponentName = lobby->GetOpponentName(gameFinishedMessage.WinnerName);
 
+            lobby->Board.SetEmpty();
+
+            //Check server side if board is won or not
             for (auto [adressIP, player] : m_Players)
             {
-                if (player != gameFinishedMessage.WinnerName) continue;
+                if (player != opponentName) continue;
 
                 m_GameServer->GetClientByName(adressIP)->Send(receivedData.dump());
 
@@ -314,7 +339,6 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
                 break;
             }
-
             break;
         }
     }

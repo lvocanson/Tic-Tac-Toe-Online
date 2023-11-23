@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "../tcp-ip/ISerializable.h"
+#include "TicTacToe.h"
 
 struct LobbyData : ISerializable
 {
@@ -33,4 +34,5 @@ struct Lobby
 
     unsigned int PlayerCount = 0;
     LobbyData Data;
+    TicTacToe::Board Board;
 };

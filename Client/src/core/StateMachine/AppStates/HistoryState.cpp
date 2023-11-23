@@ -105,7 +105,7 @@ void HistoryState::DisplayGame()
 
         for (const auto move : *m_CurrentGame->GetMoves())
         {
-            m_Board.InstanciateNewPlayerShape(move->playerData.Id, move->playerData.ShapeType, move->BoardCell);
+            m_Board.InstanciateNewPlayerShape(move->playerData.Piece, move->BoardCell);
         }
     }
     else
@@ -122,7 +122,7 @@ void HistoryState::PlacePiece()
     {
         m_CurrentMoveIndex++;
         const auto move = m_CurrentGame->GetMove(m_CurrentMoveIndex);
-        m_Board.InstanciateNewPlayerShape(move->playerData.Id, move->playerData.ShapeType, move->BoardCell);
+        m_Board.InstanciateNewPlayerShape(move->playerData.Piece, move->BoardCell);
     }
     else
     {

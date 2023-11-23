@@ -33,5 +33,5 @@ private:
     ButtonComponent* m_LeaveButtons = nullptr;
 
     std::vector<ButtonComponent*> m_LobbyButtons;
-    std::vector<Lobby> m_Lobbies;
+    std::vector<LobbyData> m_Lobbies;
 };

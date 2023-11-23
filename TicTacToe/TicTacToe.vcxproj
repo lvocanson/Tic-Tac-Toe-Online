@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="PlayerMoveResponse.cpp" />
     <ClCompile Include="tcp-ip\Messages\GameFinishedMessage.cpp" />
     <ClCompile Include="game\GameMode.cpp" />
     <ClCompile Include="game\IDGenerator.cpp" />
@@ -28,6 +29,7 @@
     <ClCompile Include="tcp-ip\Messages\TryToJoinLobbyMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PlayerMoveResponse.h" />
     <ClInclude Include="tcp-ip\Messages\GameFinishedMessage.h" />
     <ClInclude Include="game\GameMode.h" />
     <ClInclude Include="game\IDGenerator.h" />

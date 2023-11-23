@@ -2,7 +2,7 @@
 
 ScoreManager::ScoreManager()
 {
-    m_PlayerScores = std::map<TicTacToe::PieceID, unsigned int>();
+    m_PlayerScores = std::map<TicTacToe::Piece, unsigned int>();
     m_CurrentGame = nullptr;
 }
 
@@ -34,7 +34,7 @@ void ScoreManager::InitPlayerScores(const std::vector<Player*>& allPlayers)
 {
     for (auto& player : allPlayers)
     {
-        m_PlayerScores.insert({ player->GetPlayerID(), 0 });
+        m_PlayerScores.insert({ player->GetPiece(), 0 });
     }
 }
 
@@ -48,23 +48,23 @@ void ScoreManager::AddPlayerMove(const PlayerData& playerData, unsigned int last
     m_CurrentGame->push_back(playerMove);
 }
 
-void ScoreManager::AddScoreToPlayer(TicTacToe::PieceID pieceID)
+void ScoreManager::AddScoreToPlayer(TicTacToe::Piece piece)
 {
-    if (!IsScoreExists(pieceID)) return;
+    if (!IsScoreExists(piece)) return;
 
-    m_PlayerScores[pieceID]++;
+    m_PlayerScores[piece]++;
 }
 
-unsigned int ScoreManager::GetPlayerScore(TicTacToe::PieceID pieceID)
+unsigned int ScoreManager::GetPlayerScore(TicTacToe::Piece piece)
 {
-    if (!IsScoreExists(pieceID)) return 0;
+    if (!IsScoreExists(piece)) return 0;
 
-    return m_PlayerScores[pieceID];
+    return m_PlayerScores[piece];
 }
 
-bool ScoreManager::IsScoreExists(TicTacToe::PieceID& pieceID)
+bool ScoreManager::IsScoreExists(TicTacToe::Piece& piece)
 {
-    if (!m_PlayerScores.contains(pieceID))
+    if (!m_PlayerScores.contains(piece))
     {
         DebugLog("Score isn't created for this player");
         return false;
