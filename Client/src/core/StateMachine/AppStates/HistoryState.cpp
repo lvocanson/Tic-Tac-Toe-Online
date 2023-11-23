@@ -173,7 +173,7 @@ void HistoryState::DisplaySelectedGame()
     if (m_CurrentGameIndex >= m_Games.size()) return;
 
     m_CurrentGame = m_Games[m_CurrentGameIndex];
-    m_CurrentMoveIndex = m_CurrentGame.GetMovesSize() - 1;
+    m_CurrentMoveIndex = static_cast<unsigned int>(m_CurrentGame.GetMovesSize()) - 1;
 
     m_GameNumberText->SetText(std::to_string(m_CurrentGameIndex + 1) + " / " + std::to_string(m_Games.size()));
     m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex + 1) + " / " + std::to_string(m_CurrentGame.GetMovesSize()));
