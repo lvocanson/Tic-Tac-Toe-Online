@@ -68,7 +68,6 @@ void ConnectionState::OnEnter()
 
             if (isNameValid)
             {
-                ClientApp::GetInstance().GetCurrentPlayer()->SetName(m_NameField->GetText());
                 ClientConnectionHandler::GetInstance().TryToConnectToServer(&ip);
                 m_IsTryingToConnect = true;
             }
@@ -124,6 +123,8 @@ void ConnectionState::OnUpdate(float dt)
         }
         case Connected:
         {
+            ClientApp::GetInstance().GetCurrentPlayer()->SetName(m_NameField->GetText());
+
             m_StateMachine->SwitchState("LobbyState");
             m_IpField->ClearErrorMessage();
             m_IsTryingToConnect = false;

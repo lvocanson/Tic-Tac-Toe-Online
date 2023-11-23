@@ -19,6 +19,7 @@ LobbyState::~LobbyState()
 
 void LobbyState::OnEnter()
 {
+    m_IsTryingToJoinLobby = false;
     m_IsLobbyInit = false;
 
     Message<MsgType::FetchLobbyList> message;
@@ -44,11 +45,6 @@ void LobbyState::OnUpdate(float dt)
     if (m_LeaveButtons)
     {
         m_LeaveButtons->Update(dt);
-    }
-    if (!m_IsInLobby)
-    {
-        m_Window->UnregisterDrawable(m_LeaveButtons);
-        RELEASE(m_LeaveButtons);
     }
 
     m_ReturnButton->Update(dt);
@@ -123,6 +119,7 @@ void LobbyState::OnReceiveData(const Json& serializeData)
     }
     case RejectJoinLobby:
     {
+        m_IsTryingToJoinLobby = false;
         DebugLog("Join lobby rejected");
         break;
     }
@@ -133,6 +130,9 @@ void LobbyState::OnReceiveData(const Json& serializeData)
 
 void LobbyState::JoinLobbyRequest(int lobbyID)
 {
+    if (m_IsTryingToJoinLobby) return;
+
+    m_IsTryingToJoinLobby = true;
     m_CurrentLobbyID = m_Lobbies[lobbyID].ID;
 
     Message<MsgType::TryToJoinLobby> message;

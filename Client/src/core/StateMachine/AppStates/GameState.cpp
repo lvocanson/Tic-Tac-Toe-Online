@@ -25,6 +25,10 @@ GameState::~GameState()
 
 void GameState::OnEnter()
 {
+    Message<MsgType::OnEnterLobby> message;
+    message.LobbyId = m_LobbyID;
+    ClientConnectionHandler::GetInstance().SendDataToServer(message);
+
     m_ScoreManager.Init();
     m_GameStateUI->Init();
 
@@ -41,10 +45,11 @@ void GameState::OnEnter()
     m_ReturnButton->SetButtonText("Return", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]()
     { 
-        Json j;
-        j["Type"] = "LeaveLobby";
-        j["ID"] = m_LobbyID;
-        ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
+        Message<MsgType::LeaveLobby> message;
+        message.LobbyId = m_LobbyID;
+        message.PlayerName = ClientApp::GetInstance().GetCurrentPlayer()->GetName();
+        ClientConnectionHandler::GetInstance().SendDataToServer(message);
+
         m_StateMachine->SwitchState("MenuState"); 
     });
 
@@ -200,13 +205,23 @@ void GameState::OnReceiveData(const Json& serializeData)
 
         //ClientApp::GetHistoryManager()->SaveGame(winner->GetData(), m_ScoreManager.GetCurrentGame());
 
-        m_ScoreManager.AddScoreToPlayer(message.Piece);
         m_ScoreManager.CreateNewGameHistory();
 
-        m_GameStateUI->UpdatePlayerScore(message.Piece, message.Winner, m_ScoreManager.GetPlayerScore(message.Piece));
-        m_GameStateUI->UpdateGameStateText(message.Winner + " won!");
+        if (message.IsDraw)
+        {
+            m_GameStateUI->UpdateGameStateText("Draw!");
+        }
+        else 
+        {
+            m_ScoreManager.AddScoreToPlayer(message.Piece);
+
+            m_GameStateUI->UpdatePlayerScore(message.Piece, message.Winner, m_ScoreManager.GetPlayerScore(message.Piece));
+            m_GameStateUI->UpdateGameStateText(message.Winner + " won!");
+
+        }
 
         ClearBoard();
+
         break;
 
     }

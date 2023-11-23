@@ -91,7 +91,7 @@ struct Message<MsgType::GameOver> : ISerializable
 {
     Message() = default;
     Message(const Json& j)
-        : Winner(j["Winner"]), Piece(j["Piece"])
+        : Winner(j["Winner"]), Piece(j["Piece"]), IsDraw(j["IsDraw"].get<bool>())
     {
     }
     ~Message() = default;
@@ -102,9 +102,11 @@ struct Message<MsgType::GameOver> : ISerializable
         j["Type"] = MsgType::GameOver;
         j["Winner"] = Winner;
         j["Piece"] = Piece;
+        j["IsDraw"] = IsDraw;
         return j;
     }
 
+    bool IsDraw = false;
     std::string Winner;
     TicTacToe::Piece Piece;
 };

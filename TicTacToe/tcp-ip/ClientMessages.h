@@ -36,13 +36,38 @@ struct Message<MsgType::OnEnterLobby> : ISerializable
     Json Serialize() override
     {
         Json j;
-        j["Type"] = MsgType::TryToJoinLobby;
+        j["Type"] = MsgType::OnEnterLobby;
         j["ID"] = LobbyId;
 
         return j;
     }
 
     unsigned int LobbyId;
+};
+
+template <>
+struct Message<MsgType::LeaveLobby> : ISerializable
+{
+    Message() = default;
+    Message(const Json& j)
+    {
+        LobbyId = j["ID"].get<unsigned int>();
+        PlayerName = j["PlayerName"];
+    }
+    ~Message() = default;
+
+    Json Serialize() override
+    {
+        Json j;
+        j["Type"] = MsgType::LeaveLobby;
+        j["ID"] = LobbyId;
+        j["PlayerName"] = PlayerName;
+
+        return j;
+    }
+
+    unsigned int LobbyId;
+    std::string PlayerName;
 };
 
 template <>

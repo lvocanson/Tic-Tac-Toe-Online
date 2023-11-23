@@ -211,9 +211,28 @@ void ServerApp::HandleRecv(ClientPtr sender)
             if (!m_StartedGames.contains(lb->Data.ID))
                 m_StartedGames.insert({lb->Data.ID, lb});
 
+            break;
+        }
+
+        // Send rejection message
+        if (!joined)
+        {
+            sender->Send(Message<RejectJoinLobby>().Serialize().dump());
+            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Rejected " << HASH_CLR(sender) << std::endl << DEF_CLR;
+        }
+        break;
+    }
+    case OnEnterLobby:
+    {
+        Message<OnEnterLobby> msg(parsedData);
+
+        for (auto& lb : m_Lobbies)
+        {
+            if (lb->Data.ID != msg.LobbyId) continue;
+
             if (lb->IsLobbyFull())
             {
-                std::string startingPlayer = rand() % 100 <= 50 ? lb->Data.PlayerX :  lb->Data.PlayerO;
+                std::string startingPlayer = rand() % 100 <= 50 ? lb->Data.PlayerX : lb->Data.PlayerO;
 
                 Message<GameStarted> toSend;
                 toSend.PlayerO = lb->Data.PlayerO;
@@ -222,22 +241,22 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
                 std::string opponentName = lb->GetOpponentName(m_Players[sender->GetName()]);
 
+                int i = 0;
                 for (auto& [adressIP, player] : m_Players)
                 {
                     if (lb->IsInLobby(player))
+                    {
                         m_GameServer->GetClientByName(adressIP)->Send(toSend.Serialize().dump());
+                        i++;
+                    }
+
+                    if (i == 2) break;
                 }
 
                 std::cout << STS_CLR << "Started game in lobby  " << INF_CLR << lb->Data.ID << std::endl << DEF_CLR;
             }
 
             break;
-        }
-        // Send rejection message
-        if (!joined)
-        {
-            sender->Send(Message<RejectJoinLobby>().Serialize().dump());
-            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Rejected " << HASH_CLR(sender) << std::endl << DEF_CLR;
         }
         break;
     }
@@ -284,12 +303,16 @@ void ServerApp::HandleRecv(ClientPtr sender)
                     m_GameServer->GetClientByName(adressIP)->Send(overMsg.Serialize().dump());
                 }
             }
+
+            lb->Board.SetEmpty();
+
             std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(playerName) << INF_CLR << " won the game." << std::endl << DEF_CLR;
         }
         else if (lb->Board.IsFull())
         {
             Message<GameOver> overMsg;
             overMsg.Winner = "Nobody";
+            overMsg.IsDraw = true;
             for (auto& [adressIP, player] : m_Players)
             {
                 if (lb->IsInLobby(player))
@@ -297,8 +320,29 @@ void ServerApp::HandleRecv(ClientPtr sender)
                     m_GameServer->GetClientByName(adressIP)->Send(overMsg.Serialize().dump());
                 }
             }
+            lb->Board.SetEmpty();
+
             std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] The game ended in a draw." << std::endl << DEF_CLR;
         }
+
+        break;
+    }
+    case LeaveLobby:
+    {
+        Message<LeaveLobby> msg(parsedData);
+        Lobby* lb = m_StartedGames[msg.LobbyId];
+
+        lb->RemovePlayerFromLobby(msg.PlayerName);
+        std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(msg.PlayerName) << INF_CLR << " has left." << std::endl << DEF_CLR;
+
+        if (m_StartedGames.contains(lb->Data.ID) && lb->IsLobbyEmpty())
+        {
+            m_StartedGames[lb->Data.ID] = nullptr;
+            m_StartedGames.erase(lb->Data.ID);
+            std::cout << INF_CLR << "Closing game " << lb->Data.ID << "..." << std::endl << DEF_CLR;
+        }
+
+        break;
     }
     default:
         std::cout << WRN_CLR << "Received JSON from " << HASH_CLR(sender) << WRN_CLR << " contains an unknown type." << std::endl << DEF_CLR;

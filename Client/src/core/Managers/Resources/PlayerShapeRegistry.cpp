@@ -29,7 +29,7 @@ void PlayerShapeRegistry::CreatePlayerShape(TicTacToe::Piece piece, sf::Color co
         shape->setOutlineThickness(OUTLINE_THICKNESS);
         shape->setOutlineColor(color);
         shape->setOrigin(shape->getSize().x * 0.5f, shape->getSize().y * 0.5f);
-        m_PlayerShapes.insert(std::make_pair(piece, shape));
+        m_PlayerShapes.insert({ piece, shape });
 
         break;
     }
@@ -41,7 +41,7 @@ void PlayerShapeRegistry::CreatePlayerShape(TicTacToe::Piece piece, sf::Color co
         shape->setOutlineThickness(OUTLINE_THICKNESS);
         shape->setOutlineColor(color);
         shape->setOrigin(shape->getRadius(), shape->getRadius());
-        m_PlayerShapes.insert(std::make_pair(piece, shape));
+        m_PlayerShapes.insert({ piece, shape });
 
         break;
     }

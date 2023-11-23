@@ -25,6 +25,7 @@ private:
     int m_CurrentLobbyID;
     bool m_IsLobbyInit = false;
     bool m_IsInLobby = false;
+    bool m_IsTryingToJoinLobby = false;
 
 
     Window* m_Window = nullptr;
