@@ -25,6 +25,8 @@ private:
 
     Window* m_Window = nullptr;
 
+    std::string m_Name = "";
+
     ButtonComponent* m_BackButton = nullptr;
     ButtonComponent* m_ConnectButton = nullptr;
 

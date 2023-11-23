@@ -2,9 +2,9 @@
 #include "PlayerShapeRegistry.h"
 #include <SFML/Graphics.hpp>
 
-sf::Drawable* PlayerShapeRegistry::GetPlayerShape(PlayerShapeType shapeType)
+sf::Drawable* PlayerShapeRegistry::GetPlayerShape(TicTacToe::Piece piece)
 {
-    return m_PlayerShapes[shapeType];
+    return m_PlayerShapes.at(piece);
 }
 
 void PlayerShapeRegistry::ClearPlayerShapes()
@@ -17,11 +17,11 @@ void PlayerShapeRegistry::ClearPlayerShapes()
     m_PlayerShapes.clear();
 }
 
-void PlayerShapeRegistry::CreatePlayerShape(PlayerShapeType shapeType, TicTacToe::PieceID id, sf::Color color)
+void PlayerShapeRegistry::CreatePlayerShape(TicTacToe::Piece piece, sf::Color color)
 {
-    switch (shapeType)
+    switch (piece)
     {
-    case Square:
+    case TicTacToe::Piece::X:
     {
         auto shape = new sf::RectangleShape;
         shape->setSize(sf::Vector2f(DEFAULT_PIECE_SIZE * 0.5f, DEFAULT_PIECE_SIZE * 0.5f));
@@ -29,20 +29,22 @@ void PlayerShapeRegistry::CreatePlayerShape(PlayerShapeType shapeType, TicTacToe
         shape->setOutlineThickness(OUTLINE_THICKNESS);
         shape->setOutlineColor(color);
         shape->setOrigin(shape->getSize().x * 0.5f, shape->getSize().y * 0.5f);
-        m_PlayerShapes.insert(std::make_pair(Square, shape));
+        m_PlayerShapes.insert({ piece, shape });
 
         break;
     }
 
-    case Circle:
+    case TicTacToe::Piece::O:
         auto shape = new sf::CircleShape;
         shape->setRadius(DEFAULT_PIECE_SIZE * 0.25f);
         shape->setFillColor(sf::Color::Transparent);
         shape->setOutlineThickness(OUTLINE_THICKNESS);
         shape->setOutlineColor(color);
         shape->setOrigin(shape->getRadius(), shape->getRadius());
-        m_PlayerShapes.insert(std::make_pair(Circle, shape));
+        m_PlayerShapes.insert({ piece, shape });
 
         break;
     }
+
+
 }

@@ -1,10 +1,8 @@
 #pragma once
 #include "BaseComponent.h"
 #include "TextComponent.h"
-#include "src/core/Managers/InputHandler.h"
-#include <memory>
 
-class ButtonComponent : public BaseComponent, public sf::Transformable
+class ButtonComponent : public BaseComponent
 {
 public:
     ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor);

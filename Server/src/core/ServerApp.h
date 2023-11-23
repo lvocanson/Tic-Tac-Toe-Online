@@ -18,6 +18,7 @@ public:
 private: // Game Server
     bool InitGameServer();
     void HandleGameServer();
+    void UnregisterPlayerFromServer(const std::string& player);
     void HandleRecv(ClientPtr sender);
     void CleanUpGameServer();
 

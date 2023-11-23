@@ -19,24 +19,24 @@ public:
     ScoreManager();
     ~ScoreManager() override;
 
-    void Init() override;
+    void Init() override {};
     void Clear() override;
 
     void InitPlayerScores(const std::vector<Player*>& allPlayers);
 
     void AddPlayerMove(const PlayerData& playerData, unsigned int lastCellPlayed);
-    void AddScoreToPlayer(TicTacToe::PieceID player);
+    void AddScoreToPlayer(TicTacToe::Piece);
 
-    unsigned int GetPlayerScore(TicTacToe::PieceID pieceID);
+    unsigned int GetPlayerScore(TicTacToe::Piece);
     const std::vector<const PlayerMove*>* GetCurrentGame() const { return m_CurrentGame; }
 
-    bool IsScoreExists(TicTacToe::PieceID& pieceID);
+    bool IsScoreExists(TicTacToe::Piece&);
     void CreateNewGameHistory();
     void ResetCurrentGame();
 
 private:
 
     // Player id -> score
-    std::map<TicTacToe::PieceID, unsigned int> m_PlayerScores;
+    std::map<TicTacToe::Piece, unsigned int> m_PlayerScores;
     std::vector<const PlayerMove*>* m_CurrentGame;
 };

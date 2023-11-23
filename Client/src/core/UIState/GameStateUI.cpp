@@ -5,7 +5,7 @@
 
 GameStateUI::GameStateUI(Window* window) : UIStateManager(window)
 {
-    m_PlayerScoreTexts = std::unordered_map<TicTacToe::PieceID, sf::Text*>();
+    m_PlayerScoreTexts = std::unordered_map<TicTacToe::Piece, sf::Text*>();
     m_Title = nullptr;
     m_GameStateText = nullptr;
     m_LobbyIDText = nullptr;
@@ -59,7 +59,7 @@ void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
 
         RegisterText(playerScoreText);
 
-        m_PlayerScoreTexts.insert(std::pair(player->GetPlayerID(), playerScoreText));
+        m_PlayerScoreTexts.insert(std::pair(player->GetPiece(), playerScoreText));
     }
     m_Window->UnregisterDrawable(m_GameStateText);
 }
@@ -92,15 +92,15 @@ void GameStateUI::UpdateGameStateText(const std::string& text)
     m_GameStateText->setString(text);
 }
 
-void GameStateUI::UpdatePlayerScore(const PlayerData& player, const unsigned int score)
+void GameStateUI::UpdatePlayerScore(const TicTacToe::Piece piece, const std::string& name, const unsigned int score)
 {
-    if (!m_PlayerScoreTexts.contains(player.Id))
+    if (!m_PlayerScoreTexts.contains(piece))
     {
-        DebugLog("Player score text with " + std::to_string(player.Id) + " is not found !");
+        DebugLog("Player score text with is not found !");
         return;
     }
 
-    m_PlayerScoreTexts.at(player.Id)->setString(player.Name + " : " + std::to_string(score));
+    m_PlayerScoreTexts.at(piece)->setString(name + " : " + std::to_string(score));
 }
 
 void GameStateUI::SetLobbyIDText(unsigned int& id)

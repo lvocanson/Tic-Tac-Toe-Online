@@ -16,22 +16,25 @@ namespace TicTacToe
         , m_Height(height)
         , m_Size(width* height)
         , m_AlignementGoal(alignementGoal)
-        , m_Board(new PieceID[m_Size])
+        , m_Board(new Piece[m_Size])
     {
         SetEmpty();
     }
 
     Board::~Board()
     {
-        delete[] m_Board;
-        m_Board = nullptr;
+        if (m_Board != nullptr)
+        {
+            delete[] m_Board;
+            m_Board = nullptr;
+        }
     }
 
     bool Board::IsFull() const
     {
         for (int i = 0; i < m_Size; i++)
         {
-            if (m_Board[i] == EMPTY_PIECE)
+            if (m_Board[i] == Piece::Empty)
             {
                 return false;
             }
@@ -40,14 +43,14 @@ namespace TicTacToe
     }
 
     // TODO: Needs to be reworked cauz it doesn't work if we change the grid size and the win condition
-    PieceID Board::IsThereAWinner() const
+    Piece Board::IsThereAWinner() const
     {
-        PieceID winner = EMPTY_PIECE;
+        Piece winner = Piece::Empty;
         unsigned int continuousPiecesCount = 0;
 
         for (int i = 0; i < m_Size; i++)
         {
-            if (m_Board[i] == EMPTY_PIECE)
+            if (m_Board[i] == Piece::Empty)
             {
                 continue;
             }
@@ -140,7 +143,7 @@ namespace TicTacToe
             }
         }
 
-        return EMPTY_PIECE;
+        return Piece::Empty;
     }
 
     unsigned int Board::GetRandomEmptyCell() const
@@ -151,7 +154,7 @@ namespace TicTacToe
 
         for (unsigned int i = 0; i < m_Size; i++)
         {
-            if (m_Board[i] == EMPTY_PIECE)
+            if (m_Board[i] == Piece::Empty)
             {
                 emptyCells.push_back(i);
             }
@@ -166,7 +169,7 @@ namespace TicTacToe
         m_Height = height;
         m_Size = width * height;
         delete[] m_Board;
-        m_Board = new PieceID[m_Size];
+        m_Board = new Piece[m_Size];
         SetEmpty();
     }
 
@@ -174,7 +177,7 @@ namespace TicTacToe
     {
         for (int i = 0; i < m_Size; i++)
         {
-            m_Board[i] = EMPTY_PIECE;
+            m_Board[i] = Piece::Empty;
         }
     }
 }

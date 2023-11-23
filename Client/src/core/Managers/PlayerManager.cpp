@@ -43,9 +43,9 @@ void PlayerManager::SwitchPlayerTurn()
     m_CurrentPlayer = m_RegisteredPlayers[m_CurrentPlayerIndex];
 }
 
-void PlayerManager::CreateNewPlayer(const std::string& name, const sf::Color color, const PlayerShapeType shapeType)
+void PlayerManager::CreateNewPlayer(const std::string& name, const sf::Color color, const TicTacToe::Piece piece)
 {
-    const auto newPlayer = new Player(name, color, shapeType);
+    const auto newPlayer = new Player(name, color, piece);
 
     m_RegisteredPlayers.push_back(newPlayer);
     m_PlayerCount++;
@@ -55,7 +55,7 @@ void PlayerManager::CreateNewPlayer(const std::string& name, const sf::Color col
         m_CurrentPlayer = newPlayer;
     }
 
-    PlayerShapeRegistry::CreatePlayerShape(shapeType, newPlayer->GetPlayerID(), color);
+    PlayerShapeRegistry::CreatePlayerShape(newPlayer->GetPiece(), color);
 }
 
 void PlayerManager::UnregisterPlayer(Player* player)
