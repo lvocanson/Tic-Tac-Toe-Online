@@ -159,9 +159,16 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
     if (receivedData["Type"] == "Login")
     {
-        m_Players.insert({sender->GetName(), receivedData["UserName"]});
-
-        std::cout << STS_CLR << "Registered player: " << HASH_STRING_CLR(receivedData["UserName"]) << STS_CLR << " into server." << std::endl << DEF_CLR;
+        if (!m_Players.contains(sender->GetName()))
+        {
+            m_Players.insert({ sender->GetName(), receivedData["UserName"] });
+            std::cout << STS_CLR << "Logged in player: " << HASH_STRING_CLR(receivedData["UserName"]) << STS_CLR << " into server." << std::endl << DEF_CLR;
+        }
+        else
+        {
+            std::cout << WRN_CLR << "Player " << HASH_STRING_CLR(m_Players[sender->GetName()]) << WRN_CLR << " tried to login again." << std::endl << DEF_CLR;
+            return;
+        }
     }
     ////////// Lobby State //////////
     else if (receivedData["Type"] == "GetLobbyList")
