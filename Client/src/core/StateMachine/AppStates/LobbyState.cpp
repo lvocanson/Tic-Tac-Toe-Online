@@ -30,7 +30,7 @@ void LobbyState::OnEnter()
     GetLobbyListNotification message2;
     ClientConnectionHandler::GetInstance().SendDataToServer(message2.Serialize().dump());
 
-    m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
+    m_ReturnButton = new ButtonComponent(sf::Vector2f(500, 500), sf::Vector2f(200, 100), sf::Color::Red);
     m_ReturnButton->SetButtonText("Return To Menu", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]()
         {
@@ -94,7 +94,8 @@ void LobbyState::OnReceiveData(const Json& serializeData)
 
             if (!m_IsLobbyInit)
             {
-                auto* m_LobbyButton = new ButtonComponent(sf::Vector2f(100, i * static_cast<float>(110)), sf::Vector2f(200, 100), sf::Color::Blue);
+                sf::Color Emerald(1, 215, 88);
+                auto* m_LobbyButton = new ButtonComponent(sf::Vector2f(500, (i * static_cast<float>(110) + 100)), sf::Vector2f(200, 100), Emerald);
                 m_LobbyButton->SetButtonText("Lobby " + std::to_string(id), sf::Color::White, 30, TextAlignment::Center);
                 m_LobbyButton->SetOnClickCallback([=]()
                 {

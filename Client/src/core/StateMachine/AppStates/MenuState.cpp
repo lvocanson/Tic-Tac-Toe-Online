@@ -16,21 +16,22 @@ void MenuState::OnEnter()
 {
     if (ClientConnectionHandler::GetInstance().IsConnected())
     {
-        m_PlayButton = new ButtonComponent(sf::Vector2f(100, 100), sf::Vector2f(200, 100), sf::Color::Blue);
-        m_PlayButton->SetButtonText("Play", sf::Color::White, 30, TextAlignment::Center);
-        m_PlayButton->SetOnClickCallback([this]()
+        sf::Color Emerald(1, 215, 88);
+        m_ConnectButton = new ButtonComponent(sf::Vector2f(((m_Window->GetWidth() * 0.5) - 150), 100), sf::Vector2f(200, 100), Emerald);
+        m_ConnectButton->SetButtonText("Play", sf::Color::White, 50, TextAlignment::Center);
+        m_ConnectButton->SetOnClickCallback([this]()
             {
                 m_StateMachine->SwitchState("LobbyState");
             });
-        m_Window->RegisterDrawable(m_PlayButton);
+        m_Window->RegisterDrawable(m_ConnectButton);
 
-        m_DisconnectButton = new ButtonComponent(sf::Vector2f(300, 500), sf::Vector2f(200, 100), sf::Color::Red);
-        m_DisconnectButton->SetButtonText("Disconnect", sf::Color::White, 30, TextAlignment::Center);
+        m_DisconnectButton = new ButtonComponent(sf::Vector2f(((m_Window->GetWidth() * 0.5) - 150), 500), sf::Vector2f(200, 100), sf::Color::Red);
+        m_DisconnectButton->SetButtonText("Disconnect", sf::Color::White, 50, TextAlignment::Center);
         m_DisconnectButton->SetOnClickCallback([this]()
             {
                 ClientConnectionHandler::GetInstance().Disconnect();
-                m_Window->UnregisterDrawable(m_PlayButton);
-                RELEASE(m_PlayButton);
+                m_Window->UnregisterDrawable(m_ConnectButton);
+                RELEASE(m_ConnectButton);
                 ShowConnectionButton();
                 m_Window->UnregisterDrawable(m_DisconnectButton);
             });
@@ -41,16 +42,18 @@ void MenuState::OnEnter()
     {
         ShowConnectionButton();
     }
-
-    m_HistoryButton = new ButtonComponent(sf::Vector2f(100, 300), sf::Vector2f(200, 100), sf::Color::Green);
-    m_HistoryButton->SetButtonText("History", sf::Color::White, 30, TextAlignment::Center);
+    
+    sf::Color GreenDuck(4, 139, 154);
+    m_HistoryButton = new ButtonComponent(sf::Vector2f(((m_Window->GetWidth() * 0.5) - 150), 300), sf::Vector2f(200, 100), GreenDuck);
+    m_HistoryButton->SetButtonText("History", sf::Color::White, 50, TextAlignment::Center);
     m_HistoryButton->SetOnClickCallback([this]()
         {
             m_StateMachine->SwitchState("HistoryState");
         });
 
-    m_QuitButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
-    m_QuitButton->SetButtonText("Quit", sf::Color::White, 30, TextAlignment::Center);
+    sf::Color OrangeRed(231, 62, 1);
+    m_QuitButton = new ButtonComponent(sf::Vector2f(((m_Window->GetWidth() * 0.5) - 150), 500), sf::Vector2f(200, 100), OrangeRed);
+    m_QuitButton->SetButtonText("Quit", sf::Color::White, 50, TextAlignment::Center);
     m_QuitButton->SetOnClickCallback([this]()
         {
             ClientApp::GetInstance().Shutdown();
@@ -62,19 +65,20 @@ void MenuState::OnEnter()
 
 void MenuState::ShowConnectionButton()
 {
-    m_PlayButton = new ButtonComponent(sf::Vector2f(100, 100), sf::Vector2f(200, 100), sf::Color::Blue);
-    m_PlayButton->SetButtonText("Connection", sf::Color::White, 30, TextAlignment::Center);
-    m_PlayButton->SetOnClickCallback([this]()
+    sf::Color Carrot(244, 102, 27);
+    m_ConnectButton = new ButtonComponent(sf::Vector2f(((m_Window->GetWidth() * 0.5) - 150), 100), sf::Vector2f(200, 100), Carrot);
+    m_ConnectButton->SetButtonText("Connection", sf::Color::White, 50, TextAlignment::Center);
+    m_ConnectButton->SetOnClickCallback([this]()
         {
             m_StateMachine->SwitchState("ConnectionState");
         });
-    m_Window->RegisterDrawable(m_PlayButton);
+    m_Window->RegisterDrawable(m_ConnectButton);
 }
 
 
 void MenuState::OnUpdate(float dt)
 {
-    m_PlayButton->Update(dt);
+    m_ConnectButton->Update(dt);
     m_HistoryButton->Update(dt);
     m_QuitButton->Update(dt);
 
@@ -84,14 +88,14 @@ void MenuState::OnUpdate(float dt)
 
 void MenuState::OnExit()
 {
-    m_Window->UnregisterDrawable(m_PlayButton);
+    m_Window->UnregisterDrawable(m_ConnectButton);
     m_Window->UnregisterDrawable(m_HistoryButton);
     m_Window->UnregisterDrawable(m_QuitButton);
 
     if (m_DisconnectButton)
         m_Window->UnregisterDrawable(m_DisconnectButton);
 
-    RELEASE(m_PlayButton);
+    RELEASE(m_ConnectButton);
     RELEASE(m_HistoryButton);
     RELEASE(m_QuitButton);
     RELEASE(m_DisconnectButton);
