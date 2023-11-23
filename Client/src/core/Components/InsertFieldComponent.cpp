@@ -12,6 +12,8 @@ InsertFieldComponent::InsertFieldComponent()
     m_Rectangle.setOutlineColor(sf::Color::White);
     m_Rectangle.setOutlineThickness(1.0f);
 
+    m_Text.SetColor(sf::Color::Black);
+
     m_Label.SetText("InsertField");
     m_Label.SetColor(sf::Color(171, 171, 171));
     m_Label.SetCharacterSize(16);
