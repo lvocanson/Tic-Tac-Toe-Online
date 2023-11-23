@@ -36,6 +36,7 @@ struct Message<MsgType::JoinLobby> : ISerializable
     {
         Json j;
         j["Type"] = MsgType::JoinLobby;
+        j["ID"] = LobbyId;
 
         return j;
     }

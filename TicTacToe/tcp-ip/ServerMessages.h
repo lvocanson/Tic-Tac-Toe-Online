@@ -7,8 +7,10 @@ struct Message<MsgType::LobbyList> : ISerializable
 {
     Message() = default;
     Message(const Json& j)
-        : LobbiesData(j["Lobbies"].size())
+        : LobbiesData()
     {
+        LobbiesData.reserve(j["Lobbies"].size());
+
         for (auto& lobby : j["Lobbies"])
         {
             LobbiesData.push_back(LobbyData(lobby));

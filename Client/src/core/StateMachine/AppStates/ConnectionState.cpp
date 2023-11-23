@@ -1,6 +1,7 @@
 #include "ConnectionState.h"
 #include "src/core/Managers/Resources/FontRegistry.h"
 #include "src/core/ClientApp.h"
+#include "tcp-ip/ClientMessages.h"
 
 #include <regex>
 #include <SFML/Network/IpAddress.hpp>
@@ -58,6 +59,8 @@ void ConnectionState::OnEnter()
                 m_NameField->ShowErrorMessage("Username should be more than 2 characters!");
             }
             else isNameValid = true;
+
+            m_Name = m_NameField->GetText();
 
             const std::string ip = std::string(TcpIp::IpAddress::FromPhrase(m_IpField->GetText()).ToString());
 
@@ -124,6 +127,11 @@ void ConnectionState::OnUpdate(float dt)
             m_StateMachine->SwitchState("LobbyState");
             m_IpField->ClearErrorMessage();
             m_IsTryingToConnect = false;
+
+            Message<MsgType::Login> message;
+            message.Username = m_Name;
+            ClientConnectionHandler::GetInstance().SendDataToServer(message);
+
             timeOutTimer = 0.0f;
             break;
         }
