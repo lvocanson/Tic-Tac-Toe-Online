@@ -1,7 +1,7 @@
 #include "GameState.h"
 
-#include "GameFinishedMessage.h"
-#include "IsLobbyFullNotification.h"
+#include "tcp-ip/Messages/GameFinishedMessage.h"
+#include "tcp-ip/Notifications/IsLobbyFullNotification.h"
 #include "tcp-ip/Messages/PlayerMoveMessage.h"
 #include "src/core/Window.h"
 #include "src/core/ClientApp.h"
