@@ -29,5 +29,4 @@ private:
 
     int m_PlayerCount;
     int m_CurrentPlayerIndex;
-
 };

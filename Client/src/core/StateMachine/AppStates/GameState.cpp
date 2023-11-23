@@ -31,6 +31,8 @@ void GameState::OnEnter()
 
     m_ScoreManager.Init();
     m_GameStateUI->Init();
+    m_GameStateUI->SetLobbyIDText(m_LobbyID);
+    m_GameStateUI->SetUserName(ClientApp::GetInstance().GetCurrentPlayer()->GetName());
 
     m_MaxPlayerTurnTime = ClientApp::GetGameSettings().GetPlayerMoveLimitTime();
     m_IsTimerOn = ClientApp::GetGameSettings().IsTimerOn();
@@ -42,7 +44,7 @@ void GameState::OnEnter()
     }
 
     m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
-    m_ReturnButton->SetButtonText("Return", sf::Color::White, 30, TextAlignment::Center);
+    m_ReturnButton->SetButtonText("Leave game", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]()
     { 
         Message<MsgType::LeaveLobby> message;
@@ -182,6 +184,7 @@ void GameState::OnReceiveData(const Json& serializeData)
 
         m_IsPlayerTurn = message.StartPlayer == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
 
+        m_GameStateUI->UpdateGameStateText("It's " + message.StartPlayer + " to start the game!");
         m_IsGameStarted = true;
         m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
         // m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());

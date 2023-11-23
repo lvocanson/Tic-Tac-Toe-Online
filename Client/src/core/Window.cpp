@@ -1,5 +1,6 @@
 #include "Window.h"
 
+
 sf::RenderWindow* Window::m_Window = nullptr;
 bool Window::m_IsFocused = true;
 
@@ -20,8 +21,16 @@ void Window::Create(const char* title, unsigned int width, unsigned int height)
 {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 4;
-
+    
     m_Window->create(sf::VideoMode(width, height), title, sf::Style::Close, settings);
+
+    auto image = sf::Image{};
+    if (!image.loadFromFile("resources/icon.png"))
+    {
+        throw std::runtime_error("Failed to load icon");
+    }
+    m_Window->setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
+
     m_Window->setVerticalSyncEnabled(true);
     m_Window->setFramerateLimit(60);
     m_Window->setMouseCursorVisible(true);
