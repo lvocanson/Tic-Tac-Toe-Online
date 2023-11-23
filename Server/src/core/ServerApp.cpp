@@ -131,7 +131,6 @@ void ServerApp::HandleRecv(ClientPtr sender)
     }
     MsgType type = Message<>::GetType(parsedData);
 
-
     // TODO: Add safeguards before accessing members of this class. (e.g. check if the player is in a lobby before accessing m_StartedGames)
     using enum MsgType;
     switch (type)
@@ -225,13 +224,9 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
                 for (auto& [adressIP, player] : m_Players)
                 {
-                    if (player != opponentName) continue;
-
-                    m_GameServer->GetClientByName(adressIP)->Send(Message<GameStarted>().Serialize().dump());
-
-                    break;
+                    if (lb->IsInLobby(player))
+                        m_GameServer->GetClientByName(adressIP)->Send(toSend.Serialize().dump());
                 }
-                sender->Send(Message<GameStarted>().Serialize().dump());
 
                 std::cout << STS_CLR << "Started game in lobby  " << INF_CLR << lb->Data.ID << std::endl << DEF_CLR;
             }
@@ -265,6 +260,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
         Message<AcceptMakeMove> acceptMsg;
         acceptMsg.LobbyId = msg.LobbyId;
         acceptMsg.Cell = msg.Cell;
+        acceptMsg.Piece = msg.Piece;
         for (auto& [adressIP, player] : m_Players)
         {
             if (lb->IsInLobby(player))
@@ -280,6 +276,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
         {
             Message<GameOver> overMsg;
             overMsg.Winner = winner == TicTacToe::Piece::X ? lb->Data.PlayerX : lb->Data.PlayerO;
+            overMsg.Piece = winner;
             for (auto& [adressIP, player] : m_Players)
             {
                 if (lb->IsInLobby(player))

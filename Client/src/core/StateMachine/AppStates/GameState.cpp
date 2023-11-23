@@ -133,8 +133,12 @@ void GameState::SwitchPlayerTurn()
 
 void GameState::SendPlacedPieceToServer(unsigned int cell)
 {
-    // PlayerMoveMessage message(ClientApp::GetInstance().GetCurrentPlayer()->GetName(), cell, m_LobbyID);
-    // ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
+    Message<MsgType::MakeMove> message;
+    message.Cell = cell;
+    message.LobbyId = m_LobbyID;
+    message.Piece = PlayerManager::GetCurrentPlayer()->GetPiece();
+
+    ClientConnectionHandler::GetInstance().SendDataToServer(message);
 }
 
 bool GameState::IsMouseHoverPiece(unsigned int i)
@@ -174,6 +178,7 @@ void GameState::OnReceiveData(const Json& serializeData)
         m_IsPlayerTurn = message.StartPlayer == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
 
         StartGame();
+        break;
     }
     case AcceptMakeMove:
     {
@@ -181,6 +186,8 @@ void GameState::OnReceiveData(const Json& serializeData)
 
         PlacePlayerPieceOnBoard(message.Cell, message.Piece);
         SwitchPlayerTurn();
+        break;
+
     }
     case DeclineMakeMove:
     {
@@ -200,7 +207,11 @@ void GameState::OnReceiveData(const Json& serializeData)
         m_GameStateUI->UpdateGameStateText(message.Winner + " won!");
 
         ClearBoard();
+        break;
+
     }
+    default:
+       break;
     }
 }
 

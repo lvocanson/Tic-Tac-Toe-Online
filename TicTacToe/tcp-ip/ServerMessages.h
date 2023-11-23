@@ -39,7 +39,7 @@ struct Message<MsgType::GameStarted> : ISerializable
 {
     Message() = default;
     Message(const Json& j)
-        : StartPlayer(j["StartPlayer"]), PlayerX(j["PlayerX"]), PlayerO(j[PlayerO])
+        : StartPlayer(j["StartPlayer"]), PlayerX(j["PlayerX"]), PlayerO(j["PlayerO"])
     {
     }
     ~Message() = default;
@@ -64,7 +64,9 @@ struct Message<MsgType::AcceptMakeMove> : ISerializable
 {
     Message() = default;
     Message(const Json& j)
-        : LobbyId(j["ID"]), Cell(j["Cell"])
+        : LobbyId(j["ID"].get<unsigned int>())
+        , Cell(j["Cell"].get<unsigned int>())
+        , Piece(j["Piece"].get<TicTacToe::Piece>())
     {
     }
     ~Message() = default;
@@ -75,11 +77,13 @@ struct Message<MsgType::AcceptMakeMove> : ISerializable
         j["Type"] = MsgType::AcceptMakeMove;
         j["ID"] = LobbyId;
         j["Cell"] = Cell;
+        j["Piece"] = Piece;
         return j;
     }
 
     unsigned int LobbyId;
     unsigned int Cell;
+    TicTacToe::Piece Piece;
 };
 
 template <>
@@ -87,7 +91,7 @@ struct Message<MsgType::GameOver> : ISerializable
 {
     Message() = default;
     Message(const Json& j)
-        : Winner(j["Winner"])
+        : Winner(j["Winner"]), Piece(j["Piece"])
     {
     }
     ~Message() = default;
@@ -97,8 +101,10 @@ struct Message<MsgType::GameOver> : ISerializable
         Json j;
         j["Type"] = MsgType::GameOver;
         j["Winner"] = Winner;
+        j["Piece"] = Piece;
         return j;
     }
 
     std::string Winner;
+    TicTacToe::Piece Piece;
 };
