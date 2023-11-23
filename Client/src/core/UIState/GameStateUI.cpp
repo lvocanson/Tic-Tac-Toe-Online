@@ -7,8 +7,9 @@ GameStateUI::GameStateUI(Window* window) : UIStateManager(window)
 {
     m_PlayerScoreTexts = std::unordered_map<TicTacToe::Piece, sf::Text*>();
     m_Title = nullptr;
-    m_PlayerTurnText = nullptr;
     m_GameStateText = nullptr;
+    m_LobbyIDText = nullptr;
+    m_UserName = nullptr;
     m_ProgressBar = nullptr;
 }
 
@@ -33,22 +34,13 @@ void GameStateUI::Init()
 
     RegisterText(m_Title);
 
-    m_PlayerTurnText = new sf::Text();
-    m_PlayerTurnText->setFont(font);
-    m_PlayerTurnText->setString("");
-    m_PlayerTurnText->setCharacterSize(24);
-    m_PlayerTurnText->setStyle(sf::Text::Bold);
-    m_PlayerTurnText->setPosition(m_Window->GetWidth() - m_PlayerTurnText->getGlobalBounds().width - 75, m_Window->GetHeight() * 0.5f - m_PlayerTurnText->getGlobalBounds().height);
-
-    RegisterText(m_PlayerTurnText);
-
     m_GameStateText = new sf::Text();
     m_GameStateText->setFont(font);
     m_GameStateText->setString("Waiting for another player...");
-    m_GameStateText->setCharacterSize(18);
+    m_GameStateText->setCharacterSize(38);
     m_GameStateText->setFillColor(sf::Color::White);
     m_GameStateText->setStyle(sf::Text::Bold);
-    m_GameStateText->setPosition(m_PlayerTurnText->getPosition().x, 100);
+    m_GameStateText->setPosition(m_Window->GetCenter().x - m_GameStateText->getGlobalBounds().width * 0.5f + 20, 0.0f + 70);
 
     RegisterText(m_GameStateText);
 }
@@ -63,18 +55,19 @@ void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
         playerScoreText->setCharacterSize(24);
         playerScoreText->setFillColor(sf::Color::White);
         playerScoreText->setStyle(sf::Text::Bold);
-        playerScoreText->setPosition(75, m_Window->GetHeight() * 0.5f - playerScoreText->getGlobalBounds().height + 25 * m_PlayerScoreTexts.size());
+        playerScoreText->setPosition(55, m_Window->GetHeight() * 0.5f - playerScoreText->getGlobalBounds().height + 25 * m_PlayerScoreTexts.size());
 
         RegisterText(playerScoreText);
 
         m_PlayerScoreTexts.insert(std::pair(player->GetPiece(), playerScoreText));
     }
+    m_Window->UnregisterDrawable(m_GameStateText);
 }
 
 void GameStateUI::InitProgressBar(const float maxValue)
 {
     m_ProgressBar = new ProgressBar();
-    m_ProgressBar->SetPosition(sf::Vector2f(m_PlayerTurnText->getPosition().x, m_PlayerTurnText->getPosition().y + 60));
+    m_ProgressBar->SetPosition(sf::Vector2f(m_GameStateText->getPosition().x, m_GameStateText->getPosition().y + 60));
     m_ProgressBar->SetSize(sf::Vector2f(200, 20));
     m_ProgressBar->SetMaxValue(100);
     m_ProgressBar->SetForegroundColor(PlayerManager::GetCurrentPlayer()->GetColor());
@@ -87,8 +80,8 @@ void GameStateUI::InitProgressBar(const float maxValue)
 
 void GameStateUI::UpdatePlayerTurnText(const PlayerData& data)
 {
-    m_PlayerTurnText->setString(data.Name + " turn");
-    m_PlayerTurnText->setFillColor(data.Color);
+    m_GameStateText->setString(data.Name + " turn");
+    m_GameStateText->setFillColor(data.Color);
 
     if (m_ProgressBar)
         m_ProgressBar->SetForegroundColor(data.Color);
@@ -110,6 +103,32 @@ void GameStateUI::UpdatePlayerScore(const TicTacToe::Piece piece, const std::str
     m_PlayerScoreTexts.at(piece)->setString(name + " : " + std::to_string(score));
 }
 
+void GameStateUI::SetLobbyIDText(unsigned int& id)
+{
+    m_LobbyIDText = new sf::Text();
+    m_LobbyIDText->setFont(*FontRegistry::GetFont("coolvetica.otf"));
+    m_LobbyIDText->setString("LobbyID: " + std::to_string(id));
+    m_LobbyIDText->setCharacterSize(24);
+    m_LobbyIDText->setFillColor(sf::Color::White);
+    m_LobbyIDText->setStyle(sf::Text::Bold);
+    m_LobbyIDText->setPosition(55, 55);
+
+    RegisterText(m_LobbyIDText);
+}
+
+void GameStateUI::SetUserName(const std::string username)
+{
+    m_UserName = new sf::Text();
+    m_UserName->setFont(*FontRegistry::GetFont("coolvetica.otf"));
+    m_UserName->setString("User: " + username);
+    m_UserName->setCharacterSize(24);
+    m_UserName->setFillColor(sf::Color::White);
+    m_UserName->setStyle(sf::Text::Bold);
+    m_UserName->setPosition(55, 80);
+
+    RegisterText(m_UserName);
+}
+
 void GameStateUI::Clear()
 {
     for (auto& text : m_PlayerScoreTexts)
@@ -117,7 +136,8 @@ void GameStateUI::Clear()
         NULLPTR(text.second);
     }
 
-    NULLPTR(m_PlayerTurnText);
     NULLPTR(m_GameStateText);
+    NULLPTR(m_LobbyIDText);
+    NULLPTR(m_UserName);
     NULLPTR(m_Title);
 }
