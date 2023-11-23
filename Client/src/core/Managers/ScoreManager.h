@@ -6,12 +6,6 @@
 #include "src/core/Player.h"
 #include "IManager.h"
 
-struct PlayerMove
-{
-    PlayerData playerData;
-    unsigned int BoardCell;
-};
-
 class ScoreManager : public IManager
 {
 public:
@@ -24,7 +18,7 @@ public:
 
     void InitPlayerScores(const std::vector<Player*>& allPlayers);
 
-    void AddPlayerMove(const PlayerData& playerData, unsigned int lastCellPlayed);
+    void AddPlayerMove(PlayerData& playerData, unsigned int lastCellPlayed);
     void AddScoreToPlayer(TicTacToe::Piece);
 
     unsigned int GetPlayerScore(TicTacToe::Piece);

@@ -2,6 +2,7 @@
 #include "src/tcp-ip/TcpIpServer.h"
 #include <src/tcp-ip/HtmlServer.h>
 #include "game/Lobby.h"
+#include <game/GameData.h>
 
 class ServerApp
 {
@@ -39,6 +40,7 @@ private: // Lobbies
     // HashMap <Address (connection name), Username>
     std::unordered_map<std::string, std::string> m_Players;
     std::vector<Lobby*> m_Lobbies;
+    std::vector<GameData> m_SavedGames;
 
 private: //Game
 

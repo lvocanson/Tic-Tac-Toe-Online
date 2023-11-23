@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="game\GameData.cpp" />
     <ClCompile Include="game\GameMode.cpp" />
     <ClCompile Include="game\IDGenerator.cpp" />
     <ClCompile Include="game\Lobby.cpp" />
@@ -19,6 +20,7 @@
     <ClCompile Include="tcp-ip\TcpIpExceptions.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="game\GameData.h" />
     <ClInclude Include="tcp-ip\ClientMessages.h" />
     <ClInclude Include="tcp-ip\Message.h" />
     <ClInclude Include="game\GameMode.h" />

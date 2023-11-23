@@ -1,22 +1,6 @@
 #pragma once
 #include "src/core/Managers/ScoreManager.h"
-
-class GameData
-{
-public:
-
-    GameData(const PlayerData* winner, const std::vector<const PlayerMove*>* allMoves);
-    ~GameData();
-
-    const std::vector<const PlayerMove*>* GetMoves() const { return AllMoves; }
-    const PlayerMove* GetMove(unsigned int moveIndex) const { return AllMoves->at(moveIndex); }
-    size_t GetMovesSize() const { return AllMoves->size(); }
-
-private:
-
-    const PlayerData* Winner;
-    const std::vector<const PlayerMove*>* AllMoves;
-};
+#include "game/GameData.h"
 
 class GameHistoryManager : public IManager
 {
@@ -27,7 +11,7 @@ public:
     void Init() override {};
     void Clear() override;
 
-    void SaveGame(const PlayerData* winner, const std::vector<const PlayerMove*>* playerMoves);
+    void SaveGame(const std::vector<const PlayerMove*>* playerMoves);
 
     size_t GetGameHistorySize() const { return m_GameHistory.size(); }
     GameData* GetGameData(unsigned int gameID) const;

@@ -33,10 +33,11 @@ void ScoreManager::InitPlayerScores(const std::vector<Player*>& allPlayers)
     }
 }
 
-void ScoreManager::AddPlayerMove(const PlayerData& playerData, unsigned int lastCellPlayed)
+void ScoreManager::AddPlayerMove(PlayerData& playerData, unsigned int lastCellPlayed)
 {
     const auto playerMove = new PlayerMove{
-        .playerData = playerData,
+        .PlayerName = playerData.Name,
+        .PlayerPiece = playerData.Piece,
         .BoardCell = lastCellPlayed
     };
 
