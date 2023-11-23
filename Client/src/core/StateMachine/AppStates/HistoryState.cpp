@@ -17,6 +17,10 @@ HistoryState::~HistoryState()
 
 void HistoryState::OnEnter()
 {
+    m_CurrentGameIndex = 0;
+    m_CurrentMoveIndex = 0;
+    m_CurrentGame = nullptr;
+
     m_PreviousMoveButton = new ButtonComponent(sf::Vector2f(500, 50), sf::Vector2f(50, 50), sf::Color::Green);
     m_PreviousMoveButton->SetButtonText("<", sf::Color::White, 30, TextAlignment::Center);
     m_PreviousMoveButton->SetOnClickCallback([this]()

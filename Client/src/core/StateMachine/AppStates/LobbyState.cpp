@@ -24,9 +24,6 @@ void LobbyState::OnEnter()
 {
     m_IsLobbyInit = false;
 
-    RegisterPlayerMessage message(ClientApp::GetInstance().GetCurrentPlayer()->GetName());
-    ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
-
     GetLobbyListNotification message2;
     ClientConnectionHandler::GetInstance().SendDataToServer(message2.Serialize().dump());
 
