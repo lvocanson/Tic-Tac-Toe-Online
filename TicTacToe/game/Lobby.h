@@ -12,12 +12,14 @@ struct LobbyData : ISerializable
     Json Serialize() override;
 
     int ID = -1;
+    bool IsFastMode = false;
     std::string PlayerX, PlayerO;
 };
 
 struct Lobby
 {
     Lobby();
+    Lobby(bool isFastMode);
     Lobby(const std::string& playerX, const std::string& playerO);
     Lobby(const int id, const std::string& playerX, const std::string& playerO);
     ~Lobby() = default;

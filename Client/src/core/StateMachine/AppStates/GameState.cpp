@@ -129,7 +129,7 @@ void GameState::SwitchPlayerTurn()
 {
     m_IsPlayerTurn = !m_IsPlayerTurn;
     m_PlayerManager.SwitchPlayerTurn();
-    m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetOpponentPlayer()->GetData());
+    m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetCurrentPlayer()->GetData());
 
     if (m_IsTimerOn)
     {
@@ -184,7 +184,7 @@ void GameState::OnReceiveData(const Json& serializeData)
 
         m_IsPlayerTurn = message.StartPlayer == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
 
-        m_GameStateUI->UpdateGameStateText("It's " + message.StartingPlayer + " to start the game!");
+        m_GameStateUI->UpdateGameStateText("It's " + message.StartPlayer + " to start the game!");
         m_IsGameStarted = true;
         m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
         // m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());

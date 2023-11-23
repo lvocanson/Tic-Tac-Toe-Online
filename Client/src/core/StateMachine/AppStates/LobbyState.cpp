@@ -85,16 +85,18 @@ void LobbyState::OnReceiveData(const Json& serializeData)
         for (const auto& lobby : lobbyList.LobbiesData)
         {
             int id = lobby.ID;
+            float xPosition = (i < 3) ? 500.0f : 700.0f;
+            float yPosition = (i % 3) * 110.0f + 100.0f;
+            sf::Color Emerald = (i < 3) ? sf::Color(1, 215, 88) : sf::Color(255, 0, 0);
 
             if (!m_IsLobbyInit)
             {
-                sf::Color Emerald(1, 215, 88);
-                auto* m_LobbyButton = new ButtonComponent(sf::Vector2f(500, (i * static_cast<float>(110) + 100)), sf::Vector2f(200, 100), Emerald);
+                auto* m_LobbyButton = new ButtonComponent(sf::Vector2f(xPosition, yPosition), sf::Vector2f(200, 100), Emerald);
                 m_LobbyButton->SetButtonText("Lobby " + std::to_string(id), sf::Color::White, 30, TextAlignment::Center);
                 m_LobbyButton->SetOnClickCallback([=]()
-                {
-                    JoinLobbyRequest(i);
-                });
+                    {
+                        JoinLobbyRequest(i);
+                    });
 
                 m_Lobbies.emplace_back(id, "", "");
                 m_LobbyButtons.push_back(m_LobbyButton);

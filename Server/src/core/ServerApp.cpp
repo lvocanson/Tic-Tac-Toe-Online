@@ -14,7 +14,7 @@
 #define WEB_PFX INF_CLR << '[' << STS_CLR << "WEB" << INF_CLR << "] " // Web server prefix
 
 
-constexpr int MAXIMUM_LOBBIES = 3;
+constexpr int MAXIMUM_LOBBIES = 6;
 
 void ServerApp::Init()
 {
@@ -595,6 +595,11 @@ void ServerApp::CreateLobbies()
     for (int i = 0; i < MAXIMUM_LOBBIES; i++)
     {
         m_Lobbies.emplace_back(new Lobby());
+        if (i > 2 )
+        {
+            bool isFastMode = true;
+            m_Lobbies.emplace_back(new Lobby(isFastMode));
+        }
     }
 }
 

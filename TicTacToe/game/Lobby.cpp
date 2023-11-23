@@ -13,6 +13,14 @@ LobbyData::LobbyData(const Json& j)
 {
 }
 
+Lobby::Lobby(bool isFastMode)
+{
+    Data.ID = IDGenerator::GenerateLobbyID();
+    Data.PlayerX = "";
+    Data.PlayerO = "";
+    Data.IsFastMode = isFastMode;
+}
+
 Lobby::Lobby(const std::string& playerX, const std::string& playerO)
 {
     Data.ID = IDGenerator::GenerateLobbyID(),
