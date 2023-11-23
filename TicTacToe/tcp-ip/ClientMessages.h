@@ -1,5 +1,6 @@
 #pragma once
 #include "Message.h"
+#include "../game/TicTacToe.h"
 
 template <>
 struct Message<MsgType::Login> : ISerializable
@@ -51,6 +52,7 @@ struct Message<MsgType::MakeMove> : ISerializable
     {
         LobbyId = j["ID"].get<unsigned int>();
         Cell = j["Cell"].get<unsigned int>();
+        Piece = j["Piece"].get<TicTacToe::Piece>();
     }
     ~Message() = default;
 
@@ -60,9 +62,11 @@ struct Message<MsgType::MakeMove> : ISerializable
         j["Type"] = MsgType::MakeMove;
         j["ID"] = LobbyId;
         j["Cell"] = Cell;
+        j["Piece"] = Piece;
         return j;
     }
 
     unsigned int LobbyId;
     unsigned int Cell;
+    TicTacToe::Piece Piece;
 };

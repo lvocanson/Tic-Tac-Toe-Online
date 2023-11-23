@@ -1,6 +1,5 @@
 #pragma once
 
-
 // Row, columns, alignment goal
 #define DEFAULT_BOARD_ARGS 3, 3, 3
 
