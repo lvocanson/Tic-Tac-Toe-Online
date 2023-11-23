@@ -2,7 +2,7 @@
 #include "src/tcp-ip/TcpIpClient.h"
 #include "src/core/StateMachine/StateMachine.h"
 
-class TcpIpClient;
+struct ISerializable;
 class Thread;
 
 enum ConnectionStateInfo
@@ -33,6 +33,7 @@ public:
 
     void Disconnect();
     void TryToConnectToServer(const std::string* adress);
+    void SendDataToServer(ISerializable& data);
     void SendDataToServer(const std::string& data);
 
     Shared<ConnectionStateInfo>& GetConnectionInfo() { return m_IsClientConnected; }

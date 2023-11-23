@@ -1,5 +1,6 @@
 #include "src/pch.h"
 #include "ClientConnectionHandler.h"
+#include "tcp-ip/ISerializable.h"
 #include "threading/Thread.h"
 
 void ClientConnectionHandler::Init(Shared<StateMachine>* stateMachine)
@@ -28,6 +29,11 @@ void ClientConnectionHandler::TryToConnectToServer(const std::string* adress)
     m_IsClientConnected.WaitGet().Get() = Connecting;
 
     StartThread(adress);
+}
+
+void ClientConnectionHandler::SendDataToServer(ISerializable& data)
+{
+    SendDataToServer(data.Serialize().dump());
 }
 
 void ClientConnectionHandler::StartThread(const std::string* ipAdress)
@@ -122,7 +128,6 @@ void ClientConnectionHandler::RunClient(const std::string* adress)
         RELEASE(m_Client);
     }
 }
-
 
 void ClientConnectionHandler::SendDataToServer(const std::string& data)
 {

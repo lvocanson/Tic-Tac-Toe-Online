@@ -1,12 +1,7 @@
 #include "ServerApp.h"
 #include "ConsoleHelper.h"
-#include "tcp-ip/Messages/GameFinishedMessage.h"
-#include "tcp-ip/Notifications/IsLobbyFullNotification.h"
-#include "tcp-ip/Messages/GetLobbyListMessage.h"
-#include "tcp-ip/Messages/JoinedLobbyMessage.h"
-#include "tcp-ip/Messages/LobbyFullMessage.h"
-#include "tcp-ip/Messages/PlayerMoveMessage.h"
-#include "tcp-ip/Messages/TryToJoinLobbyMessage.h"
+#include "tcp-ip/ClientMessages.h"
+#include "tcp-ip/ServerMessages.h"
 
 #define ERR_CLR Color::Red // Error color
 #define WRN_CLR Color::Yellow // Warning color
@@ -108,12 +103,12 @@ void ServerApp::HandleGameServer()
 
         // For each closed connection
         m_GameServer->CleanClosedConnections([this](ClientPtr c)
-        {
-            std::cout << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR;
+            {
+                std::cout << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR;
 
-            if (m_Players.contains(c->GetName()))
-                m_Players.erase(c->GetName());
-        });
+                if (m_Players.contains(c->GetName()))
+                    m_Players.erase(c->GetName());
+            });
     }
     catch (const TcpIp::TcpIpException& e)
     {
@@ -124,203 +119,121 @@ void ServerApp::HandleGameServer()
 void ServerApp::HandleRecv(ClientPtr sender)
 {
     std::string data = sender->Receive();
-    Json receivedData;
+    Json parsedData;
     try
     {
-        receivedData = Json::parse(data);
+        parsedData = Json::parse(data);
     }
     catch (const std::exception& e)
     {
         std::cout << ERR_CLR << "Failed to parse JSON from " << HASH_CLR(sender) << ERR_CLR << ": " << e.what() << std::endl << DEF_CLR;
         return;
     }
-    if (!receivedData.contains("Type"))
+    MsgType type = Message<>::GetType(parsedData);
+
+
+    // TODO: Add safeguards before accessing members of this class. (e.g. check if the player is in a lobby before accessing m_StartedGames)
+    using enum MsgType;
+    switch (type)
     {
-        std::cout << ERR_CLR << "Received JSON from " << HASH_CLR(sender) << ERR_CLR << " does not contain a type." << std::endl << DEF_CLR;
-        return;
+    case Login:
+    {
+        Message<Login> msg(parsedData);
+        m_Players.insert({sender->GetName(), msg.Username});
+        std::cout << INF_CLR << "Registered player: " << HASH_STRING_CLR(msg.Username) << INF_CLR << " into server." << std::endl << DEF_CLR;
+        break;
     }
-
-    if (receivedData["Type"] == "Login")
+    case Disconnect:
     {
-        m_Players.insert({sender->GetName(), receivedData["UserName"]});
-
-        std::cout << STS_CLR << "Registered player: " << HASH_STRING_CLR(receivedData["UserName"]) << STS_CLR << " into server." << std::endl << DEF_CLR;
-    }
-    ////////// Lobby State //////////
-    else if (receivedData["Type"] == "GetLobbyList")
-    {
-        GetLobbyListMessage getLobbyListMessage(m_Lobbies);
-        sender->Send(getLobbyListMessage.Serialize().dump());
-
-        std::cout << INF_CLR << "Sending lobbies list to " << HASH_CLR(sender) << std::endl << DEF_CLR;
-    }
-    else if (receivedData["Type"] == "TryToJoinLobby")
-    {
-        TryToJoinLobbyMessage tryToJoinLobbyMessage;
-        tryToJoinLobbyMessage.Deserialize(receivedData);
-
-        const int lobbyID = tryToJoinLobbyMessage.ID;
-
-        for (auto lb : m_Lobbies)
-        {
-            if (lobbyID != lb->Data.ID) continue;
-
-            if (lb->IsInLobby(m_Players[sender->GetName()]))
-            {
-                std::cout << WRN_CLR << "Player " << HASH_STRING_CLR(m_Players[sender->GetName()]) << WRN_CLR << " tried to join lobby: " << INF_CLR << lobbyID << WRN_CLR << " but he's already in." << std::endl << DEF_CLR;
-                return;
-            }
-            else if (lb->IsLobbyFull())
-            {
-                std::cout << WRN_CLR << "Player " << HASH_STRING_CLR(m_Players[sender->GetName()]) << WRN_CLR << " tried to join lobby: " << INF_CLR << lobbyID << WRN_CLR << " but it's full." << std::endl << DEF_CLR;
-                return;
-            }
-
-            const std::string& playerName = m_Players[sender->GetName()];
-
-            lb->AddPlayerToLobby(playerName);
-            std::cout << STS_CLR << "Player " << HASH_STRING_CLR(playerName) << STS_CLR << " has joined lobby: " << INF_CLR << lobbyID << std::endl << DEF_CLR;
-
-            if (!m_StartedGames.contains(lb->Data.ID))
-            {
-                m_StartedGames.insert({ lb->Data.ID, lb });
-                std::cout << STS_CLR << "Creating game " << INF_CLR << lobbyID << "..." << std::endl << DEF_CLR;
-            }
-
-            JoinedLobbyMessage joinedLobby(lobbyID);
-            sender->Send(joinedLobby.Serialize().dump());
-
-            std::cout << INF_CLR << "Lobby confirmation sent to " << HASH_CLR(sender) << std::endl << DEF_CLR;
-
-            break;
-        }
-
-        size_t playerCount = m_Players.size();
-        unsigned int playerInLobbyCount = 0;
-
-        for (auto lb : m_Lobbies)
-        {
-            playerInLobbyCount += lb->GetPlayerCount();
-        }
-
-        // Send lobby refresh message if there are more players than players in lobbies
-        if (playerCount > playerInLobbyCount)
-        {
-            GetLobbyListMessage getLobbyListMessage(m_Lobbies);
-            const std::string message = getLobbyListMessage.Serialize().dump();
-
-            std::cout << INF_CLR << "Lobby confirmation sent to other players" << std::endl << DEF_CLR;
-
-            // Refresh lobbies list for players that are not in a lobby
-            for (auto [adressIP, player] : m_Players)
-            {
-                if (IsPlayerInLobby(player)) continue;
-
-                m_GameServer->GetClientByName(adressIP)->Send(message);
-            }
-        }
-    }
-    else if (receivedData["Type"] == "LeaveLobby")
-    {
+        std::string& username = m_Players.at(sender->GetName());
         for (const auto& lb : m_Lobbies)
         {
-            if (receivedData["ID"] != lb->Data.ID) continue;
-
-            const std::string& playerName = m_Players[sender->GetName()];
-
-            lb->RemovePlayerFromLobby(playerName);
-            std::cout << STS_CLR << "Player " << HASH_STRING_CLR(playerName) << STS_CLR << " has left lobby: " << INF_CLR << receivedData["ID"] << std::endl << DEF_CLR;
-
-            std::cout << STS_CLR << "Unregistered player: " << HASH_STRING_CLR(playerName) << STS_CLR << " from server." << std::endl << DEF_CLR;
-            m_Players.erase(sender->GetName());
-
-            if (m_StartedGames.contains(lb->Data.ID) && lb->IsLobbyEmpty())
+            // If the player is in a lobby, remove him from it
+            if (lb->IsInLobby(username))
             {
-                m_StartedGames[lb->Data.ID] = nullptr;
-                m_StartedGames.erase(lb->Data.ID);
-                std::cout << STS_CLR << "Closing game " << INF_CLR << lb->Data.ID << "..." << std::endl << DEF_CLR;
-            }
-        }
-    }
-    else if (receivedData["Type"] == "IsLobbyFull")
-    {
-        IsLobbyFullNotification isLobbyFullNotification;
-        isLobbyFullNotification.Deserialize(receivedData);
+                lb->RemovePlayerFromLobby(username);
+                std::cout << INF_CLR << "Player " << HASH_STRING_CLR(username) << INF_CLR << " has left lobby: " << lb->Data.ID << std::endl << DEF_CLR;
 
-        for (const auto& lb : m_Lobbies)
-        {
-            if (isLobbyFullNotification.LobbyID != lb->Data.ID) continue;
-
-            if (lb->IsLobbyFull())
-            {
-                Lobby* lobby = m_StartedGames[isLobbyFullNotification.LobbyID];
-                LobbyFullMessage lobbyFull(lobby->Data.ID, lobby->Data.PlayerX, lobby->Data.PlayerO);
-                std::string message = lobbyFull.Serialize().dump();
-
-                int i = 0;
-                for (auto [adressIP, player] : m_Players)
+                if (m_StartedGames.contains(lb->Data.ID) && lb->IsLobbyEmpty())
                 {
-                    if (i == 2) break;
-
-                    if (lb->IsInLobby(player))
-                    {
-                        ClientPtr client = m_GameServer->GetClientByName(adressIP);
-                        client->Send(message);
-                        i++;
-                        std::cout << INF_CLR << "Lobby's full confirmation sent to " << HASH_CLR(client) << std::endl << DEF_CLR;
-                    }
+                    m_StartedGames[lb->Data.ID] = nullptr;
+                    m_StartedGames.erase(lb->Data.ID);
+                    std::cout << INF_CLR << "Closing game " << lb->Data.ID << "..." << std::endl << DEF_CLR;
                 }
             }
         }
+        break;
     }
-    ////////// Game State //////////
-    else if (receivedData["Type"] == "OpponentMove")
+    case FetchLobbyList:
     {
-        PlayerMoveMessage playerMoveMessage;
-        playerMoveMessage.Deserialize(receivedData);
-
-        Lobby* lb = m_StartedGames[playerMoveMessage.LobbyID];
-        const std::string& opponentName = lb->GetOpponentName(playerMoveMessage.PlayerName);
-
-        for (auto [adressIP, player] : m_Players)
+        Message<LobbyList> toSend;
+        toSend.LobbiesData.reserve(m_Lobbies.size());
+        for (auto& lb : m_Lobbies)
         {
-            if (player != opponentName) continue;
-
-            m_GameServer->GetClientByName(adressIP)->Send(receivedData.dump());
-
-            std::cout << STS_CLR << "Player " << HASH_STRING_CLR(opponentName) << STS_CLR << " has made a move in lobby: " << INF_CLR << receivedData["ID"] << std::endl << DEF_CLR;
-
-            return;
+            toSend.LobbiesData.push_back(lb->Data);
         }
+        sender->Send(toSend.Serialize().dump());
+        std::cout << INF_CLR << "Lobby list sent to " << HASH_CLR(sender) << std::endl << DEF_CLR;
+        break;
     }
-    else if (receivedData["Type"] == "GameFinished")
+    case JoinLobby:
     {
-        GameFinishedMessage gameFinishedMessage;
-        gameFinishedMessage.Deserialize(receivedData);
+        Message<JoinLobby> msg(parsedData);
+        bool joined = false;
 
-        for (const auto lobby : m_Lobbies)
+        // Find the lobby with the given ID
+        for (auto& lb : m_Lobbies)
         {
-            if (lobby->Data.ID != gameFinishedMessage.LobbyID) continue;
+            if (msg.LobbyId != lb->Data.ID) continue;
+            const std::string& playerName = m_Players[sender->GetName()];
 
-            lobby->GetOpponentName(gameFinishedMessage.WinnerName);
-
-            for (auto [adressIP, player] : m_Players)
+            // Check if the player can join it
+            if (lb->IsInLobby(playerName))
             {
-                if (player != gameFinishedMessage.WinnerName) continue;
-
-                m_GameServer->GetClientByName(adressIP)->Send(receivedData.dump());
-
-                std::cout << STS_CLR << "Player " << HASH_STRING_CLR(gameFinishedMessage.WinnerName) << STS_CLR << " has won the game in lobby: " << INF_CLR << receivedData["ID"] << std::endl << DEF_CLR;
-
+                std::cout << WRN_CLR << "Player " << HASH_STRING_CLR(playerName) << WRN_CLR << " tried to join lobby: " << INF_CLR << msg.LobbyId << WRN_CLR << " but he's already in." << std::endl << DEF_CLR;
+                joined = false;
+                break;
+            }
+            else if (lb->IsLobbyFull())
+            {
+                std::cout << WRN_CLR << "Player " << HASH_STRING_CLR(playerName) << WRN_CLR << " tried to join lobby: " << INF_CLR << msg.LobbyId << WRN_CLR << " but it's full." << std::endl << DEF_CLR;
+                joined = false;
                 break;
             }
 
+            lb->AddPlayerToLobby(playerName);
+            joined = true;
+            std::cout << STS_CLR << "Player " << HASH_STRING_CLR(playerName) << STS_CLR << " has joined lobby: " << INF_CLR << msg.LobbyId << std::endl << DEF_CLR;
+
+            // Create the lobby game if it doesn't exist
+            if (!m_StartedGames.contains(lb->Data.ID))
+            {
+                m_StartedGames.insert({lb->Data.ID, lb});
+                std::cout << STS_CLR << "Creating game " << INF_CLR << msg.LobbyId << "..." << std::endl << DEF_CLR;
+            }
+
+            sender->Send(Message<AcceptJoinLobby>().Serialize().dump());
+            std::cout << INF_CLR << "Lobby confirmation sent to " << HASH_CLR(sender) << std::endl << DEF_CLR;
             break;
         }
+
+        // Send rejection message
+        if (!joined)
+        {
+            sender->Send(Message<RejectJoinLobby>().Serialize().dump());
+            std::cout << INF_CLR << "Lobby rejection sent to " << HASH_CLR(sender) << std::endl << DEF_CLR;
+        }
+        break;
     }
-    else
+    case MakeMove:
     {
+        Message<MakeMove> msg(parsedData);
+
+        // TODO: Chek move validity, send rejection to sender if invalid, send accept to sender and opponent if valid, check for game over
+    }
+    default:
         std::cout << WRN_CLR << "Received JSON from " << HASH_CLR(sender) << WRN_CLR << " contains an unknown type." << std::endl << DEF_CLR;
+        break;
     }
 }
 

@@ -5,10 +5,10 @@
 struct LobbyData : ISerializable
 {
     LobbyData() = default;
+    LobbyData(const Json& j);
     LobbyData(const int id, const std::string& playerX, const std::string& playerO);
 
     Json Serialize() override;
-    void Deserialize(const Json& j) override;
 
     int ID = -1;
     std::string PlayerX, PlayerO;

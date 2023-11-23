@@ -11,9 +11,4 @@ struct ISerializable
     /// </summary>
     /// <returns>Json type</returns>
     virtual Json Serialize() = 0;
-    /// <summary>
-    /// Retrieve the data stored in the json
-    /// </summary>
-    /// <param name="j"></param>
-    virtual void Deserialize(const Json& j) = 0;
 };

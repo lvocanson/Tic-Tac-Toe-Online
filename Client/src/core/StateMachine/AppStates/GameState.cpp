@@ -1,11 +1,8 @@
 #include "GameState.h"
-
-#include "tcp-ip/Messages/GameFinishedMessage.h"
-#include "tcp-ip/Notifications/IsLobbyFullNotification.h"
-#include "tcp-ip/Messages/PlayerMoveMessage.h"
 #include "src/core/Window.h"
 #include "src/core/ClientApp.h"
-#include "tcp-ip/Messages/LobbyFullMessage.h"
+#include "tcp-ip/ClientMessages.h"
+#include "tcp-ip/ServerMessages.h"
 
 using namespace TicTacToe;
 using json = nlohmann::json;
@@ -176,14 +173,14 @@ void GameState::SwitchPlayerTurn()
 
 void GameState::SendPlacedPieceToServer(unsigned int cell)
 {
-    PlayerMoveMessage message(ClientApp::GetInstance().GetCurrentPlayer()->GetName(), cell, m_LobbyID);
-    ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
+    // PlayerMoveMessage message(ClientApp::GetInstance().GetCurrentPlayer()->GetName(), cell, m_LobbyID);
+    // ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
 }
 
 void GameState::SendGameFinishedToServer(const std::string& winnerName)
 {
-    GameFinishedMessage message(winnerName, m_LobbyID);
-    ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
+    // GameFinishedMessage message(winnerName, m_LobbyID);
+    // ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
 }
 
 bool GameState::IsMouseHoverPiece(unsigned int i)
@@ -208,37 +205,37 @@ void GameState::OnExit()
 
 void GameState::OnReceiveData(const Json& serializeData)
 {
-    if (serializeData["Type"] == "OpponentMove")
-    {
-        PlacePlayerPieceOnBoard(serializeData["PlayerMove"]);
-        SwitchPlayerTurn();
-    }
-    else if (serializeData["Type"] == "SetPlayerShape")
-    {
-        LobbyFullMessage message;
-        message.Deserialize(serializeData);
-
-        m_PlayerManager.CreateNewPlayer(message.PlayerX, sf::Color(250, 92, 12), Square);
-        m_PlayerManager.CreateNewPlayer(message.PlayerO, sf::Color(255, 194, 0), Circle);
-
-        m_IsPlayerTurn = message.StartingPlayer == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
-
-        StartGame();
-    }
-    else if (serializeData["Type"] == "GameFinished")
-    {
-        GameFinishedMessage message;
-        message.Deserialize(serializeData);
-
-        m_GameStateUI->UpdateGameStateText(message.WinnerName + " won!");
-        ClearBoard();
-    }
+    // if (serializeData["Type"] == "OpponentMove")
+    // {
+    //     PlacePlayerPieceOnBoard(serializeData["PlayerMove"]);
+    //     SwitchPlayerTurn();
+    // }
+    // else if (serializeData["Type"] == "SetPlayerShape")
+    // {
+    //     LobbyFullMessage message;
+    //     message.Deserialize(serializeData);
+    // 
+    //     m_PlayerManager.CreateNewPlayer(message.PlayerX, sf::Color(250, 92, 12), Square);
+    //     m_PlayerManager.CreateNewPlayer(message.PlayerO, sf::Color(255, 194, 0), Circle);
+    // 
+    //     m_IsPlayerTurn = message.StartingPlayer == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
+    // 
+    //     StartGame();
+    // }
+    // else if (serializeData["Type"] == "GameFinished")
+    // {
+    //     GameFinishedMessage message;
+    //     message.Deserialize(serializeData);
+    // 
+    //     m_GameStateUI->UpdateGameStateText(message.WinnerName + " won!");
+    //     ClearBoard();
+    // }
 }
 
 void GameState::IsServerLobbyFull()
 {
-    IsLobbyFullNotification notification(m_LobbyID);
-    ClientConnectionHandler::GetInstance().SendDataToServer(notification.Serialize().dump());
+    // IsLobbyFullNotification notification(m_LobbyID);
+    // ClientConnectionHandler::GetInstance().SendDataToServer(notification.Serialize().dump());
 }
 
 void GameState::StartGame()

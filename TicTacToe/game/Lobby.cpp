@@ -8,6 +8,11 @@ Lobby::Lobby()
     Data.PlayerO = "";
 }
 
+LobbyData::LobbyData(const Json& j)
+    : ID(j["ID"]), PlayerX(j["PlayerX"]), PlayerO(j["PlayerO"])
+{
+}
+
 Lobby::Lobby(const std::string& playerX, const std::string& playerO)
 {
     Data.ID = IDGenerator::GenerateLobbyID(),
@@ -74,11 +79,4 @@ Json LobbyData::Serialize()
     j["PlayerX"] = PlayerX;
     j["PlayerO"] = PlayerO;
     return j;
-}
-
-void LobbyData::Deserialize(const Json& j)
-{
-    ID = j["ID"];
-    PlayerO = j["PlayerO"];
-    PlayerX = j["PlayerX"];
 }
