@@ -3,7 +3,7 @@
 
 struct LobbyFullMessage : ISerializable
 {
-    LobbyFullMessage();
+    LobbyFullMessage() = default;
     LobbyFullMessage(int ID, const std::string& playerX, const std::string& playerO) : ID(ID), PlayerX(playerX), PlayerO(playerO) { }
 
     Json Serialize() override;

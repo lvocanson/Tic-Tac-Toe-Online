@@ -1,5 +1,7 @@
 #include "ServerApp.h"
 #include "ConsoleHelper.h"
+#include "GameFinishedMessage.h"
+#include "IsLobbyFullNotification.h"
 #include "tcp-ip/Messages/GetLobbyListMessage.h"
 #include "tcp-ip/Messages/JoinedLobbyMessage.h"
 #include "tcp-ip/Messages/LobbyFullMessage.h"
@@ -242,14 +244,18 @@ void ServerApp::HandleRecv(ClientPtr sender)
     }
     else if (receivedData["Type"] == "IsLobbyFull")
     {
+        IsLobbyFullNotification isLobbyFullNotification;
+        isLobbyFullNotification.Deserialize(receivedData);
+
         for (const auto& lb : m_Lobbies)
         {
-            if (receivedData["ID"] != lb->Data.ID) continue;
+            if (isLobbyFullNotification.LobbyID != lb->Data.ID) continue;
 
             if (lb->IsLobbyFull())
             {
-                Lobby* lobby = m_StartedGames[receivedData["ID"]];
+                Lobby* lobby = m_StartedGames[isLobbyFullNotification.LobbyID];
                 LobbyFullMessage lobbyFull(lobby->Data.ID, lobby->Data.PlayerX, lobby->Data.PlayerO);
+                std::string message = lobbyFull.Serialize().dump();
 
                 int i = 0;
                 for (auto [adressIP, player] : m_Players)
@@ -259,7 +265,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
                     if (lb->IsInLobby(player))
                     {
                         ClientPtr client = m_GameServer->GetClientByName(adressIP);
-                        client->Send(lobbyFull.Serialize().dump());
+                        client->Send(message);
                         i++;
                         std::cout << INF_CLR << "Lobby's full confirmation sent to " << HASH_CLR(client) << std::endl << DEF_CLR;
                     }
@@ -271,7 +277,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
     else if (receivedData["Type"] == "OpponentMove")
     {
         PlayerMoveMessage playerMoveMessage;
-        playerMoveMessage.Deserialize(receivedData.dump());
+        playerMoveMessage.Deserialize(receivedData);
 
         Lobby* lb = m_StartedGames[playerMoveMessage.LobbyID];
         const std::string& opponentName = lb->GetOpponentName(playerMoveMessage.PlayerName);
@@ -285,6 +291,31 @@ void ServerApp::HandleRecv(ClientPtr sender)
             std::cout << STS_CLR << "Player " << HASH_STRING_CLR(opponentName) << STS_CLR << " has made a move in lobby: " << INF_CLR << receivedData["ID"] << std::endl << DEF_CLR;
 
             return;
+        }
+    }
+    else if (receivedData["Type"] == "GameFinished")
+    {
+        GameFinishedMessage gameFinishedMessage;
+        gameFinishedMessage.Deserialize(receivedData);
+
+        for (const auto lobby : m_Lobbies)
+        {
+            if (lobby->Data.ID != gameFinishedMessage.LobbyID) continue;
+
+            lobby->GetOpponentName(gameFinishedMessage.WinnerName);
+
+            for (auto [adressIP, player] : m_Players)
+            {
+                if (player != gameFinishedMessage.WinnerName) continue;
+
+                m_GameServer->GetClientByName(adressIP)->Send(receivedData.dump());
+
+                std::cout << STS_CLR << "Player " << HASH_STRING_CLR(gameFinishedMessage.WinnerName) << STS_CLR << " has won the game in lobby: " << INF_CLR << receivedData["ID"] << std::endl << DEF_CLR;
+
+                break;
+            }
+
+            break;
         }
     }
     else

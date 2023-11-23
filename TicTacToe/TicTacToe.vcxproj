@@ -11,11 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameFinishedMessage.cpp" />
+    <ClCompile Include="tcp-ip\Messages\GameFinishedMessage.cpp" />
     <ClCompile Include="game\GameMode.cpp" />
     <ClCompile Include="game\IDGenerator.cpp" />
     <ClCompile Include="game\Lobby.cpp" />
     <ClCompile Include="game\TicTacToe.cpp" />
+    <ClCompile Include="tcp-ip\Notifications\IsLobbyFullNotification.cpp" />
     <ClCompile Include="tcp-ip\Messages\GetLobbyListMessage.cpp" />
     <ClCompile Include="tcp-ip\Messages\JoinedLobbyMessage.cpp" />
     <ClCompile Include="tcp-ip\Messages\LobbyFullMessage.cpp" />
@@ -27,11 +28,12 @@
     <ClCompile Include="tcp-ip\Messages\TryToJoinLobbyMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameFinishedMessage.h" />
+    <ClInclude Include="tcp-ip\Messages\GameFinishedMessage.h" />
     <ClInclude Include="game\GameMode.h" />
     <ClInclude Include="game\IDGenerator.h" />
     <ClInclude Include="game\Lobby.h" />
     <ClInclude Include="game\TicTacToe.h" />
+    <ClInclude Include="tcp-ip\Notifications\IsLobbyFullNotification.h" />
     <ClInclude Include="tcp-ip\Messages\GetLobbyListMessage.h" />
     <ClInclude Include="tcp-ip\Messages\JoinedLobbyMessage.h" />
     <ClInclude Include="tcp-ip\Messages\LobbyFullMessage.h" />

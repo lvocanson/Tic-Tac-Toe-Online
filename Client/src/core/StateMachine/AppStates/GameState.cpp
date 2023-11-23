@@ -1,10 +1,11 @@
 #include "GameState.h"
 
 #include "GameFinishedMessage.h"
+#include "IsLobbyFullNotification.h"
 #include "tcp-ip/Messages/PlayerMoveMessage.h"
-#include "game/Lobby.h"
 #include "src/core/Window.h"
 #include "src/core/ClientApp.h"
+#include "tcp-ip/Messages/LobbyFullMessage.h"
 
 using namespace TicTacToe;
 using json = nlohmann::json;
@@ -64,7 +65,7 @@ void GameState::OnUpdate(float dt)
         m_ReturnButton->Update(dt);
     }
 
-    if (m_IsPlayerTurn && m_IsGameStart)
+    if (m_IsPlayerTurn && m_IsGameStarted)
     {
         CheckIfMouseHoverBoard();
 
@@ -128,12 +129,6 @@ void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
     m_ScoreManager.AddPlayerMove(*currentPlayer->GetData(), cell);
 }
 
-void GameState::SendGameFinishedToServer(const std::string& winnerName)
-{
-    GameFinishedMessage message(winnerName, m_LobbyID);
-    ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
-}
-
 void GameState::WinCheck()
 {
     const PieceID winnerID = m_Board.IsThereAWinner();
@@ -185,6 +180,12 @@ void GameState::SendPlacedPieceToServer(unsigned int cell)
     ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
 }
 
+void GameState::SendGameFinishedToServer(const std::string& winnerName)
+{
+    GameFinishedMessage message(winnerName, m_LobbyID);
+    ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
+}
+
 bool GameState::IsMouseHoverPiece(unsigned int i)
 {
     const sf::Vector2f mousePos = static_cast<sf::Vector2f>(InputHandler::GetMousePosition());
@@ -214,30 +215,35 @@ void GameState::OnReceiveData(const Json& serializeData)
     }
     else if (serializeData["Type"] == "SetPlayerShape")
     {
-        m_PlayerManager.CreateNewPlayer(serializeData["PlayerX"], sf::Color(250, 92, 12), Square);
-        m_PlayerManager.CreateNewPlayer(serializeData["PlayerO"], sf::Color(255, 194, 0), Circle);
+        LobbyFullMessage message;
+        message.Deserialize(serializeData);
 
-        m_IsPlayerTurn = serializeData["Starter"] == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
+        m_PlayerManager.CreateNewPlayer(message.PlayerX, sf::Color(250, 92, 12), Square);
+        m_PlayerManager.CreateNewPlayer(message.PlayerO, sf::Color(255, 194, 0), Circle);
+
+        m_IsPlayerTurn = message.StartingPlayer == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
 
         StartGame();
     }
     else if (serializeData["Type"] == "GameFinished")
     {
+        GameFinishedMessage message;
+        message.Deserialize(serializeData);
+
+        m_GameStateUI->UpdateGameStateText(message.WinnerName + " won!");
         ClearBoard();
     }
 }
 
 void GameState::IsServerLobbyFull()
 {
-    Json j;
-    j["Type"] = "IsLobbyFull";
-    j["ID"] = m_LobbyID;
-    ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
+    IsLobbyFullNotification notification(m_LobbyID);
+    ClientConnectionHandler::GetInstance().SendDataToServer(notification.Serialize().dump());
 }
 
 void GameState::StartGame()
 {
-    m_IsGameStart = true;
-    m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
+    m_IsGameStarted = true;
     m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
+   // m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
 }

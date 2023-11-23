@@ -1,5 +1,5 @@
 #pragma once
-#include "tcp-ip/ISerializable.h"
+#include "../ISerializable.h"
 
 struct GameFinishedMessage : ISerializable
 {

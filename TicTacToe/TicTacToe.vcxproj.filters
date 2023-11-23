@@ -14,7 +14,8 @@
     <ClCompile Include="tcp-ip\Messages\JoinedLobbyMessage.cpp" />
     <ClCompile Include="tcp-ip\Messages\LobbyFullMessage.cpp" />
     <ClCompile Include="tcp-ip\Messages\GetLobbyListMessage.cpp" />
-    <ClCompile Include="GameFinishedMessage.cpp" />
+    <ClCompile Include="tcp-ip\Messages\GameFinishedMessage.cpp" />
+    <ClCompile Include="tcp-ip\Notifications\IsLobbyFullNotification.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\GameMode.h" />
@@ -33,6 +34,7 @@
     <ClInclude Include="tcp-ip\Messages\JoinedLobbyMessage.h" />
     <ClInclude Include="tcp-ip\Messages\LobbyFullMessage.h" />
     <ClInclude Include="tcp-ip\Messages\GetLobbyListMessage.h" />
-    <ClInclude Include="GameFinishedMessage.h" />
+    <ClInclude Include="tcp-ip\Messages\GameFinishedMessage.h" />
+    <ClInclude Include="tcp-ip\Notifications\IsLobbyFullNotification.h" />
   </ItemGroup>
 </Project>
