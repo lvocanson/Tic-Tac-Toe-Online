@@ -518,6 +518,15 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
             }
             sender->Send(HTML_200 HTML_PAGE(HTML_REFRESH 
                                             "<title>Tic Tac Toz</title>",
+
+                                            "<style>"
+                                                "h3 {"
+                                                    "font-family: 'Courier New', monospace;"
+                                                "}"
+                                                "a {"
+                                                    "font-family: 'Courier New', monospace;"
+                                                "}"
+                                            "</style>"
                                             "<h3>Click on a lobby to watch the game that's being played.</h3>"
                                             "<br />" 
                                                +
@@ -547,6 +556,16 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
 
                 sender->Send(HTML_200 HTML_PAGE(HTML_REFRESH
                     "<title>Lobby " + std::to_string(lobby->Data.ID) + "</title>",
+
+                    "<style>"
+                        "body {"
+                            "font-family: 'Courier New', monospace;"
+                        "}"
+                        "pre {"
+                            "font-family: 'Courier New', monospace;"
+                        "}"
+                    "</style>"
+
                     "<h3>You are watching lobby " + std::to_string(lobby->Data.ID) + "</h3>"
                     "<a href='/'>Back to lobby list</a>"
                     "<h2>`" + lobby->Data.PlayerX + "` VS `" + lobby->Data.PlayerO + "`</h2>"
@@ -580,7 +599,7 @@ std::string ServerApp::PieceToString(TicTacToe::Piece piece)
     switch (piece)
     {
     case TicTacToe::Piece::Empty:
-        return "  ";
+        return "   ";
     case TicTacToe::Piece::X:
         return " X ";
     case TicTacToe::Piece::O:
