@@ -46,7 +46,7 @@ void GameHistoryManager::SaveGame(const PlayerData* winner, const std::vector<co
 
 GameData* GameHistoryManager::GetGameData(unsigned int gameID) const
 {
-    if (gameID < 0 || gameID > m_GameHistory.size())
+    if (gameID > m_GameHistory.size())
     {
         DebugLog("Invalid game id");
         return nullptr;
