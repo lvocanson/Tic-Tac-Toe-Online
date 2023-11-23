@@ -70,7 +70,7 @@ struct Message<MsgType::GameStarted> : ISerializable
 {
     Message() = default;
     Message(const Json& j)
-        : StartPlayer(j["StartPlayer"]), PlayerX(j["PlayerX"]), PlayerO(j["PlayerO"])
+        : StartPlayer(j["StartPlayer"]), GameMode(j["GameMode"]), PlayerX(j["PlayerX"]), PlayerO(j["PlayerO"])
     {
     }
     ~Message() = default;
@@ -79,6 +79,7 @@ struct Message<MsgType::GameStarted> : ISerializable
     {
         Json j;
         j["Type"] = MsgType::GameStarted;
+        j["GameMode"] = GameMode;
         j["StartPlayer"] = StartPlayer;
         j["PlayerX"] = PlayerX;
         j["PlayerO"] = PlayerO;
@@ -86,6 +87,7 @@ struct Message<MsgType::GameStarted> : ISerializable
         return j;
     }
 
+    GameModeType GameMode;
     std::string StartPlayer, PlayerX, PlayerO;
 
 };

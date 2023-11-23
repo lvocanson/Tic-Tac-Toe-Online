@@ -1,6 +1,12 @@
 #pragma once
 
-struct GameMode
+enum GameModeType
+{
+    CLASSIC,
+    FAST
+};
+
+struct GameMode 
 {
     bool IsTimerOn;
     float PlayerMoveLimitTime;

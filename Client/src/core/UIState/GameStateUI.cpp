@@ -47,6 +47,8 @@ void GameStateUI::Init()
 
 void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
 {
+    const float height = m_Window->GetHeight();
+
     for (const auto player : allPlayers)
     {
         auto playerScoreText = new sf::Text();
@@ -55,13 +57,12 @@ void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
         playerScoreText->setCharacterSize(24);
         playerScoreText->setFillColor(sf::Color::White);
         playerScoreText->setStyle(sf::Text::Bold);
-        playerScoreText->setPosition(55, m_Window->GetHeight() * 0.5f - playerScoreText->getGlobalBounds().height + 25 * m_PlayerScoreTexts.size());
+        playerScoreText->setPosition(55, height - playerScoreText->getGlobalBounds().height + 25 * m_PlayerScoreTexts.size());
 
         RegisterText(playerScoreText);
 
         m_PlayerScoreTexts.insert(std::pair(player->GetPiece(), playerScoreText));
     }
-    m_Window->UnregisterDrawable(m_GameStateText);
 }
 
 void GameStateUI::InitProgressBar(const float maxValue)

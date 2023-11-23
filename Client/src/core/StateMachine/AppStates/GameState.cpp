@@ -25,19 +25,12 @@ void GameState::OnEnter()
 {
     m_GameStateUI = new GameStateUI(m_Window);
 
+    m_IsTimerOn = false;
+
     m_ScoreManager.Init();
     m_GameStateUI->Init();
     m_GameStateUI->SetLobbyIDText(m_LobbyID);
     m_GameStateUI->SetUserName(ClientApp::GetInstance().GetCurrentPlayer()->GetName());
-
-    m_MaxPlayerTurnTime = ClientApp::GetGameSettings().GetPlayerMoveLimitTime();
-    m_IsTimerOn = ClientApp::GetGameSettings().IsTimerOn();
-    m_PlayerTurnTime = m_MaxPlayerTurnTime;
-
-    if (m_IsTimerOn)
-    {
-        m_GameStateUI->InitProgressBar(m_MaxPlayerTurnTime);
-    }
 
     m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
     m_ReturnButton->SetButtonText("Leave game", sf::Color::White, 30, TextAlignment::Center);
@@ -67,20 +60,23 @@ void GameState::OnUpdate(float dt)
         m_ReturnButton->Update(dt);
     }
 
-    if (m_NeedToCleanBoard && m_IsGameStarted)
+    if (!m_IsGameStarted) return;
+
+    if (m_NeedToCleanBoard)
     {
         ClearBoard();
     }
 
-    if (!m_WaitingServerResponse && m_IsPlayerTurn && m_IsGameStarted)
+    if (!m_WaitingServerResponse)
     {
-        CheckIfMouseHoverBoard();
-
         if (m_IsTimerOn)
         {
             UpdatePlayerTimer(dt);
             CheckIfTimerIsUp();
         }
+
+        if (m_IsPlayerTurn)
+            CheckIfMouseHoverBoard();
     }
 }
 
@@ -190,6 +186,15 @@ void GameState::OnReceiveData(const Json& serializeData)
         m_WaitingServerResponse = false;
         m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
         m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
+
+        if (message.GameMode == FAST)
+        {
+            m_IsTimerOn = true;
+            m_MaxPlayerTurnTime = GAMEMODE_FAST.PlayerMoveLimitTime;
+            m_PlayerTurnTime = m_MaxPlayerTurnTime;
+            
+            m_GameStateUI->InitProgressBar(m_MaxPlayerTurnTime);
+        }
 
         break;
     }
