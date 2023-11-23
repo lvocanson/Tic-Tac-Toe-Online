@@ -32,6 +32,8 @@ void GameState::OnEnter()
 
     m_ScoreManager.Init();
     m_GameStateUI->Init();
+    m_GameStateUI->SetLobbyIDText(m_LobbyID);
+    m_GameStateUI->SetUserName(ClientApp::GetInstance().GetCurrentPlayer()->GetName());
 
     m_MaxPlayerTurnTime = ClientApp::GetGameSettings().GetPlayerMoveLimitTime();
     m_IsTimerOn = ClientApp::GetGameSettings().IsTimerOn();

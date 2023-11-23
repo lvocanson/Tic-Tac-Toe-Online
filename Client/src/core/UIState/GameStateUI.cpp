@@ -8,6 +8,8 @@ GameStateUI::GameStateUI(Window* window) : UIStateManager(window)
     m_PlayerScoreTexts = std::unordered_map<TicTacToe::PieceID, sf::Text*>();
     m_Title = nullptr;
     m_GameStateText = nullptr;
+    m_LobbyIDText = nullptr;
+    m_UserName = nullptr;
     m_ProgressBar = nullptr;
 }
 
@@ -101,6 +103,32 @@ void GameStateUI::UpdatePlayerScore(const PlayerData& player, const unsigned int
     m_PlayerScoreTexts.at(player.Id)->setString(player.Name + " : " + std::to_string(score));
 }
 
+void GameStateUI::SetLobbyIDText(unsigned int& id)
+{
+    m_LobbyIDText = new sf::Text();
+    m_LobbyIDText->setFont(*FontRegistry::GetFont("coolvetica.otf"));
+    m_LobbyIDText->setString("LobbyID: " + std::to_string(id));
+    m_LobbyIDText->setCharacterSize(24);
+    m_LobbyIDText->setFillColor(sf::Color::White);
+    m_LobbyIDText->setStyle(sf::Text::Bold);
+    m_LobbyIDText->setPosition(55, 55);
+
+    RegisterText(m_LobbyIDText);
+}
+
+void GameStateUI::SetUserName(const std::string username)
+{
+    m_UserName = new sf::Text();
+    m_UserName->setFont(*FontRegistry::GetFont("coolvetica.otf"));
+    m_UserName->setString("User: " + username);
+    m_UserName->setCharacterSize(24);
+    m_UserName->setFillColor(sf::Color::White);
+    m_UserName->setStyle(sf::Text::Bold);
+    m_UserName->setPosition(55, 80);
+
+    RegisterText(m_UserName);
+}
+
 void GameStateUI::Clear()
 {
     for (auto& text : m_PlayerScoreTexts)
@@ -109,5 +137,7 @@ void GameStateUI::Clear()
     }
 
     NULLPTR(m_GameStateText);
+    NULLPTR(m_LobbyIDText);
+    NULLPTR(m_UserName);
     NULLPTR(m_Title);
 }
