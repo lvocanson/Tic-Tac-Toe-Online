@@ -22,16 +22,16 @@ ConnectionState::~ConnectionState()
 void ConnectionState::OnEnter()
 {
     m_IpField = new InsertFieldComponent();
-    m_IpField->SetPosition(sf::Vector2f(100, 200));
+    m_IpField->SetPosition(sf::Vector2f(m_Window->GetWidth() * 0.5 - 190, 100));
     m_IpField->SetLabel("Server Phrase");
     m_IpField->SetText(TcpIp::IpAddress::FromString(sf::IpAddress::getLocalAddress().toString()).ToPhrase());
 
     m_NameField = new InsertFieldComponent();
-    m_NameField->SetPosition(sf::Vector2f(100, 300));
+    m_NameField->SetPosition(sf::Vector2f(m_Window->GetWidth() * 0.5 - 190, 200));
     m_NameField->SetLabel("Username");
 
     sf::Color OrangeRed(231, 62, 1);
-    m_BackButton = new ButtonComponent(sf::Vector2f(100, 550), sf::Vector2f(200, 100), OrangeRed);
+    m_BackButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5 - 150, 500), sf::Vector2f(200, 100), OrangeRed);
     m_BackButton->SetButtonText("Quit", sf::Color::White, 50, TextAlignment::Center);
     m_BackButton->SetOnClickCallback([this]()
         {
@@ -39,7 +39,7 @@ void ConnectionState::OnEnter()
         });
 
     sf::Color Emerald(1, 215, 88);
-    m_ConnectButton = new ButtonComponent(sf::Vector2f(100, 400), sf::Vector2f(200, 100), Emerald);
+    m_ConnectButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5 - 150, 300), sf::Vector2f(200, 100), Emerald);
     m_ConnectButton->SetButtonText("Connect", sf::Color::White, 50, TextAlignment::Center);
     m_ConnectButton->SetOnClickCallback([this]()
         {

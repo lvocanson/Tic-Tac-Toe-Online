@@ -17,7 +17,7 @@ void MenuState::OnEnter()
     if (ClientConnectionHandler::GetInstance().IsConnected())
     {
         sf::Color Emerald(1, 215, 88);
-        m_ConnectButton = new ButtonComponent(sf::Vector2f(((m_Window->GetWidth() * 0.5) - 150), 100), sf::Vector2f(200, 100), Emerald);
+        m_ConnectButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5 - 150, 100), sf::Vector2f(200, 100), Emerald);
         m_ConnectButton->SetButtonText("Play", sf::Color::White, 50, TextAlignment::Center);
         m_ConnectButton->SetOnClickCallback([this]()
             {
@@ -25,7 +25,7 @@ void MenuState::OnEnter()
             });
         m_Window->RegisterDrawable(m_ConnectButton);
 
-        m_DisconnectButton = new ButtonComponent(sf::Vector2f(((m_Window->GetWidth() * 0.5) - 150), 500), sf::Vector2f(200, 100), sf::Color::Red);
+        m_DisconnectButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5 - 150, 500), sf::Vector2f(200, 100), sf::Color::Red);
         m_DisconnectButton->SetButtonText("Disconnect", sf::Color::White, 50, TextAlignment::Center);
         m_DisconnectButton->SetOnClickCallback([this]()
             {
@@ -44,7 +44,7 @@ void MenuState::OnEnter()
     }
     
     sf::Color GreenDuck(4, 139, 154);
-    m_HistoryButton = new ButtonComponent(sf::Vector2f(((m_Window->GetWidth() * 0.5) - 150), 300), sf::Vector2f(200, 100), GreenDuck);
+    m_HistoryButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5 - 150, 300), sf::Vector2f(200, 100), GreenDuck);
     m_HistoryButton->SetButtonText("History", sf::Color::White, 50, TextAlignment::Center);
     m_HistoryButton->SetOnClickCallback([this]()
         {
@@ -52,7 +52,7 @@ void MenuState::OnEnter()
         });
 
     sf::Color OrangeRed(231, 62, 1);
-    m_QuitButton = new ButtonComponent(sf::Vector2f(((m_Window->GetWidth() * 0.5) - 150), 500), sf::Vector2f(200, 100), OrangeRed);
+    m_QuitButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5 - 150, 500), sf::Vector2f(200, 100), OrangeRed);
     m_QuitButton->SetButtonText("Quit", sf::Color::White, 50, TextAlignment::Center);
     m_QuitButton->SetOnClickCallback([this]()
         {

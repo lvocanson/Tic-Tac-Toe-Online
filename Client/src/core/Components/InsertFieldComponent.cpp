@@ -7,7 +7,7 @@ InsertFieldComponent::InsertFieldComponent()
     , m_Focus(false)
     , m_CursorTimer(0.0f)
 {
-    m_Rectangle.setSize(sf::Vector2f(300, 50));
+    m_Rectangle.setSize(sf::Vector2f(300, 30));
     m_Rectangle.setFillColor(sf::Color(171, 171, 171));
     m_Rectangle.setOutlineColor(sf::Color::White);
     m_Rectangle.setOutlineThickness(1.0f);
