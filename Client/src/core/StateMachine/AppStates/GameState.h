@@ -2,54 +2,64 @@
 #include "src/core/StateMachine/StateMachine.h"
 #include "src/core/Components/ButtonComponent.h"
 #include "src/core/GraphicBoard.h"
-#include "src/core/Player.h"
 #include "src/core/UIState/GameStateUI.h"
 
 #include "src/core/Managers/PlayerManager.h"
 #include "src/core/Managers/ScoreManager.h"
-#include "src/core/Managers/UIStateManager.h"
-#include "src/core/Managers/GameHistoryManager.h"
+
 
 class sf::Shape;
 
 class GameState : public State
 {
 public:
-	void OnEnter() override;
-	void OnUpdate(float dt) override;
-	void OnExit() override;
-	void OnReceiveData(const Json& serializeData) override;
+    void OnEnter() override;
+    void OnUpdate(float dt) override;
+    void OnExit() override;
+    void OnReceiveData(const Json& serializeData) override;
 
-	GameState(StateMachine* stateMachine, Window* m_Window);
-	GameState(const GameState& other) = delete;
-	GameState& operator=(const GameState& other) = delete;
-	~GameState() override;
+    void IsServerLobbyFull();
 
-	void CheckIfMouseHoverBoard();
-	bool IsMouseHoverPiece(unsigned int i);
-	void PlacePlayerPieceOnBoard(unsigned int cell);
-	void WinCheck();
-	void SwitchPlayerTurn();
+    void StartGame();
 
-	void UpdatePlayerTimer(float dt);
-	void CheckIfTimerIsUp();
+    GameState(StateMachine* stateMachine, Window* m_Window);
+    GameState(const GameState& other) = delete;
+    GameState& operator=(const GameState& other) = delete;
+    ~GameState() override;
 
-	void SendPlacedPieceToServer(unsigned int cell);
+    void SetLobbyID(unsigned int id) { m_LobbyID = id; }
+    void CheckIfMouseHoverBoard();
+    bool IsMouseHoverPiece(unsigned int i);
+    void PlacePlayerPieceOnBoard(unsigned int cell);
+    void WinCheck();
+    void SwitchPlayerTurn();
 
-	void ClearBoard();
+    void UpdatePlayerTimer(float dt);
+    void CheckIfTimerIsUp();
+
+    void SendPlacedPieceToServer(unsigned int cell);
+
+    void ClearBoard();
 
 private:
-	Window* m_Window;
-	ButtonComponent* m_ReturnButton;
 
-	GraphicBoard m_Board;
+    unsigned int m_LobbyID;
 
-	PlayerManager m_PlayerManager;
-	ScoreManager m_ScoreManager;
+    Window* m_Window;
+    ButtonComponent* m_ReturnButton = nullptr;
+    GraphicBoard m_Board;
 
-	float m_PlayerTurnTime;
-	float m_MaxPlayerTurnTime;
-	bool m_IsTimerOn;
+    PlayerManager m_PlayerManager;
+    ScoreManager m_ScoreManager;
 
-	GameStateUI* m_GameStateUI;
+    float m_PlayerTurnTime = 0.0f;
+    float m_MaxPlayerTurnTime = 0.0f;
+
+    bool m_IsPlayersConnected = false;
+    bool m_IsGameInit = false;
+    bool m_IsTimerOn = false;
+    bool m_IsPlayerTurn = false;
+    bool m_IsGameStart = false;
+
+    GameStateUI* m_GameStateUI;
 };

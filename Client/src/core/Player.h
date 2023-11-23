@@ -20,13 +20,15 @@ public:
 
     void SetColor(const sf::Color color) { m_Data.Color = color; }
 
-    const sf::Color GetColor() const { return m_Data.Color; }
-    const TicTacToe::PieceID GetPlayerID() const { return m_Data.Id; }
-    const std::string GetName() const { return m_Data.Name; }
-    const PlayerData* GetData() { return &m_Data; }
+    sf::Color GetColor() const { return m_Data.Color; }
+    TicTacToe::PieceID GetPlayerID() const { return m_Data.Id; }
+    std::string GetName() const { return m_Data.Name; }
+    PlayerShapeType GetShapeType() const { return m_Data.ShapeType; }
+    PlayerData* GetData() { return &m_Data; }
+
+    void SetName(const std::string& name) { m_Data.Name = name; }
 
 private:
 
     PlayerData m_Data;
-
 };

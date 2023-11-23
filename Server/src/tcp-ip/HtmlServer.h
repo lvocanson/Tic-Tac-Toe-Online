@@ -9,10 +9,11 @@ struct HtmlConn
 {
     std::string Address = "Unknown";
     unsigned int Port = 0;
+    std::string GetName() const;
 
-    std::string Receive();
-    void Send(const std::string& data);
-    void Kick();
+    std::string Receive() const;
+    void Send(const std::string& data) const;
+    void Kick() const;
 
     // Creates the event object and associate it with the socket.
     HtmlConn(SOCKET socket);
@@ -22,8 +23,8 @@ private:
     SOCKET Socket;
 
     bool IsNew = true;
-    bool ReadPending = false;
-    bool ClosePending = false;
+    mutable bool ReadPending = false;
+    mutable bool ClosePending = false;
 };
 /// <summary>
 /// A pointer to a connection.
@@ -73,6 +74,11 @@ public:
     /// <param name="lastCallback">A callback that will be called for each client that is closed.</param>
     /// <returns>The number of connections that were closed.</returns>
     int CleanClosedHtmlConns(std::function<void(WebClientPtr)> lastCallback = nullptr);
+
+    /// <summary>
+    /// Get all connections.
+    /// </summary>
+    const std::vector<HtmlConn>& GetHtmlConns() { return m_HtmlConns; }
 
 private:
     WSADATA m_WsaData;

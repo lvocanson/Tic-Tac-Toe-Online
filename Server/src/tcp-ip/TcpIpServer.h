@@ -9,10 +9,11 @@ struct Connection
 {
     std::string Address = "Unknown";
     unsigned int Port = 0;
+    std::string GetName() const;
 
-    std::string Receive();
-    void Send(const std::string& data);
-    void Kick();
+    std::string Receive() const;
+    void Send(const std::string& data) const;
+    void Kick() const;
 
     // Creates the event object and associate it with the socket.
     Connection(SOCKET socket);
@@ -23,8 +24,8 @@ private:
     WSAEVENT Event;
 
     bool IsNew = true;
-    bool ReadPending = false;
-    bool ClosePending = false;
+    mutable bool ReadPending = false;
+    mutable bool ClosePending = false;
 };
 /// <summary>
 /// A pointer to a connection.
@@ -73,6 +74,15 @@ public:
     /// <param name="lastCallback">A callback that will be called for each client that is closed.</param>
     /// <returns>The number of connections that were closed.</returns>
     int CleanClosedConnections(std::function<void(ClientPtr)> lastCallback = nullptr);
+
+    /// <summary>
+    /// Return all connections.
+    /// </summary>
+    const std::vector<Connection>& GetConnections() { return m_Connections; }
+    /// <summary>
+    /// Return a connection by its name.
+    /// </summary>
+    ClientPtr GetClientByName(const std::string& name);
 
 private:
 

@@ -10,7 +10,7 @@ public:
     void OnEnter() override;
     void OnUpdate(float dt) override;
     void OnExit() override;
-    
+
 
     ConnectionState(StateMachine* stateMachine, Window* window);
     ConnectionState(const ConnectionState& other) = delete;
@@ -19,11 +19,15 @@ public:
 
     bool IsValidIpAddress(const char* ip);
 
-    void Send(const std::string& data);
-
 private:
-    Window* m_Window;
 
-    ButtonComponent* m_BackButton;
-    InsertFieldComponent* m_IpField;
+    bool m_IsTryingToConnect = false;
+
+    Window* m_Window = nullptr;
+
+    ButtonComponent* m_BackButton = nullptr;
+    ButtonComponent* m_ConnectButton = nullptr;
+
+    InsertFieldComponent* m_IpField = nullptr;
+    InsertFieldComponent* m_NameField = nullptr;
 };

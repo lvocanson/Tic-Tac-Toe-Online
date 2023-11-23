@@ -1,7 +1,12 @@
 #include "HtmlServer.h"
 using enum TcpIp::ErrorCode;
 
-std::string HtmlConn::Receive()
+std::string HtmlConn::GetName() const
+{
+    return Address + ":" + std::to_string(Port);
+}
+
+std::string HtmlConn::Receive() const
 {
     if (!ReadPending)
         throw TcpIp::TcpIpException::Create(SOCKET_NoDataAvailable);
@@ -12,12 +17,12 @@ std::string HtmlConn::Receive()
     return ss.str();
 }
 
-void HtmlConn::Send(const std::string& data)
+void HtmlConn::Send(const std::string& data) const
 {
     TcpIp::SendHtmlResponse(Socket, data.c_str(), static_cast<u_long>(data.size()));
 }
 
-void HtmlConn::Kick()
+void HtmlConn::Kick() const
 {
     ClosePending = true;
 }
@@ -112,6 +117,7 @@ void HtmlServer::Open(unsigned int port)
 
     if (hWnd == nullptr)
         throw TcpIp::TcpIpException::Create(EVENT_CreateFailed, GetLastError());
+
     SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
     iResult = WSAAsyncSelect(m_ListenSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_READ | FD_CLOSE);

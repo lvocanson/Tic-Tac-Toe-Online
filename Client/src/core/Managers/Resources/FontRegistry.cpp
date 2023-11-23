@@ -3,7 +3,6 @@
 
 std::unordered_map<std::string, sf::Font*> FontRegistry::m_Fonts;
 
-
 sf::Font* FontRegistry::GetFont(const std::string& fontName)
 {
     if (!m_Fonts.contains(fontName))
@@ -20,7 +19,7 @@ void FontRegistry::LoadFont(const std::string& fontName)
 
     try
     {
-        if (!font->loadFromFile("resources/fonts/" + fontName + ".ttf"))
+        if (!font->loadFromFile("resources/fonts/" + fontName))
         {
             throw std::runtime_error("Failed to load font: " + fontName);
         }

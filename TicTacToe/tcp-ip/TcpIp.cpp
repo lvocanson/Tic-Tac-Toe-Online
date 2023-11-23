@@ -126,7 +126,7 @@ namespace TcpIp
         char* buffer = new char[bufferSize];
         while (dataSize > 0)
         {
-            // recvSize = min(dataSize, bufferSize), because there might be more data to receive
+            // recvSize = min(dataSize, bufferSize), because there might be more data to receive 
             int recvSize = dataSize > bufferSize ? bufferSize : static_cast<int>(dataSize);
             iResult = recv(socket, buffer, recvSize, 0);
 
@@ -209,5 +209,87 @@ namespace TcpIp
         if (WSACloseEvent(event) == FALSE)
             throw TcpIpException::Create(ErrorCode::EVENT_CloseFailed, TCP_IP_WSA_ERROR);
         event = WSA_INVALID_EVENT;
+    }
+
+    IpAddress IpAddress::GetLocalAddress()
+    {
+        char hostName[256];
+        if (gethostname(hostName, 256) != 0)
+            return {0, 0, 0, 0};
+
+        addrinfo hints;
+        memset(&hints, 0, sizeof(hints));
+        hints.ai_family = AF_INET; // IPv4
+        hints.ai_socktype = SOCK_STREAM;
+
+        addrinfo* result;
+        int status = getaddrinfo(hostName, nullptr, &hints, &result);
+        if (status != 0)
+        {
+            freeaddrinfo(result);
+            return {0, 0, 0, 0};
+        }
+
+        sockaddr_in* addr = reinterpret_cast<sockaddr_in*>(result->ai_addr);
+        IpAddress localAddress = {
+            static_cast<unsigned char>(addr->sin_addr.s_addr & 0xFF),
+            static_cast<unsigned char>((addr->sin_addr.s_addr >> 8) & 0xFF),
+            static_cast<unsigned char>((addr->sin_addr.s_addr >> 16) & 0xFF),
+            static_cast<unsigned char>((addr->sin_addr.s_addr >> 24) & 0xFF)
+        };
+
+        freeaddrinfo(result);
+        return localAddress;
+    }
+
+    std::string IpAddress::ToString() const
+    {
+        return std::to_string(a) + "." + std::to_string(b) + "." + std::to_string(c) + "." + std::to_string(d);
+    }
+
+    IpAddress IpAddress::FromString(const std::string& str)
+    {
+        unsigned int a, b, c, d;
+        sscanf_s(str.c_str(), "%u.%u.%u.%u", &a, &b, &c, &d);
+        return {static_cast<unsigned char>(a), static_cast<unsigned char>(b), static_cast<unsigned char>(c), static_cast<unsigned char>(d)};
+    }
+
+    constexpr char Base64Alphabet[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-";
+
+    std::string IpAddress::ToPhrase() const
+    {
+        unsigned int num = (a << 24) + (b << 16) + (c << 8) + d;
+        std::string result;
+        while (num > 0)
+        {
+            result = Base64Alphabet[num % 64] + result;
+            num /= 64;
+        }
+        return result;
+    }
+
+    IpAddress IpAddress::FromPhrase(const std::string& phrase)
+    {
+        unsigned int num = 0;
+        for (char c : phrase)
+        {
+            num *= 64;
+            for (int i = 0; i < 64; ++i)
+            {
+                if (Base64Alphabet[i] == c)
+                {
+                    num += i;
+                    break;
+                }
+            }
+        }
+
+        return
+        {
+            static_cast<unsigned char>((num >> 24) & 0xFF),
+            static_cast<unsigned char>((num >> 16) & 0xFF),
+            static_cast<unsigned char>((num >> 8) & 0xFF),
+            static_cast<unsigned char>(num & 0xFF)
+        };
     }
 }

@@ -5,11 +5,10 @@
 class InputHandler
 {
 public:
+    InputHandler() = delete;
+    ~InputHandler() = delete;
 
-    InputHandler();
-    ~InputHandler();
-
-    void Update();
+    static void Update();
 
     static bool IsKeyPressed(sf::Keyboard::Key key);
     static bool IsKeyReleased(sf::Keyboard::Key key);
@@ -35,5 +34,4 @@ private:
     // The keyboard's state in the current- and the previous frame
     static bool m_CurrentKeyState[sf::Keyboard::KeyCount + sf::Mouse::ButtonCount];
     static bool m_PreviousKeyState[sf::Keyboard::KeyCount + sf::Mouse::ButtonCount];
-
 };

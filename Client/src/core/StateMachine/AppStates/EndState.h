@@ -18,7 +18,7 @@ public:
     void Cleanup();
 
 private:
-    Window* m_Window;    
-    ButtonComponent* m_ButtonComponent;
 
+    Window* m_Window;
+    ButtonComponent* m_ButtonComponent;
 };

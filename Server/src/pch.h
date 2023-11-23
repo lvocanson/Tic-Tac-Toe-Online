@@ -10,10 +10,10 @@
 #pragma comment(lib, "User32.lib")
 
 #include <iostream>
-#include <TcpIp.h>
+#include <tcp-ip/TcpIp.h>
 #include <vector>
 #include <algorithm>
-#include <json.hpp>
+#include <tcp-ip/json.hpp>
 
 #pragma region Our defines
 
@@ -25,5 +25,6 @@
 
 // Release a pointer and set it to nullptr
 #define RELEASE(ptr) if(ptr) { delete ptr; ptr = nullptr; }
+#define NULLPTR(ptr) if(ptr) { ptr = nullptr; }
 
 #pragma endregion

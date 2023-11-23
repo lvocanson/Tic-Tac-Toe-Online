@@ -5,19 +5,19 @@
 class StateMachine
 {
 public:
-    StateMachine();
+    StateMachine() = default;
     ~StateMachine();
 
     /// <summary>
     /// Add the state ref to the dictionnary
     /// </summary>
     void AddState(const std::string& stateName, State* newState);
-
+    const State* GetState(const std::string& stateName);
     void InitState(const std::string& initState);
 
     void Update(float dt);
-    void Start();
-    void OnReceiveData(const Json& serializeData);
+    void Start() const;
+    void OnReceiveData(const Json& serializeData) const;
     /// <summary>
     /// Switch the current state to the state with the name newState
     /// </summary>

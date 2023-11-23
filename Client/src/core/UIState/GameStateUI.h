@@ -31,5 +31,4 @@ private:
     ProgressBar* m_ProgressBar;
 
     std::unordered_map<TicTacToe::PieceID, sf::Text*> m_PlayerScoreTexts;
-
 };

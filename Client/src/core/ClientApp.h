@@ -1,13 +1,13 @@
 #pragma once
-#include "GameMode.h"
+#include "game/GameMode.h"
 #include "src/core/StateMachine/StateMachine.h"
 #include "Managers/InputHandler.h"
-#include "src/tcp-ip/TcpIpClient.h"
+#include "Managers/TimeManager.h"
+#include "Player.h"
 #include "src/core/Managers/GameHistoryManager.h"
 
 class Window;
 class sf::Shape;
-class TcpIpClient;
 
 class ClientApp
 {
@@ -39,29 +39,28 @@ public:
     /// </summary>
     void Shutdown() { m_IsRunning = false; }
 
-    void Send(const std::string& data);
     static GameSettings& GetGameSettings() { return GetInstance().m_GameSettings; }
 
-    void Connection(const std::string& ip);
+    Player* GetCurrentPlayer() const { return m_Player; }
 
     static GameHistoryManager* GetHistoryManager() { return GetInstance().m_GameHistoryManager; }
 
 private: // Methods
+
     /// Update the ClientApp. Called once per frame.
-    void Update(sf::Time delta);
+    void Update(float delta);
 
     /// Perform any cleanup tasks (e.g. delete pointers). Called before Run() returns.
     void Cleanup();
 
 private: // Fields
+
     bool m_IsRunning = false;
 
+    TimeManager m_TimeManager;
     Window* m_Window = nullptr;
-    StateMachine* m_StateMachine;
-
+    Shared<StateMachine>* m_StateMachine = nullptr;
     GameSettings m_GameSettings;
-    InputHandler m_InputHandler;
-    GameHistoryManager* m_GameHistoryManager;
-
-    TcpIpClient* m_Client;
+    Player* m_Player = nullptr;
+    GameHistoryManager* m_GameHistoryManager = nullptr;
 };

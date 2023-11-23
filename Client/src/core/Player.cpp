@@ -1,6 +1,5 @@
 #include "Player.h"
-#include "IDGenerator.h"
-
+#include <game/IDGenerator.h>
 
 Player::Player()
 {

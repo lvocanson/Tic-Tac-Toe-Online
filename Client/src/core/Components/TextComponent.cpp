@@ -1,12 +1,12 @@
 #include "TextComponent.h"
 #include "src/core/Managers/Resources/FontRegistry.h"
 
-TextComponent::TextComponent() 
+TextComponent::TextComponent()
     : m_Alignment(Center)
 {
-    
+
     m_Text.setString("");
-    m_Text.setFont(*FontRegistry::GetFont("bold-font"));
+    m_Text.setFont(*FontRegistry::GetFont("coolvetica.otf"));
     m_Text.setFillColor(sf::Color::Black);
     m_Text.setCharacterSize(20);
 
@@ -18,14 +18,14 @@ TextComponent::TextComponent(const std::string& text, BaseComponent* parentCompo
 {
     m_ParentComponent = parentComponent;
     m_Text.setString(text);
-    m_Text.setFont(*FontRegistry::GetFont("bold-font"));
+    m_Text.setFont(*FontRegistry::GetFont("coolvetica.otf"));
     m_Text.setFillColor(color);
     m_Text.setCharacterSize(size);
 
     SetPosition(m_ParentComponent->GetPosition());
 }
 
-void TextComponent::Update()
+void TextComponent::Update(float dt)
 {
 }
 

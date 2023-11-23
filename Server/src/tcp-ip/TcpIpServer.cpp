@@ -1,7 +1,12 @@
 #include "TcpIpServer.h"
 using enum TcpIp::ErrorCode;
 
-std::string Connection::Receive()
+std::string Connection::GetName() const
+{
+    return Address + ":" + std::to_string(Port);
+}
+
+std::string Connection::Receive() const
 {
     if (!ReadPending)
         throw TcpIp::TcpIpException::Create(SOCKET_NoDataAvailable);
@@ -12,12 +17,12 @@ std::string Connection::Receive()
     return ss.str();
 }
 
-void Connection::Send(const std::string& data)
+void Connection::Send(const std::string& data) const
 {
     TcpIp::Send(Socket, data.c_str(), static_cast<u_long>(data.size()));
 }
 
-void Connection::Kick()
+void Connection::Kick() const
 {
     ClosePending = true;
 }
@@ -203,4 +208,14 @@ int TcpIpServer::CleanClosedConnections(std::function<void(ClientPtr)> lastCallb
     int closedConnections = (int)std::distance(partition, m_Connections.end());
     m_Connections.erase(partition, m_Connections.end());
     return closedConnections;
+}
+
+ClientPtr TcpIpServer::GetClientByName(const std::string& name)
+{
+    for (Connection& connection : m_Connections)
+    {
+        if (connection.GetName() == name)
+            return &connection;
+    }
+    return nullptr;
 }

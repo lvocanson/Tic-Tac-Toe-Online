@@ -7,7 +7,6 @@ PlayerManager::PlayerManager() : m_PlayerCount(0), m_CurrentPlayerIndex(0)
     m_RegisteredPlayers = std::vector<Player*>();
 }
 
-
 PlayerManager::~PlayerManager()
 {
     Clear();

@@ -2,15 +2,14 @@
 #include "PlayerShapeRegistry.h"
 #include <SFML/Graphics.hpp>
 
-
-sf::Drawable* PlayerShapeRegistry::GetPlayerShape(TicTacToe::PieceID id)
+sf::Drawable* PlayerShapeRegistry::GetPlayerShape(PlayerShapeType shapeType)
 {
-    return m_PlayerShapes[id];
+    return m_PlayerShapes[shapeType];
 }
 
 void PlayerShapeRegistry::ClearPlayerShapes()
 {
-   for (auto& shape : m_PlayerShapes)
+    for (auto& shape : m_PlayerShapes)
     {
         delete shape.second;
     }
@@ -30,11 +29,11 @@ void PlayerShapeRegistry::CreatePlayerShape(PlayerShapeType shapeType, TicTacToe
         shape->setOutlineThickness(OUTLINE_THICKNESS);
         shape->setOutlineColor(color);
         shape->setOrigin(shape->getSize().x * 0.5f, shape->getSize().y * 0.5f);
-        m_PlayerShapes.insert(std::make_pair(id, shape));
+        m_PlayerShapes.insert(std::make_pair(Square, shape));
 
         break;
     }
-     
+
     case Circle:
         auto shape = new sf::CircleShape;
         shape->setRadius(DEFAULT_PIECE_SIZE * 0.25f);
@@ -42,7 +41,7 @@ void PlayerShapeRegistry::CreatePlayerShape(PlayerShapeType shapeType, TicTacToe
         shape->setOutlineThickness(OUTLINE_THICKNESS);
         shape->setOutlineColor(color);
         shape->setOrigin(shape->getRadius(), shape->getRadius());
-        m_PlayerShapes.insert(std::make_pair(id, shape));
+        m_PlayerShapes.insert(std::make_pair(Circle, shape));
 
         break;
     }

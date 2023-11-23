@@ -1,6 +1,5 @@
 #include "GameHistoryManager.h"
 
-
 GameData::GameData(const PlayerData* winner, const std::vector<const PlayerMove*>* allMoves)
 {
     Winner = winner;
@@ -29,10 +28,6 @@ GameHistoryManager::~GameHistoryManager()
     Clear();
 }
 
-void GameHistoryManager::Init()
-{
-
-}
 
 void GameHistoryManager::Clear()
 {
@@ -49,7 +44,7 @@ void GameHistoryManager::SaveGame(const PlayerData* winner, const std::vector<co
     m_GameHistory.push_back(new GameData(winner, playerMoves));
 }
 
-GameData* GameHistoryManager::GetGameData(unsigned int gameID)
+GameData* GameHistoryManager::GetGameData(unsigned int gameID) const
 {
     if (gameID < 0 || gameID >= m_GameHistory.size())
     {

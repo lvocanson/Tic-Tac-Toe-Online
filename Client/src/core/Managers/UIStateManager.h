@@ -23,4 +23,3 @@ protected:
     Window* m_Window;
 
 };
-

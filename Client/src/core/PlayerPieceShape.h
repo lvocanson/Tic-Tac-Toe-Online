@@ -7,9 +7,10 @@ class PlayerPieceShape : public sf::Drawable
 {
 public:
 
-    PlayerPieceShape(const TicTacToe::PieceID id, const sf::Vector2f& position);
+    PlayerPieceShape(const TicTacToe::PieceID id, const PlayerShapeType type, const sf::Vector2f& position);
 
     TicTacToe::PieceID GetPlayerID() const { return m_ID; }
+    PlayerShapeType GetPlayerShape() const { return m_ShapeType; }
 
 private:
 
@@ -17,7 +18,7 @@ private:
 
 protected:
 
+    PlayerShapeType m_ShapeType;
     TicTacToe::PieceID m_ID;
     sf::Vector2f m_Position;
-
 };

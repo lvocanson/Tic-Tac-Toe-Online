@@ -1,9 +1,5 @@
 #include "StateMachine.h"
 
-StateMachine::StateMachine()
-    : m_States()
-{
-}
 
 StateMachine::~StateMachine()
 {
@@ -20,9 +16,21 @@ void StateMachine::AddState(const std::string& stateName, State* newState)
     m_States.insert(std::pair(stateName, newState));
 }
 
-void StateMachine::Start()
+const State* StateMachine::GetState(const std::string& stateName)
 {
-    if (!m_CurrentState) 
+    const State* state = m_States[stateName];
+    if (!state)
+    {
+        std::cout << "State not found" << std::endl;
+        return nullptr;
+    }
+
+    return state;
+}
+
+void StateMachine::Start() const
+{
+    if (!m_CurrentState)
     {
         std::cout << "State machine isn't init" << std::endl;
         return;
@@ -31,7 +39,7 @@ void StateMachine::Start()
     m_CurrentState->OnEnter();
 }
 
-void StateMachine::OnReceiveData(const Json& data)
+void StateMachine::OnReceiveData(const Json& data) const
 {
     m_CurrentState->OnReceiveData(data);
 }

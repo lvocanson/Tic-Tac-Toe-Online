@@ -1,6 +1,7 @@
 #pragma once
 
-struct GameMode {
+struct GameMode
+{
     bool IsTimerOn;
     float PlayerMoveLimitTime;
     unsigned int AlignmentGoal;
@@ -8,8 +9,8 @@ struct GameMode {
     unsigned int TotalColumn;
 };
 
-static const GameMode GAMEMODE_CLASSIC = { false, 0, 3, 3, 3 };
-static const GameMode GAMEMODE_FAST = { true, 3.f, 3, 3, 3 };
+static const GameMode GAMEMODE_CLASSIC = {false, 0, 3, 3, 3};
+static const GameMode GAMEMODE_FAST = {true, 3.f, 3, 3, 3};
 
 class GameSettings
 {
@@ -27,8 +28,6 @@ public:
     bool IsTimerOn() const { return m_ActualGameMode.IsTimerOn; }
 
 private:
-
     GameMode m_ActualGameMode;
 
 };
-
