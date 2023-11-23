@@ -157,7 +157,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
         Message<Login> msg(parsedData);
         if (!m_Players.contains(sender->GetName()))
         {
-            m_Players.insert({ sender->GetName(), msg.Username });
+            m_Players.insert({sender->GetName(), msg.Username});
             std::cout << INF_CLR << "Registered player: " << HASH_STRING_CLR(msg.Username) << INF_CLR << " into server." << std::endl << DEF_CLR;
         }
         else
@@ -234,7 +234,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
             // Create the lobby game if it doesn't exist
             if (!m_StartedGames.contains(lb->Data.ID))
-                m_StartedGames.insert({ lb->Data.ID, lb });
+                m_StartedGames.insert({lb->Data.ID, lb});
 
             break;
         }
@@ -486,7 +486,7 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
             data = sender->Receive();
             break;
         }
-        catch (const TcpIp::TcpIpException &e)
+        catch (const TcpIp::TcpIpException& e)
         {
             if (e.Context == WSAEWOULDBLOCK && wbe < maxWouldBlockErrors)
             {
@@ -510,29 +510,20 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
             std::cout << "Sending root page." << std::endl;
             std::string lobbyButtons;
 
-            for (const auto &pair : m_StartedGames)
+            for (const auto& pair : m_StartedGames)
             {
                 unsigned int lobbyId = pair.first;
-                Lobby *lobby = pair.second;
+                Lobby* lobby = pair.second;
                 lobbyButtons += "<a href='/watch/" + std::to_string(lobby->Data.ID) + "'>Lobby " + std::to_string(lobby->Data.ID) + "</a><br>";
             }
-            sender->Send(HTML_200 HTML_PAGE(HTML_REFRESH 
-                                            "<title>Tic Tac Toz</title>",
-
-                                            "<style>"
-                                                "h3 {"
-                                                    "font-family: 'Courier New', monospace;"
-                                                "}"
-                                                "a {"
-                                                    "font-family: 'Courier New', monospace;"
-                                                "}"
-                                            "</style>"
-                                            "<h3>Click on a lobby to watch the game that's being played.</h3>"
-                                            "<br />" 
-                                               +
-                                                lobbyButtons 
-                                               +
-                                            "<br />"));
+            sender->Send(HTML_200 HTML_PAGE(HTML_REFRESH
+                "<title>Tic Tac Toz</title>",
+                "<style>"
+                "   h3 {font-family: 'Courier New', monospace;}"
+                "   a {font-family: 'Courier New', monospace;}"
+                "</style>"
+                "<h3>Click on a lobby to watch the game that's being played.</h3>"
+                "<br />" + lobbyButtons + "<br />"));
         }
         else if (page == "/favicon.ico")
         {
@@ -556,40 +547,41 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
 
                 sender->Send(HTML_200 HTML_PAGE(HTML_REFRESH
                     "<title>Lobby " + std::to_string(lobby->Data.ID) + "</title>",
-
                     "<style>"
-                        "body {"
-                            "font-family: 'Courier New', monospace;"
-                            "display: flex;"
-                            "flex-direction: column;"
-                            "align-items: center;"
-                            "justify-content: center;"
-                            "height: 100vh;"
-                            "margin: 0;"
-                        "}"
-                        "pre {"
-                            "font-family: 'Courier New', monospace;"
-                            "font-size: 35px;"
-                        "}"
-                        "h2, h3 {"
-                            "margin: 5px 0; /* Ajustez les valeurs de la marge selon vos besoins */"
-                        "}"
+                    "   body"
+                    "   {"
+                    "      font-family: 'Courier New', monospace;"
+                    "      display: flex;"
+                    "      flex-direction: column;"
+                    "      align-items: center;"
+                    "      justify-content: center;"
+                    "      height: 100vh;"
+                    "      margin: 0;"
+                    "   }"
+                    "   pre"
+                    "   {"
+                    "      font-family: 'Courier New', monospace;"
+                    "      font-size: 35px;"
+                    "   }"
+                    "   h2, h3"
+                    "   {"
+                    "      margin: 5px 0;"
+                    "   }"
                     "</style>"
 
                     "<h2>You are watching lobby " + std::to_string(lobby->Data.ID) + "</h2>"
                     "<br />"
                     "<a href='/'>Back to lobby list</a>"
                     "<br />"
-                    "<h2>" + lobby->Data.PlayerX + "(X)</h2>"
+                    "<h2>" + lobby->Data.PlayerX + " (X)</h2>"
                     "<h3>VS</h3>"
-                    "<h2>" + lobby->Data.PlayerO + "(O)</h2>"
-
+                    "<h2>" + lobby->Data.PlayerO + " (O)</h2>"
                     "<pre>"
-                    + PieceToString(lobby->Board(0, 0)) + " | " + PieceToString(lobby->Board(0, 1)) + " | " + PieceToString(lobby->Board(0, 2)) + "\n"
-                    + "----------------\n"
-                    + PieceToString(lobby->Board(1, 0)) + " | " + PieceToString(lobby->Board(1, 1)) + " | " + PieceToString(lobby->Board(1, 2)) + "\n"
-                    + "----------------\n"
-                    + PieceToString(lobby->Board(2, 0)) + " | " + PieceToString(lobby->Board(2, 1)) + " | " + PieceToString(lobby->Board(2, 2)) + "\n"
+                    + " " + PieceToString(lobby->Board(0, 0)) + " | " + PieceToString(lobby->Board(0, 1)) + " | " + PieceToString(lobby->Board(0, 2)) + "\n"
+                    + "-----------------\n"
+                    + " " + PieceToString(lobby->Board(1, 0)) + " | " + PieceToString(lobby->Board(1, 1)) + " | " + PieceToString(lobby->Board(1, 2)) + "\n"
+                    + "-----------------\n"
+                    + " " + PieceToString(lobby->Board(2, 0)) + " | " + PieceToString(lobby->Board(2, 1)) + " | " + PieceToString(lobby->Board(2, 2)) + "\n"
                     "</pre>"
                 ));
             }
