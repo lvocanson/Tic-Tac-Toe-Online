@@ -109,16 +109,33 @@ void ServerApp::HandleGameServer()
         // For each closed connection
         m_GameServer->CleanClosedConnections([this](ClientPtr c)
         {
-            std::cout << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR;
+            const auto& player = m_Players[c->GetName()];
+            if (player != "")
+            {
+                for (auto lb : m_Lobbies)
+                {
+                    if (lb->IsInLobby(player))
+                    {
+                        lb->RemovePlayerFromLobby(player);
+                    }
+                }
 
-            if (m_Players.contains(c->GetName()))
-                m_Players.erase(c->GetName());
+                UnregisterPlayerFromServer(player);
+            }
+
+            std::cout << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR;
         });
     }
     catch (const TcpIp::TcpIpException& e)
     {
         std::cout << ERR_CLR << "The game server has encountered an error: " << e.what() << std::endl << DEF_CLR;
     }
+}
+
+void ServerApp::UnregisterPlayerFromServer(const std::string& player)
+{
+    m_Players.erase(player);
+    std::cout << STS_CLR << "Unregistered player: " << HASH_STRING_CLR(player) << STS_CLR << " from server." << std::endl << DEF_CLR;
 }
 
 void ServerApp::HandleRecv(ClientPtr sender)
@@ -142,9 +159,16 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
     if (receivedData["Type"] == "Login")
     {
-        m_Players.insert({sender->GetName(), receivedData["UserName"]});
-
-        std::cout << STS_CLR << "Registered player: " << HASH_STRING_CLR(receivedData["UserName"]) << STS_CLR << " into server." << std::endl << DEF_CLR;
+        if (!m_Players.contains(sender->GetName()))
+        {
+            m_Players.insert({ sender->GetName(), receivedData["UserName"] });
+            std::cout << STS_CLR << "Logged in player: " << HASH_STRING_CLR(receivedData["UserName"]) << STS_CLR << " into server." << std::endl << DEF_CLR;
+        }
+        else
+        {
+            std::cout << WRN_CLR << "Player " << HASH_STRING_CLR(m_Players[sender->GetName()]) << WRN_CLR << " tried to login again." << std::endl << DEF_CLR;
+            return;
+        }
     }
     ////////// Lobby State //////////
     else if (receivedData["Type"] == "GetLobbyList")
@@ -230,9 +254,6 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
             lb->RemovePlayerFromLobby(playerName);
             std::cout << STS_CLR << "Player " << HASH_STRING_CLR(playerName) << STS_CLR << " has left lobby: " << INF_CLR << receivedData["ID"] << std::endl << DEF_CLR;
-
-            std::cout << STS_CLR << "Unregistered player: " << HASH_STRING_CLR(playerName) << STS_CLR << " from server." << std::endl << DEF_CLR;
-            m_Players.erase(sender->GetName());
 
             if (m_StartedGames.contains(lb->Data.ID) && lb->IsLobbyEmpty())
             {

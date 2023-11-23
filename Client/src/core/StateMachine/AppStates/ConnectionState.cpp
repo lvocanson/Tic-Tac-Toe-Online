@@ -4,6 +4,7 @@
 
 #include <regex>
 #include <SFML/Network/IpAddress.hpp>
+#include <tcp-ip/Messages/RegisterPlayerMessage.h>
 
 constexpr float CONNECTION_TIMEOUT_TIME = 5.0f;
 
@@ -121,6 +122,9 @@ void ConnectionState::OnUpdate(float dt)
         }
         case Connected:
         {
+            RegisterPlayerMessage message(ClientApp::GetInstance().GetCurrentPlayer()->GetName());
+            ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
+
             m_StateMachine->SwitchState("LobbyState");
             m_IpField->ClearErrorMessage();
             m_IsTryingToConnect = false;

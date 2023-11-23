@@ -20,7 +20,10 @@ public:
 
 private:
 
-    void DisplayGame();
+    void DisplaySelectedGame();
+
+    void NextGame();
+    void PreviousGame();
 
     void PlacePiece();
     void RemovePiece();
@@ -34,6 +37,14 @@ private:
     ButtonComponent* m_NextGameButton = nullptr;
     ButtonComponent* m_PreviousGameButton = nullptr;
     ButtonComponent* m_BackToMenu = nullptr;
+
+    TextComponent* m_GameNumberText = nullptr;
+    TextComponent* m_MoveNumberText = nullptr;
+    TextComponent* m_GameButtonLabel = nullptr;
+    TextComponent* m_MoveButtonLabel = nullptr;
+    TextComponent* m_GameWinnerText = nullptr;
+
+    std::vector<GameData*> m_Games;
 
     GraphicBoard m_Board;
 
