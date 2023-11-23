@@ -1,5 +1,8 @@
 #include "ServerApp.h"
 #include "ConsoleHelper.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 #define ERR_CLR Color::Red // Error color
 #define WRN_CLR Color::Yellow // Warning color
@@ -372,11 +375,24 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
         if (page == "/")
         {
             std::cout << "Sending root page." << std::endl;
-            sender->Send("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
+            std::string lobbyButtons;
 
-                // TODO: Send the actual page, lobbies with href to /watch/lobbyid
+            for (const auto& pair : m_StartedGames)
+            {
+                unsigned int lobbyId = pair.first;
+                Lobby* lobby = pair.second;
+                lobbyButtons += "<a href='/watch/" + std::to_string(lobby->ID) + "'>Lobby " + std::to_string(lobby->ID) + "</a><br>";
+            }
+            sender->Send(
+                "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
 
-                "<html><body><h1>Hello " + sender->Address + ":" + std::to_string(sender->Port) + "</h1></body></html>");
+                "<html>"
+                    "<body>"
+                        "<h1>Hello </h1>"
+                        "<br />" + lobbyButtons +
+                    "</body>"
+                "</html>"
+            );
         }
         else if (page == "/favicon.ico")
         {
@@ -384,26 +400,41 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
             std::cout << "Sending 404." << std::endl;
             sender->Send("HTTP/1.1 404 Not Found\r\n\r\n");
         }
+        else if (page.find("/watch/") == 0) 
+        {
+            unsigned int requestedLobbyId = std::stoi(page.substr(7));
 
-        // TODO: page.starts_with("/watch/") -> send the watch page for the lobby
+            auto it = m_StartedGames.find(requestedLobbyId);
+            if (it != m_StartedGames.end())
+            {
+                Lobby* lobby = it->second;
 
-        /*
-            The client should get something like this: (maybe with a link to the root page)
+                std::string watchPage = "<html>"
+                    "<body>"
+                    "<h1>Lobby ID: " + std::to_string(lobby->ID) + "</h1>"
+                    "<p>Player X: \"" + lobby->PlayerO + "\"</p>"
+                    "<p>Player O: \"" + lobby->PlayerX + "\"</p>"
 
-            Lobby ID: 123456
-            Player X: "Player 1"
-            Player O: "Player 2"
-            Turn: X
+                    // TODO Finish this
+                    /*                  
+                    "<p>Turn: " + lobby->GetPlayerTurn() + "</p>"
+                    "<pre>"
+                    " " + lobby->GetBoardState(0, 0) + " | " + lobby->GetBoardState(0, 1) + " | " + lobby->GetBoardState(0, 2) + "\n"
+                    " -----------\n"
+                    " " + lobby->GetBoardState(1, 0) + " | " + lobby->GetBoardState(1, 1) + " | " + lobby->GetBoardState(1, 2) + "\n"
+                    " -----------\n"
+                    " " + lobby->GetBoardState(2, 0) + " | " + lobby->GetBoardState(2, 1) + " | " + lobby->GetBoardState(2, 2) + "\n"
+                    "</pre>"
+                    */
 
+                    "</body>"
+                    "</html>";
 
-             X | O | X
-            -----------
-             X | X | O
-            -----------
-             O | X | O
-
-        */
-
+                sender->Send(
+                    "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" + watchPage
+                );
+            }
+        }
         else
         {
             std::cout << "Redirecting to root page." << std::endl;
@@ -418,6 +449,7 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
     // Close the connection
     sender->Kick();
 }
+
 
 void ServerApp::CleanUpWebServer()
 {
