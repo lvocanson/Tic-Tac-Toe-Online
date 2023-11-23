@@ -97,10 +97,17 @@ void ServerApp::HandleGameServer()
         }
 
         // For each closed connection
-        m_GameServer->CleanClosedConnections([](ClientPtr c)
+        m_GameServer->CleanClosedConnections([this](ClientPtr c)
+        {
+            const auto& player = m_Players[c->GetName()];
+            if (player != "")
             {
-                std::cout << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR;
-            });
+                m_Players.erase(player);
+                std::cout << STS_CLR << "Unregistered player: " << HASH_STRING_CLR(player) << STS_CLR << " from server." << std::endl << DEF_CLR;
+            }
+
+            std::cout << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR;
+        });
     }
     catch (const TcpIp::TcpIpException& e)
     {
