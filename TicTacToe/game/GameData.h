@@ -18,8 +18,7 @@ struct PlayerMove : ISerializable
 
 struct GameData : ISerializable
 {
-public:
-
+    GameData() = default;
     GameData(const std::vector<PlayerMove>& allMoves);
     GameData(const Json& j);
 

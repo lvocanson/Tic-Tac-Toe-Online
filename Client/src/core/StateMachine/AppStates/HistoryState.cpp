@@ -1,6 +1,6 @@
 #include "HistoryState.h"
-#include "src/core/ClientApp.h"
 #include "src/core/Managers/GameHistoryManager.h"
+#include "tcp-ip/ServerMessages.h"
 #include "tcp-ip/ClientMessages.h"
 
 const sf::Vector2f NEXT_BUTTON_OFFSET = sf::Vector2f(250, 0);
@@ -9,7 +9,6 @@ HistoryState::HistoryState(StateMachine* stateMachine, Window* m_Window)
     : State(stateMachine)
     , m_Window(m_Window)
 {
-    m_Games = std::vector<GameData*>();
 }
 
 HistoryState::~HistoryState()
@@ -21,10 +20,6 @@ void HistoryState::OnEnter()
 {
     Message<MsgType::FetchGameHistoryList> message;
     ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
-
-    m_CurrentGameIndex = 0;
-    m_CurrentMoveIndex = 0;
-    m_CurrentGame = nullptr;
 
     m_PreviousMoveButton = new ButtonComponent(sf::Vector2f(500, 50), sf::Vector2f(50, 50), sf::Color::Green);
     m_PreviousMoveButton->SetButtonText("<", sf::Color::White, 30, TextAlignment::Center);
@@ -119,17 +114,41 @@ void HistoryState::OnExit()
     m_Window->ClearAllDrawables();
 }
 
-void HistoryState::OnReceiveData(const Json& data)
+void HistoryState::OnReceiveData(const Json& serializeData)
 {
-    Message<MsgType::GameHistoryList> message(data);
+    m_CurrentGameIndex = 0;
+    m_CurrentMoveIndex = 0;
+    m_Games.clear();
+
+    const auto type = Message<>::GetType(serializeData);
+
+    using enum MsgType;
+    switch (type)
+    {
+    case GameHistoryList:
+    {
+        const Message<GameHistoryList> historyList(serializeData);
+
+        for (const auto& game : historyList.GameHistory)
+        {
+            m_Games.push_back(game);
+        }
+
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 void HistoryState::DisplaySelectedGame()
 {
-    m_CurrentGame = ClientApp::GetHistoryManager()->GetGameData(m_CurrentGameIndex);
-    m_CurrentMoveIndex = m_CurrentGame->GetMovesSize() - 1;
+    if (m_CurrentGameIndex >= m_Games.size()) return;
 
-    for (const auto& move : m_CurrentGame->GetMoves())
+    m_CurrentGame = m_Games[m_CurrentGameIndex];
+    m_CurrentMoveIndex = m_CurrentGame.GetMovesSize() - 1;
+
+    for (const auto& move : m_CurrentGame.GetMoves())
     {
         m_Board.InstanciateNewPlayerShape(move.PlayerPiece, move.BoardCell);
     }
@@ -168,14 +187,14 @@ void HistoryState::PreviousGame()
 
 void HistoryState::PlacePiece()
 {
-    if (!m_CurrentGame) return;
+    if (m_CurrentGame.GetMoves().empty()) return;
 
-    if (m_CurrentMoveIndex + 1 < m_CurrentGame->GetMovesSize())
+    if (m_CurrentMoveIndex + 1 < m_CurrentGame.GetMovesSize())
     {
         m_CurrentMoveIndex++;
-        const auto& move = m_CurrentGame->GetMove(m_CurrentMoveIndex);
+        const auto& move = m_CurrentGame.GetMove(m_CurrentMoveIndex);
         m_Board.InstanciateNewPlayerShape(move.PlayerPiece, move.BoardCell);
-        m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex) + " / " + std::to_string(m_CurrentGame->GetMovesSize()));
+        m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex) + " / " + std::to_string(m_CurrentGame.GetMovesSize()));
     }
     else
     {
@@ -185,13 +204,13 @@ void HistoryState::PlacePiece()
 
 void HistoryState::RemovePiece()
 {
-    if (!m_CurrentGame) return;
+    if (m_CurrentGame.GetMoves().empty()) return;
 
     if (m_CurrentMoveIndex > 0)
     {
         m_CurrentMoveIndex--;
         m_Board.RemoveLastPlayerShape();
-        m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex) + " / " + std::to_string(m_CurrentGame->GetMovesSize()));
+        m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex) + " / " + std::to_string(m_CurrentGame.GetMovesSize()));
     }
     else
     {
