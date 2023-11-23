@@ -222,6 +222,8 @@ void GameState::OnReceiveData(const Json& serializeData)
         m_PlayerManager.CreateNewPlayer(message.PlayerO, sf::Color(255, 194, 0), Circle);
 
         m_IsPlayerTurn = message.StartingPlayer == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
+        
+        m_GameStateUI->UpdateGameStateText(message.StartingPlayer + " turn!");
 
         StartGame();
     }
@@ -245,5 +247,4 @@ void GameState::StartGame()
 {
     m_IsGameStarted = true;
     m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
-   // m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
 }

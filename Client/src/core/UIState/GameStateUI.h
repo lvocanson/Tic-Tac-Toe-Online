@@ -25,7 +25,6 @@ public:
 
 private:
 
-    sf::Text* m_PlayerTurnText;
     sf::Text* m_GameStateText;
     sf::Text* m_Title;
     ProgressBar* m_ProgressBar;
