@@ -197,8 +197,8 @@ void ServerApp::HandleRecv(ClientPtr sender)
             lb->RemovePlayerFromLobby(playerName);
             std::cout << STS_CLR << "Player " << HASH_STRING_CLR(playerName) << STS_CLR << " has left lobby: " << INF_CLR << receivedData["ID"] << std::endl << DEF_CLR;
 
-            m_Players.erase(sender->GetName());
             std::cout << STS_CLR << "Unregistered player: " << HASH_STRING_CLR(playerName) << STS_CLR << " from server." << std::endl << DEF_CLR;
+            m_Players.erase(sender->GetName());
 
             if (m_StartedGames.contains(lb->ID) && lb->IsLobbyEmpty())
             {
