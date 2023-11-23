@@ -42,6 +42,7 @@ private:
     TextComponent* m_MoveNumberText = nullptr;
     TextComponent* m_GameButtonLabel = nullptr;
     TextComponent* m_MoveButtonLabel = nullptr;
+    TextComponent* m_GameWinnerText = nullptr;
 
     GraphicBoard m_Board;
 

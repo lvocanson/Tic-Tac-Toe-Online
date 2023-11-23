@@ -76,6 +76,9 @@ void HistoryState::OnEnter()
     m_MoveButtonLabel->SetPosition(m_MoveNumberText->GetPosition() - sf::Vector2f(m_MoveButtonLabel->GetSize().x * 0.5f + 10, 50));
     m_MoveButtonLabel->SetCharacterSize(40);
 
+    m_GameWinnerText = new TextComponent;
+    m_GameWinnerText->SetText("GAME WINNER");
+
     m_Board.Init(3, 3, m_Window);
     m_Board.DrawBoard();
 
