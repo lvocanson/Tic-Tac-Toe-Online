@@ -2,27 +2,72 @@
 #include "IDGenerator.h"
 
 Lobby::Lobby()
-    : ID(IDGenerator::GenerateLobbyID())
-    , PlayerX()
-    , PlayerO()
 {
+    Data.ID = IDGenerator::GenerateLobbyID();
+    Data.PlayerX = "";
+    Data.PlayerO = "";
 }
 
 Lobby::Lobby(const std::string& playerX, const std::string& playerO)
-    : ID(IDGenerator::GenerateLobbyID())
-    , PlayerX(playerX)
-    , PlayerO(playerO)
 {
+    Data.ID = IDGenerator::GenerateLobbyID(),
+    Data.PlayerX = playerX;
+    Data.PlayerO = playerO;
 }
 
 Lobby::Lobby(int id, const std::string& playerX, const std::string& playerO)
-    : ID(id)
-    , PlayerX(playerX)
-    , PlayerO(playerO)
 {
+    Data.ID = id;
+    Data.PlayerX = playerX;
+    Data.PlayerO = playerO;
 }
 
-Json Lobby::Serialize()
+std::string& Lobby::GetOpponentName(const std::string& senderName)
+{
+    if (Data.PlayerO == senderName)
+        return Data.PlayerX;
+    else if (Data.PlayerX == senderName)
+        return Data.PlayerO;
+
+    throw std::exception("Player not found");
+}
+
+void Lobby::AddPlayerToLobby(const std::string& name)
+{
+    if (Data.PlayerX.empty())
+    {
+        Data.PlayerX = name;
+        PlayerCount++;
+    }
+    else if (Data.PlayerO.empty())
+    {
+        Data.PlayerO = name;
+        PlayerCount++;
+    }
+}
+
+void Lobby::RemovePlayerFromLobby(const std::string& name)
+{
+    if (Data.PlayerX == name)
+    {
+        Data.PlayerX = "";
+        PlayerCount--;
+    }
+    else if (Data.PlayerO == name)
+    {
+        Data.PlayerO = "";
+        PlayerCount--;
+    }
+}
+
+LobbyData::LobbyData(const int id, const std::string& playerX, const std::string& playerO)
+{
+    ID = id;
+    PlayerX = playerX;
+    PlayerO = playerO;
+}
+
+Json LobbyData::Serialize()
 {
     Json j;
     j["ID"] = ID;
@@ -31,35 +76,9 @@ Json Lobby::Serialize()
     return j;
 }
 
-void Lobby::Deserialize(Json j)
+void LobbyData::Deserialize(const Json& j)
 {
     ID = j["ID"];
     PlayerO = j["PlayerO"];
     PlayerX = j["PlayerX"];
-}
-
-std::string& Lobby::GetOpponentName(const std::string& senderName)
-{
-    if (PlayerO == senderName)
-        return PlayerX;
-    else if (PlayerX == senderName)
-        return PlayerO;
-
-    throw std::exception("Player not found");
-}
-
-void Lobby::AddPlayerToLobby(const std::string& name)
-{
-    if (PlayerX.empty())
-        PlayerX = name;
-    else if (PlayerO.empty())
-        PlayerO = name;
-}
-
-void Lobby::RemovePlayerFromLobby(const std::string& name)
-{
-    if (PlayerX == name)
-        PlayerX = "";
-    else if (PlayerO == name)
-        PlayerO = "";
 }
