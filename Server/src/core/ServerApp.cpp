@@ -3,15 +3,16 @@
 #include "tcp-ip/ClientMessages.h"
 #include "tcp-ip/ServerMessages.h"
 
-#define ERR_CLR Color::Red          // Error color
-#define WRN_CLR Color::Yellow       // Warning color
-#define SCS_CLR Color::LightGreen   // Success color
+#define ERR_CLR Color::Red // Error color
+#define WRN_CLR Color::Yellow // Warning color
+#define SCS_CLR Color::LightGreen // Success color
 #define STS_CLR Color::LightMagenta // Status color
-#define INF_CLR Color::Gray         // Information color
-#define DEF_CLR Color::White        // Default color
+#define INF_CLR Color::Gray // Information color
+#define DEF_CLR Color::White // Default color
 #define HASH_CLR(c) HshClr(c->GetName()) << c->GetName()
 #define HASH_STRING_CLR(c) HshClr(c) << c
 #define WEB_PFX INF_CLR << '[' << STS_CLR << "WEB" << INF_CLR << "] " // Web server prefix
+
 
 constexpr int MAXIMUM_LOBBIES = 3;
 
@@ -35,8 +36,7 @@ void ServerApp::Init()
 
 void ServerApp::Run()
 {
-    std::cout << INF_CLR << "Press ESC to shutdown the app." << std::endl
-              << DEF_CLR << std::endl;
+    std::cout << INF_CLR << "Press ESC to shutdown the app." << std::endl << DEF_CLR << std::endl;
     while (!IsKeyPressed(27)) // 27 = ESC
     {
         HandleGameServer();
@@ -49,9 +49,7 @@ void ServerApp::Run()
 
 void ServerApp::CleanUp()
 {
-    std::cout << std::endl
-              << INF_CLR << "User requested to shutdown the app." << std::endl
-              << DEF_CLR;
+    std::cout << std::endl << INF_CLR << "User requested to shutdown the app." << std::endl << DEF_CLR;
 
     CleanUpWebServer();
     CleanUpGameServer();
@@ -61,18 +59,16 @@ void ServerApp::CleanUp()
 
 bool ServerApp::InitGameServer()
 {
-    std::cout << Color::Cyan << "=========== Starting Game Server Initialization ===========" << std::endl
-              << INF_CLR;
+    std::cout << Color::Cyan << "=========== Starting Game Server Initialization ===========" << std::endl << INF_CLR;
     try
     {
         m_GameServer = new TcpIpServer();
         m_GameServer->Open(DEFAULT_PORT);
         std::cout << "Game server is listening on port " << DEFAULT_PORT << "..." << std::endl;
     }
-    catch (const TcpIp::TcpIpException &e)
+    catch (const TcpIp::TcpIpException& e)
     {
-        std::cout << ERR_CLR << "The game server is unable to start: " << e.what() << std::endl
-                  << DEF_CLR;
+        std::cout << ERR_CLR << "The game server is unable to start: " << e.what() << std::endl << DEF_CLR;
         return false;
     }
 
@@ -80,8 +76,7 @@ bool ServerApp::InitGameServer()
     CreateLobbies();
     std::cout << "Lobbies created." << std::endl;
 
-    std::cout << Color::Cyan << "=========== Game Server Initialization Complete ===========" << std::endl
-              << DEF_CLR;
+    std::cout << Color::Cyan << "=========== Game Server Initialization Complete ===========" << std::endl << DEF_CLR;
     return true;
 }
 
@@ -96,8 +91,7 @@ void ServerApp::HandleGameServer()
         ClientPtr newClient;
         while ((newClient = m_GameServer->FindNewClient()) != nullptr)
         {
-            std::cout << STS_CLR << "New connection from " << HASH_CLR(newClient) << STS_CLR << " has been established." << std::endl
-                      << DEF_CLR;
+            std::cout << STS_CLR << "New connection from " << HASH_CLR(newClient) << STS_CLR << " has been established." << std::endl << DEF_CLR;
         }
 
         // For each client with pending data
@@ -109,35 +103,34 @@ void ServerApp::HandleGameServer()
 
         // For each closed connection
         m_GameServer->CleanClosedConnections([this](ClientPtr c)
-                                             {
-            const auto& player = m_Players[c->GetName()];
-            if (player != "")
             {
-                for (auto lb : m_Lobbies)
+                const auto& player = m_Players[c->GetName()];
+                if (player != "")
                 {
-                    if (lb->IsInLobby(player))
+                    for (auto lb : m_Lobbies)
                     {
-                        lb->RemovePlayerFromLobby(player);
+                        if (lb->IsInLobby(player))
+                        {
+                            lb->RemovePlayerFromLobby(player);
+                        }
                     }
+
+                    UnregisterPlayerFromServer(player);
                 }
 
-                UnregisterPlayerFromServer(player);
-            }
-
-            std::cout << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR; });
+                std::cout << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR;
+            });
     }
-    catch (const TcpIp::TcpIpException &e)
+    catch (const TcpIp::TcpIpException& e)
     {
-        std::cout << ERR_CLR << "The game server has encountered an error: " << e.what() << std::endl
-                  << DEF_CLR;
+        std::cout << ERR_CLR << "The game server has encountered an error: " << e.what() << std::endl << DEF_CLR;
     }
 }
 
-void ServerApp::UnregisterPlayerFromServer(const std::string &player)
+void ServerApp::UnregisterPlayerFromServer(const std::string& player)
 {
     m_Players.erase(player);
-    std::cout << STS_CLR << "Unregistered player: " << HASH_STRING_CLR(player) << STS_CLR << " from server." << std::endl
-              << DEF_CLR;
+    std::cout << STS_CLR << "Unregistered player: " << HASH_STRING_CLR(player) << STS_CLR << " from server." << std::endl << DEF_CLR;
 }
 
 void ServerApp::HandleRecv(ClientPtr sender)
@@ -148,10 +141,9 @@ void ServerApp::HandleRecv(ClientPtr sender)
     {
         parsedData = Json::parse(data);
     }
-    catch (const std::exception &e)
+    catch (const std::exception& e)
     {
-        std::cout << ERR_CLR << "Failed to parse JSON from " << HASH_CLR(sender) << ERR_CLR << ": " << e.what() << std::endl
-                  << DEF_CLR;
+        std::cout << ERR_CLR << "Failed to parse JSON from " << HASH_CLR(sender) << ERR_CLR << ": " << e.what() << std::endl << DEF_CLR;
         return;
     }
     MsgType type = Message<>::GetType(parsedData);
@@ -165,63 +157,32 @@ void ServerApp::HandleRecv(ClientPtr sender)
         Message<Login> msg(parsedData);
         if (!m_Players.contains(sender->GetName()))
         {
-            if (lobbyID != lb->ID)
-                continue;
-
-            if (lb->IsInLobby(m_Players[sender->GetName()]) || lb->IsLobbyFull())
-                return;
-
-            const std::string &playerName = m_Players[sender->GetName()];
-
-            lb->AddPlayerToLobby(playerName);
-            std::cout << STS_CLR << "Player " << HASH_STRING_CLR(playerName) << STS_CLR << " has joined lobby: " << INF_CLR << lobbyID << std::endl
-                      << DEF_CLR;
-
-            if (!m_StartedGames.contains(lb->ID))
-            {
-                m_StartedGames.insert({lb->ID, lb});
-                std::cout << STS_CLR << "Creating game " << INF_CLR << lobbyID << "..." << std::endl
-                          << DEF_CLR;
-            }
-
-            Json j;
-            j["Type"] = "IsInLobby";
-            j["CurrentLobbyID"] = lb->ID;
-            sender->Send(j.dump());
-
-            std::cout << INF_CLR << "Lobby confirmation sent to " << HASH_CLR(sender) << std::endl
-                      << DEF_CLR;
-
-            m_Players.insert({sender->GetName(), msg.Username});
-            std::cout << INF_CLR << "Registered player: " << HASH_STRING_CLR(msg.Username) << INF_CLR << " into server." << std::endl
-                      << DEF_CLR;
+            m_Players.insert({ sender->GetName(), msg.Username });
+            std::cout << INF_CLR << "Registered player: " << HASH_STRING_CLR(msg.Username) << INF_CLR << " into server." << std::endl << DEF_CLR;
         }
         else
         {
-            std::cout << WRN_CLR << "Player " << HASH_STRING_CLR(m_Players[sender->GetName()]) << WRN_CLR << " tried to login again." << std::endl
-                      << DEF_CLR;
+            std::cout << WRN_CLR << "Player " << HASH_STRING_CLR(m_Players[sender->GetName()]) << WRN_CLR << " tried to login again." << std::endl << DEF_CLR;
             return;
         }
         break;
     }
     case Disconnect:
     {
-        std::string &username = m_Players.at(sender->GetName());
-        for (const auto &lb : m_Lobbies)
+        std::string& username = m_Players.at(sender->GetName());
+        for (const auto& lb : m_Lobbies)
         {
             // If the player is in a lobby, remove him from it
             if (lb->IsInLobby(username))
             {
                 lb->RemovePlayerFromLobby(username);
-                std::cout << INF_CLR << "Player " << HASH_STRING_CLR(username) << INF_CLR << " has left lobby: " << lb->Data.ID << std::endl
-                          << DEF_CLR;
+                std::cout << INF_CLR << "Player " << HASH_STRING_CLR(username) << INF_CLR << " has left lobby: " << lb->Data.ID << std::endl << DEF_CLR;
 
                 if (m_StartedGames.contains(lb->Data.ID) && lb->IsLobbyEmpty())
                 {
                     m_StartedGames[lb->Data.ID] = nullptr;
                     m_StartedGames.erase(lb->Data.ID);
-                    std::cout << INF_CLR << "Closing game " << lb->Data.ID << "..." << std::endl
-                              << DEF_CLR;
+                    std::cout << INF_CLR << "Closing game " << lb->Data.ID << "..." << std::endl << DEF_CLR;
                 }
             }
         }
@@ -231,13 +192,12 @@ void ServerApp::HandleRecv(ClientPtr sender)
     {
         Message<LobbyList> toSend;
         toSend.LobbiesData.reserve(m_Lobbies.size());
-        for (auto &lb : m_Lobbies)
+        for (auto& lb : m_Lobbies)
         {
             toSend.LobbiesData.push_back(lb->Data);
         }
         sender->Send(toSend.Serialize().dump());
-        std::cout << INF_CLR << "Lobby list sent to " << HASH_CLR(sender) << std::endl
-                  << DEF_CLR;
+        std::cout << INF_CLR << "Lobby list sent to " << HASH_CLR(sender) << std::endl << DEF_CLR;
         break;
     }
     case TryToJoinLobby:
@@ -246,40 +206,35 @@ void ServerApp::HandleRecv(ClientPtr sender)
         bool joined = false;
 
         // Find the lobby with the given ID
-        for (auto &lb : m_Lobbies)
+        for (auto& lb : m_Lobbies)
         {
-            if (msg.LobbyId != lb->Data.ID)
-                continue;
-            const std::string &playerName = m_Players[sender->GetName()];
+            if (msg.LobbyId != lb->Data.ID) continue;
+            const std::string& playerName = m_Players[sender->GetName()];
 
             // Check if the player can join it
             if (lb->IsInLobby(playerName))
             {
-                std::cout << WRN_CLR << "Player " << HASH_STRING_CLR(playerName) << WRN_CLR << " tried to join lobby: " << INF_CLR << msg.LobbyId << WRN_CLR << " but he's already in." << std::endl
-                          << DEF_CLR;
+                std::cout << WRN_CLR << "Player " << HASH_STRING_CLR(playerName) << WRN_CLR << " tried to join lobby: " << INF_CLR << msg.LobbyId << WRN_CLR << " but he's already in." << std::endl << DEF_CLR;
                 joined = false;
                 break;
             }
             else if (lb->IsLobbyFull())
             {
-                std::cout << WRN_CLR << "Player " << HASH_STRING_CLR(playerName) << WRN_CLR << " tried to join lobby: " << INF_CLR << msg.LobbyId << WRN_CLR << " but it's full." << std::endl
-                          << DEF_CLR;
+                std::cout << WRN_CLR << "Player " << HASH_STRING_CLR(playerName) << WRN_CLR << " tried to join lobby: " << INF_CLR << msg.LobbyId << WRN_CLR << " but it's full." << std::endl << DEF_CLR;
                 joined = false;
                 break;
             }
 
             lb->AddPlayerToLobby(playerName);
             joined = true;
-            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(playerName) << INF_CLR << " has joined." << std::endl
-                      << DEF_CLR;
+            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(playerName) << INF_CLR << " has joined." << std::endl << DEF_CLR;
 
             sender->Send(Message<AcceptJoinLobby>().Serialize().dump());
-            std::cout << INF_CLR << "Lobby confirmation sent to " << HASH_CLR(sender) << std::endl
-                      << DEF_CLR;
+            std::cout << INF_CLR << "Lobby confirmation sent to " << HASH_CLR(sender) << std::endl << DEF_CLR;
 
             // Create the lobby game if it doesn't exist
             if (!m_StartedGames.contains(lb->Data.ID))
-                m_StartedGames.insert({lb->Data.ID, lb});
+                m_StartedGames.insert({ lb->Data.ID, lb });
 
             break;
         }
@@ -288,8 +243,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
         if (!joined)
         {
             sender->Send(Message<RejectJoinLobby>().Serialize().dump());
-            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Rejected " << HASH_CLR(sender) << std::endl
-                      << DEF_CLR;
+            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Rejected " << HASH_CLR(sender) << std::endl << DEF_CLR;
         }
         break;
     }
@@ -297,10 +251,9 @@ void ServerApp::HandleRecv(ClientPtr sender)
     {
         Message<OnEnterLobby> msg(parsedData);
 
-        for (auto &lb : m_Lobbies)
+        for (auto& lb : m_Lobbies)
         {
-            if (lb->Data.ID != msg.LobbyId)
-                continue;
+            if (lb->Data.ID != msg.LobbyId) continue;
 
             if (lb->IsLobbyFull())
             {
@@ -314,7 +267,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
                 std::string opponentName = lb->GetOpponentName(m_Players[sender->GetName()]);
 
                 int i = 0;
-                for (auto &[adressIP, player] : m_Players)
+                for (auto& [adressIP, player] : m_Players)
                 {
                     if (lb->IsInLobby(player))
                     {
@@ -322,12 +275,10 @@ void ServerApp::HandleRecv(ClientPtr sender)
                         i++;
                     }
 
-                    if (i == 2)
-                        break;
+                    if (i == 2) break;
                 }
 
-                std::cout << STS_CLR << "Started game in lobby  " << INF_CLR << lb->Data.ID << std::endl
-                          << DEF_CLR;
+                std::cout << STS_CLR << "Started game in lobby  " << INF_CLR << lb->Data.ID << std::endl << DEF_CLR;
             }
 
             break;
@@ -337,14 +288,13 @@ void ServerApp::HandleRecv(ClientPtr sender)
     case MakeMove:
     {
         Message<MakeMove> msg(parsedData);
-        Lobby *lb = m_StartedGames[msg.LobbyId];
-        std::string &playerName = m_Players[sender->GetName()];
+        Lobby* lb = m_StartedGames[msg.LobbyId];
+        std::string& playerName = m_Players[sender->GetName()];
 
         // Check if move is valid
         if (!lb->Board.IsCellEmpty(msg.Cell))
         {
-            std::cout << WRN_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(playerName) << WRN_CLR << " tried to make an invalid move." << std::endl
-                      << DEF_CLR;
+            std::cout << WRN_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(playerName) << WRN_CLR << " tried to make an invalid move." << std::endl << DEF_CLR;
             sender->Send(Message<DeclineMakeMove>().Serialize().dump());
             break;
         }
@@ -355,15 +305,14 @@ void ServerApp::HandleRecv(ClientPtr sender)
         acceptMsg.LobbyId = msg.LobbyId;
         acceptMsg.Cell = msg.Cell;
         acceptMsg.Piece = msg.Piece;
-        for (auto &[adressIP, player] : m_Players)
+        for (auto& [adressIP, player] : m_Players)
         {
             if (lb->IsInLobby(player))
             {
                 m_GameServer->GetClientByName(adressIP)->Send(acceptMsg.Serialize().dump());
             }
         }
-        std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(playerName) << INF_CLR << " made a move." << std::endl
-                  << DEF_CLR;
+        std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(playerName) << INF_CLR << " made a move." << std::endl << DEF_CLR;
 
         // Check if the game is over
         TicTacToe::Piece winner = lb->Board.IsThereAWinner();
@@ -372,7 +321,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
             Message<GameOver> overMsg;
             overMsg.Winner = winner == TicTacToe::Piece::X ? lb->Data.PlayerX : lb->Data.PlayerO;
             overMsg.Piece = winner;
-            for (auto &[adressIP, player] : m_Players)
+            for (auto& [adressIP, player] : m_Players)
             {
                 if (lb->IsInLobby(player))
                 {
@@ -382,15 +331,14 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
             lb->Board.SetEmpty();
 
-            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(playerName) << INF_CLR << " won the game." << std::endl
-                      << DEF_CLR;
+            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(playerName) << INF_CLR << " won the game." << std::endl << DEF_CLR;
         }
         else if (lb->Board.IsFull())
         {
             Message<GameOver> overMsg;
             overMsg.Winner = "Nobody";
             overMsg.IsDraw = true;
-            for (auto &[adressIP, player] : m_Players)
+            for (auto& [adressIP, player] : m_Players)
             {
                 if (lb->IsInLobby(player))
                 {
@@ -399,8 +347,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
             }
             lb->Board.SetEmpty();
 
-            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] The game ended in a draw." << std::endl
-                      << DEF_CLR;
+            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] The game ended in a draw." << std::endl << DEF_CLR;
         }
 
         break;
@@ -408,25 +355,22 @@ void ServerApp::HandleRecv(ClientPtr sender)
     case LeaveLobby:
     {
         Message<LeaveLobby> msg(parsedData);
-        Lobby *lb = m_StartedGames[msg.LobbyId];
+        Lobby* lb = m_StartedGames[msg.LobbyId];
 
         lb->RemovePlayerFromLobby(msg.PlayerName);
-        std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(msg.PlayerName) << INF_CLR << " has left." << std::endl
-                  << DEF_CLR;
+        std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(msg.PlayerName) << INF_CLR << " has left." << std::endl << DEF_CLR;
 
         if (m_StartedGames.contains(lb->Data.ID) && lb->IsLobbyEmpty())
         {
             m_StartedGames[lb->Data.ID] = nullptr;
             m_StartedGames.erase(lb->Data.ID);
-            std::cout << INF_CLR << "Closing game " << lb->Data.ID << "..." << std::endl
-                      << DEF_CLR;
+            std::cout << INF_CLR << "Closing game " << lb->Data.ID << "..." << std::endl << DEF_CLR;
         }
 
         break;
     }
     default:
-        std::cout << WRN_CLR << "Received JSON from " << HASH_CLR(sender) << WRN_CLR << " contains an unknown type." << std::endl
-                  << DEF_CLR;
+        std::cout << WRN_CLR << "Received JSON from " << HASH_CLR(sender) << WRN_CLR << " contains an unknown type." << std::endl << DEF_CLR;
         break;
     }
 }
@@ -436,18 +380,17 @@ void ServerApp::CleanUpGameServer()
     std::cout << Color::Cyan << "============== Starting Game Server Clean Up ==============" << std::endl;
     try
     {
-        for (auto &c : m_GameServer->GetConnections())
+        for (auto& c : m_GameServer->GetConnections())
         {
             c.Kick();
         }
 
         int count = 0;
-        m_GameServer->CleanClosedConnections([&](ClientPtr c)
-                                             { ++count; });
+        m_GameServer->CleanClosedConnections([&](ClientPtr c) { ++count; });
         if (count > 0)
             std::cout << INF_CLR << "Closed " << count << " connection" << (count > 1 ? "s" : "") << "." << std::endl;
 
-        for (auto &[id, lobby] : m_StartedGames)
+        for (auto& [id, lobby] : m_StartedGames)
         {
             NULLPTR(lobby);
         }
@@ -466,13 +409,11 @@ void ServerApp::CleanUpGameServer()
         m_GameServer->Close();
         delete m_GameServer;
     }
-    catch (const TcpIp::TcpIpException &e)
+    catch (const TcpIp::TcpIpException& e)
     {
-        std::cout << ERR_CLR << "Game server clean up failed: " << e.what() << std::endl
-                  << DEF_CLR;
+        std::cout << ERR_CLR << "Game server clean up failed: " << e.what() << std::endl << DEF_CLR;
     }
-    std::cout << Color::Cyan << "============== Game Server Clean Up Complete ==============" << std::endl
-              << DEF_CLR;
+    std::cout << Color::Cyan << "============== Game Server Clean Up Complete ==============" << std::endl << DEF_CLR;
 }
 
 #pragma endregion
@@ -481,23 +422,20 @@ void ServerApp::CleanUpGameServer()
 
 bool ServerApp::InitWebServer()
 {
-    std::cout << WEB_PFX << Color::Cyan << "===== Starting Web Server Initialization  ===========" << std::endl
-              << DEF_CLR;
+    std::cout << WEB_PFX << Color::Cyan << "===== Starting Web Server Initialization  ===========" << std::endl << DEF_CLR;
     try
     {
         m_WebServer = new HtmlServer();
         m_WebServer->Open(DEFAULT_PORT + 1);
         std::cout << WEB_PFX << "Web server is listening on port " << DEFAULT_PORT + 1 << "..." << std::endl;
     }
-    catch (const TcpIp::TcpIpException &e)
+    catch (const TcpIp::TcpIpException& e)
     {
-        std::cout << WEB_PFX << WRN_CLR << "Web server is unable to start: " << e.what() << std::endl
-                  << DEF_CLR;
+        std::cout << WEB_PFX << WRN_CLR << "Web server is unable to start: " << e.what() << std::endl << DEF_CLR;
         RELEASE(m_WebServer);
         return false;
     }
-    std::cout << WEB_PFX << Color::Cyan << "===== Web Server Initialization Complete  ===========" << std::endl
-              << DEF_CLR;
+    std::cout << WEB_PFX << Color::Cyan << "===== Web Server Initialization Complete  ===========" << std::endl << DEF_CLR;
     return true;
 }
 
@@ -510,8 +448,7 @@ void ServerApp::HandleWebServer()
         WebClientPtr newClient;
         while ((newClient = m_WebServer->FindNewClient()) != nullptr)
         {
-            std::cout << WEB_PFX << STS_CLR << "New connection from " << HASH_CLR(newClient) << STS_CLR << " has been established." << std::endl
-                      << DEF_CLR;
+            std::cout << WEB_PFX << STS_CLR << "New connection from " << HASH_CLR(newClient) << STS_CLR << " has been established." << std::endl << DEF_CLR;
         }
 
         WebClientPtr sender;
@@ -521,13 +458,13 @@ void ServerApp::HandleWebServer()
         }
 
         m_WebServer->CleanClosedHtmlConns([](WebClientPtr c)
-                                          { std::cout << WEB_PFX << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl
-                                                      << DEF_CLR; });
+            {
+                std::cout << WEB_PFX << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR;
+            });
     }
-    catch (const TcpIp::TcpIpException &e)
+    catch (const TcpIp::TcpIpException& e)
     {
-        std::cout << WEB_PFX << ERR_CLR << "The web server has encountered an error: " << e.what() << std::endl
-                  << DEF_CLR;
+        std::cout << WEB_PFX << ERR_CLR << "The web server has encountered an error: " << e.what() << std::endl << DEF_CLR;
     }
 }
 
@@ -577,13 +514,16 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
             {
                 unsigned int lobbyId = pair.first;
                 Lobby *lobby = pair.second;
-                lobbyButtons += "<a href='/watch/" + std::to_string(lobby->ID) + "'>Lobby " + std::to_string(lobby->ID) + "</a><br>";
+                lobbyButtons += "<a href='/watch/" + std::to_string(lobby->Data.ID) + "'>Lobby " + std::to_string(lobby->Data.ID) + "</a><br>";
             }
-            sender->Send(HTML_200 HTML_PAGE(HTML_REFRESH "<title>Tic Tac Toz</title>",
+            sender->Send(HTML_200 HTML_PAGE(HTML_REFRESH 
+                                            "<title>Tic Tac Toz</title>",
                                             "<h3>Click on a lobby to watch the game that's being played.</h3>"
-                                            "<br />" +
-                                                lobbyButtons +
-                                                "<br />"));
+                                            "<br />" 
+                                               +
+                                                lobbyButtons 
+                                               +
+                                            "<br />"));
         }
         else if (page == "/favicon.ico")
         {
@@ -604,22 +544,13 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
             {
                 Lobby *lobby = it->second;
                 std::cout << "Sending watch page for lobby " << requestedLobbyId << "." << std::endl;
-                sender->Send(HTML_200 HTML_PAGE(HTML_REFRESH "<title>Lobby " + std::to_string(lobby->ID) + "</title>",
-                                                "<h3>You are watching lobby " + std::to_string(lobby->ID) + "</h3>"
-                                                                                                            "<a href='/'>Back to lobby list</a>"
-                                                                                                            "<h2>`" +
-                                                    lobby->PlayerX + "` VS `" + lobby->PlayerO + "`</h2>"
-                                                // TODO Finish this
-                                                /*
-                                                "<p>Turn: " + lobby->GetPlayerTurn() + "</p>"
+                sender->Send(HTML_200 HTML_PAGE(HTML_REFRESH 
+                                                "<title>Lobby " + std::to_string(lobby->Data.ID) + "</title>",
+                                                "<h3>You are watching lobby " + std::to_string(lobby->Data.ID) + "</h3>"
+                                                "<a href='/'>Back to lobby list</a>"
+                                                 "<h2>`" + lobby->Data.PlayerX + "` VS `" + lobby->Data.PlayerO + "`</h2>"
                                                 "<pre>"
-                                                " " + lobby->GetBoardState(0, 0) + " | " + lobby->GetBoardState(0, 1) + " | " + lobby->GetBoardState(0, 2) + "\n"
-                                                " -----------\n"
-                                                " " + lobby->GetBoardState(1, 0) + " | " + lobby->GetBoardState(1, 1) + " | " + lobby->GetBoardState(1, 2) + "\n"
-                                                " -----------\n"
-                                                " " + lobby->GetBoardState(2, 0) + " | " + lobby->GetBoardState(2, 1) + " | " + lobby->GetBoardState(2, 2) + "\n"
                                                 "</pre>"
-                                                */
                                                 ));
             }
         }
@@ -640,21 +571,18 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
 
 void ServerApp::CleanUpWebServer()
 {
-    if (!m_WebServer)
-        return;
+    if (!m_WebServer) return;
 
-    std::cout << WEB_PFX << Color::Cyan << "======== Starting Web Server Clean Up  ==============" << std::endl
-              << DEF_CLR;
+    std::cout << WEB_PFX << Color::Cyan << "======== Starting Web Server Clean Up  ==============" << std::endl << DEF_CLR;
     try
     {
-        for (auto &c : m_WebServer->GetHtmlConns())
+        for (auto& c : m_WebServer->GetHtmlConns())
         {
             c.Kick();
         }
 
         int count = 0;
-        m_WebServer->CleanClosedHtmlConns([&](WebClientPtr c)
-                                          { ++count; });
+        m_WebServer->CleanClosedHtmlConns([&](WebClientPtr c) { ++count; });
 
         if (count > 0)
             std::cout << WEB_PFX << "Closed " << count << " connection" << (count > 1 ? "s" : "") << "." << std::endl;
@@ -662,20 +590,18 @@ void ServerApp::CleanUpWebServer()
         m_WebServer->Close();
         delete m_WebServer;
     }
-    catch (const TcpIp::TcpIpException &e)
+    catch (const TcpIp::TcpIpException& e)
     {
-        std::cout << WEB_PFX << ERR_CLR << "Web server clean up failed: " << e.what() << std::endl
-                  << DEF_CLR;
+        std::cout << WEB_PFX << ERR_CLR << "Web server clean up failed: " << e.what() << std::endl << DEF_CLR;
     }
-    std::cout << WEB_PFX << Color::Cyan << "======== Web Server Clean Up Complete  ==============" << std::endl
-              << DEF_CLR;
+    std::cout << WEB_PFX << Color::Cyan << "======== Web Server Clean Up Complete  ==============" << std::endl << DEF_CLR;
 }
 
 #pragma endregion
 
 #pragma region Lobbying
 
-bool ServerApp::IsPlayerInLobby(const std::string &name) const
+bool ServerApp::IsPlayerInLobby(const std::string& name) const
 {
     for (const auto lobby : m_Lobbies)
     {
