@@ -43,7 +43,7 @@ void GameState::OnEnter()
     }
 
     m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
-    m_ReturnButton->SetButtonText("Return", sf::Color::White, 30, TextAlignment::Center);
+    m_ReturnButton->SetButtonText("Leave party", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]()
     { 
         Json j;
