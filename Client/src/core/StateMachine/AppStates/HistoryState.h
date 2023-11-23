@@ -44,6 +44,8 @@ private:
     TextComponent* m_MoveButtonLabel = nullptr;
     TextComponent* m_GameWinnerText = nullptr;
 
+    std::vector<GameData*> m_Games;
+
     GraphicBoard m_Board;
 
     GameData* m_CurrentGame = nullptr;

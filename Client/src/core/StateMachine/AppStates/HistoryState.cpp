@@ -8,6 +8,7 @@ HistoryState::HistoryState(StateMachine* stateMachine, Window* m_Window)
     : State(stateMachine)
     , m_Window(m_Window)
 {
+    m_Games = std::vector<GameData*>();
 }
 
 HistoryState::~HistoryState()
@@ -17,6 +18,8 @@ HistoryState::~HistoryState()
 
 void HistoryState::OnEnter()
 {
+    m_Games = ClientApp::GetHistoryManager()->GetAllGameData();
+
     m_CurrentGameIndex = 0;
     m_CurrentMoveIndex = 0;
     m_CurrentGame = nullptr;
@@ -65,7 +68,7 @@ void HistoryState::OnEnter()
 
     position = m_PreviousGameButton->GetPosition() + sf::Vector2f((m_NextGameButton->GetPosition().x - m_PreviousGameButton->GetPosition().x) * 0.5f, 0);
     m_GameNumberText = new TextComponent;
-    m_GameNumberText->SetText("0 / 0");
+    m_GameNumberText->SetText("0 / " + std::to_string(m_Games.size()));
     m_GameNumberText->SetPosition(position);
     m_GameNumberText->SetCharacterSize(46);
     m_GameNumberText->SetColor(sf::Color::White);
@@ -128,12 +131,12 @@ void HistoryState::DisplaySelectedGame()
 
 void HistoryState::NextGame()
 {
-    if (m_CurrentGameIndex + 1 < ClientApp::GetHistoryManager()->GetGameHistorySize())
+    if (m_CurrentGameIndex + 1 <= m_Games.size())
     {
         m_CurrentGameIndex++;
         m_Board.SetEmpty();
         DisplaySelectedGame();
-        m_GameNumberText->SetText(std::to_string(m_CurrentGameIndex) + " / " + std::to_string(ClientApp::GetHistoryManager()->GetGameHistorySize() - 1));
+        m_GameNumberText->SetText(std::to_string(m_CurrentGameIndex) + " / " + std::to_string(m_Games.size()));
     }
     else
     {
@@ -143,12 +146,12 @@ void HistoryState::NextGame()
 
 void HistoryState::PreviousGame()
 {
-    if (m_CurrentGameIndex - 1 > 0)
+    if (m_CurrentGameIndex > 0)
     {
         m_CurrentGameIndex--;
         m_Board.SetEmpty();
         DisplaySelectedGame();
-        m_GameNumberText->SetText(std::to_string(m_CurrentGameIndex) + " / " + std::to_string(ClientApp::GetHistoryManager()->GetGameHistorySize() - 1));
+        m_GameNumberText->SetText(std::to_string(m_CurrentGameIndex) + " / " + std::to_string(m_Games.size()));
     }
     else
     {
@@ -165,7 +168,7 @@ void HistoryState::PlacePiece()
         m_CurrentMoveIndex++;
         const auto move = m_CurrentGame->GetMove(m_CurrentMoveIndex);
         m_Board.InstanciateNewPlayerShape(move->playerData.Id, move->playerData.ShapeType, move->BoardCell);
-        m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex) + " / " + std::to_string(m_CurrentGame->GetMovesSize() - 1));
+        m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex) + " / " + std::to_string(m_CurrentGame->GetMovesSize()));
     }
     else
     {
@@ -181,7 +184,7 @@ void HistoryState::RemovePiece()
     {
         m_CurrentMoveIndex--;
         m_Board.RemoveLastPlayerShape();
-        m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex) + " / " + std::to_string(m_CurrentGame->GetMovesSize() - 1));
+        m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex) + " / " + std::to_string(m_CurrentGame->GetMovesSize()));
     }
     else
     {
