@@ -103,23 +103,23 @@ void ServerApp::HandleGameServer()
 
         // For each closed connection
         m_GameServer->CleanClosedConnections([this](ClientPtr c)
-        {
-            const auto& player = m_Players[c->GetName()];
-            if (player != "")
             {
-                for (auto lb : m_Lobbies)
+                const auto& player = m_Players[c->GetName()];
+                if (player != "")
                 {
-                    if (lb->IsInLobby(player))
+                    for (auto lb : m_Lobbies)
                     {
-                        lb->RemovePlayerFromLobby(player);
+                        if (lb->IsInLobby(player))
+                        {
+                            lb->RemovePlayerFromLobby(player);
+                        }
                     }
+
+                    UnregisterPlayerFromServer(player);
                 }
 
-                UnregisterPlayerFromServer(player);
-            }
-
-            std::cout << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR;
-        });
+                std::cout << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR;
+            });
     }
     catch (const TcpIp::TcpIpException& e)
     {
@@ -234,7 +234,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
             // Create the lobby game if it doesn't exist
             if (!m_StartedGames.contains(lb->Data.ID))
-                m_StartedGames.insert({lb->Data.ID, lb});
+                m_StartedGames.insert({ lb->Data.ID, lb });
 
             break;
         }
@@ -468,6 +468,12 @@ void ServerApp::HandleWebServer()
     }
 }
 
+#define HTML_200 "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" // Code 200 = OK
+#define HTML_404 "HTTP/1.1 404 Not Found\r\n\r\n"                     // Code 404 = Not Found
+#define HTML_303 "HTTP/1.1 303 See Other\r\nLocation: /\r\n\r\n"      // Code 303 = See Other
+#define HTML_REFRESH "<meta http-equiv='refresh' content='5'>"
+#define HTML_PAGE(header, body) "<html><head>" header "</head><body>" body "</body></html>"
+
 void ServerApp::HandleWebConnection(WebClientPtr sender)
 {
     constexpr int maxWouldBlockErrors = 10;
@@ -480,7 +486,7 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
             data = sender->Receive();
             break;
         }
-        catch (const TcpIp::TcpIpException& e)
+        catch (const TcpIp::TcpIpException &e)
         {
             if (e.Context == WSAEWOULDBLOCK && wbe < maxWouldBlockErrors)
             {
@@ -496,47 +502,102 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
     if (data.starts_with("GET "))
     {
         std::string page = data.substr(4, data.find(' ', 4) - 4);
-        std::cout << WEB_PFX << HASH_CLR(sender) << DEF_CLR << " sent a GET request for " << page << ". ";
+        std::cout << data << std::endl;
+        std::cout << WEB_PFX << HASH_CLR(sender) << DEF_CLR << " sent a GET request for `" << page << "`. ";
 
         if (page == "/")
         {
             std::cout << "Sending root page." << std::endl;
-            sender->Send("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
+            std::string lobbyButtons;
 
-                // TODO: Send the actual page, lobbies with href to /watch/lobbyid
+            for (const auto &pair : m_StartedGames)
+            {
+                unsigned int lobbyId = pair.first;
+                Lobby *lobby = pair.second;
+                lobbyButtons += "<a href='/watch/" + std::to_string(lobby->Data.ID) + "'>Lobby " + std::to_string(lobby->Data.ID) + "</a><br>";
+            }
+            sender->Send(HTML_200 HTML_PAGE(HTML_REFRESH 
+                                            "<title>Tic Tac Toz</title>",
 
-                "<html><body><h1>Hello " + sender->Address + ":" + std::to_string(sender->Port) + "</h1></body></html>");
+                                            "<style>"
+                                                "h3 {"
+                                                    "font-family: 'Courier New', monospace;"
+                                                "}"
+                                                "a {"
+                                                    "font-family: 'Courier New', monospace;"
+                                                "}"
+                                            "</style>"
+                                            "<h3>Click on a lobby to watch the game that's being played.</h3>"
+                                            "<br />" 
+                                               +
+                                                lobbyButtons 
+                                               +
+                                            "<br />"));
         }
         else if (page == "/favicon.ico")
         {
             // We don't have a favicon, so just send a 404
             std::cout << "Sending 404." << std::endl;
-            sender->Send("HTTP/1.1 404 Not Found\r\n\r\n");
+            sender->Send(HTML_404);
         }
+        else if (page.starts_with("/watch"))
+        {
+            unsigned int requestedLobbyId = std::stoi(page.substr(7));
+            auto it = m_StartedGames.find(requestedLobbyId);
+            if (it == m_StartedGames.end()) // Lobby not found
+            {
+                std::cout << "Redirecting to root page." << std::endl;
+                sender->Send(HTML_303);
+            }
+            else
+            {
+                Lobby* lobby = it->second;
+                std::cout << "Sending watch page for lobby " << requestedLobbyId << "." << std::endl;
 
-        // TODO: page.starts_with("/watch/") -> send the watch page for the lobby
+                sender->Send(HTML_200 HTML_PAGE(HTML_REFRESH
+                    "<title>Lobby " + std::to_string(lobby->Data.ID) + "</title>",
 
-        /*
-            The client should get something like this: (maybe with a link to the root page)
+                    "<style>"
+                        "body {"
+                            "font-family: 'Courier New', monospace;"
+                            "display: flex;"
+                            "flex-direction: column;"
+                            "align-items: center;"
+                            "justify-content: center;"
+                            "height: 100vh;"
+                            "margin: 0;"
+                        "}"
+                        "pre {"
+                            "font-family: 'Courier New', monospace;"
+                            "font-size: 35px;"
+                        "}"
+                        "h2, h3 {"
+                            "margin: 5px 0; /* Ajustez les valeurs de la marge selon vos besoins */"
+                        "}"
+                    "</style>"
 
-            Lobby ID: 123456
-            Player X: "Player 1"
-            Player O: "Player 2"
-            Turn: X
+                    "<h2>You are watching lobby " + std::to_string(lobby->Data.ID) + "</h2>"
+                    "<br />"
+                    "<a href='/'>Back to lobby list</a>"
+                    "<br />"
+                    "<h2>" + lobby->Data.PlayerX + "(X)</h2>"
+                    "<h3>VS</h3>"
+                    "<h2>" + lobby->Data.PlayerO + "(O)</h2>"
 
-
-             X | O | X
-            -----------
-             X | X | O
-            -----------
-             O | X | O
-
-        */
-
+                    "<pre>"
+                    + PieceToString(lobby->Board(0, 0)) + " | " + PieceToString(lobby->Board(0, 1)) + " | " + PieceToString(lobby->Board(0, 2)) + "\n"
+                    + "----------------\n"
+                    + PieceToString(lobby->Board(1, 0)) + " | " + PieceToString(lobby->Board(1, 1)) + " | " + PieceToString(lobby->Board(1, 2)) + "\n"
+                    + "----------------\n"
+                    + PieceToString(lobby->Board(2, 0)) + " | " + PieceToString(lobby->Board(2, 1)) + " | " + PieceToString(lobby->Board(2, 2)) + "\n"
+                    "</pre>"
+                ));
+            }
+        }
         else
         {
             std::cout << "Redirecting to root page." << std::endl;
-            sender->Send("HTTP/1.1 301 Moved Permanently\r\nLocation: /\r\n\r\n");
+            sender->Send(HTML_303);
         }
     }
     else
@@ -546,6 +607,21 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
 
     // Close the connection
     sender->Kick();
+}
+
+std::string ServerApp::PieceToString(TicTacToe::Piece piece)
+{
+    switch (piece)
+    {
+    case TicTacToe::Piece::Empty:
+        return "   ";
+    case TicTacToe::Piece::X:
+        return " X ";
+    case TicTacToe::Piece::O:
+        return " O ";
+    default:
+        return " ? ";
+    }
 }
 
 void ServerApp::CleanUpWebServer()
