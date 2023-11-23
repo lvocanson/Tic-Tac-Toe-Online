@@ -156,7 +156,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
             if (!m_StartedGames.contains(lb->ID))
             {
-                m_StartedGames.insert({ lb->ID, lb });
+                m_StartedGames.insert({lb->ID, lb});
                 std::cout << STS_CLR << "Creating game " << INF_CLR << lobbyID << "..." << std::endl << DEF_CLR;
             }
 
@@ -339,6 +339,12 @@ void ServerApp::HandleWebServer()
     }
 }
 
+#define HTML_200 "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" // Code 200 = OK
+#define HTML_404 "HTTP/1.1 404 Not Found\r\n\r\n" // Code 404 = Not Found
+#define HTML_303 "HTTP/1.1 303 See Other\r\nLocation: /\r\n\r\n" // Code 303 = See Other
+#define HTML_REFRESH "<meta http-equiv='refresh' content='5'>"
+#define HTML_PAGE(header, body) "<html><head>" header "</head><body>" body "</body></html>"
+
 void ServerApp::HandleWebConnection(WebClientPtr sender)
 {
     constexpr int maxWouldBlockErrors = 10;
@@ -367,7 +373,8 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
     if (data.starts_with("GET "))
     {
         std::string page = data.substr(4, data.find(' ', 4) - 4);
-        std::cout << WEB_PFX << HASH_CLR(sender) << DEF_CLR << " sent a GET request for " << page << ". ";
+        std::cout << data << std::endl;
+        std::cout << WEB_PFX << HASH_CLR(sender) << DEF_CLR << " sent a GET request for `" << page << "`. ";
 
         if (page == "/")
         {
@@ -380,72 +387,54 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
                 Lobby* lobby = pair.second;
                 lobbyButtons += "<a href='/watch/" + std::to_string(lobby->ID) + "'>Lobby " + std::to_string(lobby->ID) + "</a><br>";
             }
-            sender->Send(
-                "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
-
-                "<html>"
-                    "<head>"
-                        "<meta http-equiv='refresh' content = '5'>"
-                    "</head>"
-
-                    "<body>"
-                        "<h1>Cliquez sur un lobby pour voir la partie en cours </h1>"
-                        "<br />" 
-                            + lobbyButtons + 
-                        "<br />"
-                    "</body>"
-                "</html>"
-            );
+            sender->Send(HTML_200 HTML_PAGE(HTML_REFRESH "<title>Tic Tac Toz</title>",
+                "<h3>Click on a lobby to watch the game that's being played.</h3>"
+                "<br />"
+                + lobbyButtons +
+                "<br />"
+            ));
         }
         else if (page == "/favicon.ico")
         {
             // We don't have a favicon, so just send a 404
             std::cout << "Sending 404." << std::endl;
-            sender->Send("HTTP/1.1 404 Not Found\r\n\r\n");
+            sender->Send(HTML_404);
         }
         else if (page.starts_with("/watch"))
         {
             unsigned int requestedLobbyId = std::stoi(page.substr(7));
-
             auto it = m_StartedGames.find(requestedLobbyId);
-            if (it != m_StartedGames.end())
+            if (it == m_StartedGames.end()) // Lobby not found
+            {
+                std::cout << "Redirecting to root page." << std::endl;
+                sender->Send(HTML_303);
+            }
+            else
             {
                 Lobby* lobby = it->second;
-
-                std::string watchPage = 
-                    "<html>"
-                        "<head>"
-                            "<meta http-equiv='refresh' content = '5'>"
-                        "</head>"
-
-                        "<body>"
-                            "<h1>Lobby ID: " + std::to_string(lobby->ID) + "</h1>"
-                            "<p>Player X: \"" + lobby->PlayerX + "\"</p>"
-                            "<p>Player O: \"" + lobby->PlayerO + "\"</p>"
-                        // TODO Finish this
-                        /*                  
-                        "<p>Turn: " + lobby->GetPlayerTurn() + "</p>"
-                        "<pre>"
-                        " " + lobby->GetBoardState(0, 0) + " | " + lobby->GetBoardState(0, 1) + " | " + lobby->GetBoardState(0, 2) + "\n"
-                        " -----------\n"
-                        " " + lobby->GetBoardState(1, 0) + " | " + lobby->GetBoardState(1, 1) + " | " + lobby->GetBoardState(1, 2) + "\n"
-                        " -----------\n"
-                        " " + lobby->GetBoardState(2, 0) + " | " + lobby->GetBoardState(2, 1) + " | " + lobby->GetBoardState(2, 2) + "\n"
-                        "</pre>"
-                        */
-
-                        "</body>"
-                    "</html>";
-
-                sender->Send(
-                    "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" + watchPage
-                );
+                std::cout << "Sending watch page for lobby " << requestedLobbyId << "." << std::endl;
+                sender->Send(HTML_200 HTML_PAGE(HTML_REFRESH "<title>Lobby " + std::to_string(lobby->ID) + "</title>",
+                    "<h3>You are watching lobby " + std::to_string(lobby->ID) + "</h3>"
+                    "<a href='/'>Back to lobby list</a>"
+                    "<h2>`" + lobby->PlayerX + "` VS `" + lobby->PlayerO + "`</h2>"
+                    // TODO Finish this
+                    /*
+                    "<p>Turn: " + lobby->GetPlayerTurn() + "</p>"
+                    "<pre>"
+                    " " + lobby->GetBoardState(0, 0) + " | " + lobby->GetBoardState(0, 1) + " | " + lobby->GetBoardState(0, 2) + "\n"
+                    " -----------\n"
+                    " " + lobby->GetBoardState(1, 0) + " | " + lobby->GetBoardState(1, 1) + " | " + lobby->GetBoardState(1, 2) + "\n"
+                    " -----------\n"
+                    " " + lobby->GetBoardState(2, 0) + " | " + lobby->GetBoardState(2, 1) + " | " + lobby->GetBoardState(2, 2) + "\n"
+                    "</pre>"
+                    */
+                ));
             }
         }
         else
         {
             std::cout << "Redirecting to root page." << std::endl;
-            sender->Send("HTTP/1.1 301 Moved Permanently\r\nLocation: /\r\n\r\n");
+            sender->Send(HTML_303);
         }
     }
     else
