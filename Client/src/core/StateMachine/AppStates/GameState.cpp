@@ -1,7 +1,8 @@
 #include "GameState.h"
 
+#include "tcp-ip/Messages/PlayerMoveMessage.h"
+#include "game/Lobby.h"
 #include "src/core/Window.h"
-#include "src/core/PlayerPieceShape.h"
 #include "src/core/ClientApp.h"
 
 using namespace TicTacToe;
@@ -172,12 +173,8 @@ void GameState::SwitchPlayerTurn()
 
 void GameState::SendPlacedPieceToServer(unsigned int cell)
 {
-    Json j;
-    j["Type"] = "OpponentMove";
-    j["PlayerName"] = ClientApp::GetInstance().GetCurrentPlayer()->GetName();
-    j["PlayerMove"] = cell;
-    j["ID"] = m_LobbyID;
-    ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
+    PlayerMoveMessage message(ClientApp::GetInstance().GetCurrentPlayer()->GetName(), cell, m_LobbyID);
+    ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
 }
 
 bool GameState::IsMouseHoverPiece(unsigned int i)

@@ -7,6 +7,13 @@
     <ClCompile Include="game\TicTacToe.cpp" />
     <ClCompile Include="tcp-ip\TcpIp.cpp" />
     <ClCompile Include="tcp-ip\TcpIpExceptions.cpp" />
+    <ClCompile Include="tcp-ip\Notifications\GetLobbyListNotification.cpp" />
+    <ClCompile Include="tcp-ip\Messages\RegisterPlayerMessage.cpp" />
+    <ClCompile Include="tcp-ip\Messages\TryToJoinLobbyMessage.cpp" />
+    <ClCompile Include="tcp-ip\Messages\PlayerMoveMessage.cpp" />
+    <ClCompile Include="tcp-ip\Messages\JoinedLobbyMessage.cpp" />
+    <ClCompile Include="tcp-ip\Messages\LobbyFullMessage.cpp" />
+    <ClCompile Include="tcp-ip\Messages\GetLobbyListMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\GameMode.h" />
@@ -18,5 +25,12 @@
     <ClInclude Include="tcp-ip\TcpIp.h" />
     <ClInclude Include="threading\Shared.h" />
     <ClInclude Include="threading\Thread.h" />
+    <ClInclude Include="tcp-ip\Notifications\GetLobbyListNotification.h" />
+    <ClInclude Include="tcp-ip\Messages\RegisterPlayerMessage.h" />
+    <ClInclude Include="tcp-ip\Messages\TryToJoinLobbyMessage.h" />
+    <ClInclude Include="tcp-ip\Messages\PlayerMoveMessage.h" />
+    <ClInclude Include="tcp-ip\Messages\JoinedLobbyMessage.h" />
+    <ClInclude Include="tcp-ip\Messages\LobbyFullMessage.h" />
+    <ClInclude Include="tcp-ip\Messages\GetLobbyListMessage.h" />
   </ItemGroup>
 </Project>

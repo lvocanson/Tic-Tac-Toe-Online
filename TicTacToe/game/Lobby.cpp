@@ -3,8 +3,6 @@
 
 Lobby::Lobby()
     : ID(IDGenerator::GenerateLobbyID())
-    , PlayerX()
-    , PlayerO()
 {
 }
 
