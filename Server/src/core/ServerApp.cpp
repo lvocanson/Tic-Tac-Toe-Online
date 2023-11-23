@@ -194,7 +194,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
         toSend.LobbiesData.reserve(m_Lobbies.size());
         for (auto& lb : m_Lobbies)
         {
-            toSend.LobbiesData.push_back(lb->Data);
+            toSend.LobbiesData.emplace_back(lb->Data);
         }
         sender->Send(toSend.Serialize().dump());
         std::cout << INF_CLR << "Lobby list sent to " << HASH_CLR(sender) << std::endl << DEF_CLR;
@@ -260,6 +260,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
                 std::string startingPlayer = rand() % 100 <= 50 ? lb->Data.PlayerX : lb->Data.PlayerO;
 
                 Message<GameStarted> toSend;
+                toSend.GameMode = lb->Data.GameMode;
                 toSend.PlayerO = lb->Data.PlayerO;
                 toSend.PlayerX = lb->Data.PlayerX;
                 toSend.StartPlayer = startingPlayer;
@@ -595,10 +596,11 @@ void ServerApp::CreateLobbies()
     for (int i = 0; i < MAXIMUM_LOBBIES; i++)
     {
         m_Lobbies.emplace_back(new Lobby());
+
         if (i > 2 )
         {
-            bool isFastMode = true;
-            m_Lobbies.emplace_back(new Lobby(isFastMode));
+            GameModeType gameMode = GameModeType::FAST;
+            m_Lobbies.emplace_back(new Lobby(gameMode));
         }
     }
 }

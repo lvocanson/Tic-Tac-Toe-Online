@@ -8,3 +8,4 @@ GameSettings::GameSettings()
 GameSettings::~GameSettings()
 {
 }
+

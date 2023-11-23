@@ -4,21 +4,22 @@
 Lobby::Lobby()
 {
     Data.ID = IDGenerator::GenerateLobbyID();
+    Data.GameMode = CLASSIC;
     Data.PlayerX = "";
     Data.PlayerO = "";
 }
 
 LobbyData::LobbyData(const Json& j)
-    : ID(j["ID"]), PlayerX(j["PlayerX"]), PlayerO(j["PlayerO"])
+    : ID(j["ID"]), GameMode(j["GameMode"]), PlayerX(j["PlayerX"]), PlayerO(j["PlayerO"])
 {
 }
 
-Lobby::Lobby(bool isFastMode)
+Lobby::Lobby(GameModeType gameModeType)
 {
     Data.ID = IDGenerator::GenerateLobbyID();
     Data.PlayerX = "";
     Data.PlayerO = "";
-    Data.IsFastMode = isFastMode;
+    Data.GameMode = gameModeType;
 }
 
 Lobby::Lobby(const std::string& playerX, const std::string& playerO)
@@ -73,9 +74,10 @@ void Lobby::RemovePlayerFromLobby(const std::string& name)
     }
 }
 
-LobbyData::LobbyData(const int id, const std::string& playerX, const std::string& playerO)
+LobbyData::LobbyData(const int id, GameModeType gameMode, const std::string& playerX, const std::string& playerO)
 {
     ID = id;
+    GameMode = gameMode;
     PlayerX = playerX;
     PlayerO = playerO;
 }
@@ -84,6 +86,7 @@ Json LobbyData::Serialize()
 {
     Json j;
     j["ID"] = ID;
+    j["GameMode"] = GameMode;
     j["PlayerX"] = PlayerX;
     j["PlayerO"] = PlayerO;
     return j;

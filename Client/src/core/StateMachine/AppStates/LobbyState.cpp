@@ -85,26 +85,35 @@ void LobbyState::OnReceiveData(const Json& serializeData)
         for (const auto& lobby : lobbyList.LobbiesData)
         {
             int id = lobby.ID;
-            float xPosition = (i < 3) ? 500.0f : 700.0f;
-            float yPosition = (i % 3) * 110.0f + 100.0f;
-            sf::Color Emerald = (i < 3) ? sf::Color(1, 215, 88) : sf::Color(255, 0, 0);
+            float x = (lobby.GameMode == GameModeType::CLASSIC) ? 300.0f : 650.0f;
+            float y = (i % 3) * 110.0f + 100.0f;
+            sf::Color color = (lobby.GameMode == GameModeType::CLASSIC) ? sf::Color(1, 215, 88) : sf::Color(255, 0, 0);
+            std::string lobbyName = (lobby.GameMode == GameModeType::CLASSIC) ? "Normal " : "Fast ";
+
+            int playerCount = 0;
+            if (!lobby.PlayerX.empty()) playerCount++;
+            if (!lobby.PlayerO.empty()) playerCount++;
 
             if (!m_IsLobbyInit)
             {
-                auto* m_LobbyButton = new ButtonComponent(sf::Vector2f(xPosition, yPosition), sf::Vector2f(200, 100), Emerald);
-                m_LobbyButton->SetButtonText("Lobby " + std::to_string(id), sf::Color::White, 30, TextAlignment::Center);
+                auto* m_LobbyButton = new ButtonComponent(sf::Vector2f(x, y), sf::Vector2f(200, 100), color);
+                m_LobbyButton->SetButtonText(
+                        lobbyName + std::to_string(id) + "\n" + std::to_string(playerCount) + "/" + "2"
+                        ,sf::Color::White, 30
+                        , TextAlignment::Center);
                 m_LobbyButton->SetOnClickCallback([=]()
                     {
                         JoinLobbyRequest(i);
                     });
 
-                m_Lobbies.emplace_back(id, "", "");
+                m_Lobbies.emplace_back(id, lobby.GameMode, "", "");
                 m_LobbyButtons.push_back(m_LobbyButton);
                 m_Window->RegisterDrawable(m_LobbyButton);
             }
             else
             {
                 m_Lobbies[i].ID = id;
+                m_Lobbies[i].GameMode = lobby.GameMode;
                 m_Lobbies[i].PlayerO = lobby.PlayerO;
                 m_Lobbies[i].PlayerX = lobby.PlayerX;
             }
