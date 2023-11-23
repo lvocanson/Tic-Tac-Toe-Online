@@ -9,7 +9,7 @@ Json TryToJoinLobbyMessage::Serialize()
     return j;
 }
 
-void TryToJoinLobbyMessage::Deserialize(Json j)
+void TryToJoinLobbyMessage::Deserialize(const Json& j)
 {
     ID = j["LobbyID"];
 }

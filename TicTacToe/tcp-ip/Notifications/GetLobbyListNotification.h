@@ -4,6 +4,6 @@
 struct GetLobbyListNotification : ISerializable
 {
     Json Serialize() override;
-    void Deserialize(Json j) override {}
+    void Deserialize(const Json& j) override {}
 };
 

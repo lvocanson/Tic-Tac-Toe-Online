@@ -1,9 +1,10 @@
 #include "ServerApp.h"
 #include "ConsoleHelper.h"
-#include "JoinedLobbyMessage.h"
-#include "LobbyFullMessage.h"
-#include "PlayerMoveMessage.h"
-#include "TryToJoinLobbyMessage.h"
+#include "tcp-ip/Messages/GetLobbyListMessage.h"
+#include "tcp-ip/Messages/JoinedLobbyMessage.h"
+#include "tcp-ip/Messages/LobbyFullMessage.h"
+#include "tcp-ip/Messages/PlayerMoveMessage.h"
+#include "tcp-ip/Messages/TryToJoinLobbyMessage.h"
 
 #define ERR_CLR Color::Red // Error color
 #define WRN_CLR Color::Yellow // Warning color
@@ -104,10 +105,13 @@ void ServerApp::HandleGameServer()
         }
 
         // For each closed connection
-        m_GameServer->CleanClosedConnections([](ClientPtr c)
-            {
-                std::cout << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR;
-            });
+        m_GameServer->CleanClosedConnections([this](ClientPtr c)
+        {
+            std::cout << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR;
+
+            if (m_Players.contains(c->GetName()))
+                m_Players.erase(c->GetName());
+        });
     }
     catch (const TcpIp::TcpIpException& e)
     {
@@ -137,36 +141,47 @@ void ServerApp::HandleRecv(ClientPtr sender)
     if (receivedData["Type"] == "Login")
     {
         m_Players.insert({sender->GetName(), receivedData["UserName"]});
+
         std::cout << STS_CLR << "Registered player: " << HASH_STRING_CLR(receivedData["UserName"]) << STS_CLR << " into server." << std::endl << DEF_CLR;
     }
     ////////// Lobby State //////////
     else if (receivedData["Type"] == "GetLobbyList")
     {
+        GetLobbyListMessage getLobbyListMessage(m_Lobbies);
+        sender->Send(getLobbyListMessage.Serialize().dump());
+
         std::cout << INF_CLR << "Sending lobbies list to " << HASH_CLR(sender) << std::endl << DEF_CLR;
-        sender->Send(SerializeLobbiesToJson().dump());
     }
     else if (receivedData["Type"] == "TryToJoinLobby")
     {
         TryToJoinLobbyMessage tryToJoinLobbyMessage;
-        tryToJoinLobbyMessage.Deserialize(receivedData.dump());
+        tryToJoinLobbyMessage.Deserialize(receivedData);
 
         const int lobbyID = tryToJoinLobbyMessage.ID;
 
         for (auto lb : m_Lobbies)
         {
-            if (lobbyID != lb->ID) continue;
+            if (lobbyID != lb->Data.ID) continue;
 
-            if (lb->IsInLobby(m_Players[sender->GetName()]) || lb->IsLobbyFull())
+            if (lb->IsInLobby(m_Players[sender->GetName()]))
+            {
+                std::cout << WRN_CLR << "Player " << HASH_STRING_CLR(m_Players[sender->GetName()]) << WRN_CLR << " tried to join lobby: " << INF_CLR << lobbyID << WRN_CLR << " but he's already in." << std::endl << DEF_CLR;
                 return;
+            }
+            else if (lb->IsLobbyFull())
+            {
+                std::cout << WRN_CLR << "Player " << HASH_STRING_CLR(m_Players[sender->GetName()]) << WRN_CLR << " tried to join lobby: " << INF_CLR << lobbyID << WRN_CLR << " but it's full." << std::endl << DEF_CLR;
+                return;
+            }
 
             const std::string& playerName = m_Players[sender->GetName()];
 
             lb->AddPlayerToLobby(playerName);
             std::cout << STS_CLR << "Player " << HASH_STRING_CLR(playerName) << STS_CLR << " has joined lobby: " << INF_CLR << lobbyID << std::endl << DEF_CLR;
 
-            if (!m_StartedGames.contains(lb->ID))
+            if (!m_StartedGames.contains(lb->Data.ID))
             {
-                m_StartedGames.insert({ lb->ID, lb });
+                m_StartedGames.insert({ lb->Data.ID, lb });
                 std::cout << STS_CLR << "Creating game " << INF_CLR << lobbyID << "..." << std::endl << DEF_CLR;
             }
 
@@ -174,23 +189,40 @@ void ServerApp::HandleRecv(ClientPtr sender)
             sender->Send(joinedLobby.Serialize().dump());
 
             std::cout << INF_CLR << "Lobby confirmation sent to " << HASH_CLR(sender) << std::endl << DEF_CLR;
+
+            break;
         }
 
-        std::string message = SerializeLobbiesToJson().dump();
+        size_t playerCount = m_Players.size();
+        unsigned int playerInLobbyCount = 0;
 
-        // Refresh lobbies list for players that are not in a lobby
-        for (auto [adressIP, player] : m_Players)
+        for (auto lb : m_Lobbies)
         {
-            if (IsPlayerInLobby(player)) continue;
+            playerInLobbyCount += lb->GetPlayerCount();
+        }
 
-            m_GameServer->GetClientByName(adressIP)->Send(message);
+        // Send lobby refresh message if there are more players than players in lobbies
+        if (playerCount > playerInLobbyCount)
+        {
+            GetLobbyListMessage getLobbyListMessage(m_Lobbies);
+            const std::string message = getLobbyListMessage.Serialize().dump();
+
+            std::cout << INF_CLR << "Lobby confirmation sent to other players" << std::endl << DEF_CLR;
+
+            // Refresh lobbies list for players that are not in a lobby
+            for (auto [adressIP, player] : m_Players)
+            {
+                if (IsPlayerInLobby(player)) continue;
+
+                m_GameServer->GetClientByName(adressIP)->Send(message);
+            }
         }
     }
     else if (receivedData["Type"] == "LeaveLobby")
     {
         for (const auto& lb : m_Lobbies)
         {
-            if (receivedData["ID"] != lb->ID) continue;
+            if (receivedData["ID"] != lb->Data.ID) continue;
 
             const std::string& playerName = m_Players[sender->GetName()];
 
@@ -200,11 +232,11 @@ void ServerApp::HandleRecv(ClientPtr sender)
             std::cout << STS_CLR << "Unregistered player: " << HASH_STRING_CLR(playerName) << STS_CLR << " from server." << std::endl << DEF_CLR;
             m_Players.erase(sender->GetName());
 
-            if (m_StartedGames.contains(lb->ID) && lb->IsLobbyEmpty())
+            if (m_StartedGames.contains(lb->Data.ID) && lb->IsLobbyEmpty())
             {
-                m_StartedGames[lb->ID] = nullptr;
-                m_StartedGames.erase(lb->ID);
-                std::cout << STS_CLR << "Closing game " << INF_CLR << lb->ID << "..." << std::endl << DEF_CLR;
+                m_StartedGames[lb->Data.ID] = nullptr;
+                m_StartedGames.erase(lb->Data.ID);
+                std::cout << STS_CLR << "Closing game " << INF_CLR << lb->Data.ID << "..." << std::endl << DEF_CLR;
             }
         }
     }
@@ -212,12 +244,12 @@ void ServerApp::HandleRecv(ClientPtr sender)
     {
         for (const auto& lb : m_Lobbies)
         {
-            if (receivedData["ID"] != lb->ID) continue;
+            if (receivedData["ID"] != lb->Data.ID) continue;
 
             if (lb->IsLobbyFull())
             {
                 Lobby* lobby = m_StartedGames[receivedData["ID"]];
-                LobbyFullMessage lobbyFull(lobby->ID, lobby->PlayerX, lobby->PlayerO);
+                LobbyFullMessage lobbyFull(lobby->Data.ID, lobby->Data.PlayerX, lobby->Data.PlayerO);
 
                 int i = 0;
                 for (auto [adressIP, player] : m_Players)
@@ -226,9 +258,10 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
                     if (lb->IsInLobby(player))
                     {
-                        m_GameServer->GetClientByName(adressIP)->Send(lobbyFull.Serialize().dump());
+                        ClientPtr client = m_GameServer->GetClientByName(adressIP);
+                        client->Send(lobbyFull.Serialize().dump());
                         i++;
-                        std::cout << INF_CLR << "Lobby's full confirmation sent to " << HASH_CLR(sender) << std::endl << DEF_CLR;
+                        std::cout << INF_CLR << "Lobby's full confirmation sent to " << HASH_CLR(client) << std::endl << DEF_CLR;
                     }
                 }
             }
@@ -481,19 +514,6 @@ void ServerApp::CreateLobbies()
     {
         m_Lobbies.emplace_back(new Lobby());
     }
-}
-
-Json ServerApp::SerializeLobbiesToJson() const
-{
-    Json lobbyListJson;
-    lobbyListJson["Type"] = "Lobby";
-
-    for (const auto& lobby : m_Lobbies)
-    {
-        lobbyListJson["Lobbies"].push_back(lobby->Serialize());
-    }
-
-    return lobbyListJson;
 }
 
 #pragma endregion

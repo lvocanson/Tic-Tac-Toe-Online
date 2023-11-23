@@ -85,10 +85,10 @@ void LobbyState::OnReceiveData(const Json& serializeData)
     if (serializeData["Type"] == "Lobby")
     {
         GetLobbyListMessage message;
-        message.Deserialize(serializeData.dump());
+        message.Deserialize(serializeData);
 
         int i = 0;
-        for (const auto& lobbyJson : message.AllLobbies)
+        for (const auto& lobbyJson : message.AllLobbiesData)
         {
             int id = lobbyJson.ID;
 
@@ -107,9 +107,9 @@ void LobbyState::OnReceiveData(const Json& serializeData)
             }
             else
             {
-                m_Lobbies[i].ID = id;
-                m_Lobbies[i].PlayerO = lobbyJson.PlayerO;
-                m_Lobbies[i].PlayerX = lobbyJson.PlayerX;
+                m_Lobbies[i].Data.ID = id;
+                m_Lobbies[i].Data.PlayerO = lobbyJson.PlayerO;
+                m_Lobbies[i].Data.PlayerX = lobbyJson.PlayerX;
             }
             i++;
         }
@@ -118,7 +118,7 @@ void LobbyState::OnReceiveData(const Json& serializeData)
     else if (serializeData["Type"] == "JoinedLobby")
     {
         JoinedLobbyMessage message;
-        message.Deserialize(serializeData.dump());
+        message.Deserialize(serializeData);
 
         ((GameState*)m_StateMachine->GetState("GameState"))->SetLobbyID(message.ID);
         m_StateMachine->SwitchState("GameState");
@@ -127,8 +127,8 @@ void LobbyState::OnReceiveData(const Json& serializeData)
 
 void LobbyState::TryToJoinLobby(int lobbyID)
 {
-    TryToJoinLobbyMessage message(m_Lobbies[lobbyID].ID);
+    TryToJoinLobbyMessage message(m_Lobbies[lobbyID].Data.ID);
 
     ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
-    m_CurrentLobbyID = m_Lobbies[lobbyID].ID;
+    m_CurrentLobbyID = m_Lobbies[lobbyID].Data.ID;
 }

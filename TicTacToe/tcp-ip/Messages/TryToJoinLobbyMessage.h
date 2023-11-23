@@ -7,7 +7,7 @@ struct TryToJoinLobbyMessage : ISerializable
     TryToJoinLobbyMessage(int ID) : ID(ID) { }
 
     Json Serialize() override;
-    void Deserialize(Json j) override;
+    void Deserialize(const Json& j) override;
 
     int ID;
 };

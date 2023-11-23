@@ -1,11 +1,19 @@
 #include "GetLobbyListMessage.h"
 
+GetLobbyListMessage::GetLobbyListMessage(const std::vector<Lobby*>& lobbyIDs)
+{
+    for (auto& lobby : lobbyIDs)
+    {
+        AllLobbiesData.emplace_back(lobby->Data);
+    }
+}
+
 Json GetLobbyListMessage::Serialize()
 {
     Json lobbyListJson;
     lobbyListJson["Type"] = "Lobby";
 
-    for (auto& lobby : AllLobbies)
+    for (auto& lobby : AllLobbiesData)
     {
         lobbyListJson["Lobbies"].push_back(lobby.Serialize());
     }
@@ -13,13 +21,13 @@ Json GetLobbyListMessage::Serialize()
     return lobbyListJson;
 }
 
-void GetLobbyListMessage::Deserialize(Json j)
+void GetLobbyListMessage::Deserialize(const Json& j)
 {
     for (const auto& lobby : j["Lobbies"])
     {
-        Lobby l;
+        LobbyData l;
         l.Deserialize(lobby);
-        AllLobbies.push_back(l);
+        AllLobbiesData.push_back(l);
     }
 }
 

@@ -1,5 +1,6 @@
 #include "GameState.h"
 
+#include "GameFinishedMessage.h"
 #include "tcp-ip/Messages/PlayerMoveMessage.h"
 #include "game/Lobby.h"
 #include "src/core/Window.h"
@@ -127,6 +128,12 @@ void GameState::PlacePlayerPieceOnBoard(unsigned int cell)
     m_ScoreManager.AddPlayerMove(*currentPlayer->GetData(), cell);
 }
 
+void GameState::SendGameFinishedToServer(const std::string& winnerName)
+{
+    GameFinishedMessage message(winnerName, m_LobbyID);
+    ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
+}
+
 void GameState::WinCheck()
 {
     const PieceID winnerID = m_Board.IsThereAWinner();
@@ -143,6 +150,7 @@ void GameState::WinCheck()
         m_GameStateUI->UpdatePlayerScore(*winner->GetData(), m_ScoreManager.GetPlayerScore(winner->GetPlayerID()));
         m_GameStateUI->UpdateGameStateText(winner->GetName() + " won!");
 
+        SendGameFinishedToServer(winner->GetName());
         ClearBoard();
     }
     else if (m_Board.IsFull())
@@ -212,6 +220,10 @@ void GameState::OnReceiveData(const Json& serializeData)
         m_IsPlayerTurn = serializeData["Starter"] == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
 
         StartGame();
+    }
+    else if (serializeData["Type"] == "GameFinished")
+    {
+        ClearBoard();
     }
 }
 

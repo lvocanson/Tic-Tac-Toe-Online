@@ -7,7 +7,7 @@ struct RegisterPlayerMessage : ISerializable
     RegisterPlayerMessage(const std::string& name) : Name(name) { }
 
     Json Serialize() override;
-    void Deserialize(Json j) override;
+    void Deserialize(const Json& j) override;
 
     std::string Name;
 };

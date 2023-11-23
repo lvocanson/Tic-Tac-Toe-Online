@@ -3,7 +3,7 @@
 Json GetLobbyListNotification::Serialize()
 {
     Json j;
-    j["type"] = "GetLobbyList";
+    j["Type"] = "GetLobbyList";
 
     return j;
 }

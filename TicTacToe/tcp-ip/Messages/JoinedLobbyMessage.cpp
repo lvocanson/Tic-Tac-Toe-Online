@@ -9,7 +9,7 @@ Json JoinedLobbyMessage::Serialize()
     return j;
 }
 
-void JoinedLobbyMessage::Deserialize(Json j)
+void JoinedLobbyMessage::Deserialize(const Json& j)
 {
     ID = j["CurrentLobbyID"];
 }

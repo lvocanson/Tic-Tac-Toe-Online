@@ -9,7 +9,7 @@ Json RegisterPlayerMessage::Serialize()
     return j;
 }
 
-void RegisterPlayerMessage::Deserialize(Json j)
+void RegisterPlayerMessage::Deserialize(const Json& j)
 {
     Name = j["Name"];
 }

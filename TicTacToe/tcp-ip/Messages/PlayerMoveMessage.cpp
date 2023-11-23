@@ -11,7 +11,7 @@ Json PlayerMoveMessage::Serialize()
     return j;
 }
 
-void PlayerMoveMessage::Deserialize(Json j)
+void PlayerMoveMessage::Deserialize(const Json& j)
 {
     PlayerName = j["PlayerName"];
     Cell = j["PlayerMove"];

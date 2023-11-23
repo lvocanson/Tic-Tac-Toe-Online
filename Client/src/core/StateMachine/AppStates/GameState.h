@@ -31,6 +31,7 @@ public:
     void CheckIfMouseHoverBoard();
     bool IsMouseHoverPiece(unsigned int i);
     void PlacePlayerPieceOnBoard(unsigned int cell);
+    void SendGameFinishedToServer(const std::string& string);
     void WinCheck();
     void SwitchPlayerTurn();
 

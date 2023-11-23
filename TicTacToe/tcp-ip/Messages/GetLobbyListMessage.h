@@ -6,11 +6,11 @@
 struct GetLobbyListMessage : ISerializable
 {
     GetLobbyListMessage() = default;
-    GetLobbyListMessage(const std::vector<Lobby>& lobbyIDs) : AllLobbies(lobbyIDs) { }
+    GetLobbyListMessage(const std::vector<Lobby*>& lobbyIDs);
 
     Json Serialize() override;
-    void Deserialize(Json j) override;
+    void Deserialize(const Json& j) override;
 
-    std::vector<Lobby> AllLobbies;
+    std::vector<LobbyData> AllLobbiesData;
 };
 

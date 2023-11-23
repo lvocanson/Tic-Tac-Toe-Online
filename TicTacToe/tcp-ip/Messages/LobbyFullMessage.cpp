@@ -11,7 +11,7 @@ Json LobbyFullMessage::Serialize()
     return j;
 }
 
-void LobbyFullMessage::Deserialize(Json j)
+void LobbyFullMessage::Deserialize(const Json& j)
 {
     PlayerX = j["PlayerX"];
     PlayerO = j["PlayerO"];
