@@ -17,6 +17,11 @@ void PlayerShapeRegistry::ClearPlayerShapes()
     m_PlayerShapes.clear();
 }
 
+sf::Color PlayerShapeRegistry::GetPlayerColor(TicTacToe::Piece piece)
+{
+    return m_PlayerShapes.at(piece)->getOutlineColor();
+}
+
 void PlayerShapeRegistry::CreatePlayerShape(TicTacToe::Piece piece, sf::Color color)
 {
     switch (piece)

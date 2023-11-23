@@ -57,6 +57,7 @@ private:
     bool m_IsTimerOn = false;
     bool m_IsGameStarted = false;
     bool m_IsPlayerTurn = false;
+    bool m_NeedToCleanBoard = false;
 
-    GameStateUI* m_GameStateUI;
+    GameStateUI* m_GameStateUI = nullptr;
 };

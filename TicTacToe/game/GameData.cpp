@@ -1,11 +1,15 @@
 #include "GameData.h"
 
-GameData::GameData(const std::vector<PlayerMove>& allMoves)
+GameData::GameData(const std::vector<PlayerMove>& allMoves, const std::string& playerX, const std::string& playerO)
 {
     for (auto& move : allMoves)
     {
         AllMoves.emplace_back(move);
     }
+
+    PlayerX = playerX;
+    PlayerO = playerO;
+    DateTime = std::format("{:%d-%m-%Y %H:%M:%OS}", std::chrono::system_clock::now());
 }
 
 GameData::GameData(const Json& j)
@@ -14,6 +18,10 @@ GameData::GameData(const Json& j)
     {
         AllMoves.emplace_back(PlayerMove(move));
     }
+
+    DateTime = j["DateTime"];
+    PlayerO = j["PlayerO"];
+    PlayerX = j["PlayerX"];
 }
 
 Json GameData::Serialize()
@@ -24,6 +32,11 @@ Json GameData::Serialize()
     {
         j["AllMoves"].push_back(move.Serialize());
     }
+
+    j["PlayerX"] = PlayerX;
+    j["PlayerO"] = PlayerO;
+    j["DateTime"] = DateTime;
+    
     return j;
 }
 

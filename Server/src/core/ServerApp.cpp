@@ -349,7 +349,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
                 }
             }
 
-            m_SavedGames.emplace_back(GameData(lb->CurrentGame));
+            m_SavedGames.emplace_back(GameData(lb->CurrentGame, lb->Data.PlayerX, lb->Data.PlayerO));
             lb->ResetGame();
 
             std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(playerName) << INF_CLR << " won the game." << std::endl << DEF_CLR;

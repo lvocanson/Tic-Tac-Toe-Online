@@ -25,10 +25,6 @@ void GameState::OnEnter()
 {
     m_GameStateUI = new GameStateUI(m_Window);
 
-    Message<MsgType::OnEnterLobby> message;
-    message.LobbyId = m_LobbyID;
-    ClientConnectionHandler::GetInstance().SendDataToServer(message);
-
     m_ScoreManager.Init();
     m_GameStateUI->Init();
     m_GameStateUI->SetLobbyIDText(m_LobbyID);
@@ -58,6 +54,10 @@ void GameState::OnEnter()
     m_Window->RegisterDrawable(m_ReturnButton);
 
     m_Board.DrawBoard();
+
+    Message<MsgType::OnEnterLobby> message;
+    message.LobbyId = m_LobbyID;
+    ClientConnectionHandler::GetInstance().SendDataToServer(message);
 }
 
 void GameState::OnUpdate(float dt)
@@ -65,6 +65,11 @@ void GameState::OnUpdate(float dt)
     if (m_ReturnButton)
     {
         m_ReturnButton->Update(dt);
+    }
+
+    if (m_NeedToCleanBoard && m_IsGameStarted)
+    {
+        ClearBoard();
     }
 
     if (!m_WaitingServerResponse && m_IsPlayerTurn && m_IsGameStarted)
@@ -115,6 +120,7 @@ void GameState::CheckIfMouseHoverBoard()
 
 void GameState::ClearBoard()
 {
+    m_NeedToCleanBoard = false;
     m_Board.SetEmpty();
 }
 
@@ -155,11 +161,11 @@ bool GameState::IsMouseHoverPiece(unsigned int i)
 
 void GameState::OnExit()
 {
-    RELEASE(m_GameStateUI)
-
     ClearBoard();
     m_ScoreManager.Clear();
-    
+
+    RELEASE(m_GameStateUI)
+
     m_Window->ClearAllDrawables();
 }
 
@@ -222,10 +228,9 @@ void GameState::OnReceiveData(const Json& serializeData)
             m_GameStateUI->UpdateGameStateText(message.Winner + " won!");
         }
 
-        ClearBoard();
+        m_NeedToCleanBoard = true;
 
         break;
-
     }
     default:
        break;

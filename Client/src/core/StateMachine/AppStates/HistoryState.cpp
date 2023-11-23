@@ -18,9 +18,6 @@ HistoryState::~HistoryState()
 
 void HistoryState::OnEnter()
 {
-    Message<MsgType::FetchGameHistoryList> message;
-    ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
-
     m_PreviousMoveButton = new ButtonComponent(sf::Vector2f(500, 50), sf::Vector2f(50, 50), sf::Color::Green);
     m_PreviousMoveButton->SetButtonText("<", sf::Color::White, 30, TextAlignment::Center);
     m_PreviousMoveButton->SetOnClickCallback([this]()
@@ -81,11 +78,33 @@ void HistoryState::OnEnter()
     m_MoveButtonLabel->SetCharacterSize(40);
 
     m_GameWinnerText = new TextComponent;
-    m_GameWinnerText->SetText("GAME WINNER");
+    m_GameWinnerText->SetText("Winner: ");
+    m_GameWinnerText->SetPosition(sf::Vector2f(50, 200));
+    m_GameWinnerText->SetCharacterSize(36);
+
+    m_PlayerXName = new TextComponent;
+    m_PlayerXName->SetText("PlayerX: ");
+    m_PlayerXName->SetPosition(sf::Vector2f(50, 260));
+    m_PlayerXName->SetCharacterSize(36);
+    m_PlayerXName->SetColor(sf::Color(250, 92, 12));
+
+    m_PlayerOName = new TextComponent;
+    m_PlayerOName->SetText("PlayerO: ");
+    m_PlayerOName->SetPosition(sf::Vector2f(50, 300));
+    m_PlayerOName->SetCharacterSize(36);
+    m_PlayerOName->SetColor(sf::Color(255, 194, 0));
+
+    m_GameDateText = new TextComponent;
+    m_GameDateText->SetText("Date: ");
+    m_GameDateText->SetPosition(sf::Vector2f(50, 340));
+    m_GameDateText->SetCharacterSize(36);
 
     m_Board.Init(3, 3, m_Window);
     m_Board.DrawBoard();
 
+    m_Window->RegisterDrawable(m_PlayerXName);
+    m_Window->RegisterDrawable(m_PlayerOName);
+    m_Window->RegisterDrawable(m_GameDateText);
     m_Window->RegisterDrawable(m_MoveButtonLabel);
     m_Window->RegisterDrawable(m_GameButtonLabel);
     m_Window->RegisterDrawable(m_NextGameButton);
@@ -95,6 +114,10 @@ void HistoryState::OnEnter()
     m_Window->RegisterDrawable(m_BackToMenu);
     m_Window->RegisterDrawable(m_MoveNumberText);
     m_Window->RegisterDrawable(m_GameNumberText);
+    m_Window->RegisterDrawable(m_GameWinnerText);
+
+    Message<MsgType::FetchGameHistoryList> message;
+    ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
 }
 
 void HistoryState::OnUpdate(float dt)
@@ -154,6 +177,11 @@ void HistoryState::DisplaySelectedGame()
 
     m_GameNumberText->SetText(std::to_string(m_CurrentGameIndex + 1) + " / " + std::to_string(m_Games.size()));
     m_MoveNumberText->SetText(std::to_string(m_CurrentMoveIndex + 1) + " / " + std::to_string(m_CurrentGame.GetMovesSize()));
+    m_GameWinnerText->SetText("Winner: " + m_CurrentGame.GetWinnerName());
+    m_GameWinnerText->SetColor(PlayerShapeRegistry::GetPlayerColor(m_CurrentGame.GetWinnerPiece()));
+    m_GameDateText->SetText("Date: " + m_CurrentGame.GetDateTime());
+    m_PlayerXName->SetText("Player X: " + m_CurrentGame.GetPlayerX());
+    m_PlayerOName->SetText("Player O: " + m_CurrentGame.GetPlayerO());
 
     for (const auto& move : m_CurrentGame.GetMoves())
     {
@@ -164,7 +192,7 @@ void HistoryState::DisplaySelectedGame()
 
 void HistoryState::NextGame()
 {
-    if (m_CurrentGameIndex + 1 <= m_Games.size())
+    if (m_CurrentGameIndex + 1 < m_Games.size())
     {
         m_CurrentGameIndex++;
         m_Board.SetEmpty();
