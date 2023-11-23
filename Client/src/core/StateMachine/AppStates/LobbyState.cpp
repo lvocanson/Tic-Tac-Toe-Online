@@ -95,9 +95,9 @@ void LobbyState::OnReceiveData(const Json& serializeData)
                 auto* m_LobbyButton = new ButtonComponent(sf::Vector2f(100, i * static_cast<float>(110)), sf::Vector2f(200, 100), sf::Color::Blue);
                 m_LobbyButton->SetButtonText("Lobby " + std::to_string(id), sf::Color::White, 30, TextAlignment::Center);
                 m_LobbyButton->SetOnClickCallback([=]()
-                    {
-                        TryToJoinLobby(i);
-                    });
+                {
+                    JoinLobbyRequest(i);
+                });
 
                 m_Lobbies.emplace_back(id, "", "");
                 m_LobbyButtons.push_back(m_LobbyButton);
@@ -131,11 +131,12 @@ void LobbyState::OnReceiveData(const Json& serializeData)
     }
 }
 
-void LobbyState::TryToJoinLobby(int lobbyID)
+void LobbyState::JoinLobbyRequest(int lobbyID)
 {
-    Message<MsgType::JoinLobby> message;
-    message.LobbyId = static_cast<unsigned int>(lobbyID);
+    m_CurrentLobbyID = m_Lobbies[lobbyID].ID;
+
+    Message<MsgType::TryToJoinLobby> message;
+    message.LobbyId = m_CurrentLobbyID;
     
     ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
-    m_CurrentLobbyID = m_Lobbies[lobbyID].ID;
 }

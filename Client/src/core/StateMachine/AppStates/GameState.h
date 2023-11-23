@@ -18,7 +18,7 @@ public:
     void OnExit() override;
     void OnReceiveData(const Json& serializeData) override;
 
-    void IsServerLobbyFull();
+    void OnEnterLobby();
 
     void StartGame();
 

@@ -18,7 +18,7 @@ public:
     LobbyState& operator=(const LobbyState& other) = delete;
     ~LobbyState() override;
 
-    void TryToJoinLobby(int lobbyID);
+    void JoinLobbyRequest(int lobbyID);
 
 private:
 

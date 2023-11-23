@@ -25,8 +25,6 @@ GameState::~GameState()
 
 void GameState::OnEnter()
 {
-    IsServerLobbyFull();
-
     m_ScoreManager.Init();
     m_GameStateUI->Init();
 
@@ -161,47 +159,49 @@ void GameState::OnExit()
 
 void GameState::OnReceiveData(const Json& serializeData)
 {
-    // if (serializeData["Type"] == "PlayerMoveResponse")
-    // {
-    //     PlayerMoveResponse moveResponse;
-    //     moveResponse.Deserialize(serializeData);
+    auto type = Message<>::GetType(serializeData);
 
-    //     PlacePlayerPieceOnBoard(moveResponse.Cell, moveResponse.Piece);
-    //     SwitchPlayerTurn();
-    // }
-    // else if (serializeData["Type"] == "SetPlayerShape")
-    // {
-    //     LobbyFullMessage message;
-    //     message.Deserialize(serializeData);
+    using enum MsgType;
+    switch (type)
+    {
+    case GameStarted:
+    {
+        Message<GameStarted> message(serializeData);
 
-    //     m_PlayerManager.CreateNewPlayer(message.PlayerX, sf::Color(250, 92, 12), Piece::X);
-    //     m_PlayerManager.CreateNewPlayer(message.PlayerO, sf::Color(255, 194, 0), Piece::O);
+        m_PlayerManager.CreateNewPlayer(message.PlayerX, sf::Color(250, 92, 12), Piece::X);
+        m_PlayerManager.CreateNewPlayer(message.PlayerO, sf::Color(255, 194, 0), Piece::O);
 
-    //     m_IsPlayerTurn = message.StartingPlayer == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
+        m_IsPlayerTurn = message.StartPlayer == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
 
-    //     StartGame();
-    // }
-    // else if (serializeData["Type"] == "GameFinished")
-    // {
-    //     GameFinishedMessage message;
-    //     message.Deserialize(serializeData);
+        StartGame();
+    }
+    case AcceptMakeMove:
+    {
+        Message<AcceptMakeMove> message(serializeData);
 
-    //     //ClientApp::GetHistoryManager()->SaveGame(winner->GetData(), m_ScoreManager.GetCurrentGame());
+        PlacePlayerPieceOnBoard(message.Cell, message.Piece);
+        SwitchPlayerTurn();
+    }
+    case DeclineMakeMove:
+    {
+        DebugLog("Declined move");
+        break;
+    }
+    case GameOver:
+    {
+        Message<GameOver> message(serializeData);
 
-    //     m_ScoreManager.AddScoreToPlayer(message.Piece);
-    //     m_ScoreManager.CreateNewGameHistory();
+        //ClientApp::GetHistoryManager()->SaveGame(winner->GetData(), m_ScoreManager.GetCurrentGame());
 
-    //     m_GameStateUI->UpdatePlayerScore(message.Piece, message.WinnerName, m_ScoreManager.GetPlayerScore(message.Piece));
-    //     m_GameStateUI->UpdateGameStateText(message.WinnerName + " won!");
+        m_ScoreManager.AddScoreToPlayer(message.Piece);
+        m_ScoreManager.CreateNewGameHistory();
 
-    //     ClearBoard();
-    // }
-}
+        m_GameStateUI->UpdatePlayerScore(message.Piece, message.Winner, m_ScoreManager.GetPlayerScore(message.Piece));
+        m_GameStateUI->UpdateGameStateText(message.Winner + " won!");
 
-void GameState::IsServerLobbyFull()
-{
-    // IsLobbyFullNotification notification(m_LobbyID);
-    // ClientConnectionHandler::GetInstance().SendDataToServer(notification.Serialize().dump());
+        ClearBoard();
+    }
+    }
 }
 
 void GameState::StartGame()

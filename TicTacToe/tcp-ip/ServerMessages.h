@@ -35,6 +35,31 @@ struct Message<MsgType::LobbyList> : ISerializable
 };
 
 template <>
+struct Message<MsgType::GameStarted> : ISerializable
+{
+    Message() = default;
+    Message(const Json& j)
+        : StartPlayer(j["StartPlayer"]), PlayerX(j["PlayerX"]), PlayerO(j[PlayerO])
+    {
+    }
+    ~Message() = default;
+
+    Json Serialize() override
+    {
+        Json j;
+        j["Type"] = MsgType::GameStarted;
+        j["StartPlayer"] = StartPlayer;
+        j["PlayerX"] = PlayerX;
+        j["PlayerO"] = PlayerO;
+
+        return j;
+    }
+
+    std::string StartPlayer, PlayerX, PlayerO;
+
+};
+
+template <>
 struct Message<MsgType::AcceptMakeMove> : ISerializable
 {
     Message() = default;

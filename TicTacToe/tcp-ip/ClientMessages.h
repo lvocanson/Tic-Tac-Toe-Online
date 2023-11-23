@@ -1,5 +1,6 @@
 #pragma once
 #include "Message.h"
+#include "../game/TicTacToe.h"
 
 template <>
 struct Message<MsgType::Login> : ISerializable
@@ -23,7 +24,7 @@ struct Message<MsgType::Login> : ISerializable
 };
 
 template <>
-struct Message<MsgType::JoinLobby> : ISerializable
+struct Message<MsgType::OnEnterLobby> : ISerializable
 {
     Message() = default;
     Message(const Json& j)
@@ -35,7 +36,29 @@ struct Message<MsgType::JoinLobby> : ISerializable
     Json Serialize() override
     {
         Json j;
-        j["Type"] = MsgType::JoinLobby;
+        j["Type"] = MsgType::TryToJoinLobby;
+        j["ID"] = LobbyId;
+
+        return j;
+    }
+
+    unsigned int LobbyId;
+};
+
+template <>
+struct Message<MsgType::TryToJoinLobby> : ISerializable
+{
+    Message() = default;
+    Message(const Json& j)
+    {
+        LobbyId = j["ID"].get<unsigned int>();
+    }
+    ~Message() = default;
+
+    Json Serialize() override
+    {
+        Json j;
+        j["Type"] = MsgType::TryToJoinLobby;
         j["ID"] = LobbyId;
 
         return j;
@@ -52,6 +75,7 @@ struct Message<MsgType::MakeMove> : ISerializable
     {
         LobbyId = j["ID"].get<unsigned int>();
         Cell = j["Cell"].get<unsigned int>();
+        Piece = j["Piece"].get<TicTacToe::Piece>();
     }
     ~Message() = default;
 
@@ -61,9 +85,11 @@ struct Message<MsgType::MakeMove> : ISerializable
         j["Type"] = MsgType::MakeMove;
         j["ID"] = LobbyId;
         j["Cell"] = Cell;
+        j["Piece"] = Piece;
         return j;
     }
 
     unsigned int LobbyId;
     unsigned int Cell;
+    TicTacToe::Piece Piece;
 };

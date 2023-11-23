@@ -11,8 +11,10 @@ enum class MsgType : unsigned int
     Disconnect,
 
     FetchLobbyList,
-    JoinLobby,
+    TryToJoinLobby,
+    OnEnterLobby,
     LeaveLobby,
+
 
     MakeMove,
 
@@ -22,6 +24,8 @@ enum class MsgType : unsigned int
     AcceptJoinLobby,
     RejectJoinLobby,
 
+
+    GameStarted,
     AcceptMakeMove,
     DeclineMakeMove,
     GameOver,

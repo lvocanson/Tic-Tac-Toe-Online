@@ -176,9 +176,9 @@ void ServerApp::HandleRecv(ClientPtr sender)
         std::cout << INF_CLR << "Lobby list sent to " << HASH_CLR(sender) << std::endl << DEF_CLR;
         break;
     }
-    case JoinLobby:
+    case TryToJoinLobby:
     {
-        Message<JoinLobby> msg(parsedData);
+        Message<TryToJoinLobby> msg(parsedData);
         bool joined = false;
 
         // Find the lobby with the given ID
@@ -205,6 +205,9 @@ void ServerApp::HandleRecv(ClientPtr sender)
             joined = true;
             std::cout << STS_CLR << "Player " << HASH_STRING_CLR(playerName) << STS_CLR << " has joined lobby: " << INF_CLR << msg.LobbyId << std::endl << DEF_CLR;
 
+            sender->Send(Message<AcceptJoinLobby>().Serialize().dump());
+            std::cout << INF_CLR << "Lobby confirmation sent to " << HASH_CLR(sender) << std::endl << DEF_CLR;
+
             // Create the lobby game if it doesn't exist
             if (!m_StartedGames.contains(lb->Data.ID))
             {
@@ -212,11 +215,32 @@ void ServerApp::HandleRecv(ClientPtr sender)
                 std::cout << STS_CLR << "Creating game " << INF_CLR << msg.LobbyId << "..." << std::endl << DEF_CLR;
             }
 
-            sender->Send(Message<AcceptJoinLobby>().Serialize().dump());
-            std::cout << INF_CLR << "Lobby confirmation sent to " << HASH_CLR(sender) << std::endl << DEF_CLR;
+            if (lb->IsLobbyFull())
+            {
+                std::string startingPlayer = rand() % 100 <= 50 ? lb->Data.PlayerX :  lb->Data.PlayerO;
+
+                Message<GameStarted> toSend;
+                toSend.PlayerO = lb->Data.PlayerO;
+                toSend.PlayerX = lb->Data.PlayerX;
+                toSend.StartPlayer = startingPlayer;
+
+                std::string opponentName = lb->GetOpponentName(m_Players[sender->GetName()]);
+
+                for (auto& [adressIP, player] : m_Players)
+                {
+                    if (player != opponentName) continue;
+
+                    m_GameServer->GetClientByName(adressIP)->Send(Message<GameStarted>().Serialize().dump());
+
+                    break;
+                }
+                sender->Send(Message<GameStarted>().Serialize().dump());
+
+                std::cout << STS_CLR << "Started game in lobby  " << INF_CLR << lb->Data.ID << std::endl << DEF_CLR;
+            }
+
             break;
         }
-
         // Send rejection message
         if (!joined)
         {
