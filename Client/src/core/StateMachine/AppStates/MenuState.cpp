@@ -32,6 +32,7 @@ void MenuState::OnEnter()
                 m_Window->UnregisterDrawable(m_PlayButton);
                 RELEASE(m_PlayButton);
                 ShowConnectionButton();
+                m_Window->UnregisterDrawable(m_DisconnectButton);
             });
 
         m_Window->RegisterDrawable(m_DisconnectButton);

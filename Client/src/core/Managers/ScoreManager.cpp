@@ -34,7 +34,7 @@ void ScoreManager::InitPlayerScores(const std::vector<Player*>& allPlayers)
 {
     for (auto& player : allPlayers)
     {
-        m_PlayerScores.insert(std::pair<TicTacToe::PieceID, int>(player->GetPlayerID(), 0));
+        m_PlayerScores.insert({ player->GetPlayerID(), 0 });
     }
 }
 

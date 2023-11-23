@@ -31,6 +31,7 @@ public:
     void CheckIfMouseHoverBoard();
     bool IsMouseHoverPiece(unsigned int i);
     void PlacePlayerPieceOnBoard(unsigned int cell);
+    void SendGameFinishedToServer(const std::string& string);
     void WinCheck();
     void SwitchPlayerTurn();
 
@@ -55,11 +56,9 @@ private:
     float m_PlayerTurnTime = 0.0f;
     float m_MaxPlayerTurnTime = 0.0f;
 
-    bool m_IsPlayersConnected = false;
-    bool m_IsGameInit = false;
     bool m_IsTimerOn = false;
+    bool m_IsGameStarted = false;
     bool m_IsPlayerTurn = false;
-    bool m_IsGameStart = false;
 
     GameStateUI* m_GameStateUI;
 };

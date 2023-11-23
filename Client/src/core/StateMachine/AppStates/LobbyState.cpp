@@ -1,7 +1,12 @@
 #include "LobbyState.h"
 #include "src/core/ClientApp.h"
-#include "game/IDGenerator.h"
 #include "GameState.h"
+
+#include "tcp-ip/Messages/GetLobbyListMessage.h"
+#include "tcp-ip/Messages/JoinedLobbyMessage.h"
+#include "tcp-ip/Messages/RegisterPlayerMessage.h"
+#include "tcp-ip/Messages/TryToJoinLobbyMessage.h"
+#include "tcp-ip/Notifications/GetLobbyListNotification.h"
 
 LobbyState::LobbyState(StateMachine* stateMachine, Window* window)
     : State(stateMachine)
@@ -19,14 +24,11 @@ void LobbyState::OnEnter()
 {
     m_IsLobbyInit = false;
 
-    Json j;
-    j["Type"] = "Login";
-    j["UserName"] = ClientApp::GetInstance().GetCurrentPlayer()->GetName();
-    ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
+    RegisterPlayerMessage message(ClientApp::GetInstance().GetCurrentPlayer()->GetName());
+    ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
 
-    j = Json();
-    j["Type"] = "GetLobbyList";
-    ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
+    GetLobbyListNotification message2;
+    ClientConnectionHandler::GetInstance().SendDataToServer(message2.Serialize().dump());
 
     m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
     m_ReturnButton->SetButtonText("Return To Menu", sf::Color::White, 30, TextAlignment::Center);
@@ -82,10 +84,13 @@ void LobbyState::OnReceiveData(const Json& serializeData)
 {
     if (serializeData["Type"] == "Lobby")
     {
+        GetLobbyListMessage message;
+        message.Deserialize(serializeData);
+
         int i = 0;
-        for (const auto& lobbyJson : serializeData["Lobbies"])
+        for (const auto& lobbyJson : message.AllLobbiesData)
         {
-            int id = lobbyJson["ID"];
+            int id = lobbyJson.ID;
 
             if (!m_IsLobbyInit)
             {
@@ -102,34 +107,28 @@ void LobbyState::OnReceiveData(const Json& serializeData)
             }
             else
             {
-                const std::string playerX = lobbyJson["PlayerX"];
-                const std::string playerO = lobbyJson["PlayerO"];
-
-                m_Lobbies[i].ID = id;
-                m_Lobbies[i].PlayerO = playerO;
-                m_Lobbies[i].PlayerX = playerX;
+                m_Lobbies[i].Data.ID = id;
+                m_Lobbies[i].Data.PlayerO = lobbyJson.PlayerO;
+                m_Lobbies[i].Data.PlayerX = lobbyJson.PlayerX;
             }
             i++;
         }
         m_IsLobbyInit = true;
     }
-    else if (serializeData["Type"] == "IsInLobby")
+    else if (serializeData["Type"] == "JoinedLobby")
     {
-        Json j;
-        j["Type"] = "WaitInLobby";
-        j["StartedLobbyID"] = m_CurrentLobbyID;
-        ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
+        JoinedLobbyMessage message;
+        message.Deserialize(serializeData);
 
-        ((GameState*)m_StateMachine->GetState("GameState"))->SetLobbyID(m_CurrentLobbyID);
+        ((GameState*)m_StateMachine->GetState("GameState"))->SetLobbyID(message.ID);
         m_StateMachine->SwitchState("GameState");
     }
 }
 
 void LobbyState::TryToJoinLobby(int lobbyID)
 {
-    Json j;
-    j["Type"] = "JoinLobby";
-    j["ID"] = m_Lobbies[lobbyID].ID;
-    ClientConnectionHandler::GetInstance().SendDataToServer(j.dump());
-    m_CurrentLobbyID = m_Lobbies[lobbyID].ID;
+    TryToJoinLobbyMessage message(m_Lobbies[lobbyID].Data.ID);
+
+    ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
+    m_CurrentLobbyID = m_Lobbies[lobbyID].Data.ID;
 }

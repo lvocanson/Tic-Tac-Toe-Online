@@ -104,7 +104,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\ServerApp.cpp" />
-    <ClCompile Include="src\pch.cpp" />
+    <ClCompile Include="src\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\ServerMain.cpp" />
     <ClCompile Include="src\tcp-ip\HtmlServer.cpp" />
     <ClCompile Include="src\tcp-ip\TcpIpServer.cpp" />
