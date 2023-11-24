@@ -60,6 +60,7 @@ If the opponent leave the lobby, the lobby will return to a waiting state.
 
 ### History
 Once connected, you can view all the games played in the server.  
+The games are automatically erased when the server is shutting down.  
 
 ---
 ![lobby](Screenshots/TicTacToe_screenshot_history.png)
@@ -70,6 +71,8 @@ Once connected, you can view all the games played in the server.
 
 When the server's started, an url will be printed in the console with this form : `=> Web Server Address: YOUR_IP`  
 CTRL + Click to quick open the link in your browser.  
+
+---
 ![web](Screenshots/TicTacToe_screenshot_web.png)
 
 ## CREDITS
