@@ -20,11 +20,11 @@ void ScoreManager::Clear()
     m_PlayerScores.clear();
 }
 
-void ScoreManager::InitPlayerScores(const std::vector<Player*>& allPlayers)
+void ScoreManager::InitPlayerScores(const std::array<Player, 2>& allPlayers)
 {
     for (auto& player : allPlayers)
     {
-        m_PlayerScores.insert({ player->GetPiece(), 0 });
+        m_PlayerScores.insert({ player.GetPiece(), 0 });
     }
 }
 

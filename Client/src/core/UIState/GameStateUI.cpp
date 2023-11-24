@@ -46,7 +46,7 @@ void GameStateUI::Init()
     RegisterText(m_GameStateText);
 }
 
-void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
+void GameStateUI::InitPlayerScores(const std::array<Player, 2>& allPlayers)
 {
     for (auto& text : m_PlayerScoreTexts)
     {
@@ -59,26 +59,26 @@ void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
     {
         auto playerScoreText = new sf::Text();
         playerScoreText->setFont(*FontRegistry::GetFont("coolvetica.otf"));
-        playerScoreText->setString(player->GetName() + " : 0");
+        playerScoreText->setString(player.GetName() + " : 0");
         playerScoreText->setCharacterSize(24);
-        playerScoreText->setFillColor(sf::Color::White);
+        playerScoreText->setFillColor(player.GetColor());
         playerScoreText->setStyle(sf::Text::Bold);
         playerScoreText->setPosition(55, m_Window->GetHeight() * 0.5f + i * 20);
 
         RegisterText(playerScoreText);
 
-        m_PlayerScoreTexts.insert(std::pair(player->GetPiece(), playerScoreText));
+        m_PlayerScoreTexts.insert(std::pair(player.GetPiece(), playerScoreText));
         i++;
     }
 }
 
-void GameStateUI::InitProgressBar(const float maxValue)
+void GameStateUI::InitProgressBar(const sf::Color& playerColor, const float maxValue)
 {
     m_ProgressBar = new ProgressBar();
     m_ProgressBar->SetPosition(sf::Vector2f(m_GameStateText->getPosition().x, m_GameStateText->getPosition().y + 60));
     m_ProgressBar->SetSize(sf::Vector2f(200, 20));
     m_ProgressBar->SetMaxValue(100);
-    m_ProgressBar->SetForegroundColor(PlayerManager::GetCurrentPlayer()->GetColor());
+    m_ProgressBar->SetForegroundColor(playerColor);
 
     m_Window->RegisterDrawable(m_ProgressBar);
 
@@ -86,13 +86,13 @@ void GameStateUI::InitProgressBar(const float maxValue)
     m_ProgressBar->SetValue(maxValue);
 }
 
-void GameStateUI::UpdatePlayerTurnText(const std::string& name, const sf::Color& color)
+void GameStateUI::UpdatePlayerTurnText(const PlayerData* data)
 {
-    m_GameStateText->setString(name + " turn");
-    m_GameStateText->setFillColor(color);
+    m_GameStateText->setString(data->Name + " turn");
+    m_GameStateText->setFillColor(data->Color);
 
     if (m_ProgressBar)
-        m_ProgressBar->SetForegroundColor(color);
+        m_ProgressBar->SetForegroundColor(data->Color);
 }
 
 void GameStateUI::UpdateGameStateText(const std::string& text)

@@ -15,10 +15,10 @@ public:
     void Init() override;
     void Clear() override;
 
-    void InitPlayerScores(const std::vector<Player*>& allPlayers);
-    void InitProgressBar(const float maxValue);
+    void InitPlayerScores(const std::array<Player, 2>& allPlayers);
+    void InitProgressBar(const sf::Color& color, const float maxValue);
 
-    void UpdatePlayerTurnText(const std::string& name, const sf::Color& color);
+    void UpdatePlayerTurnText(const PlayerData* data);
     void UpdateGameStateText(const std::string& text);
     void UpdatePlayerScore(const TicTacToe::Piece, const std::string&, unsigned int score);
     void UpdateProgressBar(float value) const { m_ProgressBar->SetValue(value); }

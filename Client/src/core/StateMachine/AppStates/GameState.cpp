@@ -119,13 +119,12 @@ void GameState::ClearBoard()
     m_Board.SetEmpty();
 }
 
-void GameState::SwitchPlayerTurn(const std::string& playerName, const Piece piece)
+void GameState::SwitchPlayerTurn()
 {
     m_IsPlayerTurn = !m_IsPlayerTurn;
 
     m_PlayerManager.SwitchPlayerTurn();
-    m_GameStateUI->UpdatePlayerTurnText(playerName, PlayerShapeRegistry::GetPlayerColor(piece));
-
+    m_GameStateUI->UpdatePlayerTurnText(m_PlayerManager.GetCurrentPlayer()->GetData());
 
     if (m_IsTimerOn)
     {
@@ -139,7 +138,7 @@ void GameState::SendPlacedPieceToServer(unsigned int cell)
     Message<MsgType::MakeMove> message;
     message.Cell = cell;
     message.LobbyId = m_LobbyID;
-    message.Piece = PlayerManager::GetCurrentPlayer()->GetPiece();
+    message.Piece = m_PlayerManager.GetCurrentPlayer()->GetPiece();
 
     ClientConnectionHandler::GetInstance().SendDataToServer(message);
 
@@ -199,7 +198,7 @@ void GameState::OnReceiveData(const Json& serializeData)
             m_MaxPlayerTurnTime = GAMEMODE_FAST.PlayerMoveLimitTime;
             m_PlayerTurnTime = m_MaxPlayerTurnTime;
 
-            m_GameStateUI->InitProgressBar(m_MaxPlayerTurnTime);
+            m_GameStateUI->InitProgressBar(m_PlayerManager.GetCurrentPlayer()->GetColor(), m_MaxPlayerTurnTime);
         }
 
         m_IsGameStarted = true;
@@ -212,9 +211,8 @@ void GameState::OnReceiveData(const Json& serializeData)
         const Message<AcceptMakeMove> message(serializeData);
 
         m_Board.InstanciateNewPlayerShape(message.Piece, message.Cell);
-
-        const Piece opponentPiece = (message.Piece == Piece::X) ? Piece::O : Piece::X;
-        SwitchPlayerTurn(PlayerManager::GetCurrentPlayer()->GetName(), opponentPiece);
+        
+        SwitchPlayerTurn();
 
         m_WaitingServerResponse = false;
 

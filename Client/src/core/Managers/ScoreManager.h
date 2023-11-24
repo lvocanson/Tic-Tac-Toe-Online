@@ -16,7 +16,7 @@ public:
     void Init() override {};
     void Clear() override;
 
-    void InitPlayerScores(const std::vector<Player*>& allPlayers);
+    void InitPlayerScores(const std::array<Player, 2>& allPlayers);
 
     void AddScoreToPlayer(TicTacToe::Piece);
 

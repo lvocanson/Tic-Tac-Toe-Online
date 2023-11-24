@@ -1,11 +1,7 @@
 #include "PlayerManager.h"
 
-Player* PlayerManager::m_CurrentPlayer = nullptr;
-Player* PlayerManager::m_OpponentPlayer = nullptr;
-
-PlayerManager::PlayerManager() : m_PlayerCount(0), m_CurrentPlayerIndex(0)
+PlayerManager::PlayerManager()
 {
-    m_RegisteredPlayers = std::vector<Player*>();
 }
 
 PlayerManager::~PlayerManager()
@@ -20,55 +16,51 @@ void PlayerManager::Init()
 
 void PlayerManager::Clear()
 {
-    for (auto player : m_RegisteredPlayers)
-    {
-        RELEASE(player)
-    }
-
     m_CurrentPlayer = nullptr;
     m_OpponentPlayer = nullptr;
-    
-    m_CurrentPlayerIndex = 0;
-    m_PlayerCount = 0;
-
-    m_RegisteredPlayers.clear();
 }
 
 void PlayerManager::SwitchPlayerTurn()
 {
-    m_CurrentPlayerIndex++;
+    m_IsPlayerXTurn = !m_IsPlayerXTurn;
 
-    if (m_CurrentPlayerIndex >= m_PlayerCount)
-    {
-        m_CurrentPlayerIndex = 0;
-    }
-
-    m_OpponentPlayer = m_RegisteredPlayers[GetOpponentPlayerIndex()];
-    m_CurrentPlayer = m_RegisteredPlayers[m_CurrentPlayerIndex];
+    m_CurrentPlayer = &m_RegisteredPlayers[m_IsPlayerXTurn];
+    m_OpponentPlayer = &m_RegisteredPlayers[!m_IsPlayerXTurn];
 }
 
 void PlayerManager::CreateNewPlayer(const std::string& name, const sf::Color color, const TicTacToe::Piece piece)
 {
-    const auto newPlayer = new Player(name, color, piece);
+    if (m_RegisteredPlayers[0].IsInited())
+        m_RegisteredPlayers[0].SetData(name, color, piece);
+    else
+        m_RegisteredPlayers[1].SetData(name, color, piece);
 
-    m_RegisteredPlayers.push_back(newPlayer);
-    m_PlayerCount++;
-
-    if (m_CurrentPlayer == nullptr)
-    {
-        m_CurrentPlayer = newPlayer;
-    }
-
-    PlayerShapeRegistry::CreatePlayerShape(newPlayer->GetPiece(), color);
+    PlayerShapeRegistry::CreatePlayerShape(piece, color);
 }
 
-void PlayerManager::UnregisterPlayer(Player* player)
+void PlayerManager::InitPlayerTurn(const std::string starter)
 {
-    if (m_CurrentPlayer == player)
+    if (starter == m_RegisteredPlayers[0].GetName())
     {
-        SwitchPlayerTurn();
+        m_CurrentPlayer = &m_RegisteredPlayers[0];
+        m_OpponentPlayer = &m_RegisteredPlayers[1];
+    }
+    else
+    {
+        m_CurrentPlayer = &m_RegisteredPlayers[1];
+        m_OpponentPlayer = &m_RegisteredPlayers[0];
     }
 
-    std::erase(m_RegisteredPlayers, player);
-    m_PlayerCount--;
+    m_IsPlayerXTurn = m_CurrentPlayer->GetPiece() == TicTacToe::Piece::X;
+}
+
+const Player& PlayerManager::GetPlayer(TicTacToe::Piece piece)
+{
+    for (auto player : m_RegisteredPlayers)
+    {
+        if (player.GetPiece() == piece)
+        {
+            return player;
+        }
+    }
 }

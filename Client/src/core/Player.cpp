@@ -10,15 +10,15 @@ Player::Player()
     };
 }
 
-Player::Player(const std::string& name, const sf::Color color, const TicTacToe::Piece piece)
+Player::~Player()
+{
+}
+
+void Player::SetData(const std::string& name, const sf::Color color, const TicTacToe::Piece piece)
 {
     m_Data = {
         .Name = name,
         .Piece = piece,
         .Color = color,
     };
-}
-
-Player::~Player()
-{
 }
