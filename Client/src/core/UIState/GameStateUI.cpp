@@ -63,7 +63,7 @@ void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
         playerScoreText->setCharacterSize(24);
         playerScoreText->setFillColor(sf::Color::White);
         playerScoreText->setStyle(sf::Text::Bold);
-        playerScoreText->setPosition(55, m_Window->GetHeight() * 0.5 + i * 20);
+        playerScoreText->setPosition(55, m_Window->GetHeight() * 0.5f + i * 20);
 
         RegisterText(playerScoreText);
 
