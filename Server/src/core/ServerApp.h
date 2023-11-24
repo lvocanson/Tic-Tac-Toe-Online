@@ -36,6 +36,8 @@ private: // Web Server
 private: // Lobbies
     void CreateLobbies();
     bool IsPlayerInLobby(const std::string& name) const;
+    const std::string& SerializeAllLobbies() const;
+    void RefreshLobbyListToPlayers();
 
     // HashMap <Address (connection name), Username>
     std::unordered_map<std::string, std::string> m_Players;

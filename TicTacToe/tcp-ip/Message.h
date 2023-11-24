@@ -24,10 +24,10 @@ enum class MsgType : unsigned int
 
     GameHistoryList,
     LobbyList,
+    RefreshLobbyList,
 
     AcceptJoinLobby,
     RejectJoinLobby,
-
 
     GameStarted,
     AcceptMakeMove,

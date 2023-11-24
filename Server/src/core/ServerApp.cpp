@@ -105,13 +105,14 @@ void ServerApp::HandleGameServer()
         m_GameServer->CleanClosedConnections([this](ClientPtr c)
         {
             const auto& player = m_Players[c->GetName()];
-            if (player != "")
+            if (!player.empty())
             {
-                for (auto lb : m_Lobbies)
+                for (const auto lb : m_Lobbies)
                 {
                     if (lb->IsInLobby(player))
                     {
                         lb->RemovePlayerFromLobby(player);
+                        RefreshLobbyListToPlayers();
                     }
                 }
 
@@ -131,6 +132,40 @@ void ServerApp::UnregisterPlayerFromServer(const std::string& player)
 {
     m_Players.erase(player);
     std::cout << STS_CLR << "Unregistered player: " << HASH_STRING_CLR(player) << STS_CLR << " from server." << std::endl << DEF_CLR;
+}
+
+void ServerApp::RefreshLobbyListToPlayers()
+{
+    const size_t playerCount = m_Players.size();
+    unsigned int playerInLobbyCount = 0;
+
+    for (const auto& lobby : m_Lobbies)
+    {
+        playerInLobbyCount += lobby->PlayerCount;
+    }
+
+    // Send the lobby list to all players that are not in a lobby
+    if (playerCount > playerInLobbyCount)
+    {
+        Message<MsgType::LobbyList> toSend;
+
+        toSend.LobbiesData.reserve(m_Lobbies.size());
+        for (const auto& lb : m_Lobbies)
+        {
+            toSend.LobbiesData.emplace_back(lb->Data);
+        }
+
+        const std::string message = toSend.Serialize().dump();
+
+        for (auto& [adressIP, player] : m_Players)
+        {
+            if (IsPlayerInLobby(player)) continue;
+
+            m_GameServer->GetClientByName(adressIP)->Send(message);
+        }
+
+        std::cout << INF_CLR << "Refresh lobby sent to players " << std::endl << DEF_CLR;
+    }
 }
 
 void ServerApp::HandleRecv(ClientPtr sender)
@@ -177,6 +212,8 @@ void ServerApp::HandleRecv(ClientPtr sender)
             {
                 lb->RemovePlayerFromLobby(username);
                 std::cout << INF_CLR << "Player " << HASH_STRING_CLR(username) << INF_CLR << " has left lobby: " << lb->Data.ID << std::endl << DEF_CLR;
+
+                RefreshLobbyListToPlayers();
 
                 if (m_StartedGames.contains(lb->Data.ID) && lb->IsLobbyEmpty())
                 {
@@ -255,6 +292,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
             if (!m_StartedGames.contains(lb->Data.ID))
                 m_StartedGames.insert({lb->Data.ID, lb});
 
+            RefreshLobbyListToPlayers();
             break;
         }
 
@@ -383,6 +421,8 @@ void ServerApp::HandleRecv(ClientPtr sender)
         lb->RemovePlayerFromLobby(msg.PlayerName);
         std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(msg.PlayerName) << INF_CLR << " has left." << std::endl << DEF_CLR;
 
+        RefreshLobbyListToPlayers();
+
         if (m_StartedGames.contains(lb->Data.ID) && lb->IsLobbyEmpty())
         {
             m_StartedGames[lb->Data.ID] = nullptr;
@@ -396,6 +436,8 @@ void ServerApp::HandleRecv(ClientPtr sender)
         std::cout << WRN_CLR << "Received JSON from " << HASH_CLR(sender) << WRN_CLR << " contains an unknown type." << std::endl << DEF_CLR;
         break;
     }
+
+    std::cout << std::endl;
 }
 
 void ServerApp::CleanUpGameServer()

@@ -58,11 +58,14 @@ void Window::PollEvents()
 
 void Window::Render()
 {
+    const int length = m_Drawables.size();
+
     m_Window->clear(m_ClearColor);
-    for (const auto drawable : m_Drawables)
+    for (int i = 0; i < length; i++)
     {
-        m_Window->draw(*drawable);
+        m_Window->draw(*m_Drawables[i]);
     }
+
     m_Window->display();
 }
 

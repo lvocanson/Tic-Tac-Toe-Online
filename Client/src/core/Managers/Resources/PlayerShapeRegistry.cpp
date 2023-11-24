@@ -11,7 +11,7 @@ void PlayerShapeRegistry::ClearPlayerShapes()
 {
     for (auto& shape : m_PlayerShapes)
     {
-        delete shape.second;
+        RELEASE(shape.second);
     }
 
     m_PlayerShapes.clear();
@@ -24,6 +24,11 @@ sf::Color PlayerShapeRegistry::GetPlayerColor(TicTacToe::Piece piece)
 
 void PlayerShapeRegistry::CreatePlayerShape(TicTacToe::Piece piece, sf::Color color)
 {
+    if (m_PlayerShapes.contains(piece))
+    {
+        return;
+    }
+
     switch (piece)
     {
     case TicTacToe::Piece::X:
