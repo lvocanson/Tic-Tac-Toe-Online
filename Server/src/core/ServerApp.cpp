@@ -110,11 +110,8 @@ void ServerApp::HandleGameServer()
                 bool wasInLobby = false;
                 for (const auto lb : m_Lobbies)
                 {
-                        if (lb->IsInLobby(player))
-                        {
-                            lb->RemovePlayerFromLobby(player);
-                        }
-                    }
+                    lb->RemovePlayerFromLobby(player);
+                }
 
                 UnregisterPlayerFromServer(player);
 
@@ -122,7 +119,7 @@ void ServerApp::HandleGameServer()
                     RefreshLobbyListToPlayers();
             }
                 std::cout << STS_CLR << "Connection from " << HASH_CLR(c) << STS_CLR << " has been closed." << std::endl << DEF_CLR;
-            });
+        });
     }
     catch (const TcpIp::TcpIpException& e)
     {
