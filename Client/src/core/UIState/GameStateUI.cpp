@@ -121,7 +121,7 @@ void GameStateUI::SetGameModeAndIDText(unsigned int& id, const std::string& game
     m_LobbyIDText->setFillColor(sf::Color::White);
     m_LobbyIDText->setStyle(sf::Text::Bold);
     m_LobbyIDText->setPosition(55, 55);
-   
+
     m_GameModeText = new sf::Text();
     m_GameModeText->setFont(*FontRegistry::GetFont("coolvetica.otf"));
     m_GameModeText->setString(gameMode);
@@ -129,7 +129,7 @@ void GameStateUI::SetGameModeAndIDText(unsigned int& id, const std::string& game
     m_GameModeText->setFillColor(sf::Color::White);
     m_GameModeText->setStyle(sf::Text::Bold);
     m_GameModeText->setPosition(55, 80);
-    
+
     RegisterText(m_GameModeText);
     RegisterText(m_LobbyIDText);
 }

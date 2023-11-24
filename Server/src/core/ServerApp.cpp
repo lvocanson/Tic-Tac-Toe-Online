@@ -285,7 +285,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
             lb->AddPlayerToLobby(playerName);
             joined = true;
-            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(playerName) << INF_CLR << " has joined." << std::endl << DEF_CLR;
+            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << "] Player " << HASH_STRING_CLR(playerName) << INF_CLR << " has joined." << std::endl << DEF_CLR;
 
             sender->Send(Message<AcceptJoinLobby>().Serialize().dump());
             std::cout << INF_CLR << "Lobby confirmation sent to " << HASH_CLR(sender) << std::endl << DEF_CLR;
@@ -302,7 +302,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
         if (!joined)
         {
             sender->Send(Message<RejectJoinLobby>().Serialize().dump());
-            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Rejected " << HASH_CLR(sender) << std::endl << DEF_CLR;
+            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << "] Rejected " << HASH_CLR(sender) << std::endl << DEF_CLR;
         }
         break;
     }
@@ -354,7 +354,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
         // Check if move is valid
         if (!lb->Board.IsCellEmpty(msg.Cell))
         {
-            std::cout << WRN_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(playerName) << WRN_CLR << " tried to make an invalid move." << std::endl << DEF_CLR;
+            std::cout << WRN_CLR << "[Lobby " << msg.LobbyId << "] Player " << HASH_STRING_CLR(playerName) << WRN_CLR << " tried to make an invalid move." << std::endl << DEF_CLR;
             sender->Send(Message<DeclineMakeMove>().Serialize().dump());
             break;
         }
@@ -378,7 +378,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
             if (i == 2) break;
         }
-        std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(playerName) << INF_CLR << " made a move." << std::endl << DEF_CLR;
+        std::cout << INF_CLR << "[Lobby " << msg.LobbyId << "] Player " << HASH_STRING_CLR(playerName) << INF_CLR << " made a move." << std::endl << DEF_CLR;
 
         // Check if the game is over
         TicTacToe::Piece winner = lb->Board.IsThereAWinner();
@@ -403,7 +403,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
             m_SavedGames.emplace_back(GameData(lb->CurrentGame, lb->Data.PlayerX, lb->Data.PlayerO));
             lb->ResetGame();
 
-            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(playerName) << INF_CLR << " won the game." << std::endl << DEF_CLR;
+            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << "] Player " << HASH_STRING_CLR(playerName) << INF_CLR << " won the game." << std::endl << DEF_CLR;
         }
         else if (lb->Board.IsFull())
         {
@@ -425,7 +425,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
 
             lb->ResetGame();
 
-            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] The game ended in a draw." << std::endl << DEF_CLR;
+            std::cout << INF_CLR << "[Lobby " << msg.LobbyId << "] The game ended in a draw." << std::endl << DEF_CLR;
         }
 
         break;
@@ -437,7 +437,7 @@ void ServerApp::HandleRecv(ClientPtr sender)
         std::string opponentName = lb->GetOpponentName(msg.PlayerName);
 
         lb->RemovePlayerFromLobby(msg.PlayerName);
-        std::cout << INF_CLR << "[Lobby " << msg.LobbyId << " ] Player " << HASH_STRING_CLR(msg.PlayerName) << INF_CLR << " has left." << std::endl << DEF_CLR;
+        std::cout << INF_CLR << "[Lobby " << msg.LobbyId << "] Player " << HASH_STRING_CLR(msg.PlayerName) << INF_CLR << " has left." << std::endl << DEF_CLR;
 
         RefreshLobbyListToPlayers();
 
