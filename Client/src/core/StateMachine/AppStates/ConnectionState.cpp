@@ -33,7 +33,7 @@ void ConnectionState::OnEnter()
 
     sf::Color OrangeRed(231, 62, 1);
     m_BackButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 500), sf::Vector2f(200, 100), OrangeRed);
-    m_BackButton->SetButtonText("Quit", sf::Color::White, 50, TextAlignment::Center);
+    m_BackButton->SetButtonText("Return to menu", sf::Color::White, 50, TextAlignment::Center);
     m_BackButton->SetOnClickCallback([this]()
         {
             m_StateMachine->SwitchState("MenuState");
