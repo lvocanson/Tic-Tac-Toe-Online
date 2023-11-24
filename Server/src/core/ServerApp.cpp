@@ -597,8 +597,7 @@ void ServerApp::HandleWebConnection(WebClientPtr sender)
 
     if (data.starts_with("GET "))
     {
-        std::string page = data.substr(4, data.find(' ', 4) - 4);
-        std::cout << data << std::endl;
+        const std::string page = data.substr(4, data.find(' ', 4) - 4);
         std::cout << WEB_PFX << HASH_CLR(sender) << DEF_CLR << " sent a GET request for `" << page << "`. ";
 
         if (page == "/")
