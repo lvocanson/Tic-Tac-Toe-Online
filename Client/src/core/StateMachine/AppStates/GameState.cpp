@@ -120,11 +120,12 @@ void GameState::ClearBoard()
     m_Board.SetEmpty();
 }
 
-void GameState::SwitchPlayerTurn()
+void GameState::SwitchPlayerTurn(const std::string& playerName)
 {
     m_IsPlayerTurn = !m_IsPlayerTurn;
     m_PlayerManager.SwitchPlayerTurn();
-    m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetOpponentPlayer()->GetData());
+
+    m_GameStateUI->UpdatePlayerTurnText(playerName, PlayerManager::GetCurrentPlayer()->GetColor());
 
     if (m_IsTimerOn)
     {
@@ -210,7 +211,7 @@ void GameState::OnReceiveData(const Json& serializeData)
         const Message<AcceptMakeMove> message(serializeData);
 
         m_Board.InstanciateNewPlayerShape(message.Piece, message.Cell);
-        SwitchPlayerTurn();
+        SwitchPlayerTurn(PlayerManager::GetCurrentPlayer()->GetName());
 
         m_WaitingServerResponse = false;
 

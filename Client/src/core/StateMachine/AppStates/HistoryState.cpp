@@ -36,7 +36,7 @@ void HistoryState::OnEnter()
     m_BackToMenu->SetButtonText("Back to Menu", sf::Color::White, 30, TextAlignment::Center);
     m_BackToMenu->SetOnClickCallback([this]()
     {
-        m_StateMachine->SwitchState("MenuState");
+        m_StateMachine->SwitchState("LobbyState");
     });
 
     m_PreviousGameButton = new ButtonComponent(sf::Vector2f(50, 50), sf::Vector2f(50, 50), sf::Color::Green);

@@ -61,7 +61,7 @@ void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
         playerScoreText->setFont(*FontRegistry::GetFont("coolvetica.otf"));
         playerScoreText->setString(player->GetName() + " : 0");
         playerScoreText->setCharacterSize(24);
-        playerScoreText->setFillColor(sf::Color::White);
+        playerScoreText->setFillColor(PlayerShapeRegistry::GetPlayerColor(player->GetPiece()));
         playerScoreText->setStyle(sf::Text::Bold);
         playerScoreText->setPosition(55, m_Window->GetHeight() * 0.5f + i * 20);
 
@@ -86,13 +86,13 @@ void GameStateUI::InitProgressBar(const float maxValue)
     m_ProgressBar->SetValue(maxValue);
 }
 
-void GameStateUI::UpdatePlayerTurnText(const PlayerData& data)
+void GameStateUI::UpdatePlayerTurnText(const std::string& name, const sf::Color& color)
 {
-    m_GameStateText->setString(data.Name + " turn");
-    m_GameStateText->setFillColor(data.Color);
+    m_GameStateText->setString(name + " turn");
+    m_GameStateText->setFillColor(color);
 
     if (m_ProgressBar)
-        m_ProgressBar->SetForegroundColor(data.Color);
+        m_ProgressBar->SetForegroundColor(color);
 }
 
 void GameStateUI::UpdateGameStateText(const std::string& text)
@@ -161,4 +161,6 @@ void GameStateUI::Clear()
     NULLPTR(m_LobbyIDText);
     NULLPTR(m_UserName);
     NULLPTR(m_Title);
+
+    m_PlayerScoreTexts.clear();
 }

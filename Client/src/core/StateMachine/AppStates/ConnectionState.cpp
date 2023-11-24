@@ -3,7 +3,7 @@
 #include "tcp-ip/ClientMessages.h"
 
 #include <regex>
-#ifdef DEBUG
+#if defined(DEBUG) | defined(_DEBUG)
     #include <SFML/Network/IpAddress.hpp>
 #endif
 
@@ -27,9 +27,11 @@ void ConnectionState::OnEnter()
     m_IpField = new InsertFieldComponent();
     m_IpField->SetPosition(sf::Vector2f(m_Window->GetWidth() * 0.5f - 190, 100));
     m_IpField->SetLabel("Server Phrase");
-#ifdef DEBUG
+
+#if defined(DEBUG) | defined(_DEBUG)
     m_IpField->SetText(TcpIp::IpAddress::FromString(sf::IpAddress::getLocalAddress().toString()).ToPhrase());
 #endif
+
     m_NameField = new InsertFieldComponent();
     m_NameField->SetPosition(sf::Vector2f(m_Window->GetWidth() * 0.5f - 190, 200));
     m_NameField->SetLabel("Username");

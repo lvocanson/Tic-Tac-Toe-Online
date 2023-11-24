@@ -29,7 +29,7 @@ void LobbyState::OnEnter()
     m_HistoryButton->SetButtonText("History", sf::Color::White, 30, TextAlignment::Center);
     m_HistoryButton->SetOnClickCallback([this]()
         {
-            m_StateMachine->SwitchState("LobbyState");
+            m_StateMachine->SwitchState("HistoryState");
         });
 
     m_ReturnButton = new ButtonComponent(sf::Vector2f(500, 600), sf::Vector2f(200, 100), sf::Color::Red);
