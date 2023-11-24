@@ -80,29 +80,41 @@ void LobbyState::OnReceiveData(const Json& serializeData)
             if (!lobby.PlayerX.empty()) playerCount++;
             if (!lobby.PlayerO.empty()) playerCount++;
 
-            if (!m_IsLobbyInit)
-            {
-                auto* m_LobbyButton = new ButtonComponent(sf::Vector2f(x, y), sf::Vector2f(200, 100), color);
-                m_LobbyButton->SetButtonText(
-                        lobbyName + std::to_string(id) + "\n" + std::to_string(playerCount) + "/" + "2"
-                        ,sf::Color::White, 30
-                        , TextAlignment::Center);
-                m_LobbyButton->SetOnClickCallback([=]()
-                    {
-                        JoinLobbyRequest(i);
-                    });
-
-                m_Lobbies.emplace_back(id, lobby.GameMode, "", "");
-                m_LobbyButtons.push_back(m_LobbyButton);
-                m_Window->RegisterDrawable(m_LobbyButton);
-            }
-            else
+            if (m_IsLobbyInit)
             {
                 m_Lobbies[i].ID = id;
                 m_Lobbies[i].GameMode = lobby.GameMode;
                 m_Lobbies[i].PlayerO = lobby.PlayerO;
                 m_Lobbies[i].PlayerX = lobby.PlayerX;
+
+                m_LobbyButtons[i]->SetButtonText(
+                    lobbyName + std::to_string(id) + "\n" + std::to_string(playerCount) + "/" + "2"
+                    , sf::Color::White, 30
+                    , TextAlignment::Center);
+
+                m_LobbyButtons[i]->SetOnClickCallback([=]()
+                {
+                    JoinLobbyRequest(i);
+                });
             }
+            else
+            {
+                m_Lobbies.emplace_back(id, lobby.GameMode, "", "");
+
+                auto* m_LobbyButton = new ButtonComponent(sf::Vector2f(x, y), sf::Vector2f(200, 100), color);
+                m_LobbyButton->SetButtonText(
+                    lobbyName + std::to_string(id) + "\n" + std::to_string(playerCount) + "/" + "2"
+                    , sf::Color::White, 30
+                    , TextAlignment::Center);
+                m_LobbyButton->SetOnClickCallback([=]()
+                {
+                    JoinLobbyRequest(i);
+                });
+
+                m_LobbyButtons.push_back(m_LobbyButton);
+                m_Window->RegisterDrawable(m_LobbyButton);
+            }
+
             i++;
         }
         m_IsLobbyInit = true;
