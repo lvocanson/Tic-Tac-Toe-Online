@@ -20,11 +20,11 @@ void ScoreManager::Clear()
     m_PlayerScores.clear();
 }
 
-void ScoreManager::InitPlayerScores(const std::vector<Player*>& allPlayers)
+void ScoreManager::InitPlayerScores(const std::map<TicTacToe::Piece, Player>& allPlayers)
 {
     for (auto& player : allPlayers)
     {
-        m_PlayerScores.insert({ player->GetPiece(), 0 });
+        m_PlayerScores.insert({ player.second.GetPiece(), 0 });
     }
 }
 
@@ -42,7 +42,7 @@ unsigned int ScoreManager::GetPlayerScore(TicTacToe::Piece piece)
     return m_PlayerScores[piece];
 }
 
-bool ScoreManager::IsScoreExists(TicTacToe::Piece& piece)
+bool ScoreManager::IsScoreExists(const TicTacToe::Piece& piece) const
 {
     if (!m_PlayerScores.contains(piece))
     {

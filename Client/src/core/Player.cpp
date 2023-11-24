@@ -22,3 +22,4 @@ Player::Player(const std::string& name, const sf::Color color, const TicTacToe::
 Player::~Player()
 {
 }
+

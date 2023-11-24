@@ -1,12 +1,9 @@
 #include "PlayerManager.h"
 
-Player* PlayerManager::m_CurrentPlayer = nullptr;
-Player* PlayerManager::m_OpponentPlayer = nullptr;
+#include "src/core/ClientApp.h"
 
-PlayerManager::PlayerManager() : m_PlayerCount(0), m_CurrentPlayerIndex(0)
-{
-    m_RegisteredPlayers = std::vector<Player*>();
-}
+PlayerManager::PlayerManager()
+= default;
 
 PlayerManager::~PlayerManager()
 {
@@ -15,60 +12,64 @@ PlayerManager::~PlayerManager()
 
 void PlayerManager::Init()
 {
-
+    m_IsPlayerTurn = false;
+    m_CurrentPlayer = nullptr;
+    m_OpponentPlayer = nullptr;
 }
 
 void PlayerManager::Clear()
 {
-    for (auto player : m_RegisteredPlayers)
-    {
-        RELEASE(player)
-    }
-
+    m_IsPlayerTurn = false;
     m_CurrentPlayer = nullptr;
     m_OpponentPlayer = nullptr;
-    
-    m_CurrentPlayerIndex = 0;
-    m_PlayerCount = 0;
-
-    m_RegisteredPlayers.clear();
 }
 
 void PlayerManager::SwitchPlayerTurn()
 {
-    m_CurrentPlayerIndex++;
-
-    if (m_CurrentPlayerIndex >= m_PlayerCount)
-    {
-        m_CurrentPlayerIndex = 0;
-    }
-
-    m_OpponentPlayer = m_RegisteredPlayers[GetOpponentPlayerIndex()];
-    m_CurrentPlayer = m_RegisteredPlayers[m_CurrentPlayerIndex];
+    m_IsPlayerTurn = !m_IsPlayerTurn;
 }
 
 void PlayerManager::CreateNewPlayer(const std::string& name, const sf::Color color, const TicTacToe::Piece piece)
 {
-    const auto newPlayer = new Player(name, color, piece);
-
-    m_RegisteredPlayers.push_back(newPlayer);
-    m_PlayerCount++;
-
-    if (m_CurrentPlayer == nullptr)
-    {
-        m_CurrentPlayer = newPlayer;
-    }
-
-    PlayerShapeRegistry::CreatePlayerShape(newPlayer->GetPiece(), color);
+    m_RegisteredPlayers.insert({ piece, Player(name, color, piece) });
+    PlayerShapeRegistry::CreatePlayerShape(piece, color);
 }
 
-void PlayerManager::UnregisterPlayer(Player* player)
+void PlayerManager::InitPlayerTurn(const std::string& starter, const TicTacToe::Piece& playerPiece)
 {
-    if (m_CurrentPlayer == player)
+    const std::string playerName = ClientApp::GetInstance().GetCurrentPlayer()->GetName();
+    const TicTacToe::Piece opponentPiece = playerPiece == TicTacToe::Piece::X ? TicTacToe::Piece::O : TicTacToe::Piece::X;
+
+    if (playerName == m_RegisteredPlayers.at(playerPiece).GetName())
     {
-        SwitchPlayerTurn();
+        m_CurrentPlayer = &m_RegisteredPlayers.at(playerPiece);
+        m_OpponentPlayer = &m_RegisteredPlayers.at(opponentPiece);
+    }
+    else if (playerName == m_RegisteredPlayers.at(opponentPiece).GetName())
+    {
+        m_CurrentPlayer = &m_RegisteredPlayers.at(opponentPiece);
+        m_OpponentPlayer = &m_RegisteredPlayers.at(playerPiece);
+    }
+    else
+    {
+        DebugLog("Invalid starter name");
     }
 
-    std::erase(m_RegisteredPlayers, player);
-    m_PlayerCount--;
+    m_IsPlayerTurn = starter == playerName;
+}
+
+Player& PlayerManager::GetPlayerByPiece(TicTacToe::Piece piece)
+{
+    if (m_RegisteredPlayers.contains(piece))
+        return m_RegisteredPlayers[piece];
+
+    DebugLog("Player not found");
+}
+
+Player& PlayerManager::GetOpponentPlayerByPiece(TicTacToe::Piece piece)
+{
+    const TicTacToe::Piece opponentPiece = piece == TicTacToe::Piece::X ? TicTacToe::Piece::O : TicTacToe::Piece::X;
+
+    if (m_RegisteredPlayers.contains(opponentPiece))
+        return m_RegisteredPlayers[opponentPiece];
 }
