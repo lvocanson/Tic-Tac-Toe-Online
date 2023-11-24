@@ -28,6 +28,7 @@ enum class MsgType : unsigned int
 
     AcceptJoinLobby,
     RejectJoinLobby,
+    OpponentLeftLobby,
 
     GameStarted,
     AcceptMakeMove,

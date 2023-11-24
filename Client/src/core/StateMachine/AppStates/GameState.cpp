@@ -25,6 +25,7 @@ void GameState::OnEnter()
 {
     m_GameStateUI = new GameStateUI(m_Window);
 
+    m_WaitingServerResponse = true;
     m_IsTimerOn = false;
 
     m_ScoreManager.Init();
@@ -86,7 +87,7 @@ void GameState::UpdatePlayerTimer(float dt)
     m_GameStateUI->UpdateProgressBar(m_PlayerTurnTime);
 }
 
-void GameState::CheckIfTimerIsUp() const
+void GameState::CheckIfTimerIsUp()
 {
     if (m_PlayerTurnTime <= 0.0f)
     {
@@ -133,7 +134,7 @@ void GameState::SwitchPlayerTurn()
     }
 }
 
-void GameState::SendPlacedPieceToServer(unsigned int cell) const
+void GameState::SendPlacedPieceToServer(unsigned int cell)
 {
     Message<MsgType::MakeMove> message;
     message.Cell = cell;
@@ -141,6 +142,8 @@ void GameState::SendPlacedPieceToServer(unsigned int cell) const
     message.Piece = PlayerManager::GetCurrentPlayer()->GetPiece();
 
     ClientConnectionHandler::GetInstance().SendDataToServer(message);
+
+    m_WaitingServerResponse = true;
 }
 
 bool GameState::IsMouseHoverPiece(unsigned int i)
@@ -176,14 +179,18 @@ void GameState::OnReceiveData(const Json& serializeData)
     {
         const Message<GameStarted> message(serializeData);
 
+        m_IsPlayerTurn = false;
+
+        m_PlayerManager.Clear();
+        m_ScoreManager.Clear();
+
         m_PlayerManager.CreateNewPlayer(message.PlayerX, sf::Color(250, 92, 12), Piece::X);
         m_PlayerManager.CreateNewPlayer(message.PlayerO, sf::Color(255, 194, 0), Piece::O);
 
         m_IsPlayerTurn = message.StartPlayer == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
 
         m_GameStateUI->UpdateGameStateText("It's " + message.StartPlayer + " to start the game!");
-        m_IsGameStarted = true;
-        m_WaitingServerResponse = false;
+
         m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
         m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
 
@@ -195,6 +202,9 @@ void GameState::OnReceiveData(const Json& serializeData)
             
             m_GameStateUI->InitProgressBar(m_MaxPlayerTurnTime);
         }
+
+        m_IsGameStarted = true;
+        m_WaitingServerResponse = false;
 
         break;
     }
@@ -234,6 +244,17 @@ void GameState::OnReceiveData(const Json& serializeData)
         }
 
         m_NeedToCleanBoard = true;
+
+        break;
+    }
+    case OpponentLeftLobby:
+    {
+        m_WaitingServerResponse = true;
+        m_IsGameStarted = false;
+        m_NeedToCleanBoard = true;
+        m_IsTimerOn = false;
+
+        m_GameStateUI->UpdateGameStateText("Opponent left the game!");
 
         break;
     }

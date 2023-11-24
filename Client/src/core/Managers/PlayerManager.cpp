@@ -25,6 +25,8 @@ void PlayerManager::Clear()
     }
 
     m_CurrentPlayer = nullptr;
+    m_CurrentPlayerIndex = 0;
+    m_PlayerCount = 0;
 
     m_RegisteredPlayers.clear();
 }

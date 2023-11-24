@@ -18,9 +18,6 @@ public:
     void OnExit() override;
     void OnReceiveData(const Json& serializeData) override;
 
-    void OnEnterLobby();
-
-    void StartGame();
 
     GameState(StateMachine* stateMachine, Window* m_Window);
     GameState(const GameState& other) = delete;
@@ -28,15 +25,15 @@ public:
     ~GameState() override;
 
     void SetLobbyID(unsigned int id) { m_LobbyID = id; }
-    void SetGameMode(std::string gameMode) { m_GameMode = gameMode; }
+    void SetGameMode(const std::string& gameMode) { m_GameMode = gameMode; }
     void CheckIfMouseHoverBoard();
     bool IsMouseHoverPiece(unsigned int i);
     void SwitchPlayerTurn();
 
     void UpdatePlayerTimer(float dt);
-    void CheckIfTimerIsUp() const;
+    void CheckIfTimerIsUp();
 
-    void SendPlacedPieceToServer(unsigned int cell) const;
+    void SendPlacedPieceToServer(unsigned int cell);
 
     void ClearBoard();
 

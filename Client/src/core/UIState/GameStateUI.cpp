@@ -48,7 +48,12 @@ void GameStateUI::Init()
 
 void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
 {
-    
+    for (auto& text : m_PlayerScoreTexts)
+    {
+        m_Window->UnregisterDrawable(text.second);
+        RELEASE(text.second);
+    }
+
     int i = 1;
     for (const auto player : allPlayers)
     {
