@@ -124,7 +124,7 @@ void GameState::SwitchPlayerTurn()
 {
     m_IsPlayerTurn = !m_IsPlayerTurn;
     m_PlayerManager.SwitchPlayerTurn();
-    m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetCurrentPlayer()->GetData());
+    m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetOpponentPlayer()->GetData());
 
     if (m_IsTimerOn)
     {
