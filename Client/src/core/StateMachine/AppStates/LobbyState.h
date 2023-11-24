@@ -33,6 +33,7 @@ private:
     ButtonComponent* m_ReturnButton = nullptr;
     ButtonComponent* m_LeaveButtons = nullptr;
 
+    std::string m_LobbyGameMode;
     std::vector<ButtonComponent*> m_LobbyButtons;
     std::vector<LobbyData> m_Lobbies;
 };

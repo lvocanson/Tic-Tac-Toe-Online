@@ -29,7 +29,7 @@ void GameState::OnEnter()
 
     m_ScoreManager.Init();
     m_GameStateUI->Init();
-    m_GameStateUI->SetLobbyIDText(m_LobbyID);
+    m_GameStateUI->SetGameModeAndIDText(m_LobbyID, m_GameMode);
     m_GameStateUI->SetUserName(ClientApp::GetInstance().GetCurrentPlayer()->GetName());
 
     m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
