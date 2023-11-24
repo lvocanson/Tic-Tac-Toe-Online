@@ -28,6 +28,7 @@ public:
     ~GameState() override;
 
     void SetLobbyID(unsigned int id) { m_LobbyID = id; }
+    void SetGameMode(std::string gameMode) { m_GameMode = gameMode; }
     void CheckIfMouseHoverBoard();
     bool IsMouseHoverPiece(unsigned int i);
     void SwitchPlayerTurn();
@@ -42,6 +43,7 @@ public:
 private:
 
     unsigned int m_LobbyID;
+    std::string m_GameMode;
 
     Window* m_Window;
     ButtonComponent* m_ReturnButton = nullptr;

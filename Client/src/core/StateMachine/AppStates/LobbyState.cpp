@@ -112,6 +112,7 @@ void LobbyState::OnReceiveData(const Json& serializeData)
     case AcceptJoinLobby:
     {
         ((GameState*)m_StateMachine->GetState("GameState"))->SetLobbyID(m_CurrentLobbyID);
+        ((GameState*)m_StateMachine->GetState("GameState"))->SetGameMode(m_LobbyGameMode);
         m_StateMachine->SwitchState("GameState");
         break;
     }
@@ -132,7 +133,7 @@ void LobbyState::JoinLobbyRequest(int lobbyID)
 
     m_IsTryingToJoinLobby = true;
     m_CurrentLobbyID = m_Lobbies[lobbyID].ID;
-
+    m_LobbyGameMode = m_Lobbies[lobbyID].GameMode == CLASSIC ? "GameMode: Classic" : "GameMode: Fast";
     Message<MsgType::TryToJoinLobby> message;
     message.LobbyId = m_CurrentLobbyID;
     
