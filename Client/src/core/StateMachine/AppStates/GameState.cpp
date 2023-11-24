@@ -213,7 +213,7 @@ void GameState::OnReceiveData(const Json& serializeData)
 
         m_Board.InstanciateNewPlayerShape(message.Piece, message.Cell);
 
-        const Piece opponentPiece = message.Piece == Piece::X ? Piece::O : Piece::X;
+        const Piece opponentPiece = (message.Piece == Piece::X) ? Piece::O : Piece::X;
         SwitchPlayerTurn(PlayerManager::GetCurrentPlayer()->GetName(), opponentPiece);
 
         m_WaitingServerResponse = false;
