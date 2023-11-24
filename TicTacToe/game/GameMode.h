@@ -16,7 +16,7 @@ struct GameMode
 };
 
 static const GameMode GAMEMODE_CLASSIC = {false, 0, 3, 3, 3};
-static const GameMode GAMEMODE_FAST = {true, 3.f, 3, 3, 3};
+static const GameMode GAMEMODE_FAST = {true, 1.5f, 3, 3, 3};
 
 class GameSettings
 {
