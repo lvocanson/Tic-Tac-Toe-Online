@@ -22,8 +22,8 @@ public:
     void UpdateGameStateText(const std::string& text);
     void UpdatePlayerScore(const TicTacToe::Piece, const std::string&, unsigned int score);
     void UpdateProgressBar(float value) const { m_ProgressBar->SetValue(value); }
-    void SetGameModeAndIDText(unsigned int& id, const std::string gameMode);
-    void SetUserName(const std::string username);
+    void SetGameModeAndIDText(unsigned int& id, const std::string& gameMode);
+    void SetUserName(const std::string& username);
 
 private:
 

@@ -464,6 +464,8 @@ void ServerApp::HandleRecv(ClientPtr sender)
             }
         }
 
+        lb->ResetGame();
+
         break;
     }
     default:

@@ -26,6 +26,8 @@ void PlayerManager::Clear()
     }
 
     m_CurrentPlayer = nullptr;
+    m_OpponentPlayer = nullptr;
+    
     m_CurrentPlayerIndex = 0;
     m_PlayerCount = 0;
 
@@ -40,6 +42,7 @@ void PlayerManager::SwitchPlayerTurn()
     {
         m_CurrentPlayerIndex = 0;
     }
+
     m_OpponentPlayer = m_RegisteredPlayers[GetOpponentPlayerIndex()];
     m_CurrentPlayer = m_RegisteredPlayers[m_CurrentPlayerIndex];
 }

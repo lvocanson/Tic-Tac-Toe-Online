@@ -97,6 +97,7 @@ void GameStateUI::UpdatePlayerTurnText(const PlayerData& data)
 
 void GameStateUI::UpdateGameStateText(const std::string& text)
 {
+    m_GameStateText->setFillColor(sf::Color::White);
     m_GameStateText->setString(text);
 }
 
@@ -111,7 +112,7 @@ void GameStateUI::UpdatePlayerScore(const TicTacToe::Piece piece, const std::str
     m_PlayerScoreTexts.at(piece)->setString(name + " : " + std::to_string(score));
 }
 
-void GameStateUI::SetGameModeAndIDText(unsigned int& id, const std::string gameMode)
+void GameStateUI::SetGameModeAndIDText(unsigned int& id, const std::string& gameMode)
 {
     m_LobbyIDText = new sf::Text();
     m_LobbyIDText->setFont(*FontRegistry::GetFont("coolvetica.otf"));
@@ -133,7 +134,7 @@ void GameStateUI::SetGameModeAndIDText(unsigned int& id, const std::string gameM
     RegisterText(m_LobbyIDText);
 }
 
-void GameStateUI::SetUserName(const std::string username)
+void GameStateUI::SetUserName(const std::string& username)
 {
     m_UserName = new sf::Text();
     m_UserName->setFont(*FontRegistry::GetFont("coolvetica.otf"));

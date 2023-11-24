@@ -28,7 +28,6 @@ void GameState::OnEnter()
     m_WaitingServerResponse = true;
     m_IsTimerOn = false;
 
-    m_ScoreManager.Init();
     m_GameStateUI->Init();
     m_GameStateUI->SetGameModeAndIDText(m_LobbyID, m_GameMode);
     m_GameStateUI->SetUserName(ClientApp::GetInstance().GetCurrentPlayer()->GetName());
@@ -61,12 +60,12 @@ void GameState::OnUpdate(float dt)
         m_ReturnButton->Update(dt);
     }
 
-    if (!m_IsGameStarted) return;
-
     if (m_NeedToCleanBoard)
     {
         ClearBoard();
     }
+
+    if (!m_IsGameStarted) return;
 
     if (!m_WaitingServerResponse)
     {
@@ -162,6 +161,7 @@ void GameState::OnExit()
 {
     ClearBoard();
     m_ScoreManager.Clear();
+    m_PlayerManager.Clear();
 
     RELEASE(m_GameStateUI)
 
@@ -179,10 +179,7 @@ void GameState::OnReceiveData(const Json& serializeData)
     {
         const Message<GameStarted> message(serializeData);
 
-        m_IsPlayerTurn = false;
-
-        m_PlayerManager.Clear();
-        m_ScoreManager.Clear();
+        ClearBoard();
 
         m_PlayerManager.CreateNewPlayer(message.PlayerX, sf::Color(250, 92, 12), Piece::X);
         m_PlayerManager.CreateNewPlayer(message.PlayerO, sf::Color(255, 194, 0), Piece::O);
@@ -221,7 +218,7 @@ void GameState::OnReceiveData(const Json& serializeData)
     }
     case DeclineMakeMove:
     {
-        DebugLog("Declined move");
+        m_GameStateUI->UpdateGameStateText("Invalid move!");
         m_WaitingServerResponse = false;
         break;
     }
@@ -253,6 +250,10 @@ void GameState::OnReceiveData(const Json& serializeData)
         m_IsGameStarted = false;
         m_NeedToCleanBoard = true;
         m_IsTimerOn = false;
+        m_IsPlayerTurn = false;
+
+        m_PlayerManager.Clear();
+        m_ScoreManager.Clear();
 
         m_GameStateUI->UpdateGameStateText("Opponent left the game!");
 
