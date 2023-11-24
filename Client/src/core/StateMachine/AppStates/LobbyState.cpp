@@ -25,13 +25,21 @@ void LobbyState::OnEnter()
     Message<MsgType::FetchLobbyList> message;
     ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
 
-    m_ReturnButton = new ButtonComponent(sf::Vector2f(500, 500), sf::Vector2f(200, 100), sf::Color::Red);
+    m_HistoryButton = new ButtonComponent(sf::Vector2f(500, 450), sf::Vector2f(200, 100), sf::Color(4, 139, 15));
+    m_HistoryButton->SetButtonText("History", sf::Color::White, 30, TextAlignment::Center);
+    m_HistoryButton->SetOnClickCallback([this]()
+        {
+            m_StateMachine->SwitchState("LobbyState");
+        });
+
+    m_ReturnButton = new ButtonComponent(sf::Vector2f(500, 600), sf::Vector2f(200, 100), sf::Color::Red);
     m_ReturnButton->SetButtonText("Return To Menu", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]()
         {
             m_StateMachine->SwitchState("MenuState");
         });
 
+    m_Window->RegisterDrawable(m_HistoryButton);
     m_Window->RegisterDrawable(m_ReturnButton);
 }
 
@@ -47,6 +55,7 @@ void LobbyState::OnUpdate(float dt)
         m_LeaveButtons->Update(dt);
     }
 
+    m_HistoryButton->Update(dt);
     m_ReturnButton->Update(dt);
 }
 
@@ -54,6 +63,7 @@ void LobbyState::OnExit()
 {
     m_Window->ClearAllDrawables();
     m_LobbyButtons.clear();
+    NULLPTR(m_HistoryButton);
 }
 
 void LobbyState::OnReceiveData(const Json& serializeData)
