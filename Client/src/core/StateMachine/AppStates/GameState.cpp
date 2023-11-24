@@ -11,8 +11,6 @@ GameState::GameState(StateMachine* stateMachine, Window* m_Window)
     : State(stateMachine)
     , m_Window(m_Window)
 {
-    m_GameStateUI = new GameStateUI(m_Window);
-
     m_Board.Init(ClientApp::GetGameSettings().GetTotalColumn(), ClientApp::GetGameSettings().GetTotalRow(), m_Window);
     m_PlayerManager.Init();
 }
@@ -25,23 +23,14 @@ GameState::~GameState()
 
 void GameState::OnEnter()
 {
-    Message<MsgType::OnEnterLobby> message;
-    message.LobbyId = m_LobbyID;
-    ClientConnectionHandler::GetInstance().SendDataToServer(message);
+    m_GameStateUI = new GameStateUI(m_Window);
 
-    m_ScoreManager.Init();
+    m_WaitingServerResponse = true;
+    m_IsTimerOn = false;
+
     m_GameStateUI->Init();
-    m_GameStateUI->SetLobbyIDText(m_LobbyID);
+    m_GameStateUI->SetGameModeAndIDText(m_LobbyID, m_GameMode);
     m_GameStateUI->SetUserName(ClientApp::GetInstance().GetCurrentPlayer()->GetName());
-
-    m_MaxPlayerTurnTime = ClientApp::GetGameSettings().GetPlayerMoveLimitTime();
-    m_IsTimerOn = ClientApp::GetGameSettings().IsTimerOn();
-    m_PlayerTurnTime = m_MaxPlayerTurnTime;
-
-    if (m_IsTimerOn)
-    {
-        m_GameStateUI->InitProgressBar(m_MaxPlayerTurnTime);
-    }
 
     m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
     m_ReturnButton->SetButtonText("Leave game", sf::Color::White, 30, TextAlignment::Center);
@@ -58,6 +47,10 @@ void GameState::OnEnter()
     m_Window->RegisterDrawable(m_ReturnButton);
 
     m_Board.DrawBoard();
+
+    Message<MsgType::OnEnterLobby> message;
+    message.LobbyId = m_LobbyID;
+    ClientConnectionHandler::GetInstance().SendDataToServer(message);
 }
 
 void GameState::OnUpdate(float dt)
@@ -67,15 +60,23 @@ void GameState::OnUpdate(float dt)
         m_ReturnButton->Update(dt);
     }
 
-    if (m_IsPlayerTurn && m_IsGameStarted)
+    if (m_NeedToCleanBoard)
     {
-        CheckIfMouseHoverBoard();
+        ClearBoard();
+    }
 
+    if (!m_IsGameStarted) return;
+
+    if (!m_WaitingServerResponse)
+    {
         if (m_IsTimerOn)
         {
             UpdatePlayerTimer(dt);
             CheckIfTimerIsUp();
         }
+
+        if (m_IsPlayerTurn)
+            CheckIfMouseHoverBoard();
     }
 }
 
@@ -90,8 +91,7 @@ void GameState::CheckIfTimerIsUp()
     if (m_PlayerTurnTime <= 0.0f)
     {
         m_GameStateUI->UpdateGameStateText("Time's up!");
-
-        //PlacePlayerPieceOnBoard(m_Board.GetRandomEmptyCell());
+        SendPlacedPieceToServer(m_Board.GetRandomEmptyCell());
     }
 }
 
@@ -114,22 +114,19 @@ void GameState::CheckIfMouseHoverBoard()
     }
 }
 
-void GameState::PlacePlayerPieceOnBoard(unsigned int cell, TicTacToe::Piece piece)
-{
-    m_Board.InstanciateNewPlayerShape(piece, cell);
-    //m_ScoreManager.AddPlayerMove(PlayerManager::GetPlayer(), cell);
-}
-
 void GameState::ClearBoard()
 {
+    m_NeedToCleanBoard = false;
     m_Board.SetEmpty();
 }
 
-void GameState::SwitchPlayerTurn()
+void GameState::SwitchPlayerTurn(const std::string& playerName, const Piece piece)
 {
     m_IsPlayerTurn = !m_IsPlayerTurn;
+
     m_PlayerManager.SwitchPlayerTurn();
-    m_GameStateUI->UpdatePlayerTurnText(*PlayerManager::GetCurrentPlayer()->GetData());
+    m_GameStateUI->UpdatePlayerTurnText(playerName, PlayerShapeRegistry::GetPlayerColor(piece));
+
 
     if (m_IsTimerOn)
     {
@@ -146,6 +143,8 @@ void GameState::SendPlacedPieceToServer(unsigned int cell)
     message.Piece = PlayerManager::GetCurrentPlayer()->GetPiece();
 
     ClientConnectionHandler::GetInstance().SendDataToServer(message);
+
+    m_WaitingServerResponse = true;
 }
 
 bool GameState::IsMouseHoverPiece(unsigned int i)
@@ -164,20 +163,25 @@ void GameState::OnExit()
 {
     ClearBoard();
     m_ScoreManager.Clear();
+    m_PlayerManager.Clear();
+
+    RELEASE(m_GameStateUI)
 
     m_Window->ClearAllDrawables();
 }
 
 void GameState::OnReceiveData(const Json& serializeData)
 {
-    auto type = Message<>::GetType(serializeData);
+    const auto type = Message<>::GetType(serializeData);
 
     using enum MsgType;
     switch (type)
     {
     case GameStarted:
     {
-        Message<GameStarted> message(serializeData);
+        const Message<GameStarted> message(serializeData);
+
+        ClearBoard();
 
         m_PlayerManager.CreateNewPlayer(message.PlayerX, sf::Color(250, 92, 12), Piece::X);
         m_PlayerManager.CreateNewPlayer(message.PlayerO, sf::Color(255, 194, 0), Piece::O);
@@ -185,33 +189,48 @@ void GameState::OnReceiveData(const Json& serializeData)
         m_IsPlayerTurn = message.StartPlayer == ClientApp::GetInstance().GetCurrentPlayer()->GetName();
 
         m_GameStateUI->UpdateGameStateText("It's " + message.StartPlayer + " to start the game!");
-        m_IsGameStarted = true;
+
         m_ScoreManager.InitPlayerScores(m_PlayerManager.GetAllPlayers());
-        // m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
+        m_GameStateUI->InitPlayerScores(m_PlayerManager.GetAllPlayers());
+
+        if (message.GameMode == FAST)
+        {
+            m_IsTimerOn = true;
+            m_MaxPlayerTurnTime = GAMEMODE_FAST.PlayerMoveLimitTime;
+            m_PlayerTurnTime = m_MaxPlayerTurnTime;
+            
+            m_GameStateUI->InitProgressBar(m_MaxPlayerTurnTime);
+        }
+
+        m_IsGameStarted = true;
+        m_WaitingServerResponse = false;
 
         break;
     }
     case AcceptMakeMove:
     {
-        Message<AcceptMakeMove> message(serializeData);
+        const Message<AcceptMakeMove> message(serializeData);
 
-        PlacePlayerPieceOnBoard(message.Cell, message.Piece);
-        SwitchPlayerTurn();
+        m_Board.InstanciateNewPlayerShape(message.Piece, message.Cell);
+
+        const Piece opponentPiece = message.Piece == Piece::X ? Piece::O : Piece::X;
+        SwitchPlayerTurn(PlayerManager::GetCurrentPlayer()->GetName(), opponentPiece);
+
+        m_WaitingServerResponse = false;
+
         break;
-
     }
     case DeclineMakeMove:
     {
-        DebugLog("Declined move");
+        m_GameStateUI->UpdateGameStateText("Invalid move!");
+        m_WaitingServerResponse = false;
         break;
     }
     case GameOver:
     {
-        Message<GameOver> message(serializeData);
+        const Message<GameOver> message(serializeData);
 
-        //ClientApp::GetHistoryManager()->SaveGame(winner->GetData(), m_ScoreManager.GetCurrentGame());
-
-        //m_ScoreManager.CreateNewGameHistory();
+        m_WaitingServerResponse = false;
 
         if (message.IsDraw)
         {
@@ -223,13 +242,26 @@ void GameState::OnReceiveData(const Json& serializeData)
 
             m_GameStateUI->UpdatePlayerScore(message.Piece, message.Winner, m_ScoreManager.GetPlayerScore(message.Piece));
             m_GameStateUI->UpdateGameStateText(message.Winner + " won!");
-
         }
 
-        ClearBoard();
+        m_NeedToCleanBoard = true;
 
         break;
+    }
+    case OpponentLeftLobby:
+    {
+        m_WaitingServerResponse = true;
+        m_IsGameStarted = false;
+        m_NeedToCleanBoard = true;
+        m_IsTimerOn = false;
+        m_IsPlayerTurn = false;
 
+        m_PlayerManager.Clear();
+        m_ScoreManager.Clear();
+
+        m_GameStateUI->UpdateGameStateText("Opponent left the game!");
+
+        break;
     }
     default:
         break;

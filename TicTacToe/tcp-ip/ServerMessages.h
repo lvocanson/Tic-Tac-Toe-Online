@@ -35,11 +35,42 @@ struct Message<MsgType::LobbyList> : ISerializable
 };
 
 template <>
+struct Message<MsgType::GameHistoryList> : ISerializable
+{
+    Message() = default;
+    Message(const Json& j)
+    {
+        GameHistory.reserve(j["GameHistory"].size());
+
+        for (auto& game : j["GameHistory"])
+        {
+            GameHistory.push_back(GameData(game));
+        }
+    }
+    ~Message() = default;
+
+    Json Serialize() override
+    {
+        Json j;
+        j["Type"] = MsgType::GameHistoryList;
+
+        for (auto& game : GameHistory)
+        {
+            j["GameHistory"].push_back(game.Serialize());
+        }
+
+        return j;
+    }
+
+    std::vector<GameData> GameHistory;
+};
+
+template <>
 struct Message<MsgType::GameStarted> : ISerializable
 {
     Message() = default;
     Message(const Json& j)
-        : StartPlayer(j["StartPlayer"]), PlayerX(j["PlayerX"]), PlayerO(j["PlayerO"])
+        : StartPlayer(j["StartPlayer"]), GameMode(j["GameMode"]), PlayerX(j["PlayerX"]), PlayerO(j["PlayerO"])
     {
     }
     ~Message() = default;
@@ -48,6 +79,7 @@ struct Message<MsgType::GameStarted> : ISerializable
     {
         Json j;
         j["Type"] = MsgType::GameStarted;
+        j["GameMode"] = GameMode;
         j["StartPlayer"] = StartPlayer;
         j["PlayerX"] = PlayerX;
         j["PlayerO"] = PlayerO;
@@ -55,6 +87,7 @@ struct Message<MsgType::GameStarted> : ISerializable
         return j;
     }
 
+    GameModeType GameMode;
     std::string StartPlayer, PlayerX, PlayerO;
 
 };
@@ -64,8 +97,7 @@ struct Message<MsgType::AcceptMakeMove> : ISerializable
 {
     Message() = default;
     Message(const Json& j)
-        : LobbyId(j["ID"].get<unsigned int>())
-        , Cell(j["Cell"].get<unsigned int>())
+        : Cell(j["Cell"].get<unsigned int>())
         , Piece(j["Piece"].get<TicTacToe::Piece>())
     {
     }
@@ -75,7 +107,6 @@ struct Message<MsgType::AcceptMakeMove> : ISerializable
     {
         Json j;
         j["Type"] = MsgType::AcceptMakeMove;
-        j["ID"] = LobbyId;
         j["Cell"] = Cell;
         j["Piece"] = Piece;
         return j;

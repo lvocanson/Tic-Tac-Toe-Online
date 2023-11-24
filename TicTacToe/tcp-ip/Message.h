@@ -10,7 +10,9 @@ enum class MsgType : unsigned int
     Login,
     Disconnect,
 
+    FetchGameHistoryList,
     FetchLobbyList,
+
     TryToJoinLobby,
     OnEnterLobby,
     LeaveLobby,
@@ -20,10 +22,13 @@ enum class MsgType : unsigned int
 
     // Server -> Client
 
+    GameHistoryList,
     LobbyList,
+    RefreshLobbyList,
+
     AcceptJoinLobby,
     RejectJoinLobby,
-
+    OpponentLeftLobby,
 
     GameStarted,
     AcceptMakeMove,

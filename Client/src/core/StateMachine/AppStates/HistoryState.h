@@ -20,6 +20,7 @@ public:
 
 private:
 
+    void OnReceiveData(const Json& serializeData) override;
     void DisplaySelectedGame();
 
     void NextGame();
@@ -43,12 +44,15 @@ private:
     TextComponent* m_GameButtonLabel = nullptr;
     TextComponent* m_MoveButtonLabel = nullptr;
     TextComponent* m_GameWinnerText = nullptr;
+    TextComponent* m_GameDateText = nullptr;
+    TextComponent* m_PlayerXName = nullptr;
+    TextComponent* m_PlayerOName = nullptr;
 
-    std::vector<GameData*> m_Games;
+
+    std::vector<GameData> m_Games;
 
     GraphicBoard m_Board;
-
-    GameData* m_CurrentGame = nullptr;
+    GameData m_CurrentGame;
 
     unsigned int m_CurrentGameIndex = 0;
     unsigned int m_CurrentMoveIndex = 0;

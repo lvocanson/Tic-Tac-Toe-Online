@@ -1,10 +1,12 @@
 #include "ConnectionState.h"
-#include "src/core/Managers/Resources/FontRegistry.h"
 #include "src/core/ClientApp.h"
 #include "tcp-ip/ClientMessages.h"
 
 #include <regex>
-#include <SFML/Network/IpAddress.hpp>
+#if defined(DEBUG) | defined(_DEBUG)
+    #include <SFML/Network/IpAddress.hpp>
+#endif
+
 
 constexpr float CONNECTION_TIMEOUT_TIME = 5.0f;
 
@@ -25,7 +27,10 @@ void ConnectionState::OnEnter()
     m_IpField = new InsertFieldComponent();
     m_IpField->SetPosition(sf::Vector2f(m_Window->GetWidth() * 0.5f - 190, 100));
     m_IpField->SetLabel("Server Phrase");
+
+#if defined(DEBUG) | defined(_DEBUG)
     m_IpField->SetText(TcpIp::IpAddress::FromString(sf::IpAddress::getLocalAddress().toString()).ToPhrase());
+#endif
 
     m_NameField = new InsertFieldComponent();
     m_NameField->SetPosition(sf::Vector2f(m_Window->GetWidth() * 0.5f - 190, 200));
@@ -33,7 +38,7 @@ void ConnectionState::OnEnter()
 
     sf::Color OrangeRed(231, 62, 1);
     m_BackButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 500), sf::Vector2f(200, 100), OrangeRed);
-    m_BackButton->SetButtonText("Quit", sf::Color::White, 50, TextAlignment::Center);
+    m_BackButton->SetButtonText("Return to menu", sf::Color::White, 50, TextAlignment::Center);
     m_BackButton->SetOnClickCallback([this]()
         {
             m_StateMachine->SwitchState("MenuState");

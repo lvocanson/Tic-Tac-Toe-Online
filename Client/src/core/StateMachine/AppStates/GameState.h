@@ -18,9 +18,6 @@ public:
     void OnExit() override;
     void OnReceiveData(const Json& serializeData) override;
 
-    void OnEnterLobby();
-
-    void StartGame();
 
     GameState(StateMachine* stateMachine, Window* m_Window);
     GameState(const GameState& other) = delete;
@@ -28,12 +25,10 @@ public:
     ~GameState() override;
 
     void SetLobbyID(unsigned int id) { m_LobbyID = id; }
+    void SetGameMode(const std::string& gameMode) { m_GameMode = gameMode; }
     void CheckIfMouseHoverBoard();
     bool IsMouseHoverPiece(unsigned int i);
-    void PlacePlayerPieceOnBoard(unsigned int cell, TicTacToe::Piece piece);
-    void SendGameFinishedToServer(const std::string& string);
-    void SetWinner(const std::string& name, const TicTacToe::Piece piece);
-    void SwitchPlayerTurn();
+    void SwitchPlayerTurn(const std::string& playerName, const TicTacToe::Piece piece);
 
     void UpdatePlayerTimer(float dt);
     void CheckIfTimerIsUp();
@@ -45,6 +40,7 @@ public:
 private:
 
     unsigned int m_LobbyID;
+    std::string m_GameMode;
 
     Window* m_Window;
     ButtonComponent* m_ReturnButton = nullptr;
@@ -56,9 +52,11 @@ private:
     float m_PlayerTurnTime = 0.0f;
     float m_MaxPlayerTurnTime = 0.0f;
 
+    bool m_WaitingServerResponse = true;
     bool m_IsTimerOn = false;
     bool m_IsGameStarted = false;
     bool m_IsPlayerTurn = false;
+    bool m_NeedToCleanBoard = false;
 
-    GameStateUI* m_GameStateUI;
+    GameStateUI* m_GameStateUI = nullptr;
 };

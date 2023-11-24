@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "Managers/Resources/PlayerShapeRegistry.h"
+#include "game/GameData.h"
 
 struct PlayerData
 {

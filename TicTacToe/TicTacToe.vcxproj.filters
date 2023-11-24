@@ -7,6 +7,7 @@
     <ClCompile Include="game\TicTacToe.cpp" />
     <ClCompile Include="tcp-ip\TcpIp.cpp" />
     <ClCompile Include="tcp-ip\TcpIpExceptions.cpp" />
+    <ClCompile Include="game\GameData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\GameMode.h" />
@@ -21,5 +22,6 @@
     <ClInclude Include="tcp-ip\Message.h" />
     <ClInclude Include="tcp-ip\ClientMessages.h" />
     <ClInclude Include="tcp-ip\ServerMessages.h" />
+    <ClInclude Include="game\GameData.h" />
   </ItemGroup>
 </Project>

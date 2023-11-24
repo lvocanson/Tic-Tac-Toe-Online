@@ -18,16 +18,17 @@ public:
     void InitPlayerScores(const std::vector<Player*>& allPlayers);
     void InitProgressBar(const float maxValue);
 
-    void UpdatePlayerTurnText(const PlayerData& data);
+    void UpdatePlayerTurnText(const std::string& name, const sf::Color& color);
     void UpdateGameStateText(const std::string& text);
     void UpdatePlayerScore(const TicTacToe::Piece, const std::string&, unsigned int score);
     void UpdateProgressBar(float value) const { m_ProgressBar->SetValue(value); }
-    void SetLobbyIDText(unsigned int& id);
-    void SetUserName(const std::string username);
+    void SetGameModeAndIDText(unsigned int& id, const std::string& gameMode);
+    void SetUserName(const std::string& username);
 
 private:
 
     sf::Text* m_GameStateText;
+    sf::Text* m_GameModeText;
     sf::Text* m_LobbyIDText;
     sf::Text* m_UserName;
     sf::Text* m_Title;

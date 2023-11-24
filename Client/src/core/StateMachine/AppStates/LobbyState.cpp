@@ -25,13 +25,21 @@ void LobbyState::OnEnter()
     Message<MsgType::FetchLobbyList> message;
     ClientConnectionHandler::GetInstance().SendDataToServer(message.Serialize().dump());
 
-    m_ReturnButton = new ButtonComponent(sf::Vector2f(500, 500), sf::Vector2f(200, 100), sf::Color::Red);
+    m_HistoryButton = new ButtonComponent(sf::Vector2f(500, 450), sf::Vector2f(200, 100), sf::Color(4, 139, 15));
+    m_HistoryButton->SetButtonText("History", sf::Color::White, 30, TextAlignment::Center);
+    m_HistoryButton->SetOnClickCallback([this]()
+        {
+            m_StateMachine->SwitchState("HistoryState");
+        });
+
+    m_ReturnButton = new ButtonComponent(sf::Vector2f(500, 600), sf::Vector2f(200, 100), sf::Color::Red);
     m_ReturnButton->SetButtonText("Return To Menu", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]()
         {
             m_StateMachine->SwitchState("MenuState");
         });
 
+    m_Window->RegisterDrawable(m_HistoryButton);
     m_Window->RegisterDrawable(m_ReturnButton);
 }
 
@@ -47,27 +55,15 @@ void LobbyState::OnUpdate(float dt)
         m_LeaveButtons->Update(dt);
     }
 
+    m_HistoryButton->Update(dt);
     m_ReturnButton->Update(dt);
 }
 
 void LobbyState::OnExit()
 {
-    for (auto& lbButton : m_LobbyButtons)
-    {
-        m_Window->UnregisterDrawable(lbButton);
-        RELEASE(lbButton);
-    }
-
-    if (m_LeaveButtons != nullptr)
-    {
-        m_Window->UnregisterDrawable(m_LeaveButtons);
-        RELEASE(m_LeaveButtons);
-    }
-
+    m_Window->ClearAllDrawables();
     m_LobbyButtons.clear();
-
-    m_Window->UnregisterDrawable(m_ReturnButton);
-    RELEASE(m_ReturnButton);
+    NULLPTR(m_HistoryButton);
 }
 
 void LobbyState::OnReceiveData(const Json& serializeData)
@@ -85,27 +81,50 @@ void LobbyState::OnReceiveData(const Json& serializeData)
         for (const auto& lobby : lobbyList.LobbiesData)
         {
             int id = lobby.ID;
+            float x = (lobby.GameMode == GameModeType::CLASSIC) ? 300.0f : 650.0f;
+            float y = (i % 3) * 110.0f + 100.0f;
+            sf::Color color = (lobby.GameMode == GameModeType::CLASSIC) ? sf::Color(1, 215, 88) : sf::Color(255, 0, 0);
+            std::string lobbyName = (lobby.GameMode == GameModeType::CLASSIC) ? "Normal " : "Fast ";
 
-            if (!m_IsLobbyInit)
+            int playerCount = 0;
+            if (!lobby.PlayerX.empty()) playerCount++;
+            if (!lobby.PlayerO.empty()) playerCount++;
+
+            if (m_IsLobbyInit)
             {
-                sf::Color Emerald(1, 215, 88);
-                auto* m_LobbyButton = new ButtonComponent(sf::Vector2f(500, (i * static_cast<float>(110) + 100)), sf::Vector2f(200, 100), Emerald);
-                m_LobbyButton->SetButtonText("Lobby " + std::to_string(id), sf::Color::White, 30, TextAlignment::Center);
+                m_Lobbies[i].ID = id;
+                m_Lobbies[i].GameMode = lobby.GameMode;
+                m_Lobbies[i].PlayerO = lobby.PlayerO;
+                m_Lobbies[i].PlayerX = lobby.PlayerX;
+
+                m_LobbyButtons[i]->SetButtonText(
+                    lobbyName + std::to_string(id) + "\n" + std::to_string(playerCount) + "/" + "2"
+                    , sf::Color::White, 30
+                    , TextAlignment::Center);
+
+                m_LobbyButtons[i]->SetOnClickCallback([=]()
+                {
+                    JoinLobbyRequest(i);
+                });
+            }
+            else
+            {
+                m_Lobbies.emplace_back(id, lobby.GameMode, "", "");
+
+                auto* m_LobbyButton = new ButtonComponent(sf::Vector2f(x, y), sf::Vector2f(200, 100), color);
+                m_LobbyButton->SetButtonText(
+                    lobbyName + std::to_string(id) + "\n" + std::to_string(playerCount) + "/" + "2"
+                    , sf::Color::White, 30
+                    , TextAlignment::Center);
                 m_LobbyButton->SetOnClickCallback([=]()
                 {
                     JoinLobbyRequest(i);
                 });
 
-                m_Lobbies.emplace_back(id, "", "");
                 m_LobbyButtons.push_back(m_LobbyButton);
                 m_Window->RegisterDrawable(m_LobbyButton);
             }
-            else
-            {
-                m_Lobbies[i].ID = id;
-                m_Lobbies[i].PlayerO = lobby.PlayerO;
-                m_Lobbies[i].PlayerX = lobby.PlayerX;
-            }
+
             i++;
         }
         m_IsLobbyInit = true;
@@ -115,6 +134,7 @@ void LobbyState::OnReceiveData(const Json& serializeData)
     case AcceptJoinLobby:
     {
         ((GameState*)m_StateMachine->GetState("GameState"))->SetLobbyID(m_CurrentLobbyID);
+        ((GameState*)m_StateMachine->GetState("GameState"))->SetGameMode(m_LobbyGameMode);
         m_StateMachine->SwitchState("GameState");
         break;
     }
@@ -135,7 +155,7 @@ void LobbyState::JoinLobbyRequest(int lobbyID)
 
     m_IsTryingToJoinLobby = true;
     m_CurrentLobbyID = m_Lobbies[lobbyID].ID;
-
+    m_LobbyGameMode = m_Lobbies[lobbyID].GameMode == CLASSIC ? "GameMode: Classic" : "GameMode: Fast";
     Message<MsgType::TryToJoinLobby> message;
     message.LobbyId = m_CurrentLobbyID;
     

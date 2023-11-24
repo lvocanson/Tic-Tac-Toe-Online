@@ -59,10 +59,14 @@ void Window::PollEvents()
 void Window::Render()
 {
     m_Window->clear(m_ClearColor);
-    for (auto drawable : m_Drawables)
+    for (int i = 0; i < m_Drawables.size(); i++)
     {
-        m_Window->draw(*drawable);
+        // Render next frame
+        if (i > m_Drawables.size()) break;
+
+        m_Window->draw(*m_Drawables[i]);
     }
+
     m_Window->display();
 }
 

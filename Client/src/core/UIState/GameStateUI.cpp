@@ -8,6 +8,7 @@ GameStateUI::GameStateUI(Window* window) : UIStateManager(window)
     m_PlayerScoreTexts = std::unordered_map<TicTacToe::Piece, sf::Text*>();
     m_Title = nullptr;
     m_GameStateText = nullptr;
+    m_GameModeText = nullptr;
     m_LobbyIDText = nullptr;
     m_UserName = nullptr;
     m_ProgressBar = nullptr;
@@ -47,6 +48,13 @@ void GameStateUI::Init()
 
 void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
 {
+    for (auto& text : m_PlayerScoreTexts)
+    {
+        m_Window->UnregisterDrawable(text.second);
+        RELEASE(text.second);
+    }
+
+    int i = 1;
     for (const auto player : allPlayers)
     {
         auto playerScoreText = new sf::Text();
@@ -55,13 +63,13 @@ void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
         playerScoreText->setCharacterSize(24);
         playerScoreText->setFillColor(sf::Color::White);
         playerScoreText->setStyle(sf::Text::Bold);
-        playerScoreText->setPosition(55, m_Window->GetHeight() * 0.5f - playerScoreText->getGlobalBounds().height + 25 * m_PlayerScoreTexts.size());
+        playerScoreText->setPosition(55, m_Window->GetHeight() * 0.5f + i * 20);
 
         RegisterText(playerScoreText);
 
         m_PlayerScoreTexts.insert(std::pair(player->GetPiece(), playerScoreText));
+        i++;
     }
-    m_Window->UnregisterDrawable(m_GameStateText);
 }
 
 void GameStateUI::InitProgressBar(const float maxValue)
@@ -78,17 +86,18 @@ void GameStateUI::InitProgressBar(const float maxValue)
     m_ProgressBar->SetValue(maxValue);
 }
 
-void GameStateUI::UpdatePlayerTurnText(const PlayerData& data)
+void GameStateUI::UpdatePlayerTurnText(const std::string& name, const sf::Color& color)
 {
-    m_GameStateText->setString(data.Name + " turn");
-    m_GameStateText->setFillColor(data.Color);
+    m_GameStateText->setString(name + " turn");
+    m_GameStateText->setFillColor(color);
 
     if (m_ProgressBar)
-        m_ProgressBar->SetForegroundColor(data.Color);
+        m_ProgressBar->SetForegroundColor(color);
 }
 
 void GameStateUI::UpdateGameStateText(const std::string& text)
 {
+    m_GameStateText->setFillColor(sf::Color::White);
     m_GameStateText->setString(text);
 }
 
@@ -103,7 +112,7 @@ void GameStateUI::UpdatePlayerScore(const TicTacToe::Piece piece, const std::str
     m_PlayerScoreTexts.at(piece)->setString(name + " : " + std::to_string(score));
 }
 
-void GameStateUI::SetLobbyIDText(unsigned int& id)
+void GameStateUI::SetGameModeAndIDText(unsigned int& id, const std::string& gameMode)
 {
     m_LobbyIDText = new sf::Text();
     m_LobbyIDText->setFont(*FontRegistry::GetFont("coolvetica.otf"));
@@ -112,11 +121,20 @@ void GameStateUI::SetLobbyIDText(unsigned int& id)
     m_LobbyIDText->setFillColor(sf::Color::White);
     m_LobbyIDText->setStyle(sf::Text::Bold);
     m_LobbyIDText->setPosition(55, 55);
-
+   
+    m_GameModeText = new sf::Text();
+    m_GameModeText->setFont(*FontRegistry::GetFont("coolvetica.otf"));
+    m_GameModeText->setString(gameMode);
+    m_GameModeText->setCharacterSize(24);
+    m_GameModeText->setFillColor(sf::Color::White);
+    m_GameModeText->setStyle(sf::Text::Bold);
+    m_GameModeText->setPosition(55, 80);
+    
+    RegisterText(m_GameModeText);
     RegisterText(m_LobbyIDText);
 }
 
-void GameStateUI::SetUserName(const std::string username)
+void GameStateUI::SetUserName(const std::string& username)
 {
     m_UserName = new sf::Text();
     m_UserName->setFont(*FontRegistry::GetFont("coolvetica.otf"));
@@ -124,20 +142,25 @@ void GameStateUI::SetUserName(const std::string username)
     m_UserName->setCharacterSize(24);
     m_UserName->setFillColor(sf::Color::White);
     m_UserName->setStyle(sf::Text::Bold);
-    m_UserName->setPosition(55, 80);
+    m_UserName->setPosition(55, 105);
 
     RegisterText(m_UserName);
 }
 
 void GameStateUI::Clear()
 {
+    m_Window->ClearAllDrawables();
+
     for (auto& text : m_PlayerScoreTexts)
     {
         NULLPTR(text.second);
     }
 
     NULLPTR(m_GameStateText);
+    NULLPTR(m_GameModeText);
     NULLPTR(m_LobbyIDText);
     NULLPTR(m_UserName);
     NULLPTR(m_Title);
+
+    m_PlayerScoreTexts.clear();
 }

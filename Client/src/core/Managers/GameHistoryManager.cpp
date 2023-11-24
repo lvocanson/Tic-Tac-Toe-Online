@@ -1,22 +1,5 @@
 #include "GameHistoryManager.h"
 
-GameData::GameData(const PlayerData* winner, const std::vector<const PlayerMove*>* allMoves)
-{
-    Winner = winner;
-    AllMoves = allMoves;
-}
-
-GameData::~GameData()
-{
-    Winner = nullptr;
-
-    for (auto move : *AllMoves)
-    {
-        RELEASE(move)
-    }
-
-    RELEASE(AllMoves)
-}
 
 GameHistoryManager::GameHistoryManager()
 {
@@ -37,11 +20,6 @@ void GameHistoryManager::Clear()
     }
 
     m_GameHistory.clear();
-}
-
-void GameHistoryManager::SaveGame(const PlayerData* winner, const std::vector<const PlayerMove*>* playerMoves)
-{
-    m_GameHistory.push_back(new GameData(winner, playerMoves));
 }
 
 GameData* GameHistoryManager::GetGameData(unsigned int gameID) const

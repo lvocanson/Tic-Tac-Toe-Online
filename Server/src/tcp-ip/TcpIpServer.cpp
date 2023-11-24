@@ -217,5 +217,6 @@ ClientPtr TcpIpServer::GetClientByName(const std::string& name)
         if (connection.GetName() == name)
             return &connection;
     }
+
     return nullptr;
 }
