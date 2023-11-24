@@ -35,14 +35,14 @@ void GameState::OnEnter()
     m_ReturnButton = new ButtonComponent(sf::Vector2f(100, 500), sf::Vector2f(200, 100), sf::Color::Red);
     m_ReturnButton->SetButtonText("Leave game", sf::Color::White, 30, TextAlignment::Center);
     m_ReturnButton->SetOnClickCallback([this]()
-    { 
-        Message<MsgType::LeaveLobby> message;
-        message.LobbyId = m_LobbyID;
-        message.PlayerName = ClientApp::GetInstance().GetCurrentPlayer()->GetName();
-        ClientConnectionHandler::GetInstance().SendDataToServer(message);
+        {
+            Message<MsgType::LeaveLobby> message;
+            message.LobbyId = m_LobbyID;
+            message.PlayerName = ClientApp::GetInstance().GetCurrentPlayer()->GetName();
+            ClientConnectionHandler::GetInstance().SendDataToServer(message);
 
-        m_StateMachine->SwitchState("MenuState"); 
-    });
+            m_StateMachine->SwitchState("MenuState");
+        });
 
     m_Window->RegisterDrawable(m_ReturnButton);
 
@@ -236,7 +236,7 @@ void GameState::OnReceiveData(const Json& serializeData)
         {
             m_GameStateUI->UpdateGameStateText("Draw!");
         }
-        else 
+        else
         {
             m_ScoreManager.AddScoreToPlayer(message.Piece);
 
@@ -264,7 +264,7 @@ void GameState::OnReceiveData(const Json& serializeData)
         break;
     }
     default:
-       break;
+        break;
     }
 }
 

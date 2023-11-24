@@ -42,7 +42,7 @@ void MenuState::OnEnter()
     {
         ShowConnectionButton();
     }
-
+  
     sf::Color OrangeRed(231, 62, 1);
     m_QuitButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 400), sf::Vector2f(200, 100), OrangeRed);
     m_QuitButton->SetButtonText("Quit", sf::Color::White, 50, TextAlignment::Center);
