@@ -46,7 +46,7 @@ void GameStateUI::Init()
     RegisterText(m_GameStateText);
 }
 
-void GameStateUI::InitPlayerScores(const std::array<Player, 2>& allPlayers)
+void GameStateUI::InitPlayerScores(const std::map<TicTacToe::Piece, Player>& allPlayers)
 {
     for (auto& text : m_PlayerScoreTexts)
     {
@@ -59,15 +59,15 @@ void GameStateUI::InitPlayerScores(const std::array<Player, 2>& allPlayers)
     {
         auto playerScoreText = new sf::Text();
         playerScoreText->setFont(*FontRegistry::GetFont("coolvetica.otf"));
-        playerScoreText->setString(player.GetName() + " : 0");
+        playerScoreText->setString(player.second.GetName() + " : 0");
         playerScoreText->setCharacterSize(24);
-        playerScoreText->setFillColor(player.GetColor());
+        playerScoreText->setFillColor(player.second.GetColor());
         playerScoreText->setStyle(sf::Text::Bold);
         playerScoreText->setPosition(55, m_Window->GetHeight() * 0.5f + i * 20);
 
         RegisterText(playerScoreText);
 
-        m_PlayerScoreTexts.insert(std::pair(player.GetPiece(), playerScoreText));
+        m_PlayerScoreTexts.insert(std::pair(player.second.GetPiece(), playerScoreText));
         i++;
     }
 }
@@ -95,9 +95,9 @@ void GameStateUI::UpdatePlayerTurnText(const PlayerData* data)
         m_ProgressBar->SetForegroundColor(data->Color);
 }
 
-void GameStateUI::UpdateGameStateText(const std::string& text)
+void GameStateUI::UpdateGameStateText(const std::string& text, sf::Color color)
 {
-    m_GameStateText->setFillColor(sf::Color::White);
+    m_GameStateText->setFillColor(color);
     m_GameStateText->setString(text);
 }
 

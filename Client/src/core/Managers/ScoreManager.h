@@ -16,13 +16,13 @@ public:
     void Init() override {};
     void Clear() override;
 
-    void InitPlayerScores(const std::array<Player, 2>& allPlayers);
+    void InitPlayerScores(const std::map<TicTacToe::Piece, Player>& allPlayers);
 
     void AddScoreToPlayer(TicTacToe::Piece);
 
     unsigned int GetPlayerScore(TicTacToe::Piece);
 
-    bool IsScoreExists(TicTacToe::Piece&);
+    bool IsScoreExists(const TicTacToe::Piece&) const;
 
 private:
 

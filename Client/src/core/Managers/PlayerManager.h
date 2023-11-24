@@ -15,20 +15,22 @@ public:
     void SwitchPlayerTurn();
 
     void CreateNewPlayer(const std::string&, const sf::Color, const TicTacToe::Piece);
-    void InitPlayerTurn(const std::string starter);
+    void InitPlayerTurn(const std::string& starter, const TicTacToe::Piece& playerPiece);
 
-    std::array<Player, 2>& GetAllPlayers() { return m_RegisteredPlayers; }
-    const Player& GetPlayer(int index) { return m_RegisteredPlayers[index]; }
-    const Player& GetPlayer(TicTacToe::Piece);
+    bool IsPlayerTurn() const { return m_IsPlayerTurn; }
 
-    Player* GetCurrentPlayer() { return m_CurrentPlayer; }
-    Player* GetOpponentPlayer() { return m_OpponentPlayer; }
+    std::map<TicTacToe::Piece, Player>& GetAllPlayers() { return m_RegisteredPlayers; }
+    Player& GetPlayerByPiece(TicTacToe::Piece);
+    Player* GetCurrentPlayer() const { return m_CurrentPlayer; }
+    Player* GetOpponentPlayer() const { return m_OpponentPlayer; }
+    Player& GetOpponentPlayerByPiece(TicTacToe::Piece);
 
 private:
 
-    std::array<Player, 2> m_RegisteredPlayers;
+    std::map<TicTacToe::Piece, Player> m_RegisteredPlayers;
     Player* m_CurrentPlayer;
     Player* m_OpponentPlayer;
 
-    bool m_IsPlayerXTurn;
+    bool m_IsPlayerTurn;
+    TicTacToe::Piece m_PlayerPiece;
 };

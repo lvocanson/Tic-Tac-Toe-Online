@@ -15,11 +15,11 @@ public:
     void Init() override;
     void Clear() override;
 
-    void InitPlayerScores(const std::array<Player, 2>& allPlayers);
+    void InitPlayerScores(const std::map<TicTacToe::Piece, Player>& allPlayers);
     void InitProgressBar(const sf::Color& color, const float maxValue);
 
     void UpdatePlayerTurnText(const PlayerData* data);
-    void UpdateGameStateText(const std::string& text);
+    void UpdateGameStateText(const std::string& text, sf::Color color = sf::Color::White);
     void UpdatePlayerScore(const TicTacToe::Piece, const std::string&, unsigned int score);
     void UpdateProgressBar(float value) const { m_ProgressBar->SetValue(value); }
     void SetGameModeAndIDText(unsigned int& id, const std::string& gameMode);

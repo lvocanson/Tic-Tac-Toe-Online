@@ -15,11 +15,11 @@ class Player
 public:
 
     Player();
+    Player(const std::string& name, const sf::Color color, const TicTacToe::Piece piece);
     ~Player();
 
-    bool IsInited() { return m_Data.Piece != TicTacToe::Piece::Empty; }
+    bool IsInited() const { return m_Data.Piece != TicTacToe::Piece::Empty; }
 
-    void SetData(const std::string& name, const sf::Color color, const TicTacToe::Piece);
     void SetColor(const sf::Color color) { m_Data.Color = color; }
 
     sf::Color GetColor() const { return m_Data.Color; }

@@ -28,10 +28,9 @@ public:
     void SetGameMode(const std::string& gameMode) { m_GameMode = gameMode; }
     void CheckIfMouseHoverBoard();
     bool IsMouseHoverPiece(unsigned int i);
-    void SwitchPlayerTurn();
+    void SwitchPlayerTurn(const TicTacToe::Piece& piece);
 
     void UpdatePlayerTimer(float dt);
-    void CheckIfTimerIsUp();
 
     void SendPlacedPieceToServer(unsigned int cell);
 
@@ -55,7 +54,6 @@ private:
     bool m_WaitingServerResponse = true;
     bool m_IsTimerOn = false;
     bool m_IsGameStarted = false;
-    bool m_IsPlayerTurn = false;
     bool m_NeedToCleanBoard = false;
 
     GameStateUI* m_GameStateUI = nullptr;
