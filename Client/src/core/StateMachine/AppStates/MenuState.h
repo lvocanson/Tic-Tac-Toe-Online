@@ -20,7 +20,6 @@ private:
     Window* m_Window = nullptr;
 
     ButtonComponent* m_ConnectButton = nullptr;
-    ButtonComponent* m_HistoryButton = nullptr;
     ButtonComponent* m_QuitButton = nullptr;
     ButtonComponent* m_DisconnectButton = nullptr;
 };

@@ -1,6 +1,7 @@
 #include "PlayerManager.h"
 
 Player* PlayerManager::m_CurrentPlayer = nullptr;
+Player* PlayerManager::m_OpponentPlayer = nullptr;
 
 PlayerManager::PlayerManager() : m_PlayerCount(0), m_CurrentPlayerIndex(0)
 {
@@ -39,7 +40,7 @@ void PlayerManager::SwitchPlayerTurn()
     {
         m_CurrentPlayerIndex = 0;
     }
-
+    m_OpponentPlayer = m_RegisteredPlayers[GetOpponentPlayerIndex()];
     m_CurrentPlayer = m_RegisteredPlayers[m_CurrentPlayerIndex];
 }
 
