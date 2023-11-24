@@ -61,7 +61,7 @@ void GameStateUI::InitPlayerScores(const std::vector<Player*>& allPlayers)
         playerScoreText->setFont(*FontRegistry::GetFont("coolvetica.otf"));
         playerScoreText->setString(player->GetName() + " : 0");
         playerScoreText->setCharacterSize(24);
-        playerScoreText->setFillColor(PlayerShapeRegistry::GetPlayerColor(player->GetPiece()));
+        playerScoreText->setFillColor(sf::Color::White);
         playerScoreText->setStyle(sf::Text::Bold);
         playerScoreText->setPosition(55, m_Window->GetHeight() * 0.5f + i * 20);
 
