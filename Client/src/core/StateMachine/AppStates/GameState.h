@@ -28,7 +28,7 @@ public:
     void SetGameMode(const std::string& gameMode) { m_GameMode = gameMode; }
     void CheckIfMouseHoverBoard();
     bool IsMouseHoverPiece(unsigned int i);
-    void SwitchPlayerTurn(const std::string& playerName);
+    void SwitchPlayerTurn(const std::string& playerName, const TicTacToe::Piece piece);
 
     void UpdatePlayerTimer(float dt);
     void CheckIfTimerIsUp();
